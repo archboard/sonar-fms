@@ -13,6 +13,7 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "grantholle/api-resource-detection": "^1.0",
+        "grantholle/powerschool-api": "^2.4",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.3.5",
         "laravel/framework": "^8.12",

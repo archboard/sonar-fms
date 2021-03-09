@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "479184fede3ce3a4bc247716cdf128d8",
+    "content-hash": "bce85754ea126d107180594b76990a47",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -969,6 +969,64 @@
                 "source": "https://github.com/grantholle/api-resource-detection/tree/1.0.0"
             },
             "time": "2020-12-15T06:13:55+00:00"
+        },
+        {
+            "name": "grantholle/powerschool-api",
+            "version": "2.4.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grantholle/powerschool-api.git",
+                "reference": "377fd97401024bba3a26ca0caa8b3b850966da39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/grantholle/powerschool-api/zipball/377fd97401024bba3a26ca0caa8b3b850966da39",
+                "reference": "377fd97401024bba3a26ca0caa8b3b850966da39",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.0.1",
+                "illuminate/console": "^7.0|^8.0",
+                "illuminate/support": "^7.0|^8.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^5.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "GrantHolle\\PowerSchool\\Api\\PowerSchoolApiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GrantHolle\\PowerSchool\\Api\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Grant Holle",
+                    "homepage": "http://grantholle.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel package to make interacting with PowerSchool less painful.",
+            "keywords": [
+                "powerschool"
+            ],
+            "support": {
+                "issues": "https://github.com/grantholle/powerschool-api/issues",
+                "source": "https://github.com/grantholle/powerschool-api/tree/2.4.4"
+            },
+            "time": "2021-02-25T06:16:06+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
