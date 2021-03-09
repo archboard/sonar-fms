@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'cloud' => env('IS_CLOUD', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
