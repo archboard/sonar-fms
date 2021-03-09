@@ -51,7 +51,7 @@ return [
         ],
         'guard' => 'web',
         'identifying_attributes' => [
-            'openid_claimed_id' => 'openid_identity',
+            'email' => 'email',
         ],
         'attribute_transformers' => [
             'email' => \GrantHolle\PowerSchool\Auth\Transformers\Lowercase::class,
@@ -69,7 +69,7 @@ return [
         ],
         'guard' => 'web',
         'identifying_attributes' => [
-            'openid_claimed_id' => 'openid_identity',
+            'email' => 'email',
         ],
         'attribute_transformers' => [
             'email' => \GrantHolle\PowerSchool\Auth\Transformers\Lowercase::class,
