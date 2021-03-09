@@ -30,7 +30,5 @@ class PowerSchoolOpenIdLoginController extends Controller
                 ->pluck('id');
             $user->schools()->syncWithoutDetaching($schools);
         }
-
-        dd($data);
     }
 }
