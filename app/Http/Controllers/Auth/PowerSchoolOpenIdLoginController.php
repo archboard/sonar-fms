@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\School;
 use App\Models\User;
 use GrantHolle\PowerSchool\Auth\Traits\AuthenticatesUsingPowerSchoolWithOpenId;
 use Illuminate\Http\Request;
@@ -22,6 +23,14 @@ class PowerSchoolOpenIdLoginController extends Controller
      */
     protected function authenticated(Request $request, User $user, Collection $data)
     {
+        $adminSchools = $data->get('adminSchools', []);
+
+        if (!empty($adminSchools)) {
+            $schools = School::whereIn('school_number', $adminSchools)
+                ->pluck('id');
+            $user->schools()->syncWithoutDetaching($schools);
+        }
+
         dd($data);
     }
 }
