@@ -17,6 +17,14 @@ Route::get('/auth/powerschool/openid', [\App\Http\Controllers\Auth\PowerSchoolOp
 Route::get('/auth/powerschool/openid/verify', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'login'])
     ->name('openid.verify');
 
+/**
+ * Self-hosted only routes
+ */
+Route::middleware('self_hosted')->group(function () {
+    Route::get('/install', \App\Http\Controllers\ShowInstallationPageController::class)
+        ->name('install');
+});
+
 Route::middleware('tenant')->group(function () {
     Route::get('/', function () {
         return inertia('Index');

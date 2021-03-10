@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
@@ -12,6 +13,7 @@ use Spatie\Multitenancy\Models\Tenant as TenantBase;
 class Tenant extends TenantBase
 {
     use HasFactory;
+    use HasResource;
 
     protected $guarded = [];
 

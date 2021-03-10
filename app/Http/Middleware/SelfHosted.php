@@ -2,11 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Tenant;
 use Closure;
 use Illuminate\Http\Request;
 
-class Installed
+class SelfHosted
 {
     /**
      * Handle an incoming request.
@@ -17,11 +16,10 @@ class Installed
      */
     public function handle(Request $request, Closure $next)
     {
-        if (config('app.cloud') || Tenant::exists()) {
-            return $next($request);
+        if (config('app.cloud')) {
+            abort(404);
         }
 
-        // Redirect to installation
-        return redirect()->route('install');
+        return $next($request);
     }
 }
