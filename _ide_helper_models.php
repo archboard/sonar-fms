@@ -24,6 +24,9 @@ namespace App\Models{
  * @property int $low_grade
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Tenant $tenant
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder|School newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|School newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|School query()
@@ -57,6 +60,10 @@ namespace App\Models{
  * @property string $license
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
+ * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
  * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
  * @method static \Spatie\Multitenancy\TenantCollection|static[] get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
@@ -99,8 +106,10 @@ namespace App\Models{
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
  * @property-read int|null $roles_count
+ * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
+ * @property-read \App\Models\Tenant $tenant
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User query()

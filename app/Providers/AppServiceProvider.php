@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\School;
+use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +29,23 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local')) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
+        }
+
+        if (!$this->app->runningInConsole()) {
+            $this->app->bind(Tenant::class, function () {
+                return Tenant::current();
+            });
+
+            $this->app->bind(School::class, function () {
+                /** @var User $user */
+                $user = auth()->user();
+
+                if ($user && $school = $user->school) {
+                    return $school;
+                }
+
+                return new School();
+            });
         }
     }
 }
