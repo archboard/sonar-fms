@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\School;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,9 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return (object) [];
+            },
+            'school' => function () {
+                return app(School::class)->toResource();
             },
             'flash' => [
                 'success' => session('success'),
