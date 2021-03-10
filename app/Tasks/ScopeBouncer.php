@@ -10,11 +10,12 @@ class ScopeBouncer implements SwitchTenantTask
 {
     public function makeCurrent(Tenant $tenant): void
     {
+        /** @var \App\Models\Tenant $tenant */
         BouncerFacade::scope()->to($tenant->id);
     }
 
     public function forgetCurrent(): void
     {
-        // TODO: Implement forgetCurrent() method.
+        BouncerFacade::scope();
     }
 }
