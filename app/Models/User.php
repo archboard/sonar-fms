@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,6 +19,7 @@ class User extends Authenticatable
     use Notifiable;
     use HasResource;
     use HasRolesAndAbilities;
+    use BelongsToTenant;
 
     /**
      * The attributes that are mass assignable.

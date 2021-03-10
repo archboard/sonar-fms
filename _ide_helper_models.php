@@ -57,6 +57,8 @@ namespace App\Models{
  * @property string $license
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
+ * @method static \Spatie\Multitenancy\TenantCollection|static[] get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()

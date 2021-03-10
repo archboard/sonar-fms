@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -13,8 +15,14 @@ use Illuminate\Support\Collection;
 class School extends Model
 {
     use HasFactory;
+    use BelongsToTenant;
 
     protected $guarded = [];
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 
     public static function getFromPowerSchool(array $ids = []): Collection
     {
