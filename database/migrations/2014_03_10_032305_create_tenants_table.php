@@ -18,6 +18,7 @@ class CreateTenantsTable extends Migration
             $table->boolean('allow_password_auth')->default(true);
             $table->dateTime('subscription_started_at')->nullable();
             $table->dateTime('subscription_expires_at')->nullable();
+            $table->string('license');
             $table->timestamps();
         });
     }
