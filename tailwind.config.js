@@ -5,8 +5,20 @@ module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
-      primary: colors.cyan
     },
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      primary: colors.cyan,
+      black: colors.black,
+      white: colors.white,
+      gray: colors.trueGray,
+      red: colors.red,
+      yellow: colors.yellow,
+      blue: colors.blue,
+      green: colors.green,
+      orange: colors.orange,
+    }
   },
   variants: {
     extend: {},
