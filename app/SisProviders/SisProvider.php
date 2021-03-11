@@ -14,7 +14,7 @@ interface SisProvider
 
     public function syncSchools(): Collection;
 
-    public function getSchool();
+    public function getSchool($sisId);
 
-    public function syncSchool(): School;
+    public function syncSchool($sisId): School;
 }

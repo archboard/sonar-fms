@@ -57,13 +57,18 @@ class PowerSchoolProvider implements SisProvider
             });
     }
 
-    public function getSchool()
+    public function getSchool($sisId)
     {
         // TODO: Implement getSchool() method.
     }
 
-    public function syncSchool(): School
+    public function syncSchool($sisId): School
     {
         // TODO: Implement syncSchool() method.
+    }
+
+    public function getBuilder()
+    {
+        return $this->builder;
     }
 }
