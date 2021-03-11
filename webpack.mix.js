@@ -32,5 +32,7 @@ mix.js('resources/js/app.js', 'public/js')
     hmrOptions: {
       host: host,
       port: '8080'
-    }
+    },
+    https: true,
+    autoprefixer: { remove: false }
   })
