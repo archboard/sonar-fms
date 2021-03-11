@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password')->nullable();
             $table->unsignedBigInteger('school_id')->nullable();
+            $table->string('timezone')->nullable();
             $table->foreign('school_id')->references('id')->on('schools')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();

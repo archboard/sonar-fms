@@ -15384,6 +15384,43 @@
      
 }
 
+    namespace JamesMills\LaravelTimezone\Facades { 
+            /**
+     * 
+     *
+     */ 
+        class Timezone {
+                    /**
+         * 
+         *
+         * @param \JamesMills\LaravelTimezone\Carbon|null $date
+         * @param null $format
+         * @param bool $format_timezone
+         * @return string 
+         * @static 
+         */ 
+        public static function convertToLocal($date, $format = null, $format_timezone = false)
+        {
+                        /** @var \JamesMills\LaravelTimezone\Timezone $instance */
+                        return $instance->convertToLocal($date, $format, $format_timezone);
+        }
+                    /**
+         * 
+         *
+         * @param $date
+         * @return \JamesMills\LaravelTimezone\Carbon 
+         * @static 
+         */ 
+        public static function convertFromLocal($date)
+        {
+                        /** @var \JamesMills\LaravelTimezone\Timezone $instance */
+                        return $instance->convertFromLocal($date);
+        }
+         
+    }
+     
+}
+
     namespace Illuminate\Http { 
             /**
      * 
@@ -18633,6 +18670,7 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
             class Bouncer extends \Silber\Bouncer\BouncerFacade {}
+            class Timezone extends \JamesMills\LaravelTimezone\Facades\Timezone {}
      
 }
 
