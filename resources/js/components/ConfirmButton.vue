@@ -19,13 +19,13 @@
         </slot>
 
         <div class="mt-3 text-center sm:mt-5 w-full">
-          <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-headline">
             <slot name="headline">
               Are you sure?
             </slot>
           </h3>
           <div class="mt-2">
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500 dark:text-gray-300">
               <slot name="content">
                 This action is destructive and cannot be undone.
               </slot>
