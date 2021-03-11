@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncSchools;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -47,7 +48,8 @@ class CreateTenantController extends Controller
         BouncerFacade::allow($user)->everything();
         auth()->login($user);
 
-        // Kick off district sync
+        // Kick off job to sync schools
+        dispatch(new SyncSchools($tenant));
 
         session()->flash('success', __('Installation complete. Sync has been started.'));
 
