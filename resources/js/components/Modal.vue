@@ -10,7 +10,7 @@
           leave-from-class="opacity-100"
           leave-to-class="opacity-0"
         >
-          <div v-if="show" class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div v-if="show" class="fixed inset-0 transition-opacity" style="backdrop-filter: blur(5px);" aria-hidden="true">
             <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
           </div>
         </transition>
