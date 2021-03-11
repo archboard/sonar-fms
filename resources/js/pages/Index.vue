@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xl mx-auto px-4 pt-16 pb-12 min-h-screen text-gray-800">
+  <div class="max-w-xl mx-auto px-4 pt-16 pb-12 min-h-screen text-gray-800 dark:text-gray-100">
     <h1 class="font-bold text-2xl leading-5 mb-8">Laravel Inertia Starter</h1>
     <p class="text-lg mb-4">A Laravel starter with Inertia and some components to get you started.</p>
 
