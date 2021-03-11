@@ -21,7 +21,8 @@ Route::get('/auth/powerschool/openid/verify', [\App\Http\Controllers\Auth\PowerS
  * Self-hosted only routes
  */
 Route::middleware('self_hosted')->group(function () {
-    Route::get('/install', \App\Http\Controllers\ShowInstallationPageController::class)
+    Route::get('/install', \App\Http\Controllers\ShowInstallationPageController::class);
+    Route::post('/install', \App\Http\Controllers\CreateTenantController::class)
         ->name('install');
 });
 
