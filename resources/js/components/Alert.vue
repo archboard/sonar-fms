@@ -40,7 +40,7 @@ export default defineComponent({
       success: 'bg-green-50 dark:bg-green-800',
       error: 'bg-red-50 dark:bg-red-800',
       warning: 'bg-yellow-50 dark:bg-yellow-800',
-      neutral: 'bg-gray-50 dark:bg-gray-700',
+      neutral: 'bg-gray-100 dark:bg-gray-700',
     }
     const iconColors = {
       success: 'text-green-400 dark:text-green-200',
@@ -58,7 +58,7 @@ export default defineComponent({
       success: 'bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600 dark:bg-green-800 dark:text-green-400',
       error: 'bg-red-50 text-red-500 hover:bg-red-100 focus:ring-offset-red-50 focus:ring-red-600 dark:bg-red-800 dark:text-red-400',
       warning: 'bg-yellow-50 text-yellow-500 hover:bg-yellow-100 focus:ring-offset-yellow-50 focus:ring-yellow-600 dark:bg-yellow-800 dark:text-yellow-400',
-      neutral: 'bg-gray-50 text-gray-500 hover:bg-gray-100 focus:ring-offset-gray-50 focus:ring-gray-600 dark:bg-gray-700 dark:text-gray-400',
+      neutral: 'bg-gray-100 text-gray-500 hover:bg-gray-200 focus:ring-offset-gray-100 focus:ring-gray-600 dark:bg-gray-700 dark:text-gray-400',
     }
     const icons = {
       success: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`,
