@@ -2,10 +2,10 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   purge: [],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
-      cyan: colors.cyan
+      primary: colors.cyan
     },
   },
   variants: {
