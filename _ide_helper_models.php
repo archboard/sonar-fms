@@ -93,6 +93,8 @@ namespace App\Models{
  * @property string|null $external_expression
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Section newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Section query()
@@ -115,6 +117,7 @@ namespace App\Models{
 /**
  * App\Models\Student
  *
+ * @mixin IdeHelperStudent
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
@@ -125,6 +128,8 @@ namespace App\Models{
  * @property string|null $email
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
+ * @property-read int|null $sections_count
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student query()
@@ -138,7 +143,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereStudentNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperStudent extends \Eloquent {}
 }
@@ -163,6 +167,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
+ * @property-read int|null $sections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
  * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
@@ -214,24 +222,25 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
  * @property-read \App\Models\Tenant $tenant
- * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereIs($role)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereIsAll($role)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereIsNot($role)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereSisId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereTimezone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static Builder|User newModelQuery()
+ * @method static Builder|User newQuery()
+ * @method static Builder|User query()
+ * @method static Builder|User whereCan(string $ability)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User whereFirstName($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereIs($role)
+ * @method static Builder|User whereIsAll($role)
+ * @method static Builder|User whereIsNot($role)
+ * @method static Builder|User whereLastName($value)
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereSchoolId($value)
+ * @method static Builder|User whereSisId($value)
+ * @method static Builder|User whereTenantId($value)
+ * @method static Builder|User whereTimezone($value)
+ * @method static Builder|User whereUpdatedAt($value)
  */
 	class IdeHelperUser extends \Eloquent {}
 }

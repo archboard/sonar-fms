@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,6 +22,8 @@ class User extends Authenticatable
     use HasResource;
     use HasRolesAndAbilities;
     use BelongsToTenant;
+
+    const TEACHER = 'teacher';
 
     /**
      * The attributes that are mass assignable.
@@ -45,6 +48,28 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * Gets the users who have an ability directly or through a role
+     *
+     * @param Builder $query
+     * @param string $ability
+     */
+    public function scopeWhereCan(Builder $query, string $ability)
+    {
+        $query->where(function ($query) use ($ability) {
+            // direct
+            $query->whereHas('abilities', function ($query) use ($ability) {
+                $query->byName($ability);
+            });
+            // through roles
+            $query->orWhereHas('roles', function ($query) use ($ability) {
+                 $query->whereHas('abilities', function ($query) use ($ability) {
+                     $query->byName($ability);
+                 });
+             });
+         });
+    }
 
     public function schools(): BelongsToMany
     {

@@ -3,6 +3,8 @@
 namespace App\SisProviders;
 
 use App\Models\School;
+use App\Models\Section;
+use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
@@ -74,7 +76,7 @@ class PowerSchoolProvider implements SisProvider
         $school = $this->tenant->getSchoolFromSisId($sisId);
         $builder = $this->builder
             ->method('get')
-            ->to("/ws/v1/school/{$sisId}/staff")
+            ->to("/ws/v1/school/{$school->sis_id}/staff")
             ->expansions('emails');
 
         while ($results = $builder->paginate()) {
@@ -150,12 +152,12 @@ class PowerSchoolProvider implements SisProvider
 
     public function syncSchoolStudents($sisId)
     {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
         $builder = $this->builder
             ->method('get')
-            ->to('/ws/v1/school/6/student')
+            ->to("/ws/v1/school/{$school->sis_id}/student")
             ->q('school_enrollment.enroll_status==A')
             ->expansions('contact_info');
-        $school = $this->tenant->getSchoolFromSisId($sisId);
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -208,10 +210,10 @@ class PowerSchoolProvider implements SisProvider
 
     public function syncSchoolCourses($sisId)
     {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
         $builder = $this->builder
             ->method('get')
-            ->to("/ws/v1/school/{$sisId}/course");
-        $school = $this->tenant->getSchoolFromSisId($sisId);
+            ->to("/ws/v1/school/{$school->sis_id}/course");
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -258,10 +260,10 @@ class PowerSchoolProvider implements SisProvider
 
     public function syncSchoolSections($sisId)
     {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
         $builder = $this->builder
             ->method('get')
-            ->to("/ws/v1/school/{$sisId}/section");
-        $school = $this->tenant->getSchoolFromSisId($sisId);
+            ->to("/ws/v1/school/{$school->sis_id}/section");
         $activeSections = [];
         $newEntries = [];
 
@@ -319,6 +321,9 @@ class PowerSchoolProvider implements SisProvider
                         'updated_at' => $now,
                     ];
 
+                    // At this point they are a teacher
+                    $teacher->assign(User::TEACHER);
+
                     return $entries;
                 }, []);
 
@@ -334,6 +339,40 @@ class PowerSchoolProvider implements SisProvider
         if (!empty($newEntries)) {
             DB::table('sections')->insert($newEntries);
         }
+    }
+
+    public function syncSchoolStudentEnrollment($sisId)
+    {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+
+        $school->sections
+            ->each(function (Section $section) {
+                $results = $this->builder
+                    ->extensions('s_cc_x,s_cc_edfi_x')
+                    ->to("/ws/v1/section/{$section->sis_id}/section_enrollment")
+                    ->get();
+
+                $enrollments = $results->section_enrollments->section_enrollment ?? [];
+
+                if (!is_array($enrollments)) {
+                    $enrollments = [$enrollments];
+                }
+
+                // Get the sis id's of the students who haven't dropped
+                $studentSisIds = collect($enrollments)
+                    ->each(function ($enrollment) use ($enrollments) {
+                        if (!is_object($enrollment)) {
+                            dd($enrollments);
+                        }
+                    })
+                    ->filter(fn ($enrollment) => !$enrollment->dropped)
+                    ->pluck('student_id');
+
+                $students = Student::whereIn('sis_id', $studentSisIds)
+                    ->pluck('id');
+
+                $section->students()->sync($students);
+            });
     }
 
     public function getBuilder(): RequestBuilder

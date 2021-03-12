@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\SisProviders\SisProvider;
 use GrantHolle\Http\Resources\Traits\HasResource;
-use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
@@ -27,6 +26,16 @@ class Tenant extends TenantBase
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class);
     }
 
     public function sisProvider(): SisProvider
