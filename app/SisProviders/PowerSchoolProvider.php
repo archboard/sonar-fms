@@ -169,6 +169,7 @@ class PowerSchoolProvider implements SisProvider
                         'section_number' => optional($section)->section_number,
                         'expression' => optional($section)->expression,
                         'external_expression' => optional($section)->external_expression,
+                        // staff_id is the school_staff dcid (005)
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
