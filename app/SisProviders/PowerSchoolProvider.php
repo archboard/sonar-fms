@@ -401,6 +401,22 @@ class PowerSchoolProvider implements SisProvider
             });
     }
 
+    /**
+     * Syncs everything for a school:
+     * staff, students, courses, sections, and enrollment
+     *
+     * @param int|string $sisId
+     */
+    public function fullSchoolSync($sisId)
+    {
+        $this->syncSchool($sisId);
+        $this->syncSchoolStaff($sisId);
+        $this->syncSchoolStudents($sisId);
+        $this->syncSchoolCourses($sisId);
+        $this->syncSchoolSections($sisId);
+        $this->syncSchoolStudentEnrollment($sisId);
+    }
+
     public function getBuilder(): RequestBuilder
     {
         return $this->builder;
