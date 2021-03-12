@@ -16,6 +16,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('sis_id')->nullable()->index();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
@@ -30,6 +31,7 @@ class CreateUsersTable extends Migration
         Schema::create('school_user', function (Blueprint $table) {
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('staff_id')->nullable()->index();
             $table->primary(['school_id', 'user_id']);
         });
     }

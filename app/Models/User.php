@@ -48,7 +48,8 @@ class User extends Authenticatable
 
     public function schools(): BelongsToMany
     {
-        return $this->belongsToMany(School::class);
+        return $this->belongsToMany(School::class)
+            ->withPivot(['staff_id']);
     }
 
     public function school(): BelongsTo

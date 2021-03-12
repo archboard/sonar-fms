@@ -22,7 +22,7 @@ class SchoolFactory extends Factory
     public function definition()
     {
         return [
-            'dcid' => $this->faker->numberBetween(),
+            'sis_id' => $this->faker->numberBetween(),
             'school_number' => $this->faker->numberBetween(),
             'name' => $this->faker->company,
             'high_grade' => 12,

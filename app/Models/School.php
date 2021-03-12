@@ -24,7 +24,8 @@ class School extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot(['staff_id']);
     }
 
     public function courses(): HasMany
@@ -52,7 +53,7 @@ class School extends Model
 
         $this->update([
             'name' => $psSchool->name,
-            'dcid' => $psSchool->id,
+            'sis_id' => $psSchool->id,
             'school_number' => $psSchool->school_number,
             'high_grade' => $psSchool->high_grade,
             'low_grade' => $psSchool->low_grade,

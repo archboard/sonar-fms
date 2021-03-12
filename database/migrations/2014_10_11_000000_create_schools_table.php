@@ -16,11 +16,11 @@ class CreateSchoolsTable extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->integer('dcid');
-            $table->integer('school_number');
+            $table->integer('sis_id')->index();
+            $table->integer('school_number')->nullable();
             $table->string('name');
-            $table->integer('high_grade');
-            $table->integer('low_grade');
+            $table->integer('high_grade')->nullable();
+            $table->integer('low_grade')->nullable();
             $table->timestamps();
         });
     }

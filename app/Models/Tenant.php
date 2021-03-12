@@ -34,11 +34,15 @@ class Tenant extends TenantBase
         return new $this->sis_provider($this);
     }
 
-    public function getSchoolsFromSis(): array
+    public function getSchoolFromSisId($sisId): School
     {
-        $response = PowerSchool::to('/ws/v1/district/school')->get();
+        if ($sisId instanceof School) {
+            return $sisId;
+        }
 
-        return $response->schools->school;
+        /** @var School $school */
+        $school = $this->schools()->where('sis_id', $sisId)->firstOrFail();
+        return $school;
     }
 
     public function syncAllSchoolsFromSis()

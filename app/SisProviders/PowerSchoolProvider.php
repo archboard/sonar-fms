@@ -4,6 +4,7 @@ namespace App\SisProviders;
 
 use App\Models\School;
 use App\Models\Tenant;
+use App\Models\User;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,7 @@ class PowerSchoolProvider implements SisProvider
 
         // Only get the schools that exist already
         if (config('app.cloud')) {
-            $schools = $this->tenant->schools->pluck('dcid');
+            $schools = $this->tenant->schools->pluck('sis_id');
             return array_filter($response->schools->school, function ($school) use ($schools) {
                 return $schools->contains($school->id);
             });
@@ -47,7 +48,7 @@ class PowerSchoolProvider implements SisProvider
                 return $this->tenant
                     ->schools()
                     ->updateOrCreate(
-                        ['dcid' => $school->id],
+                        ['sis_id' => $school->id],
                         [
                             'name' => $school->name,
                             'school_number' => $school->school_number,
@@ -68,14 +69,91 @@ class PowerSchoolProvider implements SisProvider
         // TODO: Implement syncSchool() method.
     }
 
+    public function syncSchoolStaff($sisId)
+    {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+        $builder = $this->builder
+            ->method('get')
+            ->to("/ws/v1/school/{$sisId}/staff")
+            ->expansions('emails');
+
+        while ($results = $builder->paginate()) {
+            $existingUsers = $this->tenant
+                ->users()
+                ->whereIn('sis_id', collect($results)->pluck('users_dcid'))
+                ->with('schools')
+                ->get()
+                ->keyBy('sis_id');
+
+            $entries = array_reduce(
+                $results,
+                function ($entries, $user) use ($school, $existingUsers) {
+                    $email = strtolower(optional($user->emails)->work_email);
+
+                    if (!$email) {
+                        return $entries;
+                    }
+
+                    /** @var User $existingUser */
+                    if ($existingUser = $existingUsers->get($user->users_dcid)) {
+                        $existingUser->update([
+                            'email' => $email,
+                            'first_name' => optional($user->name)->first_name,
+                            'last_name' => optional($user->name)->last_name,
+                        ]);
+                        /** @var School $existingSchool */
+                        $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
+
+                        // If the school record exists already, update the staff id just in case
+                        if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) {
+                            $existingUser->schools()
+                                ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
+                        }
+                        // If there isn't a school relationship, add it here
+                        elseif (!$existingSchool) {
+                            $entries[] = [
+                                'school_id' => $school->id,
+                                'user_id' => $existingUser->id,
+                                'staff_id' => $user->id,
+                            ];
+                        }
+
+                        return $entries;
+                    }
+
+                    /** @var User $newUser */
+                    $newUser = $this->tenant
+                        ->users()
+                        ->create([
+                            'sis_id' => $user->users_dcid,
+                            'email' => $email,
+                            'first_name' => optional($user->name)->first_name,
+                            'last_name' => optional($user->name)->last_name,
+                            'school_id' => $school->id,
+                        ]);
+
+                    $entries[] = [
+                        'school_id' => $school->id,
+                        'user_id' => $newUser->id,
+                        'staff_id' => $user->id,
+                    ];
+
+                    return $entries;
+                }
+            );
+
+            if (!empty($entries)) {
+                DB::table('school_user')->insert($entries);
+            }
+        }
+    }
+
     public function syncSchoolCourses($sisId)
     {
         $builder = $this->builder
             ->method('get')
             ->to("/ws/v1/school/{$sisId}/course");
-        $school = $sisId instanceof School
-            ? $sisId
-            : $this->tenant->schools()->firstWhere('dcid', $sisId);
+        $school = $this->tenant->getSchoolFromSisId($sisId);
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -86,30 +164,33 @@ class PowerSchoolProvider implements SisProvider
                 ->get()
                 ->keyBy('sis_id');
 
-            $entries = array_reduce($results, function ($entries, $course) use ($school, $now, $existingCourses) {
-                // If it exists, then update
-                if ($existingCourse = $existingCourses->get($course->id)) {
-                    $existingCourse->update([
+            $entries = array_reduce(
+                $results,
+                function ($entries, $course) use ($school, $now, $existingCourses) {
+                    // If it exists, then update
+                    if ($existingCourse = $existingCourses->get($course->id)) {
+                        $existingCourse->update([
+                            'name' => $course->course_name,
+                            'course_number' => $course->course_number,
+                        ]);
+
+                        return $entries;
+                    }
+
+                    // It's a new course
+                    $entries[] = [
+                        'tenant_id' => $this->tenant->id,
+                        'school_id' => $school->id,
                         'name' => $course->course_name,
                         'course_number' => $course->course_number,
-                    ]);
+                        'sis_id' => $course->id,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
 
                     return $entries;
-                }
-
-                // It's a new course
-                $entries[] = [
-                    'tenant_id' => $this->tenant->id,
-                    'school_id' => $school->id,
-                    'name' => $course->course_name,
-                    'course_number' => $course->course_number,
-                    'sis_id' => $course->id,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-
-                return $entries;
-            }, []);
+                }, []
+            );
 
             if (!empty($entries)) {
                 DB::table('courses')->insert($entries);
@@ -122,9 +203,9 @@ class PowerSchoolProvider implements SisProvider
         $builder = $this->builder
             ->method('get')
             ->to("/ws/v1/school/{$sisId}/section");
-        $school = $sisId instanceof School
-            ? $sisId
-            : $this->tenant->schools()->firstWhere('dcid', $sisId);
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+        $activeSections = [];
+        $newEntries = [];
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -138,10 +219,11 @@ class PowerSchoolProvider implements SisProvider
                 ->whereIn('sis_id', collect($results)->pluck('id'))
                 ->get()
                 ->keyBy('sis_id');
+            // $staff
 
             $entries = array_reduce(
                 $results,
-                function ($entries, $section) use ($school, $now, $courses, $existingSections) {
+                function ($entries, $section) use (&$activeSections, $school, $now, $courses, $existingSections) {
                     $course = $courses->get($section->course_id);
 
                     // If the course doesn't exists, don't do anything
@@ -151,6 +233,7 @@ class PowerSchoolProvider implements SisProvider
 
                     // If the section exists, then update
                     if ($existingSection = $existingSections->get($section->id)) {
+                        $activeSections[] = $existingSection->id;
                         $existingSection->update([
                             'section_number' => optional($section)->section_number,
                             'expression' => optional($section)->expression,
@@ -177,9 +260,17 @@ class PowerSchoolProvider implements SisProvider
                     return $entries;
                 }, []);
 
-            if (!empty($entries)) {
-                DB::table('sections')->insert($entries);
-            }
+            $newEntries = array_merge($newEntries, $entries);
+        }
+
+        // Delete the existing sections that didn't update
+        // which means the other existing sections aren't active
+        $school->sections()
+            ->whereNotIn('id', $activeSections)
+            ->delete();
+
+        if (!empty($newEntries)) {
+            DB::table('sections')->insert($newEntries);
         }
     }
 
