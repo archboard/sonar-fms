@@ -14,6 +14,7 @@ namespace App\Models{
 /**
  * App\Models\Course
  *
+ * @mixin IdeHelperCourse
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
@@ -33,7 +34,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Course whereSisId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Course whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Course whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperCourse extends \Eloquent {}
 }
@@ -56,6 +56,8 @@ namespace App\Models{
  * @property-read int|null $courses_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
  * @property-read \App\Models\Tenant $tenant
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
@@ -79,10 +81,12 @@ namespace App\Models{
 /**
  * App\Models\Section
  *
+ * @mixin IdeHelperSection
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
  * @property int $course_id
+ * @property int $user_id
  * @property int $sis_id
  * @property string|null $section_number
  * @property string|null $expression
@@ -102,9 +106,41 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereSisId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Section whereUserId($value)
  */
 	class IdeHelperSection extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Student
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property int $sis_id
+ * @property string|null $student_number
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $email
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereSisId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereStudentNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperStudent extends \Eloquent {}
 }
 
 namespace App\Models{

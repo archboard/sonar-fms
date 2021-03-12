@@ -38,6 +38,11 @@ class School extends Model
         return $this->hasMany(Section::class);
     }
 
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
+    }
+
     public static function getFromPowerSchool(array $ids = []): Collection
     {
         $psSchools = PowerSchool::endpoint('/ws/v1/district/school')

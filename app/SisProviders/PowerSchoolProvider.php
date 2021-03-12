@@ -148,6 +148,64 @@ class PowerSchoolProvider implements SisProvider
         }
     }
 
+    public function syncSchoolStudents($sisId)
+    {
+        $builder = $this->builder
+            ->method('get')
+            ->to('/ws/v1/school/6/student')
+            ->q('school_enrollment.enroll_status==A')
+            ->expansions('contact_info');
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+
+        while ($results = $builder->paginate()) {
+            $now = now()->format('Y-m-d H:i:s');
+
+            // Get courses that exist already
+            $existingStudents = $school->students()
+                ->whereIn('sis_id', collect($results)->pluck('id'))
+                ->get()
+                ->keyBy('sis_id');
+
+            $entries = array_reduce(
+                $results,
+                function ($entries, $student) use ($school, $now, $existingStudents) {
+                    $email = optional($student->contact_info)->email;
+
+                    // If it exists, then update
+                    if ($existingStudent = $existingStudents->get($student->id)) {
+                        $existingStudent->update([
+                            'student_number' => $student->local_id,
+                            'first_name' => optional($student->name)->first_name,
+                            'last_name' => optional($student->name)->last_name,
+                            'email' => $email ? strtolower($email) : null,
+                        ]);
+
+                        return $entries;
+                    }
+
+                    // It's a new course
+                    $entries[] = [
+                        'tenant_id' => $this->tenant->id,
+                        'school_id' => $school->id,
+                        'sis_id' => $student->id,
+                        'student_number' => $student->local_id,
+                        'first_name' => optional($student->name)->first_name,
+                        'last_name' => optional($student->name)->last_name,
+                        'email' => $email ? strtolower($email) : null,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+
+                    return $entries;
+                }, []
+            );
+
+            if (!empty($entries)) {
+                DB::table('students')->insert($entries);
+            }
+        }
+    }
+
     public function syncSchoolCourses($sisId)
     {
         $builder = $this->builder
