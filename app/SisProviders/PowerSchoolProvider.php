@@ -63,12 +63,31 @@ class PowerSchoolProvider implements SisProvider
 
     public function getSchool($sisId)
     {
-        // TODO: Implement getSchool() method.
+        $results = $this->builder
+            ->to("/ws/v1/school/{$sisId}")
+            ->get();
+
+        return $results->school;
     }
 
     public function syncSchool($sisId): School
     {
-        // TODO: Implement syncSchool() method.
+        $sisSchool = $this->getSchool($sisId);
+
+        /** @var School $school */
+        $school = $this->tenant
+            ->schools()
+            ->updateOrCreate(
+                ['sis_id' => $sisSchool->id],
+                [
+                    'name' => $sisSchool->name,
+                    'school_number' => $sisSchool->school_number,
+                    'low_grade' => $sisSchool->low_grade,
+                    'high_grade' => $sisSchool->high_grade,
+                ]
+            );
+
+        return $school;
     }
 
     public function syncSchoolStaff($sisId)
