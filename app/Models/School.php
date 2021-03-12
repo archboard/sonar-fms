@@ -8,6 +8,7 @@ use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -24,6 +25,11 @@ class School extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class);
     }
 
     public static function getFromPowerSchool(array $ids = []): Collection

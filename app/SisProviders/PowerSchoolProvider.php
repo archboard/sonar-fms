@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\Tenant;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class PowerSchoolProvider implements SisProvider
 {
@@ -67,7 +68,56 @@ class PowerSchoolProvider implements SisProvider
         // TODO: Implement syncSchool() method.
     }
 
-    public function getBuilder()
+    public function syncSchoolCourses($sisId)
+    {
+        $builder = $this->builder
+            ->method('get')
+            ->to("/ws/v1/school/{$sisId}/course");
+        $school = $sisId instanceof School
+            ? $sisId
+            : $this->tenant->schools()->firstWhere('dcid', $sisId);
+
+        while ($results = $builder->paginate()) {
+            $now = now();
+
+            // Get courses that exist already
+            $existingCourses = $school->courses()
+                ->whereIn('sis_id', collect($results)->pluck('id'))
+                ->get()
+                ->keyBy('sis_id');
+
+            $entries = array_reduce($results, function ($entries, $course) use ($school, $now, $existingCourses) {
+                // If it exists, then update
+                if ($existingCourse = $existingCourses->get($course->id)) {
+                    $existingCourse->update([
+                        'name' => $course->course_name,
+                        'course_number' => $course->course_number,
+                    ]);
+
+                    return $entries;
+                }
+
+                // It's a new course
+                $entries[] = [
+                    'tenant_id' => $this->tenant->id,
+                    'school_id' => $school->id,
+                    'name' => $course->course_name,
+                    'course_number' => $course->course_number,
+                    'sis_id' => $course->id,
+                    'created_at' => $now->format('Y-m-d H:i:s'),
+                    'updated_at' => $now->format('Y-m-d H:i:s'),
+                ];
+
+                return $entries;
+            }, []);
+
+            if (!empty($entries)) {
+                DB::table('courses')->insert($entries);
+            }
+        }
+    }
+
+    public function getBuilder(): RequestBuilder
     {
         return $this->builder;
     }
