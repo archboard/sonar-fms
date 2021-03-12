@@ -78,7 +78,7 @@ class PowerSchoolProvider implements SisProvider
             : $this->tenant->schools()->firstWhere('dcid', $sisId);
 
         while ($results = $builder->paginate()) {
-            $now = now();
+            $now = now()->format('Y-m-d H:i:s');
 
             // Get courses that exist already
             $existingCourses = $school->courses()
@@ -104,8 +104,8 @@ class PowerSchoolProvider implements SisProvider
                     'name' => $course->course_name,
                     'course_number' => $course->course_number,
                     'sis_id' => $course->id,
-                    'created_at' => $now->format('Y-m-d H:i:s'),
-                    'updated_at' => $now->format('Y-m-d H:i:s'),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
 
                 return $entries;
@@ -113,6 +113,71 @@ class PowerSchoolProvider implements SisProvider
 
             if (!empty($entries)) {
                 DB::table('courses')->insert($entries);
+            }
+        }
+    }
+
+    public function syncSchoolSections($sisId)
+    {
+        $builder = $this->builder
+            ->method('get')
+            ->to("/ws/v1/school/{$sisId}/section");
+        $school = $sisId instanceof School
+            ? $sisId
+            : $this->tenant->schools()->firstWhere('dcid', $sisId);
+
+        while ($results = $builder->paginate()) {
+            $now = now()->format('Y-m-d H:i:s');
+
+            // Get courses that exist already
+            $courses = $school->courses()
+                ->whereIn('sis_id', collect($results)->pluck('course_id'))
+                ->get()
+                ->keyBy('sis_id');
+            $existingSections = $school->sections()
+                ->whereIn('sis_id', collect($results)->pluck('id'))
+                ->get()
+                ->keyBy('sis_id');
+
+            $entries = array_reduce(
+                $results,
+                function ($entries, $section) use ($school, $now, $courses, $existingSections) {
+                    $course = $courses->get($section->course_id);
+
+                    // If the course doesn't exists, don't do anything
+                    if (!$course) {
+                        return $entries;
+                    }
+
+                    // If the section exists, then update
+                    if ($existingSection = $existingSections->get($section->id)) {
+                        $existingSection->update([
+                            'section_number' => optional($section)->section_number,
+                            'expression' => optional($section)->expression,
+                            'external_expression' => optional($section)->external_expression,
+                        ]);
+
+                        return $entries;
+                    }
+
+                    // It's a new section
+                    $entries[] = [
+                        'tenant_id' => $this->tenant->id,
+                        'school_id' => $school->id,
+                        'course_id' => $course->id,
+                        'sis_id' => $section->id,
+                        'section_number' => optional($section)->section_number,
+                        'expression' => optional($section)->expression,
+                        'external_expression' => optional($section)->external_expression,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+
+                    return $entries;
+                }, []);
+
+            if (!empty($entries)) {
+                DB::table('sections')->insert($entries);
             }
         }
     }
