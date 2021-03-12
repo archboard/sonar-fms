@@ -219,15 +219,19 @@ class PowerSchoolProvider implements SisProvider
                 ->whereIn('sis_id', collect($results)->pluck('id'))
                 ->get()
                 ->keyBy('sis_id');
-            // $staff
+            $staff = $school->users()
+                ->wherePivotIn('staff_id', collect($results)->pluck('staff_id'))
+                ->get()
+                ->keyBy('pivot.staff_id');
 
             $entries = array_reduce(
                 $results,
-                function ($entries, $section) use (&$activeSections, $school, $now, $courses, $existingSections) {
+                function ($entries, $section) use (&$activeSections, $school, $staff, $courses, $now, $existingSections) {
                     $course = $courses->get($section->course_id);
+                    $teacher = $staff->get($section->staff_id);
 
-                    // If the course doesn't exists, don't do anything
-                    if (!$course) {
+                    // If the course or staff doesn't exists, don't do anything
+                    if (!$course || !$teacher) {
                         return $entries;
                     }
 
@@ -248,11 +252,11 @@ class PowerSchoolProvider implements SisProvider
                         'tenant_id' => $this->tenant->id,
                         'school_id' => $school->id,
                         'course_id' => $course->id,
+                        'user_id' => $teacher->id,
                         'sis_id' => $section->id,
                         'section_number' => optional($section)->section_number,
                         'expression' => optional($section)->expression,
                         'external_expression' => optional($section)->external_expression,
-                        // staff_id is the school_staff dcid (005)
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
