@@ -67,6 +67,13 @@ class PowerSchoolProvider implements SisProvider
             ->to("/ws/v1/school/{$sisId}")
             ->get();
 
+        if (
+            config('app.cloud') &&
+            !$this->tenant->schools()->where('sis_id', $sisId)->exists()
+        ) {
+            throw new \Exception("Your license does not support this school. Please update your license and try again.");
+        }
+
         return $results->school;
     }
 
