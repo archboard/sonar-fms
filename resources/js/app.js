@@ -5,11 +5,13 @@ import components from '@/components'
 import './bootstrap'
 
 const el = document.getElementById('app')
+const initialPage = JSON.parse(el.dataset.page)
+el.removeAttribute('data-page')
 
 // Create the application instance
 const app = createApp({
   render: () => h(App, {
-    initialPage: JSON.parse(el.dataset.page),
+    initialPage,
     resolveComponent: name => import(`./pages/${name}`).then(module => module.default),
   })
 })
