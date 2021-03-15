@@ -1,14 +1,12 @@
 <template>
   <Layout>
-    <ValidationErrors class="mb-4" />
-
     <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
       {{ status }}
     </div>
 
     <form @submit.prevent="submit">
       <Fieldset>
-        <InputWrap>
+        <InputWrap :error="form.errors.email">
           <Label for="email">{{ __('Email') }}</Label>
           <Input id="email" type="email" v-model="form.email" required autofocus autocomplete="username" />
         </InputWrap>
