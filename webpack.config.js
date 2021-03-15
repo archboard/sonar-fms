@@ -8,7 +8,7 @@ module.exports = {
   plugins: [],
   resolve: {
     alias: {
-      '@': path.resolve('resources/js'),
+      '@': path.resolve(__dirname, 'resources/js'),
     },
   },
   devServer: {
