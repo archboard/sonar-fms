@@ -3,7 +3,7 @@
     This is a secure area of the application. Please confirm your password before continuing.
   </div>
 
-  <breeze-validation-errors class="mb-4" />
+  <ValidationErrors class="mb-4" />
 
   <form @submit.prevent="submit">
     <Fieldset>
@@ -11,40 +11,34 @@
         <Label for="password" value="Password">
           {{ __('Password') }}
         </Label>
-        <Input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" autofocus />
+        <Input id="password" type="password" v-model="form.password" required autocomplete="current-password" autofocus />
       </InputWrap>
     </Fieldset>
 
     <div class="flex justify-end mt-4">
-      <breeze-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+      <Button :loading="form.processing">
         Confirm
-      </breeze-button>
+      </Button>
     </div>
   </form>
 </template>
 
 <script>
-import BreezeButton from '@/Components/Button'
-import BreezeGuestLayout from "@/Layouts/Guest"
-import BreezeInput from '@/Components/Input'
-import BreezeValidationErrors from '@/Components/ValidationErrors'
 import Label from '@/components/forms/Label'
 import Input from '@/components/forms/Input'
 import Fieldset from '@/components/forms/Fieldset'
 import InputWrap from '@/components/forms/InputWrap'
+import Button from '@/components/Button'
+import ValidationErrors from '@/components/ValidationErrors'
 
 export default {
-  layout: BreezeGuestLayout,
-
   components: {
+    ValidationErrors,
+    Button,
     InputWrap,
     Fieldset,
     Input,
     Label,
-    BreezeButton,
-    BreezeInput,
-    BreezeLabel,
-    BreezeValidationErrors,
   },
 
   data() {
