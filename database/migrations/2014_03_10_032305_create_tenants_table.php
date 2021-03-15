@@ -20,6 +20,7 @@ class CreateTenantsTable extends Migration
             $table->dateTime('subscription_expires_at')->nullable();
             $table->string('license');
             $table->string('sis_provider')->default(\App\SisProviders\PowerSchoolProvider::class);
+            $table->boolean('allows_pw_auth')->default(false);
             $table->timestamps();
         });
     }
