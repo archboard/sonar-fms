@@ -29,6 +29,11 @@ Route::middleware('tenant')->group(function () {
     Route::get('/auth/powerschool/openid/verify', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'login'])
         ->name('openid.verify');
 
+    // Normal auth
+    Route::middleware('allows_pw_auth')->group(function () {
+        require __DIR__.'/auth.php';
+    });
+
     Route::get('/', function () {
         return inertia('Index');
     });
