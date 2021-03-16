@@ -22,7 +22,7 @@ mix.js('resources/js/app.js', 'public/js')
   .webpackConfig(webpackConfig)
   .postCss('resources/css/app.css', 'public/css', [
     require('postcss-import'),
-    require('tailwindcss'),
+    require('@tailwindcss/jit'),
     require('postcss-nested'),
   ])
   .babelConfig({

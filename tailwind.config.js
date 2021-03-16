@@ -1,10 +1,20 @@
 const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  purge: [],
+  purge: [
+    'resources/js/**/*.vue',
+    'resources/views/**/*.blade.php',
+  ],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'Inter',
+          ...defaultTheme.fontFamily.sans,
+        ]
+      }
     },
     colors: {
       transparent: 'transparent',
