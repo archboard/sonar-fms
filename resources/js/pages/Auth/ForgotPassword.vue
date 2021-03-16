@@ -1,28 +1,30 @@
 <template>
-  <div class="mb-4 text-sm text-gray-600">
-    Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
-  </div>
-
-  <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-    {{ status }}
-  </div>
-
-  <ValidationErrors class="mb-4" />
-
-  <form @submit.prevent="submit">
-    <Fieldset>
-      <InputWrap :error="form.errors.email">
-        <Label for="email">{{ __('Email') }}</Label>
-        <Input id="email" type="email" v-model="form.email" required autofocus autocomplete="username" />
-      </InputWrap>
-    </Fieldset>
-
-    <div class="flex items-center justify-end mt-4">
-      <Button :loading="form.processing">
-        Email Password Reset Link
-      </Button>
+  <Layout>
+    <div class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+      {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
     </div>
-  </form>
+
+    <Alert v-if="status" level="success" class="mb-4">
+      {{ status }}
+    </Alert>
+
+    <ValidationErrors class="mb-4" />
+
+    <form @submit.prevent="submit">
+      <Fieldset>
+        <InputWrap :error="form.errors.email">
+          <Label for="email" class="text-base">{{ __('Email') }}</Label>
+          <Input id="email" type="email" class="text-lg" v-model="form.email" required autofocus autocomplete="username" />
+        </InputWrap>
+      </Fieldset>
+
+      <div class="mt-6">
+        <Button :loading="form.processing" size="lg" :is-block="true">
+          {{ __('Email Password Reset Link') }}
+        </Button>
+      </div>
+    </form>
+  </Layout>
 </template>
 
 <script>
@@ -32,9 +34,13 @@ import Fieldset from '@/components/forms/Fieldset'
 import InputWrap from '@/components/forms/InputWrap'
 import Label from '@/components/forms/Label'
 import Input from '@/components/forms/Input'
+import Layout from '../../layouts/Guest'
+import Alert from '../../components/Alert'
 
 export default {
   components: {
+    Alert,
+    Layout,
     Input,
     Label,
     InputWrap,
