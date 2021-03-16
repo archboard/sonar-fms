@@ -6,7 +6,7 @@ context('Personal Settings', () => {
     cy.logout()
   })
 
-  it('Can update personal settings successfully', () => {
+  it('Updates personal settings successfully', () => {
     cy.visit('/settings/personal')
 
     const data = {
@@ -40,5 +40,22 @@ context('Personal Settings', () => {
     cy.getCy('password_confirmation').invoke('val').should('be.empty')
 
     cy.getPage().should('contain.text', 'Settings updated successfully.')
+  })
+
+  it('Receives validation errors', () => {
+    cy.visit('/settings/personal')
+
+    // Set the values
+    cy.getCy('first_name').clear()
+    cy.getCy('last_name').clear()
+    cy.getCy('email').clear()
+    cy.getCy('password').clear().type('data.email')
+    cy.getCy('password_confirmation').clear().type('data')
+    cy.getCy('form').submit()
+
+    // Make sure the values have been saved
+    cy.getCy('form').should('contain.text', 'This field is required')
+    cy.getCy('form').should('contain.text', 'The password confirmation does not match')
+    cy.getPage().should('not.contain.text', 'Settings updated successfully.')
   })
 })
