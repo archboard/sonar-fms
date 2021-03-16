@@ -1,5 +1,5 @@
 <template>
-  <div class="textured-bg min-h-screen flex justify-center items-center px-4">
+  <div class="textured-bg min-h-screen flex justify-center items-center p-4">
     <div class="max-w-md mx-auto w-full">
       <CardWrapper>
         <CardPadding>
