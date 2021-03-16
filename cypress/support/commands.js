@@ -10,7 +10,10 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.Commands.add('login', () => cy.request('/_testing/session/new'))
+Cypress.Commands.add('removeUser', () => cy.request('/_testing/session/logout'))
+Cypress.Commands.add('getCy', (name, ...args) => cy.get(`[data-cy="${name}"]`, ...args))
+
 //
 //
 // -- This is a child command --
