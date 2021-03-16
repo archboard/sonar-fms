@@ -7,25 +7,25 @@
     <form @submit.prevent="submit">
       <Fieldset>
         <InputWrap :error="form.errors.email">
-          <Label for="email">{{ __('Email') }}</Label>
-          <Input id="email" type="email" v-model="form.email" required autofocus autocomplete="username" />
+          <Label for="email" class="text-base">{{ __('Email') }}</Label>
+          <Input id="email" type="email" class="text-lg" v-model="form.email" required autofocus autocomplete="username" />
         </InputWrap>
 
         <InputWrap>
-          <Label for="password">{{ __('Password') }}</Label>
-          <Input id="password" type="password" v-model="form.password" required autocomplete="current-password" />
+          <Label for="password" class="text-base">{{ __('Password') }}</Label>
+          <Input id="password" type="password" class="text-lg" v-model="form.password" required autocomplete="current-password" />
         </InputWrap>
 
         <InputWrap>
           <label class="flex items-center">
             <Checkbox name="remember" v-model:checked="form.remember" />
-            <span class="ml-2 text-sm text-gray-600 dark:text-gray-300">Remember me</span>
+            <span class="ml-2 text-gray-600 dark:text-gray-300">Remember me</span>
           </label>
         </InputWrap>
       </Fieldset>
 
       <div class="flex items-center justify-end my-4">
-        <Button :loading="form.processing" :is-block="true">
+        <Button :loading="form.processing" :is-block="true" size="lg">
           {{ __('Log in') }}
         </Button>
       </div>
