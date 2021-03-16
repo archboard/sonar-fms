@@ -119,7 +119,6 @@ export default {
 
   watch: {
     loading () {
-      console.log(this.$el.offsetHeight)
       if (!this.isBlock) {
         this.style.width = `${this.$el.offsetWidth}px`
       }
