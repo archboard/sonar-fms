@@ -34,7 +34,12 @@ Route::middleware('tenant')->group(function () {
         require __DIR__.'/auth.php';
     });
 
-    Route::get('/', function () {
-        return inertia('Index');
+    Route::middleware('auth')->group(function () {
+        Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
+            ->name('logout');
+
+        Route::get('/home', function () {
+            return inertia('Index');
+        });
     });
 });
