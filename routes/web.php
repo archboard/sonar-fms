@@ -41,5 +41,11 @@ Route::middleware('tenant')->group(function () {
         Route::get('/home', function () {
             return inertia('Index');
         });
+
+        Route::prefix('/settings')->group(function () {
+            Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index']);
+            Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update'])
+                ->name('settings.personal');
+        });
     });
 });

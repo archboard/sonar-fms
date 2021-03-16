@@ -11,7 +11,7 @@ axios.interceptors.response.use(response => {
 
       if (text) {
         console.log(`${level}: ${flash[level]}`)
-        store.addNotification({ level, text })
+        store.addNotification({ level, text }, 100000)
       }
     })
   }
