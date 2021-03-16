@@ -1,9 +1,5 @@
 <template>
   <Layout>
-    <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-      {{ status }}
-    </div>
-
     <form @submit.prevent="submit">
       <Fieldset>
         <InputWrap :error="form.errors.email">
@@ -48,9 +44,11 @@ import Input from '@/components/forms/Input'
 import Checkbox from '@/components/forms/Checkbox'
 import Button from '@/components/Button'
 import ValidationErrors from '@/components/ValidationErrors'
+import Alert from '../../components/Alert'
 
 export default {
   components: {
+    Alert,
     Layout,
     ValidationErrors,
     Button,

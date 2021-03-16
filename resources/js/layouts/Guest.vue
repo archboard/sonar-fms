@@ -6,6 +6,11 @@
           <Logo class="w-20 h-20 fill-current text-white" />
         </inertia-link>
       </div>
+
+      <Alert v-if="status" level="success" class="mb-4">
+        {{ status }}
+      </Alert>
+
       <CardWrapper>
         <CardPadding>
           <slot />
@@ -19,12 +24,20 @@
 import Logo from '@/components/ApplicationLogo'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
+import Alert from '../components/Alert'
 
 export default {
   components: {
+    Alert,
     CardPadding,
     CardWrapper,
     Logo,
+  },
+
+  computed: {
+    status () {
+      return this.$page.props.status
+    }
   }
 }
 </script>
