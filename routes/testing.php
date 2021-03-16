@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,16 +27,19 @@ Route::prefix('_testing')->group(function () {
                 'ps_client_id' => env('POWERSCHOOL_CLIENT_ID'),
                 'ps_secret' => env('POWERSCHOOL_CLIENT_SECRET'),
                 'license' => \Ramsey\Uuid\Uuid::uuid4(),
-                'allow_pw_auth' => true,
+                'allow_password_auth' => true,
                 'subscription_started_at' => now(),
             ]
         );
 
         \App\Models\User::where('email', $email)->delete();
-        $user = \App\Models\User::factory()->create(['email' => $email]);
+
+        /** @var \App\Models\User $user */
+        $user = $tenant->users()->save(\App\Models\User::factory()->make(['email' => $email]));
+
         auth()->login($user);
 
-        return response();
+        return response()->json();
     });
 
     /**
@@ -52,6 +56,6 @@ Route::prefix('_testing')->group(function () {
 
         \App\Models\User::where('email', $email)->delete();
 
-        return response();
+        return response()->json();
     });
 });
