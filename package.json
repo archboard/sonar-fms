@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "cypress": "cypress open",
     "development": "mix",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
@@ -22,6 +23,7 @@
     "axios": "^0.21.1",
     "body-scroll-lock": "^3.1.5",
     "cross-env": "^7.0",
+    "cypress": "^6.7.1",
     "laravel-mix": "^6.0.13",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.20",
