@@ -24,7 +24,7 @@
         </InputWrap>
       </Fieldset>
 
-      <div class="flex items-center justify-end my-4">
+      <div class="my-4">
         <Button :loading="form.processing" :is-block="true" size="lg">
           {{ __('Log in') }}
         </Button>
