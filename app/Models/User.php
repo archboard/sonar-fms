@@ -24,6 +24,7 @@ class User extends Authenticatable
     use BelongsToTenant;
 
     const TEACHER = 'teacher';
+    const DISTRICT_ADMIN = 'district admin';
 
     /**
      * The attributes that are mass assignable.

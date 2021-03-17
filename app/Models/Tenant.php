@@ -6,6 +6,7 @@ use App\SisProviders\SisProvider;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Silber\Bouncer\BouncerFacade;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
 
 /**
@@ -17,6 +18,17 @@ class Tenant extends TenantBase
     use HasResource;
 
     protected $guarded = [];
+
+    public static function boot()
+    {
+        Tenant::created(function (Tenant $tenant) {
+            // Seed the roles and abilities for this tenant scope
+            BouncerFacade::scope()->to($tenant->id);
+            BouncerFacade::allow(User::DISTRICT_ADMIN)->everything();
+
+            // Additional seeding as the project needs
+        });
+    }
 
     public function schools(): HasMany
     {
