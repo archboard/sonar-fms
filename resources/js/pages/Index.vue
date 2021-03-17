@@ -3,6 +3,8 @@
     <h1 class="font-bold text-2xl leading-5 mb-8">Laravel Inertia Starter</h1>
     <p class="text-lg mb-4">A Laravel starter with Inertia and some components to get you started.</p>
 
+    <inertia-link :href="$route('settings.personal')">Settings</inertia-link>
+
     <h2 class="text-xl font-bold mb-2">Notifications</h2>
     <div class="space-y-2">
       <div>
@@ -96,6 +98,7 @@ import Notifications from '@/components/Notifications'
 import Alert from '@/components/Alert'
 import Modal from '@/components/Modal'
 import ConfirmButton from '@/components/ConfirmButton'
+import authCheck from '../mixins/AuthCheck'
 
 export default defineComponent({
   components: {
@@ -103,6 +106,10 @@ export default defineComponent({
     Modal,
     Alert,
     Notifications,
+  },
+
+  setup () {
+    authCheck()
   },
 
   data () {

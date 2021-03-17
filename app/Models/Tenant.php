@@ -18,10 +18,13 @@ class Tenant extends TenantBase
     use HasResource;
 
     protected $guarded = [];
+    protected $casts = [
+        'allow_password_auth' => 'boolean',
+    ];
 
-    public static function boot()
+    protected static function booted()
     {
-        Tenant::created(function (Tenant $tenant) {
+        static::created(function (Tenant $tenant) {
             // Seed the roles and abilities for this tenant scope
             BouncerFacade::scope()->to($tenant->id);
             BouncerFacade::allow(User::DISTRICT_ADMIN)->everything();
@@ -66,8 +69,14 @@ class Tenant extends TenantBase
         return $school;
     }
 
-    public function syncAllSchoolsFromSis()
+    public function toArray()
     {
-
+        return [
+            'name' => $this->name,
+            'ps_url' => $this->ps_url,
+            'ps_client_id' => $this->ps_client_id,
+            'ps_secret' => $this->ps_secret,
+            'allow_password_auth' => $this->allow_password_auth,
+        ];
     }
 }

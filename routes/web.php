@@ -52,6 +52,12 @@ Route::middleware('tenant')->group(function () {
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index']);
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update'])
                 ->name('settings.personal');
+
+            Route::middleware('can:edit tenant settings')->group(function () {
+                Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index']);
+                Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update'])
+                    ->name('settings.tenant');
+            });
         });
     });
 });

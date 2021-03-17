@@ -15,12 +15,11 @@ class CreateTenantsTable extends Migration
             $table->string('ps_url')->nullable();
             $table->string('ps_client_id')->nullable();
             $table->string('ps_secret')->nullable();
-            $table->boolean('allow_password_auth')->default(true);
+            $table->boolean('allow_password_auth')->default(false);
             $table->dateTime('subscription_started_at')->nullable();
             $table->dateTime('subscription_expires_at')->nullable();
             $table->string('license');
             $table->string('sis_provider')->default(\App\SisProviders\PowerSchoolProvider::class);
-            $table->boolean('allows_pw_auth')->default(false);
             $table->timestamps();
         });
     }

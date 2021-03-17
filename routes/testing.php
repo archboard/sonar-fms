@@ -14,23 +14,21 @@ use Illuminate\Http\Request;
 
 Route::prefix('_testing')->group(function () {
     $email = 'user@example.com';
+    $tenantAttributes = [
+        'name' => 'Organization',
+        'ps_url' => env('POWERSCHOOL_ADDRESS'),
+        'ps_client_id' => env('POWERSCHOOL_CLIENT_ID'),
+        'ps_secret' => env('POWERSCHOOL_CLIENT_SECRET'),
+        'license' => \Ramsey\Uuid\Uuid::uuid4(),
+        'allow_password_auth' => false,
+        'subscription_started_at' => now(),
+    ];
 
     /**
      * Creates a user session for the given tenant
      */
-    Route::get('/session/new', function (Request $request) use ($email) {
-        $tenant = \App\Models\Tenant::firstOrCreate(
-            ['domain' => $request->getHost()],
-            [
-                'name' => 'Organization',
-                'ps_url' => env('POWERSCHOOL_ADDRESS'),
-                'ps_client_id' => env('POWERSCHOOL_CLIENT_ID'),
-                'ps_secret' => env('POWERSCHOOL_CLIENT_SECRET'),
-                'license' => \Ramsey\Uuid\Uuid::uuid4(),
-                'allow_password_auth' => true,
-                'subscription_started_at' => now(),
-            ]
-        );
+    Route::get('/session/new', function (Request $request) use ($email, $tenantAttributes) {
+        $tenant = \App\Models\Tenant::updateOrCreate(['domain' => $request->getHost()], $tenantAttributes);
 
         \App\Models\User::where('email', $email)->delete();
 
@@ -45,7 +43,7 @@ Route::prefix('_testing')->group(function () {
     /**
      * Logs the user out and deletes any user with that email
      */
-    Route::get('/session/logout', function (\Illuminate\Http\Request $request) use ($email) {
+    Route::get('/session/logout', function (Request $request) use ($email, $tenantAttributes) {
         $user = $request->user();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -55,6 +53,16 @@ Route::prefix('_testing')->group(function () {
         }
 
         \App\Models\User::where('email', $email)->delete();
+        \App\Models\Tenant::current()->update($tenantAttributes);
+
+        return response()->json();
+    });
+
+    Route::post('/permissions', function (Request $request) {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        $user->allow($request->input('permissions'));
 
         return response()->json();
     });

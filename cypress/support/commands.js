@@ -15,6 +15,11 @@ Cypress.Commands.add('logout', () => cy.request('/_testing/session/logout'))
 Cypress.Commands.add('removeUser', () => cy.request('/_testing/session/logout'))
 Cypress.Commands.add('getCy', (name, ...args) => cy.get(`[data-cy="${name}"]`, ...args))
 Cypress.Commands.add('getPage', (...args) => cy.get(`[data-cy="page"]`, ...args))
+Cypress.Commands.add('addPermissions', (permissions, model) => {
+  cy.request('post', '/_testing/permissions', {
+    permissions,
+  })
+})
 
 //
 //

@@ -15,7 +15,7 @@
         <InputWrap>
           <label class="flex items-center">
             <Checkbox name="remember" v-model:checked="form.remember" />
-            <span class="ml-2 text-gray-600 dark:text-gray-300">Remember me</span>
+            <CheckboxText>{{ __('Remember me') }}</CheckboxText>
           </label>
         </InputWrap>
       </Fieldset>
@@ -45,9 +45,11 @@ import Checkbox from '@/components/forms/Checkbox'
 import Button from '@/components/Button'
 import ValidationErrors from '@/components/ValidationErrors'
 import Alert from '../../components/Alert'
+import CheckboxText from '../../components/forms/CheckboxText'
 
 export default {
   components: {
+    CheckboxText,
     Alert,
     Layout,
     ValidationErrors,
