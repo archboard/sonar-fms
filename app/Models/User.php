@@ -72,6 +72,11 @@ class User extends Authenticatable
          });
     }
 
+    public function getSchoolPermissionsAttribute(): array
+    {
+        return $this->getPermissionsForSchool();
+    }
+
     public function schools(): BelongsToMany
     {
         return $this->belongsToMany(School::class)
@@ -81,5 +86,18 @@ class User extends Authenticatable
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function getPermissionsForSchool(School $school = null): array
+    {
+        $school = $school ?? $this->school;
+
+        return [
+            [
+                'label' => __('Change school settings'),
+                'permission' => 'change settings',
+                'selected' => $this->can('change settings', $school),
+            ],
+        ];
     }
 }
