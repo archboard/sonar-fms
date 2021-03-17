@@ -2,7 +2,7 @@ import axios from 'axios'
 import get from 'lodash/get'
 import store from '@/stores/notifications'
 
-axios.interceptors.response.use(response => {
+const flashMessage = response => {
   const flash = get(response, 'data.props.flash')
 
   if (flash) {
@@ -11,12 +11,35 @@ axios.interceptors.response.use(response => {
 
       if (text) {
         console.log(`${level}: ${flash[level]}`)
-        store.addNotification({ level, text }, 100000)
+        store.addNotification({ level, text }, 4000)
       }
     })
   }
+}
+
+axios.interceptors.response.use(response => {
+  flashMessage(response)
 
   return response
+}, async err => {
+  const status = get(err, 'response.status')
+
+  if (status === 419) {
+    const { data } = await axios.get('/csrf-token')
+    const config = err.response.config
+    config.headers['X-XSRF-TOKEN'] = data.token
+
+    return axios(config)
+  }
+
+  if (err.response) {
+    store.addNotification({
+      level: 'error',
+      text: err.message,
+    })
+  }
+
+  Promise.reject(err)
 })
 
 export default {

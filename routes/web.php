@@ -38,6 +38,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
+        Route::get('/csrf-token', \App\Http\Controllers\RefreshCsrfTokenController::class)
+            ->name('csrf-token');
+
         Route::get('/home', function () {
             return inertia('Index');
         });

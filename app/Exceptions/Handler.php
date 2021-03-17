@@ -56,10 +56,6 @@ class Handler extends ExceptionHandler
                 ->withViewData(compact('title'))
                 ->toResponse($request)
                 ->setStatusCode($response->status());
-        } else if ($response->status() === 419) {
-            return back()->with([
-                'message' => 'The page expired, please try again.',
-            ]);
         }
 
         return $response;
