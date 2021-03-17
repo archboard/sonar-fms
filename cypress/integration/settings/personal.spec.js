@@ -7,6 +7,10 @@ context('Personal Settings', () => {
   })
 
   it('Updates personal settings successfully', () => {
+    cy.intercept({
+      url: '/settings/personal',
+      method: 'post',
+    }).as('settings')
     cy.visit('/settings/personal')
 
     const data = {
@@ -32,14 +36,17 @@ context('Personal Settings', () => {
     cy.getCy('password_confirmation').clear().type('data.email')
     cy.getCy('form').submit()
 
+    cy.wait('@settings')
+    cy.getPage().should('contain.text', 'Settings updated successfully.')
+
     // Make sure the values have been saved
+    cy.visit('/settings/personal')
     cy.getCy('first_name').invoke('val').should('eq', data.first_name)
     cy.getCy('last_name').invoke('val').should('eq', data.last_name)
     cy.getCy('email').invoke('val').should('eq', data.email)
     cy.getCy('password').invoke('val').should('be.empty')
     cy.getCy('password_confirmation').invoke('val').should('be.empty')
 
-    cy.getPage().should('contain.text', 'Settings updated successfully.')
   })
 
   it('Receives validation errors', () => {
