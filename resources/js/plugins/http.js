@@ -25,8 +25,8 @@ axios.interceptors.response.use(response => {
   const status = get(err, 'response.status')
 
   if (status === 419) {
-    const { data } = await axios.get('/csrf-token')
     const config = err.response.config
+    const { data } = await axios.get('/csrf-token')
     config.headers['X-XSRF-TOKEN'] = data.token
 
     return axios(config)
@@ -35,11 +35,11 @@ axios.interceptors.response.use(response => {
   if (err.response) {
     store.addNotification({
       level: 'error',
-      text: err.message,
+      text: get(err, 'response.data.message', err.message),
     })
   }
 
-  Promise.reject(err)
+  return Promise.reject(err)
 })
 
 export default {

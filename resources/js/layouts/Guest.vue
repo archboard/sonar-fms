@@ -17,6 +17,8 @@
         </CardPadding>
       </CardWrapper>
     </div>
+
+    <Notifications />
   </div>
 </template>
 
@@ -25,9 +27,11 @@ import Logo from '@/components/ApplicationLogo'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
 import Alert from '../components/Alert'
+import Notifications from '../components/Notifications'
 
 export default {
   components: {
+    Notifications,
     Alert,
     CardPadding,
     CardWrapper,
@@ -36,7 +40,7 @@ export default {
 
   computed: {
     status () {
-      return this.$page.props.status
+      return this.$page?.props?.status
     }
   }
 }

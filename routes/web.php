@@ -35,6 +35,9 @@ Route::middleware('tenant')->group(function () {
     });
 
     Route::middleware('auth')->group(function () {
+        Route::get('/ping', \App\Http\Controllers\CheckAuthStatusController::class)
+            ->name('auth.status');
+
         Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
