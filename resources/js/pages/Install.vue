@@ -57,7 +57,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3/src'
+import { useForm } from '@inertiajs/inertia-vue3'
 import CardWrapper from '../components/CardWrapper'
 import CardPadding from '../components/CardPadding'
 import CardHeader from '../components/CardHeader'
