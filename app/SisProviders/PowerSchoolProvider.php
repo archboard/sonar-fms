@@ -310,12 +310,17 @@ class PowerSchoolProvider implements SisProvider
                 ->wherePivotIn('staff_id', collect($results)->pluck('staff_id'))
                 ->get()
                 ->keyBy('pivot.staff_id');
+            $terms = $school->terms()
+                ->where('start_year', $results[0]->term->start_year)
+                ->get()
+                ->keyBy('sis_id');
 
             $entries = array_reduce(
                 $results,
-                function ($entries, $section) use (&$activeSections, $school, $staff, $courses, $now, $existingSections) {
+                function ($entries, $section) use (&$activeSections, $school, $terms, $staff, $courses, $now, $existingSections) {
                     $course = $courses->get($section->course_id);
                     $teacher = $staff->get($section->staff_id);
+                    $term = $terms->get($section->term->id);
 
                     // If the course or staff doesn't exists, don't do anything
                     if (!$course || !$teacher) {
@@ -326,6 +331,7 @@ class PowerSchoolProvider implements SisProvider
                     if ($existingSection = $existingSections->get($section->id)) {
                         $activeSections[] = $existingSection->id;
                         $existingSection->update([
+                            'term_id' => $term->id,
                             'section_number' => optional($section)->section_number,
                             'expression' => optional($section)->expression,
                             'external_expression' => optional($section)->external_expression,
@@ -338,6 +344,7 @@ class PowerSchoolProvider implements SisProvider
                     $entries[] = [
                         'tenant_id' => $this->tenant->id,
                         'school_id' => $school->id,
+                        'term_id' => $term->id,
                         'course_id' => $course->id,
                         'user_id' => $teacher->id,
                         'sis_id' => $section->id,
