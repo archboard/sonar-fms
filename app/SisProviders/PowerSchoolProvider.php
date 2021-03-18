@@ -289,7 +289,8 @@ class PowerSchoolProvider implements SisProvider
         $school = $this->tenant->getSchoolFromSisId($sisId);
         $builder = $this->builder
             ->method('get')
-            ->to("/ws/v1/school/{$school->sis_id}/section");
+            ->to("/ws/v1/school/{$school->sis_id}/section")
+            ->expansions('term');
         $activeSections = [];
         $newEntries = [];
 
@@ -401,6 +402,35 @@ class PowerSchoolProvider implements SisProvider
             });
     }
 
+    public function syncSchoolTerms($sisId)
+    {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+
+        $results = $this->builder
+            ->to("/ws/v1/school/{$school->sis_id}/term")
+            ->get();
+
+        collect($results->terms->term)->each(function ($term) use ($school) {
+            $school->terms()
+                ->updateOrCreate(
+                    [
+                        'tenant_id' => $this->tenant->id,
+                        'school_id' => $school->id,
+                        'sis_id' => $term->id,
+                    ],
+                    [
+                        'sis_assigned_id' => $term->local_id,
+                        'name' => $term->name,
+                        'abbreviation' => $term->abbreviation,
+                        'start_year' => $term->start_year,
+                        'portion' => $term->portion,
+                        'starts_at' => $term->start_date,
+                        'ends_at' => $term->end_date,
+                    ]
+                );
+        });
+    }
+
     /**
      * Syncs everything for a school:
      * staff, students, courses, sections, and enrollment
@@ -410,6 +440,7 @@ class PowerSchoolProvider implements SisProvider
     public function fullSchoolSync($sisId)
     {
         $this->syncSchool($sisId);
+        $this->syncSchoolTerms($sisId);
         $this->syncSchoolStaff($sisId);
         $this->syncSchoolStudents($sisId);
         $this->syncSchoolCourses($sisId);
