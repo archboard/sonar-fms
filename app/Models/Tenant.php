@@ -6,6 +6,7 @@ use App\SisProviders\SisProvider;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Validator;
 use Silber\Bouncer\BouncerFacade;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
 
@@ -51,6 +52,37 @@ class Tenant extends TenantBase
     public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
+    }
+
+    public function syncTimes(): HasMany
+    {
+        return $this->hasMany(SyncTime::class);
+    }
+
+    public function getSisAttribute(): string
+    {
+        return $this->sisProvider()->getSisLabel();
+    }
+
+    public function getSyncNotificationEmails(): array
+    {
+        if (!$this->sync_notification_emails) {
+            return [];
+        }
+
+        // Split by comma, semi-colon, pipe or space
+        $emails = preg_split('/([,;| ])/', $this->sync_notification_emails);
+
+        return array_reduce($emails, function ($emails, $email) {
+            $email = trim($email);
+            $validator = Validator::make(compact('email'), ['email' => 'required|email']);
+
+            if ($validator->valid()) {
+                $emails[] = $email;
+            }
+
+            return $emails;
+        }, []);
     }
 
     public function sisProvider(): SisProvider

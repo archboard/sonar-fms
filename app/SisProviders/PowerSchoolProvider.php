@@ -10,6 +10,7 @@ use App\Models\User;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PowerSchoolProvider implements SisProvider
 {
@@ -63,6 +64,10 @@ class PowerSchoolProvider implements SisProvider
 
     public function getSchool($sisId)
     {
+        if ($sisId instanceof School) {
+            $sisId = $sisId->sis_id;
+        }
+
         $results = $this->builder
             ->to("/ws/v1/school/{$sisId}")
             ->get();
@@ -245,46 +250,50 @@ class PowerSchoolProvider implements SisProvider
             ->method('get')
             ->to("/ws/v1/school/{$school->sis_id}/course");
 
-        while ($results = $builder->paginate()) {
-            $now = now()->format('Y-m-d H:i:s');
+        try {
+            while ($results = $builder->paginate()) {
+                $now = now()->format('Y-m-d H:i:s');
 
-            // Get courses that exist already
-            $existingCourses = $school->courses()
-                ->whereIn('sis_id', collect($results)->pluck('id'))
-                ->get()
-                ->keyBy('sis_id');
+                // Get courses that exist already
+                $existingCourses = $school->courses()
+                    ->whereIn('sis_id', collect($results)->pluck('id'))
+                    ->get()
+                    ->keyBy('sis_id');
 
-            $entries = array_reduce(
-                $results,
-                function ($entries, $course) use ($school, $now, $existingCourses) {
-                    // If it exists, then update
-                    if ($existingCourse = $existingCourses->get($course->id)) {
-                        $existingCourse->update([
+                $entries = array_reduce(
+                    $results,
+                    function ($entries, $course) use ($school, $now, $existingCourses) {
+                        // If it exists, then update
+                        if ($existingCourse = $existingCourses->get($course->id)) {
+                            $existingCourse->update([
+                                'name' => $course->course_name,
+                                'course_number' => $course->course_number,
+                            ]);
+
+                            return $entries;
+                        }
+
+                        // It's a new course
+                        $entries[] = [
+                            'tenant_id' => $this->tenant->id,
+                            'school_id' => $school->id,
                             'name' => $course->course_name,
                             'course_number' => $course->course_number,
-                        ]);
+                            'sis_id' => $course->id,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
 
                         return $entries;
-                    }
+                    }, []
+                );
 
-                    // It's a new course
-                    $entries[] = [
-                        'tenant_id' => $this->tenant->id,
-                        'school_id' => $school->id,
-                        'name' => $course->course_name,
-                        'course_number' => $course->course_number,
-                        'sis_id' => $course->id,
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
-
-                    return $entries;
-                }, []
-            );
-
-            if (!empty($entries)) {
-                DB::table('courses')->insert($entries);
+                if (!empty($entries)) {
+                    DB::table('courses')->insert($entries);
+                }
             }
+        } catch (\Exception $exception) {
+            Log::error("Failed importing courses for {$school->name}.", ['exception' => $exception]);
         }
     }
 
@@ -406,7 +415,9 @@ class PowerSchoolProvider implements SisProvider
                     ->filter(fn ($enrollment) => !$enrollment->dropped)
                     ->pluck('student_id');
 
-                $students = Student::whereIn('sis_id', $studentSisIds)
+                $students = $this->tenant
+                    ->students()
+                    ->whereIn('sis_id', $studentSisIds)
                     ->pluck('id');
 
                 $section->students()->sync($students);
@@ -421,7 +432,11 @@ class PowerSchoolProvider implements SisProvider
             ->to("/ws/v1/school/{$school->sis_id}/term")
             ->get();
 
-        collect($results->terms->term)->each(function ($term) use ($school) {
+        $terms = is_array($results->terms->term)
+            ? $results->terms->term
+            : [$results->terms->term];
+
+        collect($terms)->each(function ($term) use ($school) {
             $school->terms()
                 ->updateOrCreate(
                     [
@@ -462,5 +477,10 @@ class PowerSchoolProvider implements SisProvider
     public function getBuilder(): RequestBuilder
     {
         return $this->builder;
+    }
+
+    public function getSisLabel(): string
+    {
+        return 'PowerSchool';
     }
 }

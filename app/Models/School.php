@@ -71,4 +71,9 @@ class School extends Model
 
         return $this;
     }
+
+    public function syncDataFromSis()
+    {
+        $this->tenant->sisProvider()->fullSchoolSync($this);
+    }
 }
