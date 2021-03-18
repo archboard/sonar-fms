@@ -271,20 +271,15 @@
 
       <main class="flex-1 relative overflow-y-auto focus:outline-none" tabindex="0">
         <div class="py-6 space-y-6">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <div v-if="title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div class="md:flex md:items-center md:justify-between">
               <div class="flex-1 min-w-0">
                 <h2 class="text-2xl font-bold leading-7 sm:text-3xl sm:truncate">
-                  Back End Developer
+                  {{ title }}
                 </h2>
               </div>
-              <div class="mt-4 flex md:mt-0 md:ml-4">
-                <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                  Edit
-                </button>
-                <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                  Publish
-                </button>
+              <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                <slot name="actions" />
               </div>
             </div>
           </div>
@@ -300,8 +295,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, nextTick } from 'vue'
+import { defineComponent, ref, watch, nextTick, } from 'vue'
 import Notifications from '../components/Notifications'
+import { usePage } from '@inertiajs/inertia-vue3'
 
 export default defineComponent({
   components: {
@@ -312,6 +308,8 @@ export default defineComponent({
     const isDark = ref(localStorage.theme === 'dark')
     const showMenu = ref(false)
     const showMenuWrapper = ref(false)
+    const page = usePage()
+    console.log(page)
     watch(isDark, (newVal) => {
       window.changeTheme(newVal)
     })
@@ -327,6 +325,7 @@ export default defineComponent({
       isDark,
       showMenu,
       showMenuWrapper,
+      title: page.props.value.title,
     }
   }
 })
