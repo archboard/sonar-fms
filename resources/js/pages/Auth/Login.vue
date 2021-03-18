@@ -1,15 +1,15 @@
 <template>
   <Layout>
-    <form @submit.prevent="submit">
+    <form @submit.prevent="submit" data-cy="form">
       <Fieldset>
         <InputWrap :error="form.errors.email">
           <Label for="email" class="text-base">{{ __('Email') }}</Label>
-          <Input id="email" type="email" class="text-lg" v-model="form.email" required autofocus autocomplete="username" />
+          <Input id="email" type="email" class="text-lg" v-model="form.email" required autofocus autocomplete="username" data-cy="email" />
         </InputWrap>
 
         <InputWrap>
           <Label for="password" class="text-base">{{ __('Password') }}</Label>
-          <Input id="password" type="password" class="text-lg" v-model="form.password" required autocomplete="current-password" />
+          <Input id="password" type="password" class="text-lg" v-model="form.password" required autocomplete="current-password" data-cy="password" />
         </InputWrap>
 
         <InputWrap>

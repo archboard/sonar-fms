@@ -10,7 +10,11 @@
 //
 //
 // -- This is a parent command --
-Cypress.Commands.add('login', () => cy.request('/_testing/session/new'))
+Cypress.Commands.add('login', (attributes = {}) => {
+  cy.intercept('**/_testing/session/new').as('session')
+  cy.request('post', '/_testing/session/new', attributes)
+  // cy.wait('@session')
+})
 Cypress.Commands.add('logout', () => cy.request('/_testing/session/logout'))
 Cypress.Commands.add('removeUser', () => cy.request('/_testing/session/logout'))
 Cypress.Commands.add('getCy', (name, ...args) => cy.get(`[data-cy="${name}"]`, ...args))

@@ -27,8 +27,8 @@ Route::prefix('_testing')->group(function () {
     /**
      * Creates a user session for the given tenant
      */
-    Route::get('/session/new', function (Request $request) use ($email, $tenantAttributes) {
-        $tenant = \App\Models\Tenant::updateOrCreate(['domain' => $request->getHost()], $tenantAttributes);
+    Route::post('/session/new', function (Request $request) use ($email, $tenantAttributes) {
+        $tenant = \App\Models\Tenant::updateOrCreate(['domain' => $request->getHost()], array_merge($tenantAttributes, $request->all()));
 
         \App\Models\User::where('email', $email)->delete();
 
@@ -37,7 +37,7 @@ Route::prefix('_testing')->group(function () {
 
         auth()->login($user);
 
-        return response()->json();
+        return response()->json($tenant->toArray());
     });
 
     /**
