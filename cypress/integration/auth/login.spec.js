@@ -1,7 +1,7 @@
 context('Login', () => {
-  // afterEach(() => {
-  //   cy.logout()
-  // })
+  afterEach(() => {
+    cy.logout()
+  })
 
   it('Logs in successfully', () => {
     cy.login({ allow_password_auth: true })
