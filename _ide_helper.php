@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.32.1.
+ * Generated for Laravel 8.33.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1255,6 +1255,7 @@
          * @param \Closure|string $concrete
          * @return mixed 
          * @throws \Illuminate\Contracts\Container\BindingResolutionException
+         * @throws \Illuminate\Contracts\Container\CircularDependencyException
          * @static 
          */ 
         public static function build($concrete)
@@ -1897,6 +1898,7 @@
          * @param string $password
          * @param string $attribute
          * @return bool|null 
+         * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
         public static function logoutOtherDevices($password, $attribute = 'password')
@@ -4606,6 +4608,17 @@
                         $instance->recordsHaveBeenModified($value);
         }
                     /**
+         * Reset the record modification state.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function forgetRecordModificationState()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->forgetRecordModificationState();
+        }
+                    /**
          * Is Doctrine available?
          *
          * @return bool 
@@ -7156,7 +7169,7 @@
          * Get a mailer instance by name.
          *
          * @param string|null $name
-         * @return \Illuminate\Mail\Mailer 
+         * @return \Illuminate\Contracts\Mail\Mailer 
          * @static 
          */ 
         public static function mailer($name = null)
@@ -15525,7 +15538,7 @@
                     /**
          * 
          *
-         * @param \JamesMills\LaravelTimezone\Carbon|null $date
+         * @param \Carbon\Carbon|null $date
          * @param null $format
          * @param bool $format_timezone
          * @return string 
@@ -15540,7 +15553,7 @@
          * 
          *
          * @param $date
-         * @return \JamesMills\LaravelTimezone\Carbon 
+         * @return \Carbon\Carbon 
          * @static 
          */ 
         public static function convertFromLocal($date)
