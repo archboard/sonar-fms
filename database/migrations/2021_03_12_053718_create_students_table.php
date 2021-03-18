@@ -22,6 +22,8 @@ class CreateStudentsTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('email')->nullable();
+            $table->boolean('enrolled')->default(true);
+            $table->integer('enroll_status')->default(1);
             $table->timestamps();
         });
     }

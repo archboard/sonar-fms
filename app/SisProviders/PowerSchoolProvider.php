@@ -182,8 +182,8 @@ class PowerSchoolProvider implements SisProvider
         $builder = $this->builder
             ->method('get')
             ->to("/ws/v1/school/{$school->sis_id}/student")
-            ->q('school_enrollment.enroll_status==A')
-            ->expansions('contact_info');
+            ->q('school_enrollment.enroll_status==(A,P,G,T,H,I)')
+            ->expansions('contact_info,school_enrollment');
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -206,6 +206,8 @@ class PowerSchoolProvider implements SisProvider
                             'first_name' => optional($student->name)->first_name,
                             'last_name' => optional($student->name)->last_name,
                             'email' => $email ? strtolower($email) : null,
+                            'enrolled' => $student->school_enrollment->enroll_status_code === 0,
+                            'enroll_status' => $student->school_enrollment->enroll_status_code,
                         ]);
 
                         return $entries;
@@ -220,6 +222,8 @@ class PowerSchoolProvider implements SisProvider
                         'first_name' => optional($student->name)->first_name,
                         'last_name' => optional($student->name)->last_name,
                         'email' => $email ? strtolower($email) : null,
+                        'enrolled' => $student->school_enrollment->enroll_status_code === 0,
+                        'enroll_status' => $student->school_enrollment->enroll_status_code,
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
