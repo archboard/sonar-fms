@@ -49,13 +49,13 @@ Route::middleware('tenant')->group(function () {
         })->name('home');
 
         Route::prefix('/settings')->group(function () {
-            Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index']);
-            Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update'])
+            Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
+            Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])
                 ->name('settings.personal');
 
             Route::middleware('can:edit tenant settings')->group(function () {
-                Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index']);
-                Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update'])
+                Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update']);
+                Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index'])
                     ->name('settings.tenant');
             });
         });
