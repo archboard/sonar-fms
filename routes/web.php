@@ -46,7 +46,7 @@ Route::middleware('tenant')->group(function () {
 
         Route::get('/home', function () {
             return inertia('Index');
-        });
+        })->name('home');
 
         Route::prefix('/settings')->group(function () {
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index']);
