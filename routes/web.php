@@ -49,6 +49,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/home', \App\Http\Controllers\HomeController::class)
             ->name('home');
 
+        Route::get('/students', [\App\Http\Controllers\StudentController::class, 'index'])
+            ->name('students.index');
+
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])

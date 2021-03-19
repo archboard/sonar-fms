@@ -30,10 +30,22 @@ Route::prefix('_testing')->group(function () {
     Route::post('/session/new', function (Request $request) use ($email, $tenantAttributes) {
         $tenant = \App\Models\Tenant::updateOrCreate(['domain' => $request->getHost()], array_merge($tenantAttributes, $request->all()));
 
+        if ($tenant->schools->count() < 5) {
+            $schools = \App\Models\School::factory()
+                ->count(5 - $tenant->schools->count())
+                ->make();
+            $tenant->schools()->saveMany($schools);
+        }
+
         \App\Models\User::where('email', $email)->delete();
 
         /** @var \App\Models\User $user */
-        $user = $tenant->users()->save(\App\Models\User::factory()->make(['email' => $email]));
+        $user = $tenant->users()->save(
+            \App\Models\User::factory()->make([
+                'email' => $email,
+                'school_id' => $tenant->schools()->inRandomOrder()->first()->id,
+            ])
+        );
 
         auth()->login($user);
 
@@ -44,11 +56,14 @@ Route::prefix('_testing')->group(function () {
      * Logs the user out and deletes any user with that email
      */
     Route::get('/session/logout', function (Request $request) use ($email, $tenantAttributes) {
+        /** @var \App\Models\User $user */
         $user = $request->user();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         if ($user) {
+            // Clean up any permissions
+            $user->abilities()->delete();
             $user->delete();
         }
 
@@ -61,8 +76,11 @@ Route::prefix('_testing')->group(function () {
     Route::post('/permissions', function (Request $request) {
         /** @var \App\Models\User $user */
         $user = $request->user();
+        $school = $request->input('for_school')
+            ? $user->school
+            : null;
 
-        $user->allow($request->input('permissions'));
+        $user->allow($request->input('permissions'), $school);
 
         return response()->json();
     });
