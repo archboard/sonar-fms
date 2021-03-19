@@ -70,10 +70,10 @@
                 </div>
 
                 <div class="space-y-1">
-                  <h3 class="px-3 text-xs font-semibold text-gray-200 uppercase tracking-wider" id="projects-headline">
+                  <h3 class="px-3 text-xs font-semibold text-gray-200 uppercase tracking-wider">
                     {{ __('Settings') }}
                   </h3>
-                  <div class="space-y-1" role="group" aria-labelledby="projects-headline">
+                  <div class="space-y-1" role="group">
                     <inertia-link
                       v-for="link in props.subNav"
                       :href="link.route"
@@ -143,10 +143,10 @@
               </div>
 
               <div class="space-y-1">
-                <h3 class="px-3 text-xs font-semibold text-gray-200 uppercase tracking-wider" id="projects-headline">
+                <h3 class="px-3 text-xs font-semibold text-gray-200 uppercase tracking-wider">
                   {{ __('Settings') }}
                 </h3>
-                <div class="space-y-1" role="group" aria-labelledby="projects-headline">
+                <div class="space-y-1" role="group">
                   <inertia-link
                     v-for="link in props.subNav"
                     :href="link.route"
