@@ -24,6 +24,8 @@ Route::middleware('self_hosted')->group(function () {
 });
 
 Route::middleware('tenant')->group(function () {
+    Route::get('/', \App\Http\Controllers\IndexController::class);
+
     // PowerSchool auth
     Route::get('/auth/powerschool/openid', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'authenticate']);
     Route::get('/auth/powerschool/openid/verify', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'login'])
