@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\SisProviders\SisProvider;
 use GrantHolle\Http\Resources\Traits\HasResource;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Validator;
 use Silber\Bouncer\BouncerFacade;
@@ -15,7 +14,6 @@ use Spatie\Multitenancy\Models\Tenant as TenantBase;
  */
 class Tenant extends TenantBase
 {
-    use HasFactory;
     use HasResource;
 
     protected $guarded = [];

@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Section extends Model
 {
-    use HasFactory;
-
     protected $guarded = [];
 
     public function students(): BelongsToMany

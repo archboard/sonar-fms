@@ -52,6 +52,8 @@ namespace App\Models{
  * @property int $low_grade
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $currency_symbol
+ * @property int $currency_decimals
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
@@ -59,12 +61,17 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
  * @property-read int|null $students_count
  * @property-read \App\Models\Tenant $tenant
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Term[] $terms
+ * @property-read int|null $terms_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
+ * @method static \Database\Factories\SchoolFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|School newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|School newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|School query()
  * @method static \Illuminate\Database\Eloquent\Builder|School whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|School whereCurrencyDecimals($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|School whereCurrencySymbol($value)
  * @method static \Illuminate\Database\Eloquent\Builder|School whereHighGrade($value)
  * @method static \Illuminate\Database\Eloquent\Builder|School whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|School whereLowGrade($value)
@@ -93,6 +100,7 @@ namespace App\Models{
  * @property string|null $external_expression
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $term_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
  * @property-read int|null $students_count
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
@@ -107,6 +115,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereSectionNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereSisId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Section whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereUserId($value)
  */
@@ -128,23 +137,50 @@ namespace App\Models{
  * @property string|null $email
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $enrolled
+ * @property int $enroll_status
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
- * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student query()
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereSisId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereStudentNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
+ * @method static Builder|Student filter(array $filters)
+ * @method static Builder|Student newModelQuery()
+ * @method static Builder|Student newQuery()
+ * @method static Builder|Student query()
+ * @method static Builder|Student whereCreatedAt($value)
+ * @method static Builder|Student whereEmail($value)
+ * @method static Builder|Student whereEnrollStatus($value)
+ * @method static Builder|Student whereEnrolled($value)
+ * @method static Builder|Student whereFirstName($value)
+ * @method static Builder|Student whereId($value)
+ * @method static Builder|Student whereLastName($value)
+ * @method static Builder|Student whereSchoolId($value)
+ * @method static Builder|Student whereSisId($value)
+ * @method static Builder|Student whereStudentNumber($value)
+ * @method static Builder|Student whereTenantId($value)
+ * @method static Builder|Student whereUpdatedAt($value)
  */
 	class IdeHelperStudent extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\SyncTime
+ *
+ * @mixin IdeHelperSyncTime
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $hour
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime whereHour($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SyncTime whereUpdatedAt($value)
+ */
+	class IdeHelperSyncTime extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -165,12 +201,17 @@ namespace App\Models{
  * @property string $sis_provider
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $allows_pw_auth
+ * @property string|null $sync_notification_emails
+ * @property-read string $sis
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
  * @property-read int|null $students_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SyncTime[] $syncTimes
+ * @property-read int|null $sync_times_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
  * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
@@ -179,6 +220,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowPasswordAuth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowsPwAuth($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
@@ -190,9 +232,48 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisProvider($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionExpiresAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSyncNotificationEmails($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereUpdatedAt($value)
  */
 	class IdeHelperTenant extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Term
+ *
+ * @mixin IdeHelperTerm
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property int $sis_id
+ * @property int $sis_assigned_id
+ * @property string $name
+ * @property string $abbreviation
+ * @property int $start_year
+ * @property int $portion
+ * @property string $starts_at
+ * @property string $ends_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Term newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Term newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Term query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereAbbreviation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term wherePortion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereSisAssignedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereSisId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereStartYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Term whereUpdatedAt($value)
+ */
+	class IdeHelperTerm extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -214,6 +295,7 @@ namespace App\Models{
  * @property int|null $sis_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
+ * @property-read array $school_permissions
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
@@ -222,6 +304,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
  * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()

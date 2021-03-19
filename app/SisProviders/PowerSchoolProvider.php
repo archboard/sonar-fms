@@ -211,6 +211,7 @@ class PowerSchoolProvider implements SisProvider
                             'first_name' => optional($student->name)->first_name,
                             'last_name' => optional($student->name)->last_name,
                             'email' => $email ? strtolower($email) : null,
+                            'grade_level' => $student->school_enrollment->grade_level,
                             'enrolled' => $student->school_enrollment->enroll_status_code === 0,
                             'enroll_status' => $student->school_enrollment->enroll_status_code,
                         ]);
@@ -227,6 +228,7 @@ class PowerSchoolProvider implements SisProvider
                         'first_name' => optional($student->name)->first_name,
                         'last_name' => optional($student->name)->last_name,
                         'email' => $email ? strtolower($email) : null,
+                        'grade_level' => $student->school_enrollment->grade_level,
                         'enrolled' => $student->school_enrollment->enroll_status_code === 0,
                         'enroll_status' => $student->school_enrollment->enroll_status_code,
                         'created_at' => $now,
