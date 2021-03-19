@@ -30,5 +30,11 @@ class PowerSchoolOpenIdLoginController extends Controller
                 ->pluck('id');
             $user->schools()->syncWithoutDetaching($schools);
         }
+
+        if ($schoolId = $data->get('schoolID')) {
+            $school = School::where('school_number', $schoolId)
+                ->first();
+            $user->update(['school_id' => $school->id]);
+        }
     }
 }
