@@ -46,9 +46,8 @@ Route::middleware('tenant')->group(function () {
         Route::get('/csrf-token', \App\Http\Controllers\RefreshCsrfTokenController::class)
             ->name('csrf-token');
 
-        Route::get('/home', function () {
-            return inertia('Index');
-        })->name('home');
+        Route::get('/home', \App\Http\Controllers\HomeController::class)
+            ->name('home');
 
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
