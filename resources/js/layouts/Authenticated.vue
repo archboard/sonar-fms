@@ -179,18 +179,7 @@
         </button>
         <div class="flex-1 px-4 flex justify-between">
           <div class="flex-1 flex">
-            <form class="w-full flex md:ml-0" action="#" method="GET">
-              <label for="search_field" class="sr-only">Search</label>
-              <div class="relative w-full text-gray-400 focus-within:text-gray-600 dark:focus-within:text-gray-200">
-                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                  <!-- Heroicon name: solid/search -->
-                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <input id="search_field" class="block w-full h-full pl-8 pr-3 py-2 border-transparent bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm" placeholder="Search" type="search" name="search">
-              </div>
-            </form>
+            <TopSearch />
           </div>
           <div class="ml-4 flex items-center md:ml-6 space-x-2">
             <button class="bg-white dark:bg-gray-900 p-1 rounded-full text-gray-400 hover:text-gray-200 dark:hover-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-primary-500 transition">
@@ -263,12 +252,14 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, nextTick, } from 'vue'
+import { defineComponent, ref, watch, nextTick } from 'vue'
 import Notifications from '../components/Notifications'
 import { usePage } from '@inertiajs/inertia-vue3'
+import TopSearch from '../components/TopSearch'
 
 export default defineComponent({
   components: {
+    TopSearch,
     Notifications
   },
 
