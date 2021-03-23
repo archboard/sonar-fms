@@ -1,14 +1,53 @@
 <template>
   <Authenticated>
+    <div class="mb-6">
+      <div class="relative w-full">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <MagnifyingGlass class="h-5 w-5 text-gray-500" />
+        </div>
+        <Input v-model="filters.s" class="pl-12" type="search" :placeholder="__('Search by name or email')" />
+      </div>
+    </div>
+
     <Table>
       <Thead>
         <tr>
           <th class="w-8 text-left pl-6">
             <Checkbox />
           </th>
-          <Th>{{ __('Name') }}</Th>
-          <Th>{{ __('Student Number') }}</Th>
-          <Th>{{ __('Grade') }}</Th>
+          <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('last_name')">
+              <span>
+                {{ __('Name') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAsc v-if="filters.orderBy === 'last_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDesc v-if="filters.orderBy === 'last_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
+          <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('student_number')">
+              <span>
+                {{ __('Student Number') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAsc v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDesc v-if="filters.orderBy === 'student_number' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
+          <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('grade_level')">
+              <span>
+                {{ __('Grade') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAsc v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDesc v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
         </tr>
       </Thead>
       <Tbody>
@@ -38,7 +77,8 @@
 </template>
 
 <script>
-import { defineComponent, inject, nextTick, ref } from 'vue'
+import { defineComponent, inject, nextTick, reactive, ref, watch } from 'vue'
+import handlesFilters from '../../composition/handlesFilters'
 import Authenticated from '../../layouts/Authenticated'
 import Table from '../../components/tables/Table'
 import Thead from '../../components/tables/Thead'
@@ -47,9 +87,17 @@ import Tbody from '../../components/tables/Tbody'
 import Td from '../../components/tables/Td'
 import Checkbox from '../../components/forms/Checkbox'
 import Pagination from '../../components/tables/Pagination'
+import SortAsc from '../../components/icons/sort-asc'
+import SortDesc from '../../components/icons/sort-desc'
+import Input from '../../components/forms/Input'
+import MagnifyingGlass from '../../components/icons/magnifying-glass'
 
 export default defineComponent({
   components: {
+    MagnifyingGlass,
+    Input,
+    SortDesc,
+    SortAsc,
     Pagination,
     Checkbox,
     Td,
@@ -68,6 +116,13 @@ export default defineComponent({
   setup (props) {
     const $http = inject('$http')
     const $route = inject('$route')
+    const filters = handlesFilters({
+      s: '',
+      perPage: 25,
+      page: 1,
+      orderBy: 'last_name',
+      orderDir: 'asc',
+    }, $route('students.index'))
     const selectStudent = student => {
       nextTick(() => {
         const add = props.user.student_selection.includes(student.id)
@@ -76,9 +131,21 @@ export default defineComponent({
         $http[method]($route('student-selection.update', student.id))
       })
     }
+    const sortColumn = column => {
+      if (column === filters.orderBy) {
+        filters.orderDir = filters.orderDir === 'asc'
+          ? 'desc'
+          : 'asc'
+      } else {
+        filters.orderBy = column
+        filters.orderDir = 'asc'
+      }
+    }
 
     return {
+      filters,
       selectStudent,
+      sortColumn,
     }
   }
 })

@@ -28,6 +28,8 @@ class Student extends Model
                 $builder->where('enrolled', true);
             });
         });
+
+        $builder->orderBy($filters['orderBy'] ?? 'last_name', $filters['orderDir'] ?? 'asc');
     }
 
     public function getFullNameAttribute()

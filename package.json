@@ -31,7 +31,7 @@
     "postcss": "^8.2.7",
     "postcss-import": "^14.0.0",
     "postcss-nested": "^5.0.5",
-    "qs": "^6.9.6",
+    "qs": "^6.10.1",
     "resolve-url-loader": "^3.1.0",
     "tailwindcss": "^2.0.3",
     "vue": "^3.0.7",
