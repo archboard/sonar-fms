@@ -139,8 +139,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property bool $enrolled
  * @property int $enroll_status
+ * @property string|null $grade_level
+ * @property-read mixed $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
+ * @method static \Database\Factories\StudentFactory factory(...$parameters)
  * @method static Builder|Student filter(array $filters)
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
@@ -150,6 +153,7 @@ namespace App\Models{
  * @method static Builder|Student whereEnrollStatus($value)
  * @method static Builder|Student whereEnrolled($value)
  * @method static Builder|Student whereFirstName($value)
+ * @method static Builder|Student whereGradeLevel($value)
  * @method static Builder|Student whereId($value)
  * @method static Builder|Student whereLastName($value)
  * @method static Builder|Student whereSchoolId($value)
@@ -159,6 +163,25 @@ namespace App\Models{
  * @method static Builder|Student whereUpdatedAt($value)
  */
 	class IdeHelperStudent extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\StudentSelection
+ *
+ * @mixin IdeHelperStudentSelection
+ * @property int $school_id
+ * @property int $student_id
+ * @property int $user_id
+ * @method static Builder|StudentSelection newModelQuery()
+ * @method static Builder|StudentSelection newQuery()
+ * @method static Builder|StudentSelection query()
+ * @method static Builder|StudentSelection student($studentId)
+ * @method static Builder|StudentSelection whereSchoolId($value)
+ * @method static Builder|StudentSelection whereStudentId($value)
+ * @method static Builder|StudentSelection whereUserId($value)
+ */
+	class IdeHelperStudentSelection extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -296,6 +319,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
  * @property-read array $school_permissions
+ * @property-read mixed $student_selection
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
@@ -303,6 +327,8 @@ namespace App\Models{
  * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $studentSelections
+ * @property-read int|null $student_selections_count
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()

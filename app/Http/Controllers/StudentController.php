@@ -17,6 +17,7 @@ class StudentController extends Controller
     public function index(Request $request, School $school)
     {
         $title = __('Students');
+        $request->user()->load('studentSelections');
 
         $students = $school->students()
             ->filter($request->all())

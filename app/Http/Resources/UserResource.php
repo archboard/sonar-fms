@@ -19,6 +19,8 @@ class UserResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,
+            'full_name' => $this->full_name,
+            'student_selection' => $this->student_selection,
             'schools' => SchoolResource::collection($this->whenLoaded('schools')),
             'school' => new SchoolResource($this->whenLoaded('schoool')),
             'permissions' => $this->whenLoaded('school', function () {

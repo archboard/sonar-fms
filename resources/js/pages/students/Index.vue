@@ -17,9 +17,16 @@
           :key="student.id"
         >
           <td class="pl-6 py-4 text-sm">
-            <Checkbox />
+            <Checkbox
+              v-model:checked="user.student_selection"
+              @change="selectStudent(student)"
+              :value="student.id"
+              :id="`student_${student.id}`"
+            />
           </td>
-          <Td :lighter="false">{{ student.full_name }}</Td>
+          <Td :lighter="false">
+            <label :for="`student_${student.id}`" class="cursor-pointer">{{ student.full_name }}</label>
+          </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level }}</Td>
         </tr>
@@ -31,7 +38,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, inject, nextTick, ref } from 'vue'
 import Authenticated from '../../layouts/Authenticated'
 import Table from '../../components/tables/Table'
 import Thead from '../../components/tables/Thead'
@@ -55,10 +62,24 @@ export default defineComponent({
 
   props: {
     students: Object,
+    user: Object,
   },
 
-  setup () {
+  setup (props) {
+    const $http = inject('$http')
+    const $route = inject('$route')
+    const selectStudent = student => {
+      nextTick(() => {
+        const add = props.user.student_selection.includes(student.id)
+        const method = add ? 'put' : 'delete'
 
+        $http[method]($route('student-selection.update', student.id))
+      })
+    }
+
+    return {
+      selectStudent,
+    }
   }
 })
 </script>

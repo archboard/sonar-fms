@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 
 /**
@@ -77,6 +80,20 @@ class User extends Authenticatable
         return $this->getPermissionsForSchool();
     }
 
+    public function getStudentSelectionAttribute()
+    {
+        if ($this->relationLoaded('studentSelections')) {
+            return $this->studentSelections->map->student_id;
+        }
+
+        return collect();
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     public function schools(): BelongsToMany
     {
         return $this->belongsToMany(School::class)
@@ -86,6 +103,14 @@ class User extends Authenticatable
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function studentSelections(): HasMany
+    {
+        return $this->hasMany(StudentSelection::class)
+            ->join('users', function (JoinClause $join) {
+                $join->on('student_selections.school_id', '=', 'users.school_id');
+            });
     }
 
     public function getPermissionsForSchool(School $school = null): array
@@ -99,5 +124,32 @@ class User extends Authenticatable
                 'selected' => $this->can('change settings', $school),
             ],
         ];
+    }
+
+    /**
+     * Adds a student to a user's selection
+     *
+     * @param int|Student $studentId
+     * @return User
+     */
+    public function selectStudent(Student|int $studentId): User
+    {
+        if ($studentId instanceof Student) {
+            $studentId = $studentId->id;
+        }
+
+        $exists = $this->studentSelections()
+            ->student($studentId)
+            ->exists();
+
+        if (!$exists) {
+            DB::table('student_selections')->insert([
+                'school_id' => $this->school_id,
+                'student_id' => $studentId,
+                'user_id' => $this->id,
+            ]);
+        }
+
+        return $this;
     }
 }
