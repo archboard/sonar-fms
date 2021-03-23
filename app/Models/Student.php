@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 class Student extends Model
 {
     use HasResource;
+    use HasFactory;
 
     protected $guarded = [];
 
