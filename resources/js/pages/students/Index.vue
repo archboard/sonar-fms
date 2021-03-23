@@ -1,12 +1,15 @@
 <template>
   <Authenticated>
-    <div class="mb-6">
-      <div class="relative w-full">
+    <div class="mb-6 flex">
+      <div class="relative w-full pr-6">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <MagnifyingGlass class="h-5 w-5 text-gray-500" />
         </div>
         <Input v-model="filters.s" class="pl-12" type="search" :placeholder="__('Search by name or email')" />
       </div>
+      <button class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">
+        <Adjustments class="w-6 h-6" />
+      </button>
     </div>
 
     <Table>
@@ -91,9 +94,11 @@ import SortAsc from '../../components/icons/sort-asc'
 import SortDesc from '../../components/icons/sort-desc'
 import Input from '../../components/forms/Input'
 import MagnifyingGlass from '../../components/icons/magnifying-glass'
+import Adjustments from '../../components/icons/adjustments'
 
 export default defineComponent({
   components: {
+    Adjustments,
     MagnifyingGlass,
     Input,
     SortDesc,
