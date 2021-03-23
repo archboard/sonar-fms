@@ -3,7 +3,9 @@
     <Table>
       <Thead>
         <tr>
-          <Th></Th>
+          <th class="w-8 text-left pl-6">
+            <Checkbox />
+          </th>
           <Th>{{ __('Name') }}</Th>
           <Th>{{ __('Student Number') }}</Th>
           <Th>{{ __('Grade') }}</Th>
@@ -14,10 +16,10 @@
           v-for="(student, index) in students.data"
           :key="student.id"
         >
-          <Td>
+          <td class="pl-6 py-4 text-sm">
             <Checkbox />
-          </Td>
-          <Td>{{ student.full_name }}</Td>
+          </td>
+          <Td :lighter="false">{{ student.full_name }}</Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level }}</Td>
         </tr>
