@@ -14,6 +14,16 @@ class SchoolResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'sis_id' => $this->sis_id,
+            'low_grade' => $this->low_grade,
+            'high_grade' => $this->high_grade,
+            'grade_levels' => $this->grade_levels,
+            'school_number' => $this->school_number,
+            'currency_symbol' => $this->currency_symbol,
+            'currency_decimals' => $this->currency_decimals,
+        ];
     }
 }

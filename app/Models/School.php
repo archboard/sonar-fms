@@ -48,6 +48,11 @@ class School extends Model
         return $this->hasMany(Term::class);
     }
 
+    public function getGradeLevelsAttribute()
+    {
+        return range($this->low_grade, $this->high_grade);
+    }
+
     public static function getFromPowerSchool(array $ids = []): Collection
     {
         $psSchools = PowerSchool::endpoint('/ws/v1/district/school')

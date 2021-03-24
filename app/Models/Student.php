@@ -26,13 +26,28 @@ class Student extends Model
                 $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
                     ->orWhere('student_number', 'ilike', "${search}%");
             });
-        })->when(true, function (Builder $builder) {
-            $builder->where(function (Builder $builder) {
-                $builder->where('enrolled', true);
-            });
+        })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
+            $builder->whereIn('grade_level', $grades);
         });
 
-        $builder->orderBy($filters['orderBy'] ?? 'last_name', $filters['orderDir'] ?? 'asc');
+        // Enrollment status
+        $enrolled = $filters['enrolled'] ?? true;
+
+        if ($enrolled !== 'all') {
+            $builder->where('enrolled', $enrolled);
+        }
+
+        $orderBy = $filters['orderBy'] ?? 'last_name';
+
+        // Cast as int so postgres sorts correctly
+        if ($orderBy === 'grade_level') {
+            $orderBy = DB::raw('grade_level::int');
+        }
+
+        $builder->orderBy($orderBy, $filters['orderDir'] ?? 'asc');
+
+        // Add the secondary first name order column
+        $builder->orderBy('first_name', $filters['orderDir'] ?? 'asc');
     }
 
     public function getFullNameAttribute()

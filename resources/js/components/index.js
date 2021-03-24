@@ -6,12 +6,4 @@ import Tbody from '@/components/tables/Tbody'
 import Th from '@/components/tables/Th'
 import Td from '@/components/tables/Td'
 
-export default {
-  'app-input': Input,
-  'app-button': Button,
-  'app-table': Table,
-  'app-thead': Thead,
-  'app-tbody': Tbody,
-  'app-th': Th,
-  'app-td': Td,
-}
+export default {}

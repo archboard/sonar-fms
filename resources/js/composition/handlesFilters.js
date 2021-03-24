@@ -17,6 +17,16 @@ export default (defaultFilters, route) => {
       preserveState: true,
     })
   })
+  const applyFilters = newFilters => {
+    Object.keys(newFilters).forEach(key => {
+      filters[key] = newFilters[key]
+    })
+  }
+  const resetFilters = () => applyFilters(defaultFilters)
 
-  return filters
+  return {
+    filters,
+    applyFilters,
+    resetFilters,
+  }
 }

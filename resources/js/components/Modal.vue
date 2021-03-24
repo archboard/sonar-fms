@@ -27,9 +27,9 @@
           leave-to-class="opacity-0 -translate-y-5"
           @after-leave="$emit('close')"
         >
-          <div v-if="show" ref="modal" :class="modalSize" class="inline-block align-middle bg-white dark:bg-gray-700 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-              <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-700 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
+          <div v-if="show" ref="modal" :class="modalSize" class="inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
+              <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-600 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
                 <span class="sr-only">Close</span>
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -48,12 +48,12 @@
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 border-t border-transparent dark:border-gray-500 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
               <slot name="actions">
-                <app-button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2">
+                <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2">
                   {{ actionText }}
-                </app-button>
-                <app-button @click.prevent="close" type="button" color="white">
+                </Button>
+                <Button @click.prevent="close" type="button" color="white">
                   Cancel
-                </app-button>
+                </Button>
               </slot>
             </div>
           </div>
@@ -66,8 +66,10 @@
 <script>
 import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
+import Button from './Button'
 
 export default defineComponent({
+  components: {Button},
   emits: ['close', 'action'],
 
   props: {
