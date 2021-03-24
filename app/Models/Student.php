@@ -22,7 +22,10 @@ class Student extends Model
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
-            $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%");
+            $builder->where(function (Builder $builder) use ($search) {
+                $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
+                    ->orWhere('student_number', 'ilike', "${search}%");
+            });
         })->when(true, function (Builder $builder) {
             $builder->where(function (Builder $builder) {
                 $builder->where('enrolled', true);
