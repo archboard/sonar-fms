@@ -47,7 +47,9 @@ class StudentSelectionController extends Controller
         // Delete the existing selection
         $user->studentSelections()->delete();
 
-        DB::table('student_selections')->insert($selection);
+        if ($selection->isNotEmpty()) {
+            DB::table('student_selections')->insert($selection->toArray());
+        }
 
         session()->flash('success', __('Selected :count students', ['count' => $selection->count()]));
 

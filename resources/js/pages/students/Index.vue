@@ -5,7 +5,7 @@
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <MagnifyingGlass class="h-5 w-5 text-gray-500" />
         </div>
-        <Input v-model="filters.s" class="pl-12" type="search" :placeholder="__('Search by name, email or student number')" />
+        <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by name, email or student number')" />
       </div>
       <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">
         <Adjustments class="w-6 h-6" />
@@ -23,7 +23,7 @@
       <Thead>
         <tr>
           <th class="w-8 text-left pl-6">
-            <Checkbox />
+            <Checkbox v-model:checked="selectAll" />
           </th>
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('last_name')">
@@ -95,7 +95,9 @@
 </template>
 
 <script>
-import { defineComponent, inject, nextTick, reactive, ref, watch } from 'vue'
+import { defineComponent, inject, nextTick, ref, watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import debounce from 'lodash/debounce'
 import handlesFilters from '../../composition/handlesFilters'
 import Authenticated from '../../layouts/Authenticated'
 import Table from '../../components/tables/Table'
@@ -142,6 +144,7 @@ export default defineComponent({
     const $http = inject('$http')
     const $route = inject('$route')
     const showFilters = ref(false)
+    const selectAll = ref(false)
     const { filters, applyFilters, resetFilters } = handlesFilters({
       s: '',
       perPage: 25,
@@ -151,6 +154,7 @@ export default defineComponent({
       grades: [],
       enrolled: true,
     }, $route('students.index'))
+    const searchTerm = ref(filters.s)
     const selectStudent = student => {
       nextTick(() => {
         const add = props.user.student_selection.includes(student.id)
@@ -173,6 +177,17 @@ export default defineComponent({
         filters.orderDir = 'asc'
       }
     }
+    watch(selectAll, (newVal) => {
+      if (newVal) {
+        Inertia.post($route('student-selection.store'), filters)
+      } else {
+        clearSelection()
+      }
+    })
+    watch(searchTerm, debounce(newVal => {
+      filters.s = newVal
+      filters.page = 1
+    }, 500))
 
     return {
       filters,
@@ -182,6 +197,8 @@ export default defineComponent({
       clearSelection,
       applyFilters,
       resetFilters,
+      selectAll,
+      searchTerm,
     }
   }
 })
