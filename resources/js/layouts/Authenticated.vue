@@ -227,24 +227,35 @@
       </div>
 
       <main class="flex-1 relative overflow-y-auto focus:outline-none" tabindex="0">
-        <div class="py-6 space-y-6">
-          <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <div class="md:flex md:items-center md:justify-between">
-              <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 sm:text-3xl sm:truncate" data-cy="page-title">
-                  {{ props.title }}
-                </h2>
-              </div>
-              <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-                <slot name="actions" />
+        <slot name="content">
+          <div class="py-6 space-y-6">
+            <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+              <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                  <h2 class="text-2xl font-bold leading-7 sm:text-3xl sm:truncate" data-cy="page-title">
+                    {{ props.title }}
+                  </h2>
+                </div>
+                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                  <slot name="actions" />
+                </div>
               </div>
             </div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+              <slot/>
+            </div>
           </div>
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <slot/>
+        </slot>
+      </main>
+
+      <footer>
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
+          <div class="border-t border-gray-200 py-8 text-sm text-gray-500 text-center sm:text-left">
+            <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} Archboard, LLC.</span>
+            <span class="block sm:inline">All rights reserved.</span>
           </div>
         </div>
-      </main>
+      </footer>
     </div>
 
     <Notifications />
