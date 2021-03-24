@@ -12,6 +12,10 @@
       </button>
     </div>
 
+    <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4">
+      {{ __(':count students selected', { count: user.student_selection.length }) }} <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="clearSelection">Remove selection</a>
+    </div>
+
     <Table>
       <Thead>
         <tr>
@@ -136,6 +140,10 @@ export default defineComponent({
         $http[method]($route('student-selection.update', student.id))
       })
     }
+    const clearSelection = async () => {
+      await $http.delete($route('student-selection.remove'))
+      props.user.student_selection = []
+    }
     const sortColumn = column => {
       if (column === filters.orderBy) {
         filters.orderDir = filters.orderDir === 'asc'
@@ -151,6 +159,7 @@ export default defineComponent({
       filters,
       selectStudent,
       sortColumn,
+      clearSelection,
     }
   }
 })
