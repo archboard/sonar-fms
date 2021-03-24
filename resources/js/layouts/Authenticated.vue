@@ -263,7 +263,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, nextTick } from 'vue'
+import { defineComponent, ref, watch, nextTick, onMounted } from 'vue'
 import Notifications from '../components/Notifications'
 import { usePage } from '@inertiajs/inertia-vue3'
 import TopSearch from '../components/TopSearch'
@@ -286,6 +286,11 @@ export default defineComponent({
           showMenu.value = true
         })
       }
+    })
+    onMounted(() => {
+      document.title = page.props.value.title
+        ? `${page.props.value.title} | Sonar FMS`
+        : 'Sonar FMS'
     })
 
     return {

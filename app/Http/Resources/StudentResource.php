@@ -23,6 +23,12 @@ class StudentResource extends JsonResource
             'full_name' => $this->full_name,
             'grade_level' => $this->grade_level,
             'email' => $this->email,
+            'enroll_status' => $this->enroll_status,
+            'enrolled' => $this->enrolled,
+            'current_entry_date' => $this->current_entry_date,
+            'current_exit_date' => $this->current_exit_date,
+            'initial_district_entry_date' => $this->initial_district_entry_date,
+            'initial_school_entry_date' => $this->initial_school_entry_date,
         ];
     }
 }

@@ -58,6 +58,7 @@
               </span>
             </div>
           </Th>
+          <th></th>
         </tr>
       </Thead>
       <Tbody>
@@ -78,6 +79,9 @@
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level }}</Td>
+          <Td class="text-right">
+            <Link is="inertia-link" :href="$route('students.show', student)">{{ __('View') }}</Link>
+          </Td>
         </tr>
       </Tbody>
     </Table>
@@ -114,6 +118,7 @@ import MagnifyingGlass from '../../components/icons/magnifying-glass'
 import Adjustments from '../../components/icons/adjustments'
 import StudentTableFiltersModal from '../../components/modals/StudentTableFiltersModal'
 import CircleX from '../../components/icons/circle-x'
+import Link from '@/components/Link'
 
 export default defineComponent({
   components: {
@@ -131,7 +136,8 @@ export default defineComponent({
     Th,
     Thead,
     Table,
-    Authenticated
+    Authenticated,
+    Link,
   },
 
   props: {
