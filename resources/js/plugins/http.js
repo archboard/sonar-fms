@@ -4,15 +4,24 @@ import store from '@/stores/notifications'
 
 const flashMessage = response => {
   const flash = get(response, 'data.props.flash')
+  const level = get(response, 'data.level')
+  const message = get(response, 'data.message')
 
   if (flash) {
     Object.keys(flash).forEach(level => {
       const text = flash[level]
 
       if (text) {
-        console.log(`${level}: ${flash[level]}`)
-        store.addNotification({ level, text }, 4000)
+        console.log(`Flashing ${level}: ${flash[level]}`)
+        store.addNotification({ level, text })
       }
+    })
+  }
+
+  if (level && message) {
+    store.addNotification({
+      level,
+      text: message,
     })
   }
 }
