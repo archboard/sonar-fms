@@ -8,7 +8,7 @@
         Next
       </component>
     </div>
-    <p v-else class="sm:hidden text-sm leading-5 text-gray-700 mb-0">No results found <span class="font-mono">¯\_(ツ)_/¯</span></p>
+    <p v-else class="sm:hidden text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">No results found.</p>
 
     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
       <div>
@@ -21,7 +21,7 @@
           <span class="font-medium">{{ meta.total }}</span>
           results
         </p>
-        <p v-else class="text-sm leading-5 text-gray-700 mb-0">No results found <span class="font-mono">¯\_(ツ)_/¯</span></p>
+        <p v-else class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">No results found.</p>
       </div>
       <div>
         <nav v-if="pageLinks.length > 1" class="relative z-0 inline-flex shadow-sm">
