@@ -188,7 +188,7 @@ class PowerSchoolProvider implements SisProvider
             ->method('get')
             ->to("/ws/v1/school/{$school->sis_id}/student")
             ->q('school_enrollment.enroll_status==(A,P,G,T,H,I)')
-            ->expansions('contact_info,school_enrollment');
+            ->expansions('contact_info,school_enrollment,initial_enrollment');
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -203,27 +203,7 @@ class PowerSchoolProvider implements SisProvider
                 $results,
                 function ($entries, $student) use ($school, $now, $existingStudents) {
                     $email = optional($student->contact_info)->email;
-
-                    // If it exists, then update
-                    if ($existingStudent = $existingStudents->get($student->id)) {
-                        $existingStudent->update([
-                            'student_number' => $student->local_id,
-                            'first_name' => optional($student->name)->first_name,
-                            'last_name' => optional($student->name)->last_name,
-                            'email' => $email ? strtolower($email) : null,
-                            'grade_level' => $student->school_enrollment->grade_level,
-                            'enrolled' => $student->school_enrollment->enroll_status_code === 0,
-                            'enroll_status' => $student->school_enrollment->enroll_status_code,
-                        ]);
-
-                        return $entries;
-                    }
-
-                    // It's a new course
-                    $entries[] = [
-                        'tenant_id' => $this->tenant->id,
-                        'school_id' => $school->id,
-                        'sis_id' => $student->id,
+                    $attributes = [
                         'student_number' => $student->local_id,
                         'first_name' => optional($student->name)->first_name,
                         'last_name' => optional($student->name)->last_name,
@@ -231,9 +211,27 @@ class PowerSchoolProvider implements SisProvider
                         'grade_level' => $student->school_enrollment->grade_level,
                         'enrolled' => $student->school_enrollment->enroll_status_code === 0,
                         'enroll_status' => $student->school_enrollment->enroll_status_code,
-                        'created_at' => $now,
-                        'updated_at' => $now,
+                        'current_entry_date' => $student->school_enrollment->entry_date,
+                        'current_exit_date' => $student->school_enrollment->exit_date,
+                        'initial_district_entry_date' => optional($student->initial_enrollment)->district_entry_date,
+                        'initial_school_entry_date' => optional($student->initial_enrollment)->school_entry_date,
+                        'initial_district_grade_level' => $student->initial_enrollment->district_entry_grade_level,
+                        'initial_school_grade_level' => $student->initial_enrollment->school_entry_grade_level,
                     ];
+
+                    // If it exists, then update
+                    if ($existingStudent = $existingStudents->get($student->id)) {
+                        $existingStudent->update($attributes);
+                        return $entries;
+                    }
+
+                    // It's a new student
+                    $attributes['tenant_id'] = $this->tenant->id;
+                    $attributes['school_id'] = $school->id;
+                    $attributes['sis_id'] = $student->id;
+                    $attributes['created_at'] = $now;
+                    $attributes['updated_at'] = $now;
+                    $entries[] = $attributes;
 
                     return $entries;
                 }, []

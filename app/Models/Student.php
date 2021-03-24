@@ -19,6 +19,13 @@ class Student extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'current_entry_date' => 'date',
+        'current_exit_date' => 'date',
+        'initial_district_entry_date' => 'date',
+        'initial_school_entry_date' => 'date',
+    ];
+
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
