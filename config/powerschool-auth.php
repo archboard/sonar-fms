@@ -48,6 +48,7 @@ return [
             'firstName' => 'first_name',
             'lastName' => 'last_name',
             'email' => 'email',
+            'usersDCID' => 'sis_id',
         ],
         'guard' => 'web',
         'identifying_attributes' => [
@@ -66,6 +67,7 @@ return [
             'firstName' => 'first_name',
             'lastName' => 'last_name',
             'email' => 'email',
+            'dcid' => 'guardian_id',
         ],
         'guard' => 'web',
         'identifying_attributes' => [

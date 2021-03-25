@@ -56,6 +56,7 @@ namespace App\Models{
  * @property int $currency_decimals
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
+ * @property-read mixed $grade_levels
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
@@ -140,22 +141,39 @@ namespace App\Models{
  * @property bool $enrolled
  * @property int $enroll_status
  * @property string|null $grade_level
+ * @property string|null $preferred_name
+ * @property \Illuminate\Support\Carbon|null $current_entry_date
+ * @property \Illuminate\Support\Carbon|null $current_exit_date
+ * @property \Illuminate\Support\Carbon|null $initial_district_entry_date
+ * @property \Illuminate\Support\Carbon|null $initial_school_entry_date
+ * @property string|null $initial_district_grade_level
+ * @property string|null $initial_school_grade_level
  * @property-read mixed $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
+ * @property-read \App\Models\Tenant $tenant
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
  * @method static \Database\Factories\StudentFactory factory(...$parameters)
  * @method static Builder|Student filter(array $filters)
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
  * @method static Builder|Student whereCreatedAt($value)
+ * @method static Builder|Student whereCurrentEntryDate($value)
+ * @method static Builder|Student whereCurrentExitDate($value)
  * @method static Builder|Student whereEmail($value)
  * @method static Builder|Student whereEnrollStatus($value)
  * @method static Builder|Student whereEnrolled($value)
  * @method static Builder|Student whereFirstName($value)
  * @method static Builder|Student whereGradeLevel($value)
  * @method static Builder|Student whereId($value)
+ * @method static Builder|Student whereInitialDistrictEntryDate($value)
+ * @method static Builder|Student whereInitialDistrictGradeLevel($value)
+ * @method static Builder|Student whereInitialSchoolEntryDate($value)
+ * @method static Builder|Student whereInitialSchoolGradeLevel($value)
  * @method static Builder|Student whereLastName($value)
+ * @method static Builder|Student wherePreferredName($value)
  * @method static Builder|Student whereSchoolId($value)
  * @method static Builder|Student whereSisId($value)
  * @method static Builder|Student whereStudentNumber($value)
@@ -316,8 +334,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $timezone
  * @property int|null $sis_id
+ * @property int|null $contact_id
+ * @property int|null $guardian_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
+ * @property-read string $full_name
  * @property-read array $school_permissions
  * @property-read mixed $student_selection
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
@@ -327,17 +348,21 @@ namespace App\Models{
  * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $studentSelections
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\StudentSelection[] $studentSelections
  * @property-read int|null $student_selections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
  * @method static Builder|User whereCan(string $ability)
+ * @method static Builder|User whereContactId($value)
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereFirstName($value)
+ * @method static Builder|User whereGuardianId($value)
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereIs($role)
  * @method static Builder|User whereIsAll($role)
