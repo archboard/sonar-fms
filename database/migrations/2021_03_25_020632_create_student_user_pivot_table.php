@@ -16,6 +16,7 @@ class CreateStudentUserPivotTable extends Migration
         Schema::create('student_user', function (Blueprint $table) {
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('relationship')->nullable();
             $table->primary(['student_id', 'user_id']);
         });
     }

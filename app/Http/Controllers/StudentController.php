@@ -49,6 +49,7 @@ class StudentController extends Controller
     public function show(Request $request, Student $student)
     {
         $title = $student->full_name;
+        $student->load('users');
 
         return inertia('students/Show', [
             'title' => $title,

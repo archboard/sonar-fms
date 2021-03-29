@@ -33,6 +33,8 @@
                     </button>
                   </div>
                 </div>
+
+                <!-- Mobile details -->
                 <aside class="mt-8 xl:hidden">
                   <h2 class="sr-only">Details</h2>
                   <div class="space-y-5">
@@ -65,21 +67,39 @@
                   </div>
                   <div class="mt-6 border-t border-b border-gray-200 py-6 space-y-8">
                     <div>
-                      <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                      <h2 class="text-sm font-medium text-gray-500 flex">
+                        <span>
+                          {{ __('Guardians') }}
+                        </span>
+                        <button
+                          class="ml-3 font-normal focus:outline-none relative inline-flex items-center justify-center"
+                          @click.prevent="syncGuardians"
+                          :class="{
+                            'w-8': syncingGuardians
+                          }"
+                        >
+                          <span v-if="syncingGuardians" class="px-2 absolute right-0 top-[2px] inline-flex">
+                            <Spinner class="w-4 h-4" />
+                          </span>
+                          <span v-else>
+                            {{ __('Sync') }}
+                          </span>
+                        </button>
+                      </h2>
                       <ul class="mt-3 space-y-3">
-                        <li class="flex justify-start">
-                          <a href="#" class="flex items-center space-x-3">
-                            <div class="flex-shrink-0">
-                              <img class="h-5 w-5 rounded-full" src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80" alt="">
-                            </div>
-                            <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
+                        <li
+                          v-for="guardian in student.users"
+                          :key="guardian.id"
+                        >
+                          <a href="#" class="text-sm font-medium text-gray-900 hover:underline">
+                            {{ guardian.full_name }}
                           </a>
                         </li>
                       </ul>
                     </div>
                     <div>
                       <h2 class="text-sm font-medium text-gray-500">Tags</h2>
-                      <ul class="mt-2 leading-8">
+                      <ul class="mt-2 leading-8 space-x-2">
                         <li class="inline">
                           <a href="#" class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5">
                             <div class="absolute flex-shrink-0 flex items-center justify-center">
@@ -100,6 +120,7 @@
                     </div>
                   </div>
                 </aside>
+
                 <div class="py-3 xl:pt-6 xl:pb-0">
                   <h2 class="sr-only">Description</h2>
                   <div class="prose max-w-none">
@@ -121,6 +142,7 @@
                 </div>
               </div>
             </div>
+
             <section aria-labelledby="activity-title" class="mt-8 xl:mt-10">
               <div>
                 <div class="divide-y divide-gray-200">
@@ -210,7 +232,7 @@
                                     <a href="#" class="font-medium text-gray-900">Hilary Mahy</a>
                                     added tags
                                   </span>
-                                  <span class="mr-0.5">
+                                  <span class="mr-0.5 space-x-2">
                                     <a href="#" class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5 text-sm">
                                       <span class="absolute flex-shrink-0 flex items-center justify-center">
                                         <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true"></span>
@@ -306,6 +328,8 @@
               </div>
             </section>
           </div>
+
+          <!-- Desktop details -->
           <aside class="hidden xl:block xl:pl-8">
             <h2 class="sr-only">Details</h2>
             <div class="space-y-5">
@@ -336,14 +360,26 @@
             </div>
             <div class="mt-6 border-t border-gray-200 py-6 space-y-8">
               <div>
-                <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                <h2 class="text-sm font-medium text-gray-500 flex justify-between relative">
+                  <span>
+                    {{ __('Guardians') }}
+                  </span>
+                  <button class="font-normal focus:outline-none" @click.prevent="syncGuardians">
+                    <span v-if="syncingGuardians" class="px-2 absolute right-0 top-0">
+                      <Spinner class="w-5 h-5" />
+                    </span>
+                    <span v-else>
+                      {{ __('Sync') }}
+                    </span>
+                  </button>
+                </h2>
                 <ul class="mt-3 space-y-3">
-                  <li class="flex justify-start">
-                    <a href="#" class="flex items-center space-x-3">
-                      <div class="flex-shrink-0">
-                        <img class="h-5 w-5 rounded-full" src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80" alt="">
-                      </div>
-                      <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
+                  <li
+                    v-for="guardian in student.users"
+                    :key="guardian.id"
+                  >
+                    <a href="#" class="text-sm font-medium text-gray-900 hover:underline">
+                      {{ guardian.full_name }}
                     </a>
                   </li>
                 </ul>
@@ -378,14 +414,17 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, inject, ref } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '../../layouts/Authenticated'
 import CircleCheck from '../../components/icons/circle-check'
 import CircleX from '../../components/icons/circle-x'
 import dayjs from 'dayjs'
+import Spinner from '../../components/icons/spinner'
 
 export default defineComponent({
   components: {
+    Spinner,
     CircleX,
     CircleCheck,
     Authenticated
@@ -399,10 +438,23 @@ export default defineComponent({
   },
 
   setup ({ student }) {
+    const $route = inject('$route')
     const enrolledAt = dayjs(student.initial_district_entry_date)
+    const syncingGuardians = ref(false)
+    const syncGuardians = () => {
+      syncingGuardians.value = true
+
+      Inertia.post($route('students.guardians.sync', student), null, {
+        onFinish () {
+          syncingGuardians.value = false
+        }
+      })
+    }
 
     return {
       enrolledAt,
+      syncingGuardians,
+      syncGuardians,
     }
   }
 })

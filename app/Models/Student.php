@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -59,6 +61,11 @@ class Student extends Model
         $builder->orderBy('first_name', $filters['orderDir'] ?? 'asc');
     }
 
+    public function scopeSisId(Builder $builder, $sisId)
+    {
+        $builder->where('sis_id', $sisId);
+    }
+
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
@@ -71,6 +78,75 @@ class Student extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot('relationship');
+    }
+
+    public function guardians(): BelongsToMany
+    {
+        return $this->users();
+    }
+
+    public function syncFromSis()
+    {
+        $this->tenant->sisProvider()
+            ->syncStudent($this);
+    }
+
+    /**
+     * Syncs guardians for a student
+     * The contact account MUST have
+     * first name, last name and an email to be synced
+     *
+     * @throws \GrantHolle\PowerSchool\Api\Exception\MissingClientCredentialsException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function syncGuardians()
+    {
+        $response = PowerSchool::to("/ws/contacts/student/{$this->sis_id}")
+            ->get();
+
+        $users = collect($response)->reduce(function ($users, $contact) {
+            if (empty($contact->emails)) {
+                return $users;
+            }
+
+            // Get the primary or first email address
+            $email = Arr::first(
+                $contact->emails,
+                fn ($emails) => $emails->primary,
+                Arr::first($contact->emails)
+            )->address;
+
+            // If no name or email, don't process this relationship
+            if (!$contact->firstName || !$contact->lastName || !$email) {
+                return $users;
+            }
+
+            $contactStudents = Arr::first($contact->contactStudents);
+            $details = Arr::first($contactStudents->studentDetails);
+
+            $user = User::updateOrCreate(
+                [
+                    'tenant_id' => Tenant::current()->id,
+                    'email' => strtolower($email)
+                ],
+                [
+                    'first_name' => $contact->firstName,
+                    'last_name' => $contact->lastName,
+                    'school_id' => School::firstWhere('school_number', $contactStudents->schoolNumber)->id,
+                    'contact_id' => $contact->contactId,
+                    'guardian_id' => $contactStudents->guardianId,
+                ]
+            );
+
+            $users[$user->id] = [
+                'relationship' => optional($details)->relationship,
+            ];
+
+            return $users;
+        }, []);
+
+        $this->users()->syncWithoutDetaching($users);
     }
 }

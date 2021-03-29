@@ -55,6 +55,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/students/{student}', [\App\Http\Controllers\StudentController::class, 'show'])
             ->name('students.show');
 
+        Route::post('/students/{student}/guardians/sync', \App\Http\Controllers\SyncStudentGuardiansController::class)
+            ->name('students.guardians.sync');
+
         Route::resource('/student-selection', \App\Http\Controllers\StudentSelectionController::class)
             ->except('create', 'show', 'edit');
 

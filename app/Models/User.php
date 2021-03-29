@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -107,7 +108,8 @@ class User extends Authenticatable
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class)
+            ->withPivot('relationship');
     }
 
     public function studentSelections(): HasMany
@@ -153,6 +155,65 @@ class User extends Authenticatable
                 'student_id' => $studentId,
                 'user_id' => $this->id,
             ]);
+        }
+
+        return $this;
+    }
+
+    public function syncStudents()
+    {
+        if (!$this->contact_id) {
+            return;
+        }
+
+        $response = PowerSchool::to("/ws/contacts/contact/{$this->contact_id}")
+            ->get();
+        $contactStudents = collect($response->contactStudents);
+        dump($response->contactStudents);
+
+        $students = Student::whereIn('sis_id', $contactStudents->pluck('dcid'))
+            ->get()
+            ->keyBy('sis_id');
+        $schools = School::whereIn('school_number', $contactStudents->pluck('schoolNumber'))
+            ->get()
+            ->keyBy('school_number');
+
+        $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students) {
+            $school = $schools->get($students->schoolNumber);
+
+            if (!$school) {
+                return $studentUsers;
+            }
+
+            if ($existingStudent = $students->get($student->dcid)) {
+                $existingStudent->update([
+                    'first_name' => $student->firstName,
+                    'last_name' => $student->lastName,
+                    'student_number' => $student->studentNumber,
+                    'school_id' => $school->id,
+                ]);
+            }
+        }, []);
+
+//        $students = Student::whereIn('sis_id', $data->get('studentids', []))
+//            ->pluck('id')
+//            ->map(fn ($student) => [
+//                'student_id' => $student,
+//                'user_id' => $this->id,
+//            ]);
+//
+//        $user->students()->detach();
+//        DB::table('student_user')->insert($students->toArray());
+    }
+
+    public function setContactId(): static
+    {
+        if (!$this->contact_id && $this->guardian_id) {
+            $response = PowerSchool::pq('com.archboard.sonarfms.guardian.contactid', ['guardianid' => $this->guardian_id]);
+
+            if (isset($response->record) && count($response->record) === 1) {
+                $this->update(['contact_id' => $response->record[0]->personid]);
+            }
         }
 
         return $this;

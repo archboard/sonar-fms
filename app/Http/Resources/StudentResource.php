@@ -29,6 +29,7 @@ class StudentResource extends JsonResource
             'current_exit_date' => $this->current_exit_date,
             'initial_district_entry_date' => $this->initial_district_entry_date,
             'initial_school_entry_date' => $this->initial_school_entry_date,
+            'users' => UserResource::collection($this->whenLoaded('users')),
         ];
     }
 }

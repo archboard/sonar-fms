@@ -42,13 +42,7 @@ class PowerSchoolOpenIdLoginController extends Controller
 
         if ($data->get('usertype') === 'guardian') {
             // Get the contact id if there isn't one set
-            if (!$user->contact_id) {
-                $response = PowerSchool::pq('com.archboard.sonarfms.guardian.contactid', ['guardianid' => $user->guardian_id]);
-
-                if (isset($response->record) && count($response->record) === 1) {
-                    $user->update(['contact_id' => $response->record[0]->personid]);
-                }
-            }
+            $user->setContactId();
 
             // Sync the contact's students
             $students = Student::whereIn('sis_id', $data->get('studentids', []))

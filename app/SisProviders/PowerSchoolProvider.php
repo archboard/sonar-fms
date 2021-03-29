@@ -2,11 +2,13 @@
 
 namespace App\SisProviders;
 
+use App\Events\SchoolSyncComplete;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
+use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -202,22 +204,7 @@ class PowerSchoolProvider implements SisProvider
             $entries = array_reduce(
                 $results,
                 function ($entries, $student) use ($school, $now, $existingStudents) {
-                    $email = optional($student->contact_info)->email;
-                    $attributes = [
-                        'student_number' => $student->local_id,
-                        'first_name' => optional($student->name)->first_name,
-                        'last_name' => optional($student->name)->last_name,
-                        'email' => $email ? strtolower($email) : null,
-                        'grade_level' => $student->school_enrollment->grade_level,
-                        'enrolled' => $student->school_enrollment->enroll_status_code === 0,
-                        'enroll_status' => $student->school_enrollment->enroll_status_code,
-                        'current_entry_date' => $student->school_enrollment->entry_date,
-                        'current_exit_date' => $student->school_enrollment->exit_date,
-                        'initial_district_entry_date' => optional($student->initial_enrollment)->district_entry_date,
-                        'initial_school_entry_date' => optional($student->initial_enrollment)->school_entry_date,
-                        'initial_district_grade_level' => $student->initial_enrollment->district_entry_grade_level,
-                        'initial_school_grade_level' => $student->initial_enrollment->school_entry_grade_level,
-                    ];
+                    $attributes = $this->getStudentAttributes($student);
 
                     // If it exists, then update
                     if ($existingStudent = $existingStudents->get($student->id)) {
@@ -241,6 +228,63 @@ class PowerSchoolProvider implements SisProvider
                 DB::table('students')->insert($entries);
             }
         }
+    }
+
+    public function syncStudent($sisId)
+    {
+        $student = $sisId instanceof Student
+            ? $sisId
+            : Student::where('sis_id', $sisId)->first();
+
+        $id = $student
+            ? $student->sis_id
+            : $sisId;
+        $response = $this->builder->to("/ws/v1/student/{$id}")
+            ->expansions('contact_info,school_enrollment,initial_enrollment')
+            ->get();
+
+        $attributes = $this->getStudentAttributes($response->student);
+
+        if ($student) {
+            $student->update($attributes);
+            return;
+        }
+
+        $school = School::where('sis_id', $response->school_enrollment->school_id)
+            ->first();
+
+        if (!$school) {
+            return;
+        }
+
+        $now = now();
+        $attributes['school_id'] = $school->id;
+        $attributes['sis_id'] = $student->id;
+        $attributes['created_at'] = $now;
+        $attributes['updated_at'] = $now;
+
+        $this->tenant->students()->create($attributes);
+    }
+
+    protected function getStudentAttributes($student)
+    {
+        $email = strtolower(optional($student->contact_info)->email);
+
+        return [
+            'student_number' => $student->local_id,
+            'first_name' => optional($student->name)->first_name,
+            'last_name' => optional($student->name)->last_name,
+            'email' => $email ?: null,
+            'grade_level' => $student->school_enrollment->grade_level,
+            'enrolled' => $student->school_enrollment->enroll_status_code === 0,
+            'enroll_status' => $student->school_enrollment->enroll_status_code,
+            'current_entry_date' => $student->school_enrollment->entry_date,
+            'current_exit_date' => $student->school_enrollment->exit_date,
+            'initial_district_entry_date' => optional($student->initial_enrollment)->district_entry_date,
+            'initial_school_entry_date' => optional($student->initial_enrollment)->school_entry_date,
+            'initial_district_grade_level' => $student->initial_enrollment->district_entry_grade_level,
+            'initial_school_grade_level' => $student->initial_enrollment->school_entry_grade_level,
+        ];
     }
 
     public function syncSchoolCourses($sisId)
@@ -457,6 +501,16 @@ class PowerSchoolProvider implements SisProvider
         });
     }
 
+    public function syncSchoolStudentGuardians($sisId)
+    {
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+
+        $school->students
+            ->each(function (Student $student) {
+                $student->syncGuardians();
+            });
+    }
+
     /**
      * Syncs everything for a school:
      * staff, students, courses, sections, and enrollment
@@ -469,9 +523,13 @@ class PowerSchoolProvider implements SisProvider
         $this->syncSchoolTerms($sisId);
         $this->syncSchoolStaff($sisId);
         $this->syncSchoolStudents($sisId);
+        $this->syncSchoolStudentGuardians($sisId);
         $this->syncSchoolCourses($sisId);
         $this->syncSchoolSections($sisId);
         $this->syncSchoolStudentEnrollment($sisId);
+
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+        event(new SchoolSyncComplete($school));
     }
 
     public function getBuilder(): RequestBuilder
