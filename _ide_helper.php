@@ -14989,6 +14989,17 @@
      
 }
 
+    namespace Laravel\Horizon { 
+            /**
+     * 
+     *
+     */ 
+        class Horizon {
+         
+    }
+     
+}
+
     namespace Silber\Bouncer { 
             /**
      * 
@@ -18939,6 +18950,7 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
+            class Horizon extends \Laravel\Horizon\Horizon {}
             class Bouncer extends \Silber\Bouncer\BouncerFacade {}
             class GeoIP extends \Torann\GeoIP\Facades\GeoIP {}
             class Timezone extends \JamesMills\LaravelTimezone\Facades\Timezone {}
