@@ -10532,11 +10532,23 @@
          * 
          *
          * @see \App\Providers\AppServiceProvider::boot()
+         * @return \App\Models\Tenant 
          * @static 
          */ 
         public static function tenant()
         {
                         return \Illuminate\Http\Request::tenant();
+        }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @return \App\Models\School 
+         * @static 
+         */ 
+        public static function school()
+        {
+                        return \Illuminate\Http\Request::school();
         }
          
     }
@@ -15673,11 +15685,23 @@
          * 
          *
          * @see \App\Providers\AppServiceProvider::boot()
+         * @return \App\Models\Tenant 
          * @static 
          */ 
         public static function tenant()
         {
                         return \Illuminate\Http\Request::tenant();
+        }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @return \App\Models\School 
+         * @static 
+         */ 
+        public static function school()
+        {
+                        return \Illuminate\Http\Request::school();
         }
          
     }
