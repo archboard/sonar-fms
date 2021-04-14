@@ -34,4 +34,22 @@ class DepartmentTest extends TestCase
             ->assertOk()
             ->assertJson(Department::resource($departments)->response()->getData(true));
     }
+
+    public function test_can_create_new_department()
+    {
+        $this->signIn();
+        $this->assignPermission('create', Department::class);
+
+        $this->post(route('departments.store'), ['name' => 'Department Name'])
+            ->assertOk()
+            ->assertJsonStructure([
+                'level', 'message', 'data',
+            ]);
+
+        $this->assertDatabaseHas('departments', [
+            'tenant_id' => $this->tenant->id,
+            'id' => 1,
+            'name' => 'Department Name'
+        ]);
+    }
 }
