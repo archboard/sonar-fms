@@ -27,7 +27,7 @@ class AddCurrencyFieldsToSchools extends Migration
     public function down()
     {
         Schema::table('schools', function (Blueprint $table) {
-            $table->dropColumn(['current_symbol', 'currency_decimals']);
+            $table->dropColumn(['currency_symbol', 'currency_decimals']);
         });
     }
 }
