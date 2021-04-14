@@ -166,10 +166,9 @@ class User extends Authenticatable
             return;
         }
 
-        $response = PowerSchool::to("/ws/contacts/contact/{$this->contact_id}")
-            ->get();
-        $contactStudents = collect($response->contactStudents);
-        dump($response->contactStudents);
+        $response = PowerSchool::get("/ws/contacts/{$this->contact_id}/students");
+        $contactStudents = collect($response);
+        ray($contactStudents)->purple();
 
         $students = Student::whereIn('sis_id', $contactStudents->pluck('dcid'))
             ->get()
@@ -178,6 +177,10 @@ class User extends Authenticatable
             ->get()
             ->keyBy('school_number');
 
+        // Attach the school relationship
+        $this->schools()->syncWithoutDetaching($schools->pluck('id'));
+
+        // TODO: finish
         $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students) {
             $school = $schools->get($students->schoolNumber);
 
@@ -192,7 +195,14 @@ class User extends Authenticatable
                     'student_number' => $student->studentNumber,
                     'school_id' => $school->id,
                 ]);
+
+                $studentUsers[] = $existingStudent->id;
+                return $studentUsers;
             }
+
+            // Create the student here
+
+            return $studentUsers;
         }, []);
 
 //        $students = Student::whereIn('sis_id', $data->get('studentids', []))
