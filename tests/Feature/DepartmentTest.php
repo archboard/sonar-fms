@@ -3,14 +3,19 @@
 namespace Tests\Feature;
 
 use App\Models\Department;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class DepartmentTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->signIn();
+    }
 
     public function test_cannot_get_all_departments_without_permission()
     {
@@ -20,7 +25,6 @@ class DepartmentTest extends TestCase
 
     public function test_can_get_all_departments_with_permission()
     {
-        $this->signIn();
         $this->assignPermission('viewAny', Department::class);
 
         $this->tenant->departments()
@@ -37,7 +41,6 @@ class DepartmentTest extends TestCase
 
     public function test_can_create_new_department()
     {
-        $this->signIn();
         $this->assignPermission('create', Department::class);
 
         $this->post(route('departments.store'), ['name' => 'Department Name'])
@@ -51,5 +54,28 @@ class DepartmentTest extends TestCase
             'id' => 1,
             'name' => 'Department Name'
         ]);
+    }
+
+    public function test_can_get_existing_department()
+    {
+        $this->assignPermission('view', Department::class);
+
+        /** @var Department $department */
+        $department = $this->tenant->departments()
+            ->save(Department::factory()->make());
+
+        $this->get(route('departments.show', $department))
+            ->assertOk()
+            ->assertJson($department->toResource()->response()->getData(true));
+    }
+
+    public function test_cant_get_existing_department_without_permission()
+    {
+        /** @var Department $department */
+        $department = $this->tenant->departments()
+            ->save(Department::factory()->make());
+
+        $this->get(route('departments.show', $department))
+            ->assertForbidden();
     }
 }
