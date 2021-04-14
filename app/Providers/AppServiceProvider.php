@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
@@ -50,5 +51,7 @@ class AppServiceProvider extends ServiceProvider
                 return new School();
             });
         }
+
+        Request::macro('tenant', fn () => Tenant::current());
     }
 }
