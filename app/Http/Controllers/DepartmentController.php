@@ -62,26 +62,25 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Department $department)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Department $department)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required',
+        ]);
+
+        $department->update($data);
+
+        return response()->json([
+            'level' => 'success',
+            'message' => __('Department updated successfully.'),
+            'data' => $department->toResource(),
+        ]);
     }
 
     /**

@@ -78,4 +78,25 @@ class DepartmentTest extends TestCase
         $this->get(route('departments.show', $department))
             ->assertForbidden();
     }
+
+    public function test_can_update_existing_department()
+    {
+        $this->assignPermission('update', Department::class);
+
+        /** @var Department $department */
+        $department = $this->tenant->departments()
+            ->save(Department::factory()->make());
+
+        $this->put(route('departments.update', $department), ['name' => 'new name'])
+            ->assertOk()
+            ->assertJsonStructure([
+                'level', 'message', 'data',
+            ]);
+
+        $this->assertDatabaseHas('departments', [
+            'tenant_id' => $this->tenant->id,
+            'id' => $department->id,
+            'name' => 'new name',
+        ]);
+    }
 }
