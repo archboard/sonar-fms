@@ -99,4 +99,24 @@ class DepartmentTest extends TestCase
             'name' => 'new name',
         ]);
     }
+
+    public function test_can_delete_department()
+    {
+        $this->assignPermission('delete', Department::class);
+
+        /** @var Department $department */
+        $department = $this->tenant->departments()
+            ->save(Department::factory()->make());
+
+        $this->delete(route('departments.destroy', $department))
+            ->assertOk()
+            ->assertJsonStructure([
+                'level', 'message',
+            ]);
+
+        $this->assertDatabaseMissing('departments', [
+            'tenant_id' => $this->tenant->id,
+            'id' => $department->id,
+        ]);
+    }
 }

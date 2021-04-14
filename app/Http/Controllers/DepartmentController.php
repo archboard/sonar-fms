@@ -87,10 +87,15 @@ class DepartmentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Department $department)
     {
-        //
+        $department->delete();
+
+        return response()->json([
+            'level' => 'success',
+            'message' => __('Department deleted successfully.'),
+        ]);
     }
 }
