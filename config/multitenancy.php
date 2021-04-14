@@ -35,7 +35,10 @@ return [
     'switch_tenant_tasks' => [
         \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
         \App\Tasks\ChangeConfigTask::class,
-        \App\Tasks\ScopeBouncer::class,
+        // I think scope needs to be set to school, not tenant
+        // since schools are the lowest 'tenancy' in the app
+        // and permissions are restricted to them
+        // \App\Tasks\ScopeBouncer::class,
     ],
 
     /*

@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\AllowsPasswordLogins;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
+use App\Http\Middleware\ScopeBouncer;
 use App\Http\Middleware\SelfHosted;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -41,6 +42,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            ScopeBouncer::class,
 
             // This needs to be last
             HandleInertiaRequests::class,
