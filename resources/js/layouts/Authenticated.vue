@@ -226,7 +226,7 @@
         </div>
       </div>
 
-      <main class="flex-1 relative overflow-y-auto focus:outline-none" tabindex="0">
+      <main class="relative overflow-y-auto focus:outline-none" tabindex="0">
         <slot name="content">
           <div class="py-6 space-y-6">
             <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -246,16 +246,17 @@
             </div>
           </div>
         </slot>
+
+        <footer>
+          <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
+            <div class="border-t border-gray-200 py-8 text-sm text-gray-500 text-center sm:text-left">
+              <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} <a href="https://archboard.io" target="_blank" class="hover:underline">Archboard LLC</a>.</span>
+              <span class="block sm:inline"> All rights reserved.</span>
+            </div>
+          </div>
+        </footer>
       </main>
 
-      <footer>
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
-          <div class="border-t border-gray-200 py-8 text-sm text-gray-500 text-center sm:text-left">
-            <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} Archboard, LLC.</span>
-            <span class="block sm:inline">All rights reserved.</span>
-          </div>
-        </div>
-      </footer>
     </div>
 
     <Notifications />
