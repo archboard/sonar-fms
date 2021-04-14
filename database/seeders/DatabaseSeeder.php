@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        if (app()->environment('testing')) {
+            $this->call(TenantSeeder::class);
+        }
     }
 }
