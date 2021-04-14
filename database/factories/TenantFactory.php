@@ -30,7 +30,7 @@ class TenantFactory extends Factory
     {
         return $this->state([
             'name' => 'District',
-            'domain' => env('TESTING_APP_URL'),
+            'domain' => parse_url(env('TESTING_APP_URL'))['host'],
             'ps_url' => env('POWERSCHOOL_ADDRESS'),
             'ps_client_id' => env('POWERSCHOOL_CLIENT_ID'),
             'ps_secret' => env('POWERSCHOOL_CLIENT_SECRET'),

@@ -2,23 +2,29 @@
 
 namespace App\Notifications;
 
+use App\Models\School;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TenantSyncComplete extends Notification
+class SchoolSyncFinished extends Notification
 {
     use Queueable;
 
     /**
+     * @var School
+     */
+    public School $school;
+
+    /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param School $school
      */
-    public function __construct()
+    public function __construct(School $school)
     {
-        //
+        $this->school = $school;
     }
 
     /**
@@ -41,8 +47,10 @@ class TenantSyncComplete extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('[' . config('app.name') . '] ' . __('Full Sync Complete'))
-            ->line(__('This is letting you know that the data for all of your schools have completed their scheduled sync.'));
+            ->subject('[' . config('app.name') . '] ' . __('School Sync Complete'))
+            ->line(__('This is letting you know that the data for :school has finished syncing from PowerSchool.', [
+                'school' => $this->school->name,
+            ]));
     }
 
     /**

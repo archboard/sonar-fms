@@ -12,6 +12,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     protected Tenant $tenant;
+    protected ?User $user = null;
 
     protected function setUp(): void
     {
@@ -29,6 +30,10 @@ abstract class TestCase extends BaseTestCase
 
     public function signIn(): User
     {
+        if ($this->user) {
+            return $this->user;
+        }
+
         /** @var School $school */
         $school = $this->tenant->schools->random();
 
@@ -41,7 +46,16 @@ abstract class TestCase extends BaseTestCase
             );
 
         $user->schools()->attach($school->id);
+        \Bouncer::scope()->to($user->school->id);
+
+        $this->be($user);
+        $this->user = $user;
 
         return $user;
+    }
+
+    public function assignPermission($permission = '*', $model = '*'): User
+    {
+        return $this->user->givePermissionForSchool($this->user->school, $permission, $model);
     }
 }

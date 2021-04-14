@@ -59,6 +59,11 @@ class Tenant extends TenantBase
         return $this->hasMany(SyncTime::class);
     }
 
+    public function departments(): HasMany
+    {
+        return $this->hasMany(Department::class);
+    }
+
     public function getSisAttribute(): string
     {
         return $this->sisProvider()->getSisLabel();

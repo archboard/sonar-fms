@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         JsonResource::withoutWrapping();
+        Inertia::setRootView('layouts.app');
 
         if ($this->app->environment('local')) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);

@@ -64,6 +64,9 @@ Route::middleware('tenant')->group(function () {
         Route::delete('/student-selection', \App\Http\Controllers\RemoveStudentSelectionController::class)
             ->name('student-selection.remove');
 
+        Route::resource('/departments', \App\Http\Controllers\DepartmentController::class)
+            ->except('create', 'edit');
+
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])

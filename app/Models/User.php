@@ -7,6 +7,7 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -225,6 +226,22 @@ class User extends Authenticatable
                 $this->update(['contact_id' => $response->record[0]->personid]);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Assigns a permission to a user for a school
+     *
+     * @param School $school
+     * @param string $permission
+     * @param string|Model $model
+     * @return User
+     */
+    public function givePermissionForSchool(School $school, string $permission = '*', $model = '*'): static
+    {
+        \Bouncer::scope()->to($school->id);
+        $this->allow($permission, $model);
 
         return $this;
     }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncSchool;
 use App\Jobs\SyncSchools;
+use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
-use Silber\Bouncer\BouncerFacade;
 
 class CreateTenantController extends Controller
 {
@@ -41,18 +42,26 @@ class CreateTenantController extends Controller
         $tenant->forceFill(Arr::except($data, 'email'));
         $tenant->save();
 
+        // Kick off job to sync schools
+        SyncSchools::dispatchSync($tenant);
+
         // Save the user and give them full privileges
         /** @var User $user */
         $user = $tenant->users()->updateOrCreate(Arr::only($data, 'email'));
-        BouncerFacade::scope()->to($tenant->id);
-        BouncerFacade::allow($user)->everything();
+        $user->schools()->sync($tenant->schools->pluck('id'));
+
+        // This is the equivalent of doing `everything()`
+        $user->schools->each(function (School $school) use ($user) {
+            $user->givePermissionForSchool($school);
+
+            // Dispatch job to sync school in background
+            SyncSchool::dispatch($school);
+        });
+
         auth()->login($user);
 
-        // Kick off job to sync schools
-        dispatch(new SyncSchools($tenant));
+        session()->flash('success', __('Installation complete. Sync has been started and will take several minutes to complete.'));
 
-        session()->flash('success', __('Installation complete. Sync has been started.'));
-
-        return back();
+        return redirect()->route('home');
     }
 }
