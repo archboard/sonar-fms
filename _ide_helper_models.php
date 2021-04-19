@@ -40,16 +40,40 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Department
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\DepartmentFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Department newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Department newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Department query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Department whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Department whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Department whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Department whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Department whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperDepartment extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\School
  *
  * @mixin IdeHelperSchool
  * @property int $id
  * @property int $tenant_id
  * @property int $sis_id
- * @property int $school_number
+ * @property int|null $school_number
  * @property string $name
- * @property int $high_grade
- * @property int $low_grade
+ * @property int|null $high_grade
+ * @property int|null $low_grade
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $currency_symbol
@@ -93,6 +117,7 @@ namespace App\Models{
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
+ * @property int|null $term_id
  * @property int $course_id
  * @property int $user_id
  * @property int $sis_id
@@ -101,7 +126,6 @@ namespace App\Models{
  * @property string|null $external_expression
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $term_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
  * @property-read int|null $students_count
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
@@ -136,11 +160,11 @@ namespace App\Models{
  * @property string|null $first_name
  * @property string|null $last_name
  * @property string|null $email
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $grade_level
  * @property bool $enrolled
  * @property int $enroll_status
- * @property string|null $grade_level
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $preferred_name
  * @property \Illuminate\Support\Carbon|null $current_entry_date
  * @property \Illuminate\Support\Carbon|null $current_exit_date
@@ -149,6 +173,8 @@ namespace App\Models{
  * @property string|null $initial_district_grade_level
  * @property string|null $initial_school_grade_level
  * @property-read mixed $full_name
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
+ * @property-read int|null $guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \App\Models\Tenant $tenant
@@ -159,6 +185,7 @@ namespace App\Models{
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
+ * @method static Builder|Student sisId($sisId)
  * @method static Builder|Student whereCreatedAt($value)
  * @method static Builder|Student whereCurrentEntryDate($value)
  * @method static Builder|Student whereCurrentExitDate($value)
@@ -242,8 +269,9 @@ namespace App\Models{
  * @property string $sis_provider
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $allows_pw_auth
  * @property string|null $sync_notification_emails
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
+ * @property-read int|null $departments_count
  * @property-read string $sis
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
@@ -256,12 +284,12 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
  * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
+ * @method static \Database\Factories\TenantFactory factory(...$parameters)
  * @method static \Spatie\Multitenancy\TenantCollection|static[] get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowPasswordAuth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowsPwAuth($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
@@ -324,16 +352,16 @@ namespace App\Models{
  * @mixin IdeHelperUser
  * @property int $id
  * @property int $tenant_id
+ * @property int|null $sis_id
  * @property string|null $first_name
  * @property string|null $last_name
  * @property string $email
  * @property string|null $password
  * @property int|null $school_id
+ * @property string|null $timezone
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $timezone
- * @property int|null $sis_id
  * @property int|null $contact_id
  * @property int|null $guardian_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities

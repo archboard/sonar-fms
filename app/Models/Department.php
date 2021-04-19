@@ -7,6 +7,9 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperDepartment
+ */
 class Department extends Model
 {
     use HasFactory;
