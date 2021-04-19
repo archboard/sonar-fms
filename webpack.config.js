@@ -17,11 +17,6 @@ module.exports = {
       key: fs.readFileSync(process.env.APP_SSL_KEY),
       cert: fs.readFileSync(process.env.APP_SSL_CERT),
     },
-    injectHot: (config) => {
-      config.output.publicPath = `${process.env.APP_URL}:${process.env.APP_PORT}/`
-
-      return true
-    },
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
