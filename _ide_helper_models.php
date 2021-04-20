@@ -271,6 +271,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $sync_notification_emails
  * @property bool $allow_oidc_login
+ * @property string|null $smtp_host
+ * @property string|null $smtp_port
+ * @property string|null $smtp_username
+ * @property string|null $smtp_password
+ * @property string|null $smtp_from_name
+ * @property string|null $smtp_from_address
+ * @property string|null $smtp_encryption
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
  * @property-read string $sis
@@ -301,6 +308,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant wherePsSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant wherePsUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpEncryption($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpFromAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpFromName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpPort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionExpiresAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionStartedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSyncNotificationEmails($value)

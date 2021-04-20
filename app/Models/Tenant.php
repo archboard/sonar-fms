@@ -117,6 +117,13 @@ class Tenant extends TenantBase
             'ps_secret' => $this->ps_secret,
             'allow_password_auth' => $this->allow_password_auth,
             'allow_oidc_login' => $this->allow_oidc_login,
+            'smtp_host' => $this->smtp_host,
+            'smtp_port' => $this->smtp_port,
+            'smtp_username' => $this->smtp_username,
+            'smtp_password' => $this->smtp_password,
+            'smtp_from_name' => $this->smtp_from_name,
+            'smtp_from_address' => $this->smtp_from_address,
+            'smtp_encryption' => $this->smtp_encryption,
         ];
     }
 }

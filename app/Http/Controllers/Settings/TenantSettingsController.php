@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TenantSettingsController extends Controller
 {
@@ -39,6 +40,13 @@ class TenantSettingsController extends Controller
             'ps_secret' => 'required|uuid',
             'allow_password_auth' => 'required|boolean',
             'allow_oidc_login' => 'required|boolean',
+            'smtp_host' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_port' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_username' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_password' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_from_name' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_from_address' => [Rule::requiredIf(!config('app.cloud')), 'email'],
+            'smtp_encryption' => ['nullable'],
         ]);
 
         Tenant::current()->update($data);

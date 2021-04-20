@@ -23,6 +23,13 @@ context('Tenant Settings', () => {
       ps_url: 'https://example.com',
       ps_client_id: '03f7db62-e1a7-497d-8d04-d892ba3145ba',
       ps_secret: 'ed700686-b5c5-4064-83fb-eec81144f1cf',
+      smtp_host: '127.0.0.1',
+      smtp_port: '2525',
+      smtp_username: 'Sonar FMS',
+      smtp_password: 'nothing',
+      smtp_from_name: 'Sonar FMS',
+      smtp_from_address: 'notifications@sonarfms.app',
+      // smtp_encryption: null,
     }
 
     cy.visit('/settings/tenant')
@@ -32,6 +39,7 @@ context('Tenant Settings', () => {
       cy.getCy(name).clear().type(data[name])
     })
     cy.getCy('allow_password_auth').click()
+    cy.getCy('allow_oidc_login').click()
     cy.getCy('form').submit()
 
     // Assert that there was a message
@@ -43,6 +51,7 @@ context('Tenant Settings', () => {
       cy.getCy(name).invoke('val').should('eq', data[name])
     })
     cy.getCy('allow_password_auth').should('be.checked')
+    cy.getCy('allow_oidc_login').should('be.checked')
   })
 
   it('Fails validation', () => {
