@@ -49,6 +49,9 @@ return [
             'lastName' => 'last_name',
             'email' => 'email',
             'usersDCID' => 'sis_id',
+            'ps_dcid' => 'sis_id',
+            'first_name' => 'first_name',
+            'last_name' => 'last_name',
         ],
         'guard' => 'web',
         'identifying_attributes' => [
@@ -68,6 +71,9 @@ return [
             'lastName' => 'last_name',
             'email' => 'email',
             'dcid' => 'guardian_id',
+            'ps_dcid' => 'guardian_id',
+            'first_name' => 'first_name',
+            'last_name' => 'last_name',
         ],
         'guard' => 'web',
         'identifying_attributes' => [
@@ -81,20 +87,6 @@ return [
 
     'student' => [
         'allowed' => false,
-        'model' => \App\User::class,
-        'attributes' => [
-            'firstName' => 'first_name',
-            'lastName' => 'last_name',
-            'email' => 'email',
-        ],
-        'guard' => 'web',
-        'identifying_attributes' => [
-            'openid_claimed_id' => 'openid_identity',
-        ],
-        'attribute_transformers' => [
-            'email' => \GrantHolle\PowerSchool\Auth\Transformers\Lowercase::class,
-        ],
-        'redirectTo' => '',
     ],
 
 ];

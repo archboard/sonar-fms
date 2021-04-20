@@ -42,6 +42,7 @@ namespace App\Models{
 /**
  * App\Models\Department
  *
+ * @mixin IdeHelperDepartment
  * @property int $id
  * @property int $tenant_id
  * @property string $name
@@ -57,7 +58,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Department whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Department whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Department whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperDepartment extends \Eloquent {}
 }
@@ -270,6 +270,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $sync_notification_emails
+ * @property bool $allow_oidc_login
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
  * @property-read string $sis
@@ -289,6 +290,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowOidcLogin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowPasswordAuth($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)

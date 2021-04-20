@@ -16,11 +16,12 @@ class AuthenticatedSessionController extends Controller
      *
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function create()
+    public function create(Request $request)
     {
         return inertia('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
+            'tenant' => $request->tenant()->toResource(),
         ]);
     }
 

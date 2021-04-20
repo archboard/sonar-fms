@@ -26,10 +26,17 @@ Route::middleware('self_hosted')->group(function () {
 Route::middleware('tenant')->group(function () {
     Route::get('/', \App\Http\Controllers\IndexController::class);
 
-    // PowerSchool auth
+    // PowerSchool OpenID 2.0 auth
     Route::get('/auth/powerschool/openid', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'authenticate']);
     Route::get('/auth/powerschool/openid/verify', [\App\Http\Controllers\Auth\PowerSchoolOpenIdLoginController::class, 'login'])
         ->name('openid.verify');
+
+    // PowerSchool OpenID Connect
+    Route::middleware('allows_oidc_auth')->group(function () {
+        Route::get('/auth/powerschool/oidc/login', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'authenticate'])
+            ->name('oidc.login');
+        Route::get('/auth/powerschool/oidc', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'login']);
+    });
 
     // Normal auth
     Route::middleware('allows_pw_auth')->group(function () {

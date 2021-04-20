@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AllowsOidcLogins;
 use App\Http\Middleware\AllowsPasswordLogins;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
@@ -79,5 +80,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'self_hosted' => SelfHosted::class,
         'allows_pw_auth' => AllowsPasswordLogins::class,
+        'allows_oidc_auth' => AllowsOidcLogins::class,
     ];
 }

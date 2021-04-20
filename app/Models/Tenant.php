@@ -21,6 +21,7 @@ class Tenant extends TenantBase
     protected $guarded = [];
     protected $casts = [
         'allow_password_auth' => 'boolean',
+        'allow_oidc_login' => 'boolean',
     ];
 
     protected static function booted()
