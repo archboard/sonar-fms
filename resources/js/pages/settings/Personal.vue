@@ -19,6 +19,7 @@
             <InputWrap :error="form.errors.password">
               <Label for="password">{{ __('Password') }}</Label>
               <Input v-model="form.password" type="password" id="password" data-cy="password" />
+              <HelpText class="mt-1 ml-1">{{ __('Leave empty to keep your current password.') }}</HelpText>
             </InputWrap>
             <InputWrap :error="form.errors.password_confirmation">
               <Label for="password_confirmation">{{ __('Confirm Password') }}</Label>
@@ -48,9 +49,11 @@ import Input from '../../components/forms/Input'
 import Button from '../../components/Button'
 import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
+import HelpText from '../../components/HelpText'
 
 export default defineComponent({
   components: {
+    HelpText,
     CardPadding,
     CardWrapper,
     Button,
@@ -73,9 +76,9 @@ export default defineComponent({
       password_confirmation: '',
     })
     const submit = () => {
-      form.value.post($route('settings.personal'), {
+      form.post($route('settings.personal'), {
         onFinish () {
-          form.value.reset('password', 'password_confirmation')
+          form.reset('password', 'password_confirmation')
         }
       })
     }
