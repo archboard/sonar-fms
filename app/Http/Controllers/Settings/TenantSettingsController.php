@@ -32,11 +32,13 @@ class TenantSettingsController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
+            'license' => 'required|uuid',
             'name' => 'required',
             'ps_url' => 'required|url',
             'ps_client_id' => 'required|uuid',
             'ps_secret' => 'required|uuid',
             'allow_password_auth' => 'required|boolean',
+            'allow_oidc_login' => 'required|boolean',
         ]);
 
         Tenant::current()->update($data);
