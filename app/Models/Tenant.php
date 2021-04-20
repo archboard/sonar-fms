@@ -111,10 +111,12 @@ class Tenant extends TenantBase
     {
         return [
             'name' => $this->name,
+            'license' => $this->license,
             'ps_url' => $this->ps_url,
             'ps_client_id' => $this->ps_client_id,
             'ps_secret' => $this->ps_secret,
             'allow_password_auth' => $this->allow_password_auth,
+            'allow_oidc_login' => $this->allow_oidc_login,
         ];
     }
 }

@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Http;
 
 class PowerSchoolOidcController extends Controller
 {
-    use AuthenticatesUsingPowerSchoolWithOidc;
+    use AuthenticatesUsingPowerSchoolWithOidc {
+        authenticate as traitAuthenticate;
+    }
 
     protected function getPowerSchoolUrl(): string
     {
@@ -26,6 +28,17 @@ class PowerSchoolOidcController extends Controller
     public function getClientSecret(): string
     {
         return Tenant::current()->ps_secret;
+    }
+
+    public function authenticate(Request $request)
+    {
+        $tenant = $request->tenant();
+
+        if ($tenant->allow_oidc_login) {
+            return $this->traitAuthenticate($request);
+        }
+
+        return redirect($tenant->ps_url);
     }
 
     protected function authenticated(Request $request, $user, Collection $data)

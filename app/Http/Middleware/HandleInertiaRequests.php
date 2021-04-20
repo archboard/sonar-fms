@@ -56,6 +56,11 @@ class HandleInertiaRequests extends Middleware
             'mainNav' => function () use ($request) {
                 /** @var User $user */
                 $user = $request->user();
+
+                if (!$user) {
+                    return [];
+                }
+
                 $links = [
                     [
                         'label' => __('Dashboard'),
@@ -98,6 +103,11 @@ class HandleInertiaRequests extends Middleware
             'subNav' => function () use ($request) {
                 /** @var User $user */
                 $user = $request->user();
+
+                if (!$user) {
+                    return [];
+                }
+
                 $links = [
                     [
                         'label' => __('Personal settings'),
@@ -106,11 +116,13 @@ class HandleInertiaRequests extends Middleware
                     ]
                 ];
 
-                $links[] = [
-                    'label' => __('System settings'),
-                    'route' => route('settings.tenant'),
-                    'active' => $request->routeIs('settings.tenant'),
-                ];
+                if ($user->can('edit tenant settings')) {
+                    $links[] = [
+                        'label' => __('System settings'),
+                        'route' => route('settings.tenant'),
+                        'active' => $request->routeIs('settings.tenant'),
+                    ];
+                }
 
                 $links[] = [
                     'label' => __('Sign out'),

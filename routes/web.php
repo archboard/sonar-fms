@@ -32,23 +32,17 @@ Route::middleware('tenant')->group(function () {
         ->name('openid.verify');
 
     // PowerSchool OpenID Connect
-    Route::middleware('allows_oidc_auth')->group(function () {
-        Route::get('/auth/powerschool/oidc/login', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'authenticate'])
-            ->name('oidc.login');
-        Route::get('/auth/powerschool/oidc', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'login']);
-    });
+    Route::get('/auth/powerschool/oidc/login', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'authenticate'])
+        ->name('oidc.login');
+    Route::middleware('allows_oidc_auth')
+        ->get('/auth/powerschool/oidc', [\App\Http\Controllers\Auth\PowerSchoolOidcController::class, 'login']);
 
     // Normal auth
-    Route::middleware('allows_pw_auth')->group(function () {
-        require __DIR__.'/auth.php';
-    });
+    require __DIR__.'/auth.php';
 
     Route::middleware('auth')->group(function () {
         Route::get('/ping', \App\Http\Controllers\CheckAuthStatusController::class)
             ->name('auth.status');
-
-        Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
-            ->name('logout');
 
         Route::get('/csrf-token', \App\Http\Controllers\RefreshCsrfTokenController::class)
             ->name('csrf-token');

@@ -10,28 +10,34 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware('guest')
     ->name('login');
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest');
-
-Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
-    ->middleware('guest')
-    ->name('password.request');
-
-Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->middleware('guest')
-    ->name('password.email');
-
-Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->middleware('guest')
-    ->name('password.reset');
-
-Route::post('/reset-password', [NewPasswordController::class, 'store'])
-    ->middleware('guest')
-    ->name('password.update');
-
-Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
+Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
-    ->name('password.confirm');
+    ->name('logout');
 
-Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
-    ->middleware('auth');
+Route::middleware('allows_pw_auth')->group(function () {
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('guest');
+
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+        ->middleware('guest')
+        ->name('password.request');
+
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware('guest')
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+        ->middleware('guest')
+        ->name('password.reset');
+
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->middleware('guest')
+        ->name('password.update');
+
+    Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
+        ->middleware('auth')
+        ->name('password.confirm');
+
+    Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
+        ->middleware('auth');
+});
