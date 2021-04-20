@@ -22,6 +22,17 @@ class ChangeConfigTask implements SwitchTenantTask
         Config::set('powerschool.client_id', $tenant->ps_client_id);
         Config::set('powerschool.client_secret', $tenant->ps_secret);
 
+        if (!config('app.cloud')) {
+            Config::set('mail.default', 'smtp');
+            Config::set('mail.mailers.smtp.host', $tenant->smtp_host);
+            Config::set('mail.mailers.smtp.port', $tenant->smtp_port);
+            Config::set('mail.mailers.smtp.username', $tenant->smtp_username);
+            Config::set('mail.mailers.smtp.password', $tenant->smtp_password);
+            Config::set('mail.from.name', $tenant->smtp_from_name);
+            Config::set('mail.from.address.', $tenant->smtp_from_address);
+            Config::set('mail.mailers.smtp.encryption', $tenant->smtp_encryption);
+        }
+
         URL::forceRootUrl(config('app.url'));
 
         Inertia::share('tenant', function () use ($tenant) {
