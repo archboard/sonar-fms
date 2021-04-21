@@ -54,6 +54,7 @@ class SyncTenantSisData extends Command
         $query->cursor()
             ->each(function (Tenant $tenant) {
                 $this->info("Dispatching job for {$tenant->name} from {$tenant->sis}.");
+                $tenant->makeCurrent();
                 SyncTenantSisDataJob::dispatch($tenant);
             });
 
