@@ -25,12 +25,12 @@
               <Label for="password_confirmation">{{ __('Confirm Password') }}</Label>
               <Input v-model="form.password_confirmation" type="password" id="password_confirmation" data-cy="password_confirmation" />
             </InputWrap>
-            <InputWrap>
-              <Button type="submit" :loading="form.processing">
-                {{ __('Save') }}
-              </Button>
-            </InputWrap>
           </Fieldset>
+          <CardAction :negative-margin="true">
+            <Button type="submit" :loading="form.processing">
+              {{ __('Save') }}
+            </Button>
+          </CardAction>
         </form>
       </CardPadding>
     </CardWrapper>
@@ -50,9 +50,11 @@ import Button from '../../components/Button'
 import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
 import HelpText from '../../components/HelpText'
+import CardAction from '../../components/CardAction'
 
 export default defineComponent({
   components: {
+    CardAction,
     HelpText,
     CardPadding,
     CardWrapper,
