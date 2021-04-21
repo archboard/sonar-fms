@@ -30,12 +30,14 @@
                 <Label>
                   <Checkbox name="allow_password_auth" v-model:checked="form.allow_password_auth" data-cy="allow_password_auth" />
                   <CheckboxText>{{ __('Allow password authentication') }}</CheckboxText>
+                  <help-text>{{ __('This will allow users to create and manage a password outside of PowerSchool and allow them to login directly.') }}</help-text>
                 </Label>
               </InputWrap>
               <InputWrap :error="form.errors.allow_oidc_login">
                 <Label>
                   <Checkbox name="allow_oidc_login" v-model:checked="form.allow_oidc_login" data-cy="allow_oidc_login" />
                   <CheckboxText>{{ __('Allow PowerSchool OpenID Connect authentication') }}</CheckboxText>
+                  <help-text>{{ __('This will display a single-sign-on button for PowerSchool and only applies to version 20.11 and newer of PowerSchool.') }}</help-text>
                 </Label>
               </InputWrap>
             </Fieldset>
