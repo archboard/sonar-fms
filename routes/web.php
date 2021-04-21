@@ -86,6 +86,9 @@ Route::middleware('tenant')->group(function () {
                 Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update']);
                 Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index'])
                     ->name('settings.tenant');
+
+                Route::resource('sync-times', \App\Http\Controllers\SyncTimeController::class)
+                    ->only('index', 'store', 'destroy');
             });
         });
     });

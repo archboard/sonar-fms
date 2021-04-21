@@ -57,7 +57,7 @@ class Tenant extends TenantBase
 
     public function syncTimes(): HasMany
     {
-        return $this->hasMany(SyncTime::class);
+        return $this->hasMany(SyncTime::class)->orderBy('hour');
     }
 
     public function departments(): HasMany

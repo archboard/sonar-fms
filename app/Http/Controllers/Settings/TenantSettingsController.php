@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SyncTimeResource;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,13 +15,15 @@ class TenantSettingsController extends Controller
      *
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function index()
+    public function index(Request $request)
     {
         $title = __('Tenant Settings');
+        $tenant = $request->tenant();
 
         return inertia('settings/Tenant', [
             'title' => $title,
-            'tenant' => Tenant::current()->toArray(),
+            'tenant' => $tenant->toArray(),
+            'syncTimes' => SyncTimeResource::collection($tenant->syncTimes),
         ])->withViewData(compact('title'));
     }
 

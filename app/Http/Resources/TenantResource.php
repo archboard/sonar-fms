@@ -20,6 +20,7 @@ class TenantResource extends JsonResource
             'subscription_started_at' => $this->subscription_started_at,
             'allow_oidc_login' => $this->allow_oidc_login,
             'allow_password_auth' => $this->allow_password_auth,
+            'sync_times' => SyncTimeResource::collection($this->whenLoaded('syncTimes')),
         ];
     }
 }
