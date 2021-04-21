@@ -2,14 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SyncSchool;
-use App\Models\School;
+use App\Jobs\SyncTenantSisData as SyncTenantSisDataJob;
 use App\Models\Tenant;
-use App\Notifications\TenantSyncComplete;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Support\Facades\Notification;
 
 class SyncTenantSisData extends Command
 {
@@ -57,22 +53,8 @@ class SyncTenantSisData extends Command
 
         $query->cursor()
             ->each(function (Tenant $tenant) {
-                $tenant->makeCurrent();
-
-                $this->info("Syncing {$tenant->name} from {$tenant->sis}.");
-
-                $tenant->sisProvider()
-                    ->syncSchools()
-                    ->each(function (School $school) {
-                        $this->info("Syncing data for {$school->name}.");
-                        SyncSchool::dispatchSync($school);
-                    });
-
-                collect($tenant->getSyncNotificationEmails())
-                    ->each(function ($email) {
-                        Notification::route('mail', $email)
-                            ->notify(new TenantSyncComplete());
-                    });
+                $this->info("Dispatching job for {$tenant->name} from {$tenant->sis}.");
+                SyncTenantSisDataJob::dispatch($tenant);
             });
 
         return 0;
