@@ -73,6 +73,12 @@ Route::middleware('tenant')->group(function () {
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])
                 ->name('settings.personal');
 
+            Route::middleware('can:edit school settings')->group(function () {
+                Route::post('school', [\App\Http\Controllers\Settings\SchoolSettingsController::class, 'update']);
+                Route::get('school', [\App\Http\Controllers\Settings\SchoolSettingsController::class, 'index'])
+                    ->name('settings.school');
+            });
+
             Route::middleware('can:edit tenant settings')->group(function () {
                 Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update']);
                 Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index'])

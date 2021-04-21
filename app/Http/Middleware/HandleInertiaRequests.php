@@ -116,6 +116,14 @@ class HandleInertiaRequests extends Middleware
                     ]
                 ];
 
+                if ($user->can('edit school settings')) {
+                    $links[] = [
+                        'label' => __('School settings'),
+                        'route' => route('settings.school'),
+                        'active' => $request->routeIs('settings.school'),
+                    ];
+                }
+
                 if ($user->can('edit tenant settings')) {
                     $links[] = [
                         'label' => __('System settings'),

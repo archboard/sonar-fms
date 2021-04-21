@@ -4,7 +4,7 @@
       <CardPadding>
 
         <form @submit.prevent="submit" data-cy="form">
-          <div class="space-y-8 divide-y divide-gray-200">
+          <FormMultipartWrapper>
             <Fieldset>
               <InputWrap :error="form.errors.license">
                 <Label for="license">{{ __('Product License') }}</Label>
@@ -87,7 +87,7 @@
                 </InputWrap>
               </div>
             </div>
-          </div>
+          </FormMultipartWrapper>
           <CardAction :negative-margin="true">
             <Button type="submit" :loading="form.processing">
               {{ __('Save') }}
@@ -116,9 +116,11 @@ import CardAction from '../../components/CardAction'
 import CardSectionHeader from '../../components/CardSectionHeader'
 import HelpText from '../../components/HelpText'
 import Select from '../../components/forms/Select'
+import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
 
 export default defineComponent({
   components: {
+    FormMultipartWrapper,
     Select,
     HelpText,
     CardSectionHeader,
