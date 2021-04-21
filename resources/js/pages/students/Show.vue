@@ -39,11 +39,11 @@
                   <h2 class="sr-only">Details</h2>
                   <div class="space-y-5">
                     <div v-if="student.enrolled" class="flex items-center space-x-2">
-                      <CircleCheck class="h-5 w-5 text-green-500" />
+                      <CheckCircleIcon class="h-5 w-5 text-green-500" />
                       <span class="text-green-700 text-sm font-medium">{{ __('Currently enrolled') }}</span>
                     </div>
                     <div v-else class="flex items-center space-x-2">
-                      <CircleX class="h-5 w-5 text-yellow-500" />
+                      <XCircleIcon class="h-5 w-5 text-yellow-500" />
                       <span class="text-yellow-700 text-sm font-medium">{{ __('Not enrolled') }}</span>
                     </div>
 
@@ -334,11 +334,11 @@
             <h2 class="sr-only">Details</h2>
             <div class="space-y-5">
               <div v-if="student.enrolled" class="flex items-center space-x-2">
-                <CircleCheck class="h-5 w-5 text-green-500" />
+                <CheckCircleIcon class="h-5 w-5 text-green-500" />
                 <span class="text-green-700 text-sm font-medium">{{ __('Currently enrolled') }}</span>
               </div>
               <div v-else class="flex items-center space-x-2">
-                <CircleX class="h-5 w-5 text-yellow-500" />
+                <XCircleIcon class="h-5 w-5 text-yellow-500" />
                 <span class="text-yellow-700 text-sm font-medium">{{ __('Not enrolled') }}</span>
               </div>
               <div class="flex items-center space-x-2">
@@ -417,16 +417,15 @@
 import { defineComponent, inject, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '../../layouts/Authenticated'
-import CircleCheck from '../../components/icons/circle-check'
-import CircleX from '../../components/icons/circle-x'
+import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import dayjs from 'dayjs'
 import Spinner from '../../components/icons/spinner'
 
 export default defineComponent({
   components: {
     Spinner,
-    CircleX,
-    CircleCheck,
+    XCircleIcon,
+    CheckCircleIcon,
     Authenticated
   },
 

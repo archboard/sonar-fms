@@ -3,15 +3,15 @@
     <div class="mb-6 flex space-x-4">
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <MagnifyingGlass class="h-5 w-5 text-gray-500" />
+          <SearchIcon class="h-5 w-5 text-gray-500" />
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by name, email or student number')" />
       </div>
       <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">
-        <Adjustments class="w-6 h-6" />
+        <AdjustmentsIcon class="w-6 h-6" />
       </button>
       <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
-        <CircleX class="w-6 h-6" />
+        <XCircleIcon class="w-6 h-6" />
       </button>
     </div>
 
@@ -31,8 +31,8 @@
                 {{ __('Name') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAsc v-if="filters.orderBy === 'last_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDesc v-if="filters.orderBy === 'last_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -42,8 +42,8 @@
                 {{ __('Student Number') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAsc v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDesc v-if="filters.orderBy === 'student_number' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -53,8 +53,8 @@
                 {{ __('Grade') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAsc v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDesc v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -111,24 +111,20 @@ import Tbody from '../../components/tables/Tbody'
 import Td from '../../components/tables/Td'
 import Checkbox from '../../components/forms/Checkbox'
 import Pagination from '../../components/tables/Pagination'
-import SortAsc from '../../components/icons/sort-asc'
-import SortDesc from '../../components/icons/sort-desc'
 import Input from '../../components/forms/Input'
-import MagnifyingGlass from '../../components/icons/magnifying-glass'
-import Adjustments from '../../components/icons/adjustments'
+import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCircleIcon } from '@heroicons/vue/outline'
 import StudentTableFiltersModal from '../../components/modals/StudentTableFiltersModal'
-import CircleX from '../../components/icons/circle-x'
 import Link from '@/components/Link'
 
 export default defineComponent({
   components: {
-    CircleX,
+    XCircleIcon,
     StudentTableFiltersModal,
-    Adjustments,
-    MagnifyingGlass,
+    AdjustmentsIcon,
+    SearchIcon,
     Input,
-    SortDesc,
-    SortAsc,
+    SortDescendingIcon,
+    SortAscendingIcon,
     Pagination,
     Checkbox,
     Td,

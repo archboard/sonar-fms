@@ -3,7 +3,7 @@
     <label for="search_field" class="sr-only">Search</label>
     <div class="relative w-full text-gray-400 focus-within:text-gray-600 dark:focus-within:text-gray-200">
       <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-        <MagnifyingGlass class="h-5 w-5" />
+        <SearchIcon class="h-5 w-5" />
       </div>
       <input v-model="searchTerm" ref="search" id="search_field" class="block w-full h-full pl-8 pr-3 py-2 border-transparent bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm" placeholder="Search" type="search" name="search">
     </div>
@@ -13,10 +13,13 @@
 <script>
 import { defineComponent, ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import debounce from 'lodash/debounce'
-import MagnifyingGlass from './icons/magnifying-glass'
+import { SearchIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({
-  components: {MagnifyingGlass},
+  components: {
+    SearchIcon
+  },
+
   setup () {
     let body
     let main
