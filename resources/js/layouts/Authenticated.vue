@@ -113,6 +113,9 @@
           <div class="flex items-center flex-shrink-0 px-4">
             <img class="h-8 w-auto" src="/images/sonar-fms-light.svg" alt="Sonar FMS">
           </div>
+
+          <SchoolSwitcher v-if="props.user.schools.length > 1" class="px-2 mt-6" />
+
           <div class="mt-5 flex-1 flex flex-col">
             <nav class="flex-1 px-2 space-y-8">
               <div class="space-y-1">
@@ -268,9 +271,11 @@ import { defineComponent, ref, watch, nextTick, onMounted } from 'vue'
 import Notifications from '../components/Notifications'
 import { usePage } from '@inertiajs/inertia-vue3'
 import TopSearch from '../components/TopSearch'
+import SchoolSwitcher from '../components/SchoolSwitcher'
 
 export default defineComponent({
   components: {
+    SchoolSwitcher,
     TopSearch,
     Notifications
   },

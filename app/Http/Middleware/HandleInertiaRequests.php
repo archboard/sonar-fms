@@ -41,6 +41,8 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'user' => function () use ($request) {
                 if ($user = $request->user()) {
+                    $user->load('schools');
+
                     return $user->toResource();
                 }
 

@@ -50,6 +50,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/home', \App\Http\Controllers\HomeController::class)
             ->name('home');
 
+        Route::put('/change-schools', \App\Http\Controllers\ChangeSchoolController::class)
+            ->name('schools.change');
+
         Route::get('/students', [\App\Http\Controllers\StudentController::class, 'index'])
             ->name('students.index');
 
