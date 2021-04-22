@@ -126,9 +126,9 @@ class HandleInertiaRequests extends Middleware
                     ];
                 }
 
-                if ($user->can('edit tenant settings')) {
+                if ($user->manages_tenancy) {
                     $links[] = [
-                        'label' => __('System settings'),
+                        'label' => __('Tenant settings'),
                         'route' => route('settings.tenant'),
                         'active' => $request->routeIs('settings.tenant'),
                     ];

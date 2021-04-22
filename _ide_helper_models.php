@@ -78,6 +78,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $currency_symbol
  * @property int $currency_decimals
+ * @property bool $use_thousands_separator
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read mixed $grade_levels
@@ -105,6 +106,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|School whereSisId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|School whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|School whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|School whereUseThousandsSeparator($value)
  */
 	class IdeHelperSchool extends \Eloquent {}
 }
@@ -239,6 +241,7 @@ namespace App\Models{
  * @property int $hour
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Tenant $tenant
  * @method static \Illuminate\Database\Eloquent\Builder|SyncTime newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SyncTime newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SyncTime query()
@@ -380,6 +383,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $contact_id
  * @property int|null $guardian_id
+ * @property bool $manages_tenancy
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
  * @property-read string $full_name
@@ -412,6 +416,7 @@ namespace App\Models{
  * @method static Builder|User whereIsAll($role)
  * @method static Builder|User whereIsNot($role)
  * @method static Builder|User whereLastName($value)
+ * @method static Builder|User whereManagesTenancy($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereSchoolId($value)

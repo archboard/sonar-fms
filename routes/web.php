@@ -71,6 +71,8 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/departments', \App\Http\Controllers\DepartmentController::class)
             ->except('create', 'edit');
 
+        Route::resource('/users', \App\Http\Controllers\UserController::class);
+
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])
@@ -82,7 +84,7 @@ Route::middleware('tenant')->group(function () {
                     ->name('settings.school');
             });
 
-            Route::middleware('can:edit tenant settings')->group(function () {
+            Route::middleware('manages_tenancy')->group(function () {
                 Route::post('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'update']);
                 Route::get('tenant', [\App\Http\Controllers\Settings\TenantSettingsController::class, 'index'])
                     ->name('settings.tenant');

@@ -6,6 +6,7 @@ use App\Http\Middleware\AllowsOidcLogins;
 use App\Http\Middleware\AllowsPasswordLogins;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
+use App\Http\Middleware\ManagesTenancy;
 use App\Http\Middleware\ScopeBouncer;
 use App\Http\Middleware\SelfHosted;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -81,5 +82,6 @@ class Kernel extends HttpKernel
         'self_hosted' => SelfHosted::class,
         'allows_pw_auth' => AllowsPasswordLogins::class,
         'allows_oidc_auth' => AllowsOidcLogins::class,
+        'manages_tenancy' => ManagesTenancy::class,
     ];
 }
