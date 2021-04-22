@@ -130,16 +130,18 @@
                   {{ __('Add') }}
                 </Button>
               </div>
+              <HelpText class="mt-1">{{ __('Times are for the UTC timezone.') }}</HelpText>
             </InputWrap>
           </form>
 
-          <ul class="pt-8">
+          <ul class="pt-8 space-y-2">
             <li
               v-for="time in syncTimes"
               :key="time.id"
+              class="flex items-center"
             >
-              {{ time.hour }}:00
-              <button @click.prevent="deleteSyncTime(time)">
+              <span>{{ time.hour }}:00</span>
+              <button @click.prevent="deleteSyncTime(time)" class="ml-2 rounded-full flex items-center justify-center h-5 w-5 focus:outline-none focus:bg-red-100 transition">
                 <TrashIcon class="h-4 w-4 text-red-500" />
               </button>
             </li>
