@@ -25,7 +25,7 @@ class SyncSchool implements ShouldQueue
 
     // Set the timeout to be 10 minutes
     // in the case of large schools
-    public $timeout = 600;
+    public $timeout = 3600;
 
     /**
      * Create a new job instance.

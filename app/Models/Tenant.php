@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
-use Silber\Bouncer\BouncerFacade;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
 
 /**
@@ -90,6 +89,8 @@ class Tenant extends TenantBase
     {
         collect($this->getSyncNotificationEmails())
             ->each(function ($email) use ($notification) {
+                ray("Notifying {$email}", $notification);
+
                 Notification::route('mail', $email)
                     ->notify(new $notification());
             });
@@ -128,11 +129,13 @@ class Tenant extends TenantBase
                 ->map(fn (School $school) => SyncSchool::dispatch($school))
         )->then(function (Batch $batch) {
             $this->notifySyncEmails(TenantSyncComplete::class);
+            $this->update(['batch_id' => null]);
+            $batch->cancel();
         })->catch(function (Batch $batch, \Throwable $ex) {
             $this->notifySyncEmails(TenantSyncFailed::class);
             ray($ex)->red();
         })->finally(function (Batch $batch) {
-            $this->update(['batch_id' => null]);
+            ray("Batch {$batch->id} has finished");
         })->name('Tenant SIS Sync')->dispatch();
 
         $this->update(['batch_id' => $batch->id]);

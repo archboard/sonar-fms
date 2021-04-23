@@ -110,11 +110,11 @@
                 </HelpText>
               </div>
               <div>
-                <Button @click.prevent="syncNow" size="sm" :disabled="tenant.is_syncing">
-                  <span v-if="tenant.is_syncing" class="mr-2">
+                <Button @click.prevent="syncNow" size="sm" :disabled="sisSyncing">
+                  <span v-if="sisSyncing" class="mr-2">
                     <Spinner class="h-4 w-4" />
                   </span>
-                  <span v-if="tenant.is_syncing">
+                  <span v-if="sisSyncing">
                     {{ __('Syncing...') }}
                   </span>
                   <span v-else>
@@ -127,8 +127,8 @@
         </div>
 
         <CardPadding>
-          <Alert v-if="tenant.is_syncing" class="mb-4">
-            {{ __('SIS data is currently syncing.') }}
+          <Alert v-if="sisSyncing && batch.id" class="mb-8">
+            {{ __('Finished syncing :processedJobs/:totalJobs schools.', batch) }}
           </Alert>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -201,7 +201,7 @@
           </HelpText>
         </CardPadding>
 
-        <form @submit.prevent="schoolsForm.put($route('tenant.schools'))">
+        <form @submit.prevent="schoolsForm.put($route('tenant.schools'), { preserveScroll: true })">
           <CardPadding>
             <Fieldset>
               <InputWrap
@@ -209,12 +209,12 @@
                 :key="school.id"
               >
                 <Label class="flex items-center">
-                  <Checkbox name="schools" v-model:checked="schoolsForm.schools" :value="school.id" />
+                  <Checkbox name="schools" v-model:checked="schoolsForm.schools" :value="school.id" class="mr-2" />
                   <CheckboxText>
                     <span
                       :class="{
-                        'text-gray-400 dark:text-gray-500': !school.active,
-                        'text-gray-900 dark:text-gray-100': school.active
+                        'text-gray-400 dark:text-gray-500': !schoolsForm.schools.includes(school.id),
+                        'text-gray-900 dark:text-gray-100': schoolsForm.schools.includes(school.id)
                       }"
                     >
                       {{ school.name }}
@@ -291,6 +291,7 @@ export default defineComponent({
 
   setup (props) {
     const $route = inject('$route')
+    const $http = inject('$http')
 
     // General settings
     const form = useForm({
@@ -323,6 +324,35 @@ export default defineComponent({
         }
       })
     }
+    const sisSyncing = ref(props.tenant.is_syncing)
+    const polling = ref(false)
+    const batch = ref({})
+
+    let syncCheckInterval
+    const startSyncPoll = () => {
+      console.log('starting poll')
+      clearInterval(syncCheckInterval)
+      $http.get($route('sis.sync.batch')).then(res => {
+        batch.value = res.data
+      })
+      polling.value = true
+      sisSyncing.value = true
+
+      syncCheckInterval = setInterval(() => {
+        if (sisSyncing.value) {
+          $http.get($route('sis.sync.batch')).then(res => {
+            batch.value = res.data
+            console.log('batch', res.data)
+
+            if (!res.data || res.data.progress >= 100) {
+              polling.value = false
+              sisSyncing.value = false
+              clearInterval(syncCheckInterval)
+            }
+          })
+        }
+      }, 60000)
+    }
     const deleteSyncTime = time => {
       Inertia.delete($route('sync-times.destroy', time), {
         preserveScroll: true,
@@ -331,11 +361,21 @@ export default defineComponent({
     const syncNow = () => {
       Inertia.post($route('sis.sync'), null, {
         preserveScroll: true,
+        onFinish () {
+          if (!polling.value) {
+            startSyncPoll()
+          }
+        }
       })
     }
     const hourOptions = computed(() => {
       return range(24).filter(h => !props.syncTimes.some(s => s.hour === h))
     })
+
+    // Start the batch poll
+    if (!polling.value && sisSyncing.value) {
+      startSyncPoll()
+    }
 
     // For displaying the time
     const getTime = () => dayjs().tz('UTC').format('H:mm')
@@ -343,8 +383,10 @@ export default defineComponent({
     const timeInterval = setInterval(() => {
       currentTime.value = getTime()
     }, 2000)
+
     onBeforeUnmount(() => {
       clearInterval(timeInterval)
+      clearInterval(syncCheckInterval)
     })
 
     return {
@@ -359,6 +401,8 @@ export default defineComponent({
       hourOptions,
       schoolsForm,
       currentTime,
+      sisSyncing,
+      batch,
     }
   },
 })

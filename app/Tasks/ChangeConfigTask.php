@@ -29,7 +29,7 @@ class ChangeConfigTask implements SwitchTenantTask
             Config::set('mail.mailers.smtp.username', $tenant->smtp_username);
             Config::set('mail.mailers.smtp.password', $tenant->smtp_password);
             Config::set('mail.from.name', $tenant->smtp_from_name);
-            Config::set('mail.from.address.', $tenant->smtp_from_address);
+            Config::set('mail.from.address', $tenant->smtp_from_address);
             Config::set('mail.mailers.smtp.encryption', $tenant->smtp_encryption);
         }
 
