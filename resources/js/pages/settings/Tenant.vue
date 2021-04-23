@@ -1,7 +1,6 @@
 <template>
   <Authenticated>
-    <div class="space-y-8">
-
+    <div class="space-y-8 lg:space-y-10">
       <CardWrapper>
         <CardPadding>
           <form @submit.prevent="submit" data-cy="form">
@@ -64,11 +63,11 @@
                   </InputWrap>
                   <InputWrap :error="form.errors.smtp_username">
                     <Label for="smtp_username">{{ __('Username') }}</Label>
-                    <Input v-model="form.smtp_username" type="text" id="smtp_username" data-cy="smtp_username" required />
+                    <Input v-model="form.smtp_username" type="text" id="smtp_username" data-cy="smtp_username" />
                   </InputWrap>
                   <InputWrap :error="form.errors.smtp_password">
                     <Label for="smtp_password">{{ __('Password') }}</Label>
-                    <Input v-model="form.smtp_password" class="font-mono" type="text" id="smtp_password" data-cy="smtp_password" required />
+                    <Input v-model="form.smtp_password" class="font-mono" type="text" id="smtp_password" data-cy="smtp_password" />
                   </InputWrap>
                   <InputWrap :error="form.errors.smtp_from_name">
                     <Label for="smtp_from_name">{{ __('From Name') }}</Label>
@@ -101,59 +100,130 @@
       <CardWrapper>
         <div>
           <CardPadding>
-            <CardSectionHeader>
-              {{ __('SIS Sync Settings') }}
-            </CardSectionHeader>
-            <HelpText class="text-sm mt-1">
-              {{ __('Configure the hours on which your SIS data will sync back to Sonar FMS.') }}
-            </HelpText>
-          </CardPadding>
-        </div>
-        <CardPadding>
-          <form @submit.prevent="addSyncTime">
-            <InputWrap>
-              <Label for="hour">{{ __('Hour') }}</Label>
-              <div class="flex">
-                <div class="flex-1 pr-4">
-                  <Select v-model="syncTimesForm.hour" id="hour">
-                    <option :value="null">{{ __('None') }}</option>
-                    <option
-                      v-for="hour in hourOptions"
-                      :key="hour"
-                      :value="hour"
-                    >
-                      {{ hour }}:00
-                    </option>
-                  </Select>
-                </div>
-                <Button type="submit" class="flex items-center">
-                  {{ __('Add') }}
+            <div class="flex justify-between">
+              <div>
+                <CardSectionHeader>
+                  {{ __('SIS Sync Settings') }}
+                </CardSectionHeader>
+                <HelpText class="text-sm mt-1">
+                  {{ __('Configure the hours on which your SIS data will sync back to Sonar FMS.') }}
+                </HelpText>
+              </div>
+              <div>
+                <Button @click.prevent="syncNow" size="sm" :disabled="tenant.is_syncing">
+                  <span v-if="tenant.is_syncing" class="mr-2">
+                    <Spinner class="h-4 w-4" />
+                  </span>
+                  <span v-if="tenant.is_syncing">
+                    {{ __('Syncing...') }}
+                  </span>
+                  <span v-else>
+                    {{ __('Sync Now') }}
+                  </span>
                 </Button>
               </div>
-              <HelpText class="mt-1">{{ __('Times are for the UTC timezone.') }}</HelpText>
-            </InputWrap>
-          </form>
+            </div>
+          </CardPadding>
+        </div>
 
-          <ul class="pt-8 space-y-2">
-            <li
-              v-for="time in syncTimes"
-              :key="time.id"
-              class="flex items-center"
-            >
-              <span>{{ time.hour }}:00</span>
-              <button @click.prevent="deleteSyncTime(time)" class="ml-2 rounded-full flex items-center justify-center h-5 w-5 focus:outline-none focus:bg-red-100 transition">
-                <TrashIcon class="h-4 w-4 text-red-500" />
-              </button>
-            </li>
-          </ul>
+        <CardPadding>
+          <Alert v-if="tenant.is_syncing" class="mb-4">
+            {{ __('SIS data is currently syncing.') }}
+          </Alert>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <form @submit.prevent="addSyncTime" class="md:col-span-2">
+              <InputWrap>
+                <Label for="hour">{{ __('Hour') }}</Label>
+                <div class="flex">
+                  <div class="flex-1 pr-4">
+                    <Select v-model="syncTimesForm.hour" id="hour">
+                      <option :value="null">{{ __('None') }}</option>
+                      <option
+                        v-for="hour in hourOptions"
+                        :key="hour"
+                        :value="hour"
+                      >
+                        {{ hour }}:00
+                      </option>
+                    </Select>
+                  </div>
+                  <Button type="submit" class="flex items-center">
+                    {{ __('Add') }}
+                  </Button>
+                </div>
+                <HelpText class="mt-1">{{ __('Times are based on the UTC timezone. Right now it is :time UTC.', { time: currentTime }) }}</HelpText>
+              </InputWrap>
+            </form>
+
+            <div>
+              <CardSectionHeader class="text-right">
+                {{ __('Configured Sync Times') }}
+              </CardSectionHeader>
+              <ul class="pt-4 space-y-2">
+                <li
+                  v-for="time in syncTimes"
+                  :key="time.id"
+                  class="flex items-center justify-end"
+                >
+                  <span>{{ time.hour }}:00</span>
+                  <button @click.prevent="deleteSyncTime(time)" class="ml-2 rounded-full flex items-center justify-center h-5 w-5 focus:outline-none focus:bg-red-100 transition">
+                    <TrashIcon class="h-4 w-4 text-red-500" />
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </CardPadding>
+      </CardWrapper>
+
+      <CardWrapper>
+        <CardPadding>
+          <CardSectionHeader>
+            {{ __('Active Schools') }}
+          </CardSectionHeader>
+          <HelpText class="text-sm mt-1">
+            {{ __('Set the schools that will use Sonar FMS. Saving these settings while syncing will cause the sync to stop.') }}
+          </HelpText>
+        </CardPadding>
+
+        <form @submit.prevent="schoolsForm.put($route('tenant.schools'))">
+          <CardPadding>
+            <Fieldset>
+              <InputWrap
+                v-for="school in schools"
+                :key="school.id"
+              >
+                <Label class="flex items-center">
+                  <Checkbox name="schools" v-model:checked="schoolsForm.schools" :value="school.id" />
+                  <CheckboxText>
+                    <span
+                      :class="{
+                        'text-gray-400 dark:text-gray-500': !school.active,
+                        'text-gray-900 dark:text-gray-100': school.active
+                      }"
+                    >
+                      {{ school.name }}
+                    </span>
+                  </CheckboxText>
+                </Label>
+              </InputWrap>
+            </Fieldset>
+          </CardPadding>
+
+           <CardAction>
+             <Button type="submit" :loading="schoolsForm.processing">
+               {{ __('Save') }}
+             </Button>
+          </CardAction>
+        </form>
       </CardWrapper>
     </div>
   </Authenticated>
 </template>
 
 <script>
-import { defineComponent, ref, inject, computed } from 'vue'
+import { defineComponent, ref, inject, computed, onBeforeUnmount } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '../../layouts/Authenticated'
@@ -173,9 +243,14 @@ import Select from '../../components/forms/Select'
 import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
 import range from 'lodash/range'
 import { TrashIcon } from '@heroicons/vue/outline'
+import Alert from '../../components/Alert'
+import Spinner from '../../components/icons/spinner'
+import dayjs from '@/plugins/dayjs'
 
 export default defineComponent({
   components: {
+    Spinner,
+    Alert,
     TrashIcon,
     FormMultipartWrapper,
     Select,
@@ -197,16 +272,26 @@ export default defineComponent({
   props: {
     tenant: Object,
     syncTimes: Array,
+    schools: Array,
   },
 
-  setup ({ tenant, syncTimes }) {
+  setup (props) {
     const $route = inject('$route')
+
+    // General settings
     const form = useForm({
-      ...tenant
+      ...props.tenant
     })
     const submit = () => {
       form.post($route('settings.tenant'))
     }
+
+    // Active schools
+    const schoolsForm = useForm({
+      schools: props.schools.filter(s => s.active).map(s => s.id)
+    })
+
+    // Sync times
     const syncTimesForm = useForm({
       hour: null
     })
@@ -223,6 +308,24 @@ export default defineComponent({
         preserveScroll: true,
       })
     }
+    const syncNow = () => {
+      Inertia.post($route('sis.sync'), null, {
+        preserveScroll: true,
+      })
+    }
+    const hourOptions = computed(() => {
+      return range(24).filter(h => !props.syncTimes.some(s => s.hour === h))
+    })
+
+    // For displaying the time
+    const getTime = () => dayjs().tz('UTC').format('H:mm')
+    const currentTime = ref(getTime())
+    const timeInterval = setInterval(() => {
+      currentTime.value = getTime()
+    }, 2000)
+    onBeforeUnmount(() => {
+      clearInterval(timeInterval)
+    })
 
     return {
       form,
@@ -230,13 +333,11 @@ export default defineComponent({
       syncTimesForm,
       addSyncTime,
       deleteSyncTime,
+      syncNow,
+      hourOptions,
+      schoolsForm,
+      currentTime,
     }
   },
-
-  computed: {
-    hourOptions () {
-      return range(24).filter(h => !this.syncTimes.some(s => s.hour === h))
-    }
-  }
 })
 </script>

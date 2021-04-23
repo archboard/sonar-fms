@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SchoolResource;
 use App\Http\Resources\SyncTimeResource;
+use App\Models\School;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,11 +21,14 @@ class TenantSettingsController extends Controller
     {
         $title = __('Tenant Settings');
         $tenant = $request->tenant();
+        $schools = School::orderBy('name')
+            ->get();
 
         return inertia('settings/Tenant', [
             'title' => $title,
             'tenant' => $tenant->toArray(),
             'syncTimes' => SyncTimeResource::collection($tenant->syncTimes),
+            'schools' => SchoolResource::collection($schools),
         ])->withViewData(compact('title'));
     }
 
@@ -45,8 +50,8 @@ class TenantSettingsController extends Controller
             'allow_oidc_login' => 'required|boolean',
             'smtp_host' => [Rule::requiredIf(!config('app.cloud'))],
             'smtp_port' => [Rule::requiredIf(!config('app.cloud'))],
-            'smtp_username' => [Rule::requiredIf(!config('app.cloud'))],
-            'smtp_password' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_username' => ['nullable'],
+            'smtp_password' => ['nullable'],
             'smtp_from_name' => [Rule::requiredIf(!config('app.cloud'))],
             'smtp_from_address' => [Rule::requiredIf(!config('app.cloud')), 'email'],
             'smtp_encryption' => ['nullable'],

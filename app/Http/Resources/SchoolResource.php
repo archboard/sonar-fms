@@ -18,6 +18,7 @@ class SchoolResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'sis_id' => $this->sis_id,
+            'active' => $this->active,
             'low_grade' => $this->low_grade,
             'high_grade' => $this->high_grade,
             'grade_levels' => $this->grade_levels,

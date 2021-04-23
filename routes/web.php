@@ -91,6 +91,15 @@ Route::middleware('tenant')->group(function () {
 
                 Route::resource('sync-times', \App\Http\Controllers\SyncTimeController::class)
                     ->only('index', 'store', 'destroy');
+
+                Route::post('sync', \App\Http\Controllers\SyncSisDataController::class)
+                    ->name('sis.sync');
+
+                Route::get('sync/progress', \App\Http\Controllers\GetSisSyncBatchController::class)
+                    ->name('sis.sync.batch');
+
+                Route::put('tenant/schools', \App\Http\Controllers\Settings\SaveActiveSchoolsController::class)
+                    ->name('tenant.schools');
             });
         });
     });
