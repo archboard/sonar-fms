@@ -552,19 +552,17 @@ class PowerSchoolProvider implements SisProvider
 
         ray()->newScreen("Sync for {$school->name}");
         ray($school->name, 'syncing school info');
-//        $this->syncSchool($sisId);
+        $this->syncSchool($sisId);
         ray($school->name, 'syncing school terms');
-//        $this->syncSchoolTerms($sisId);
+        $this->syncSchoolTerms($sisId);
         ray($school->name, 'syncing school staff');
-//        $this->syncSchoolStaff($sisId);
+        $this->syncSchoolStaff($sisId);
         ray($school->name, 'syncing school students');
-//        $this->syncSchoolStudents($sisId);
+        $this->syncSchoolStudents($sisId);
         ray($school->name, 'syncing school guardians');
-        ray()->stopShowingQueries();
-//        $this->syncSchoolStudentGuardians($sisId);
-        ray()->showQueries();
+        $this->syncSchoolStudentGuardians($sisId);
         ray($school->name, 'syncing school courses');
-//        $this->syncSchoolCourses($sisId);
+        $this->syncSchoolCourses($sisId);
         ray($school->name, 'syncing school sections');
         $this->syncSchoolSections($sisId);
         ray($school->name, 'syncing school enrollment');

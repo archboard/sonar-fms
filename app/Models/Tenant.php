@@ -130,6 +130,7 @@ class Tenant extends TenantBase
             $this->notifySyncEmails(TenantSyncComplete::class);
         })->catch(function (Batch $batch, \Throwable $ex) {
             $this->notifySyncEmails(TenantSyncFailed::class);
+            ray($ex)->red();
         })->finally(function (Batch $batch) {
             $this->update(['batch_id' => null]);
         })->name('Tenant SIS Sync')->dispatch();
