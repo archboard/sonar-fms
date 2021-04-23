@@ -79,6 +79,7 @@ namespace App\Models{
  * @property string $currency_symbol
  * @property int $currency_decimals
  * @property bool $use_thousands_separator
+ * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read mixed $grade_levels
@@ -91,22 +92,24 @@ namespace App\Models{
  * @property-read int|null $terms_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @property-read int|null $users_count
+ * @method static Builder|School active()
  * @method static \Database\Factories\SchoolFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|School newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|School newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|School query()
- * @method static \Illuminate\Database\Eloquent\Builder|School whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereCurrencyDecimals($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereCurrencySymbol($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereHighGrade($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereLowGrade($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereSchoolNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereSisId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|School whereUseThousandsSeparator($value)
+ * @method static Builder|School newModelQuery()
+ * @method static Builder|School newQuery()
+ * @method static Builder|School query()
+ * @method static Builder|School whereActive($value)
+ * @method static Builder|School whereCreatedAt($value)
+ * @method static Builder|School whereCurrencyDecimals($value)
+ * @method static Builder|School whereCurrencySymbol($value)
+ * @method static Builder|School whereHighGrade($value)
+ * @method static Builder|School whereId($value)
+ * @method static Builder|School whereLowGrade($value)
+ * @method static Builder|School whereName($value)
+ * @method static Builder|School whereSchoolNumber($value)
+ * @method static Builder|School whereSisId($value)
+ * @method static Builder|School whereTenantId($value)
+ * @method static Builder|School whereUpdatedAt($value)
+ * @method static Builder|School whereUseThousandsSeparator($value)
  */
 	class IdeHelperSchool extends \Eloquent {}
 }
@@ -281,6 +284,7 @@ namespace App\Models{
  * @property string|null $smtp_from_name
  * @property string|null $smtp_from_address
  * @property string|null $smtp_encryption
+ * @property string|null $batch_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
  * @property-read string $sis
@@ -302,6 +306,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowOidcLogin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowPasswordAuth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
