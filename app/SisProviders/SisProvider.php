@@ -11,6 +11,7 @@ interface SisProvider
 {
     public function __construct(Tenant $tenant);
     public function getSisLabel(): string;
+    public function getSchoolsFromSis(): array;
     public function getAllSchools(): array;
     public function syncSchools(): Collection;
     public function getSchool($sisId);

@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use App\Jobs\SyncSchool;
+use App\Notifications\TenantSyncComplete;
+use App\Notifications\TenantSyncFailed;
 use App\SisProviders\SisProvider;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Silber\Bouncer\BouncerFacade;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
@@ -23,17 +29,6 @@ class Tenant extends TenantBase
         'allow_password_auth' => 'boolean',
         'allow_oidc_login' => 'boolean',
     ];
-
-    protected static function booted()
-    {
-        static::created(function (Tenant $tenant) {
-            // Seed the roles and abilities for this tenant scope
-            BouncerFacade::scope()->to($tenant->id);
-            BouncerFacade::allow(User::DISTRICT_ADMIN)->everything();
-
-            // Additional seeding as the project needs
-        });
-    }
 
     public function schools(): HasMany
     {
@@ -91,6 +86,15 @@ class Tenant extends TenantBase
         }, []);
     }
 
+    public function notifySyncEmails(string $notification)
+    {
+        collect($this->getSyncNotificationEmails())
+            ->each(function ($email) use ($notification) {
+                Notification::route('mail', $email)
+                    ->notify(new $notification());
+            });
+    }
+
     public function sisProvider(): SisProvider
     {
         return new $this->sis_provider($this);
@@ -105,6 +109,34 @@ class Tenant extends TenantBase
         /** @var School $school */
         $school = $this->schools()->where('sis_id', $sisId)->firstOrFail();
         return $school;
+    }
+
+    /**
+     * This syncs all the schools' basic info
+     * Then syncs only the active schools' SIS data
+     * terms, students, teachers, courses, sections, and enrollment
+     *
+     * @return $this
+     * @throws \Throwable
+     */
+    public function startSisSync(): static
+    {
+        $batch = Bus::batch(
+            $this->sisProvider()
+                ->syncSchools()
+                ->filter(fn (School $school) => $school->active)
+                ->map(fn (School $school) => SyncSchool::dispatch($school))
+        )->then(function (Batch $batch) {
+            $this->notifySyncEmails(TenantSyncComplete::class);
+        })->catch(function (Batch $batch, \Throwable $ex) {
+            $this->notifySyncEmails(TenantSyncFailed::class);
+        })->finally(function (Batch $batch) {
+            $this->update(['batch_id' => null]);
+        })->name('Tenant SIS Sync')->dispatch();
+
+        $this->update(['batch_id' => $batch->id]);
+
+        return $this;
     }
 
     public function toArray()
@@ -124,6 +156,8 @@ class Tenant extends TenantBase
             'smtp_from_name' => $this->smtp_from_name,
             'smtp_from_address' => $this->smtp_from_address,
             'smtp_encryption' => $this->smtp_encryption,
+            'is_syncing' => !!$this->batch_id,
+            'is_cloud' => config('app.cloud'),
         ];
     }
 }

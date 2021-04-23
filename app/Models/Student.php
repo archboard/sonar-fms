@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -101,12 +102,17 @@ class Student extends Model
      * @throws \GrantHolle\PowerSchool\Api\Exception\MissingClientCredentialsException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function syncGuardians()
+    public function syncGuardians(Collection $schools = null): array
     {
-        $response = PowerSchool::to("/ws/contacts/student/{$this->sis_id}")
-            ->get();
+        $response = PowerSchool::get("/ws/contacts/student/{$this->sis_id}");
 
-        $users = collect($response)->reduce(function ($users, $contact) {
+        if (!$schools) {
+            $schools = School::select(['id', 'school_number'])
+                ->get()
+                ->keyBy('school_number');
+        }
+
+        $users = collect($response)->reduce(function ($users, $contact) use ($schools) {
             if (empty($contact->emails)) {
                 return $users;
             }
@@ -126,19 +132,17 @@ class Student extends Model
             $contactStudents = Arr::first($contact->contactStudents);
             $details = Arr::first($contactStudents->studentDetails);
 
-            $user = User::updateOrCreate(
-                [
-                    'tenant_id' => Tenant::current()->id,
-                    'email' => strtolower($email)
-                ],
-                [
-                    'first_name' => $contact->firstName,
-                    'last_name' => $contact->lastName,
-                    'school_id' => School::firstWhere('school_number', $contactStudents->schoolNumber)->id,
-                    'contact_id' => $contact->contactId,
-                    'guardian_id' => $contactStudents->guardianId,
-                ]
-            );
+            /** @var User $user */
+            $user = User::updateOrCreate([
+                'tenant_id' => $this->tenant_id,
+                'email' => strtolower($email),
+            ], [
+                'first_name' => $contact->firstName,
+                'last_name' => $contact->lastName,
+                'school_id' => optional($schools->get($contactStudents->schoolNumber))->id,
+                'contact_id' => $contact->contactId,
+                'guardian_id' => $contactStudents->guardianId,
+            ]);
 
             $users[$user->id] = [
                 'relationship' => optional($details)->relationship,
@@ -147,6 +151,8 @@ class Student extends Model
             return $users;
         }, []);
 
-        $this->users()->syncWithoutDetaching($users);
+        $this->users()->sync($users);
+
+        return $users;
     }
 }

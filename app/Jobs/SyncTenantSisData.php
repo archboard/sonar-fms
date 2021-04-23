@@ -2,15 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Models\School;
 use App\Models\Tenant;
-use App\Notifications\TenantSyncComplete;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Notification;
 
 class SyncTenantSisData implements ShouldQueue
 {
@@ -38,14 +35,6 @@ class SyncTenantSisData implements ShouldQueue
      */
     public function handle()
     {
-        $this->tenant->sisProvider()
-            ->syncSchools()
-            ->each(fn (School $school) => SyncSchool::dispatchSync($school));
-
-        collect($this->tenant->getSyncNotificationEmails())
-            ->each(function ($email) {
-                Notification::route('mail', $email)
-                    ->notify(new TenantSyncComplete());
-            });
+        $this->tenant->startSisSync();
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,31 +30,36 @@ class PowerSchoolProvider implements SisProvider
         );
     }
 
-    public function getAllSchools(): array
+    public function getSchoolsFromSis(): array
     {
         $response = $this->builder
             ->to('/ws/v1/district/school')
             ->get();
 
-        // Only get the schools that exist already
-        if (config('app.cloud')) {
-            $schools = $this->tenant->schools->pluck('sis_id');
-            return array_filter($response->schools->school, function ($school) use ($schools) {
-                return $schools->contains($school->id);
-            });
-        }
+        return array_map(function ($school) {
+            return new School([
+                'sis_id' => $school->id,
+                'name' => $school->name,
+                'school_number' => $school->school_number,
+                'low_grade' => $school->low_grade,
+                'high_grade' => $school->high_grade,
+            ]);
+        }, $response->schools->school);
+    }
 
-        return $response->schools->school;
+    public function getAllSchools(): array
+    {
+        return $this->getSchoolsFromSis();
     }
 
     public function syncSchools(): Collection
     {
         return collect($this->getAllSchools())
-            ->map(function ($school) {
+            ->map(function (School $school) {
                 return $this->tenant
                     ->schools()
                     ->updateOrCreate(
-                        ['sis_id' => $school->id],
+                        ['sis_id' => $school->sis_id],
                         [
                             'name' => $school->name,
                             'school_number' => $school->school_number,
@@ -435,9 +441,14 @@ class PowerSchoolProvider implements SisProvider
     public function syncSchoolStudentEnrollment($sisId)
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
+        $students = $this->tenant->students()
+            ->select(['id', 'sis_id'])
+            ->get()
+            ->keyBy('sis_id');
 
-        $school->sections
-            ->each(function (Section $section) {
+        $sectionStudents = $school->sections()
+            ->get()
+            ->reduce(function (array $sectionStudents, Section $section) use ($students) {
                 $results = $this->builder
                     ->extensions('s_cc_x,s_cc_edfi_x')
                     ->to("/ws/v1/section/{$section->sis_id}/section_enrollment")
@@ -449,23 +460,36 @@ class PowerSchoolProvider implements SisProvider
                     $enrollments = [$enrollments];
                 }
 
-                // Get the sis id's of the students who haven't dropped
-                $studentSisIds = collect($enrollments)
-                    ->each(function ($enrollment) use ($enrollments) {
+                $sectionEnrollment = collect($enrollments)
+                    ->reduce(function (array $enrollments, $enrollment) use ($section, $students) {
                         if (!is_object($enrollment)) {
-                            dd($enrollments);
+                            return $enrollments;
                         }
-                    })
-                    ->filter(fn ($enrollment) => !$enrollment->dropped)
-                    ->pluck('student_id');
 
-                $students = $this->tenant
-                    ->students()
-                    ->whereIn('sis_id', $studentSisIds)
-                    ->pluck('id');
+                        $student = $students->get($enrollment->student_id);
 
-                $section->students()->sync($students);
-            });
+                        if (!$student || $enrollment->dropped) {
+                            return $enrollments;
+                        }
+
+                        $enrollments[] = [
+                            'section_id' => $section->id,
+                            'student_id' => $student->id,
+                        ];
+
+                        return $enrollments;
+                    }, []);
+
+                return array_merge($sectionStudents, $sectionEnrollment);
+            }, []);
+
+        DB::transaction(function () use ($sectionStudents) {
+            $table = DB::table('section_student');
+            $sectionIds = array_unique(Arr::pluck($sectionStudents, 'section_id'));
+
+            $table->whereIn('section_id', $sectionIds)->delete();
+            $table->insert($sectionStudents);
+        });
     }
 
     public function syncSchoolTerms($sisId)
@@ -504,11 +528,15 @@ class PowerSchoolProvider implements SisProvider
     public function syncSchoolStudentGuardians($sisId)
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
+        $schools = School::select(['id', 'school_number'])
+            ->get()
+            ->keyBy('school_number');
 
-        $school->students
-            ->each(function (Student $student) {
-                $student->syncGuardians();
-            });
+        $school->students()
+            ->get()
+            ->each(
+                fn (Student $student) => $student->syncGuardians($schools)
+            );
     }
 
     /**
@@ -519,17 +547,32 @@ class PowerSchoolProvider implements SisProvider
      */
     public function fullSchoolSync($sisId)
     {
-        $this->syncSchool($sisId);
-        $this->syncSchoolTerms($sisId);
-        $this->syncSchoolStaff($sisId);
-        $this->syncSchoolStudents($sisId);
-        $this->syncSchoolStudentGuardians($sisId);
-        $this->syncSchoolCourses($sisId);
+        $school = $this->tenant->getSchoolFromSisId($sisId);
+        \Bouncer::cache();
+
+        ray()->newScreen("Sync for {$school->name}");
+        ray($school->name, 'syncing school info');
+//        $this->syncSchool($sisId);
+        ray($school->name, 'syncing school terms');
+//        $this->syncSchoolTerms($sisId);
+        ray($school->name, 'syncing school staff');
+//        $this->syncSchoolStaff($sisId);
+        ray($school->name, 'syncing school students');
+//        $this->syncSchoolStudents($sisId);
+        ray($school->name, 'syncing school guardians');
+        ray()->stopShowingQueries();
+//        $this->syncSchoolStudentGuardians($sisId);
+        ray()->showQueries();
+        ray($school->name, 'syncing school courses');
+//        $this->syncSchoolCourses($sisId);
+        ray($school->name, 'syncing school sections');
         $this->syncSchoolSections($sisId);
+        ray($school->name, 'syncing school enrollment');
         $this->syncSchoolStudentEnrollment($sisId);
 
-        $school = $this->tenant->getSchoolFromSisId($sisId);
+        \Bouncer::refresh();
         event(new SchoolSyncComplete($school));
+        ray()->clearScreen();
     }
 
     public function getBuilder(): RequestBuilder

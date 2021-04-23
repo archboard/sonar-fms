@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,6 +22,15 @@ class School extends Model
     use HasResource;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'active_at' => 'datetime',
+    ];
+
+    public function scopeActive(Builder $builder)
+    {
+        $builder->where('active', true);
+    }
 
     public function users(): BelongsToMany
     {
