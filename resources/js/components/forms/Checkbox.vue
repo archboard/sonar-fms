@@ -4,7 +4,7 @@
     :value="value"
     v-model="proxyChecked"
     @change="$emit('change')"
-   class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+   class="rounded border-gray-300 text-primary-600 dark:text-primary-500 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
   >
 </template>
 
