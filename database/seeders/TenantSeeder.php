@@ -19,9 +19,6 @@ class TenantSeeder extends Seeder
         /** @var Tenant $tenant */
         $tenant = Tenant::factory()->testing()->create();
 
-        // Permissions can go here
-        \Bouncer::scope()->to($tenant->id);
-
         $schools = $tenant->schools()
             ->saveMany(School::factory()->count(3)->make());
 
