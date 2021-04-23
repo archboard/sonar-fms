@@ -47,7 +47,9 @@ class CreateTenantController extends Controller
 
         // Save the user and give them full privileges
         /** @var User $user */
-        $user = $tenant->users()->updateOrCreate(Arr::only($data, 'email'));
+        $user = $tenant->users()->updateOrCreate(Arr::only($data, 'email'), [
+            'manages_tenancy' => true,
+        ]);
         $user->schools()->sync($tenant->schools->pluck('id'));
 
         // This is the equivalent of doing `everything()`
