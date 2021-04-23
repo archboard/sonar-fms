@@ -95,6 +95,9 @@ Route::middleware('tenant')->group(function () {
                 Route::post('sync', \App\Http\Controllers\SyncSisDataController::class)
                     ->name('sis.sync');
 
+                Route::put('sync/emails', \App\Http\Controllers\Settings\SaveSyncEmailsController::class)
+                    ->name('sis.sync.emails');
+
                 Route::get('sync/progress', \App\Http\Controllers\GetSisSyncBatchController::class)
                     ->name('sis.sync.batch');
 

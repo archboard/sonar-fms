@@ -150,6 +150,7 @@ class Tenant extends TenantBase
             'ps_secret' => $this->ps_secret,
             'allow_password_auth' => $this->allow_password_auth,
             'allow_oidc_login' => $this->allow_oidc_login,
+            'sync_notification_emails' => $this->sync_notification_emails,
             'smtp_host' => $this->smtp_host,
             'smtp_port' => $this->smtp_port,
             'smtp_username' => $this->smtp_username,

@@ -174,6 +174,20 @@
               </ul>
             </div>
           </div>
+
+          <form @submit.prevent="saveSyncEmails">
+            <Fieldset>
+              <InputWrap :error="syncEmailsForm.errors.sync_notification_emails">
+                <Label for="sync_notification_emails">{{ __('Notify these emails after a sync completes') }}</Label>
+                <Input v-model="syncEmailsForm.sync_notification_emails" type="text" id="sync_notification_emails" />
+                <HelpText class="mt-1">{{ __('You may separate multiple email addresses with a comma or semicolon.') }}</HelpText>
+              </InputWrap>
+            </Fieldset>
+
+            <CardAction :negative-margin="true">
+              <Button type="submit" :loading="syncEmailsForm.processing" />
+            </CardAction>
+          </form>
         </CardPadding>
       </CardWrapper>
 
@@ -292,9 +306,15 @@ export default defineComponent({
     })
 
     // Sync times
+    const syncEmailsForm = useForm({
+      sync_notification_emails: props.tenant.sync_notification_emails
+    })
     const syncTimesForm = useForm({
       hour: null
     })
+    const saveSyncEmails = () => {
+      syncEmailsForm.put($route('sis.sync.emails'), { preserveScroll: true })
+    }
     const addSyncTime = () => {
       syncTimesForm.post($route('sync-times.store'), {
         preserveScroll: true,
@@ -331,6 +351,8 @@ export default defineComponent({
       form,
       submit,
       syncTimesForm,
+      syncEmailsForm,
+      saveSyncEmails,
       addSyncTime,
       deleteSyncTime,
       syncNow,

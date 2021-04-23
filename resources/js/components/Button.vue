@@ -41,7 +41,9 @@
         v-show="!loading"
         class="inline-flex items-center"
       >
-        <slot />
+        <slot>
+          {{ __('Save') }}
+        </slot>
       </span>
     </transition>
   </component>
