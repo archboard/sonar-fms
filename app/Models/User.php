@@ -53,7 +53,9 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $casts = [];
+    protected $casts = [
+        'manages_tenancy' => 'boolean',
+    ];
 
     /**
      * Gets the users who have an ability directly or through a role
