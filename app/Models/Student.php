@@ -151,7 +151,7 @@ class Student extends Model
             return $users;
         }, []);
 
-        $this->users()->sync($users);
+        $this->users()->syncWithoutDetaching($users);
 
         return $users;
     }
