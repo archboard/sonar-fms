@@ -71,6 +71,9 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/departments', \App\Http\Controllers\DepartmentController::class)
             ->except('create', 'edit');
 
+        Route::resource('/fee-categories', \App\Http\Controllers\FeeCategoryController::class)
+            ->except('create', 'edit');
+
         Route::resource('/users', \App\Http\Controllers\UserController::class);
 
         Route::prefix('/settings')->group(function () {

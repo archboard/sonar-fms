@@ -59,6 +59,11 @@ class Tenant extends TenantBase
         return $this->hasMany(Department::class);
     }
 
+    public function feeCategories(): HasMany
+    {
+        return $this->hasMany(FeeCategory::class);
+    }
+
     public function getSisAttribute(): string
     {
         return $this->sisProvider()->getSisLabel();
