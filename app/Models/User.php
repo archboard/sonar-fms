@@ -58,7 +58,16 @@ class User extends Authenticatable
 
     public function scopeFilter(Builder $builder, array $filters)
     {
+        $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
+            $builder->where(function (Builder $builder) use ($search) {
+                $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "${search}%");
+            });
+        });
 
+        $orderBy = $filters['orderBy'] ?? 'last_name';
+        $builder->orderBy($orderBy, $filters['orderDir'] ?? 'asc');
+        $builder->orderBy('first_name', $filters['orderDir'] ?? 'asc');
     }
 
     /**

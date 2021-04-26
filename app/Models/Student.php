@@ -36,6 +36,7 @@ class Student extends Model
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where(function (Builder $builder) use ($search) {
                 $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "${search}%")
                     ->orWhere('student_number', 'ilike', "${search}%");
             });
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {

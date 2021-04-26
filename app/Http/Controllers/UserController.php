@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'user');
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $school = $request->school();
+        $title = __('Users');
+
+        $users = $school->users()
+            ->filter($request->all())
+            ->paginate($request->input('perPage', 25));
+
+        return inertia('users/Index', [
+            'users' => UserResource::collection($users),
+            'title' => $title,
+        ])->withViewData(compact('title'));
     }
 
     /**
