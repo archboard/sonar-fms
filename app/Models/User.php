@@ -56,6 +56,11 @@ class User extends Authenticatable
         'manages_tenancy' => 'boolean',
     ];
 
+    public function scopeFilter(Builder $builder, array $filters)
+    {
+
+    }
+
     /**
      * Gets the users who have an ability directly or through a role
      *

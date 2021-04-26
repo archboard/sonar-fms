@@ -64,6 +64,20 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\FeeCategory
+ *
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\FeeCategoryFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperFeeCategory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\School
  *
  * @mixin IdeHelperSchool
@@ -287,6 +301,8 @@ namespace App\Models{
  * @property string|null $batch_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FeeCategory[] $feeCategories
+ * @property-read int|null $fee_categories_count
  * @property-read string $sis
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
@@ -407,6 +423,7 @@ namespace App\Models{
  * @property-read int|null $students_count
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static Builder|User filter(array $filters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
