@@ -69,11 +69,18 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(User $user)
     {
-        //
+        $title = $user->full_name;
+        $user->load('schools');
+
+        return inertia('users/Show', [
+            'title' => $title,
+            'user' => $user->toResource(),
+            'permissions' => $user->getPermissionsMatrix(),
+        ])->withViewData(compact('title'));
     }
 
     /**

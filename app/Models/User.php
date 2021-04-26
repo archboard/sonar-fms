@@ -261,4 +261,88 @@ class User extends Authenticatable
 
         return $this;
     }
+
+    public function getPermissionsMatrix(): array
+    {
+        return [
+            [
+                'model' => User::class,
+                'label' => __('Users'),
+                'permissions' => [
+                    [
+                        'permission' => 'viewAny',
+                        'label' => __('View'),
+                        'can' => $this->can('viewAny', User::class),
+                    ],
+                    [
+                        'permission' => 'create',
+                        'label' => __('Create'),
+                        'can' => $this->can('create', User::class),
+                    ],
+                    [
+                        'permission' => 'update',
+                        'label' => __('Update'),
+                        'can' => $this->can('update', User::class),
+                    ],
+                    [
+                        'permission' => 'delete',
+                        'label' => __('Delete'),
+                        'can' => $this->can('delete', User::class),
+                    ],
+                ],
+            ],
+            [
+                'model' => FeeCategory::class,
+                'label' => __('Fee Categories'),
+                'permissions' => [
+                    [
+                        'permission' => 'viewAny',
+                        'label' => __('View'),
+                        'can' => $this->can('viewAny', FeeCategory::class),
+                    ],
+                    [
+                        'permission' => 'create',
+                        'label' => __('Create'),
+                        'can' => $this->can('create', FeeCategory::class),
+                    ],
+                    [
+                        'permission' => 'update',
+                        'label' => __('Update'),
+                        'can' => $this->can('update', FeeCategory::class),
+                    ],
+                    [
+                        'permission' => 'delete',
+                        'label' => __('Delete'),
+                        'can' => $this->can('delete', FeeCategory::class),
+                    ],
+                ],
+            ],
+            [
+                'model' => Department::class,
+                'label' => __('Departments'),
+                'permissions' => [
+                    [
+                        'permission' => 'viewAny',
+                        'label' => __('View'),
+                        'can' => $this->can('viewAny', Department::class),
+                    ],
+                    [
+                        'permission' => 'create',
+                        'label' => __('Create'),
+                        'can' => $this->can('create', Department::class),
+                    ],
+                    [
+                        'permission' => 'update',
+                        'label' => __('Update'),
+                        'can' => $this->can('update', Department::class),
+                    ],
+                    [
+                        'permission' => 'delete',
+                        'label' => __('Delete'),
+                        'can' => $this->can('delete', Department::class),
+                    ],
+                ],
+            ],
+        ];
+    }
 }
