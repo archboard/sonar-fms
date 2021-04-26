@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button class="text-sm">
+      <Button class="text-sm" @click.prevent="showModal = true">
         {{ __('Create') }}
       </Button>
     </template>
@@ -74,6 +74,10 @@
       :filters="filters"
       :school="school"
     />
+    <CreateUserModal
+      v-if="showModal"
+      @close="showModal = false"
+    />
   </Authenticated>
 </template>
 
@@ -94,9 +98,11 @@ import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCi
 import UserTableFiltersModal from '../../components/modals/UserTableFiltersModal'
 import Link from '@/components/Link'
 import Button from '../../components/Button'
+import CreateUserModal from '../../components/modals/CreateUserModal'
 
 export default defineComponent({
   components: {
+    CreateUserModal,
     Button,
     XCircleIcon,
     UserTableFiltersModal,
@@ -127,6 +133,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
+    const showModal = ref(false)
     const { filters, applyFilters, resetFilters } = handlesFilters({
       s: '',
       perPage: 25,
@@ -158,6 +165,7 @@ export default defineComponent({
       resetFilters,
       selectAll,
       searchTerm,
+      showModal,
     }
   }
 })

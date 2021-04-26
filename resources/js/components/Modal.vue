@@ -46,12 +46,12 @@
                 </div>
               </div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700 border-t border-transparent dark:border-gray-500 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
               <slot name="actions">
-                <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2">
+                <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
                   {{ actionText }}
                 </Button>
-                <Button @click.prevent="close" type="button" color="white">
+                <Button @click.prevent="close" type="button" color="white" class="text-sm">
                   Cancel
                 </Button>
               </slot>

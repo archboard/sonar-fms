@@ -74,7 +74,8 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/fee-categories', \App\Http\Controllers\FeeCategoryController::class)
             ->except('create', 'edit');
 
-        Route::resource('/users', \App\Http\Controllers\UserController::class);
+        Route::resource('/users', \App\Http\Controllers\UserController::class)
+            ->except('create');
 
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);

@@ -34,24 +34,35 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+        ]);
+        $school = $request->school();
+
+        $user = User::where('email', 'ilike', $data['email'])
+            ->first();
+
+        if (!$user) {
+            $data['tenant_id'] = $school->tenant_id;
+            $data['school_id'] = $school->id;
+            $data['email'] = strtolower($data['email']);
+            $user = User::create($data);
+        }
+
+        $user->schools()->syncWithoutDetaching([$school->id]);
+
+        session()->flash('success', __('User created successfully.'));
+
+        return redirect()->route('users.show', $user);
     }
 
     /**

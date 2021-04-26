@@ -12,6 +12,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     protected Tenant $tenant;
+    protected School $school;
     protected ?User $user = null;
 
     protected function setUp(): void
@@ -34,19 +35,18 @@ abstract class TestCase extends BaseTestCase
             return $this->user;
         }
 
-        /** @var School $school */
-        $school = $this->tenant->schools->random();
+        $this->school = $this->tenant->schools->random();
 
         /** @var User $user */
         $user = $this->tenant->users()
             ->save(
                 User::factory()->make([
-                    'school_id' => $school->id,
+                    'school_id' => $this->school->id,
                 ])
             );
 
-        $user->schools()->attach($school->id);
-        \Bouncer::scope()->to($user->school->id);
+        $user->schools()->attach($this->school->id);
+        \Bouncer::scope()->to($this->school->id);
 
         $this->be($user);
         $this->user = $user;
