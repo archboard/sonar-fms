@@ -26,7 +26,7 @@ class AddActiveFlagForSchools extends Migration
     public function down()
     {
         Schema::table('schools', function (Blueprint $table) {
-            $table->dropColumn('active_at');
+            $table->dropColumn('active');
         });
     }
 }
