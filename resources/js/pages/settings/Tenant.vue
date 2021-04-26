@@ -344,14 +344,18 @@ export default defineComponent({
             batch.value = res.data
             console.log('batch', res.data)
 
-            if (!res.data || res.data.progress >= 100) {
+            if (
+              !res.data ||
+              typeof res.data.progress === 'undefined' ||
+              res.data.progress >= 100
+            ) {
               polling.value = false
               sisSyncing.value = false
               clearInterval(syncCheckInterval)
             }
           })
         }
-      }, 60000)
+      }, 5000)
     }
     const deleteSyncTime = time => {
       Inertia.delete($route('sync-times.destroy', time), {

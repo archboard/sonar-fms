@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 
 class SyncSisDataController extends Controller
 {
@@ -17,8 +18,12 @@ class SyncSisDataController extends Controller
         $tenant = $request->tenant();
 
         if ($tenant->batch_id) {
-            session()->flash('error', __('SIS data is currently syncing.'));
-            return back();
+            $batch = Bus::findBatch($tenant->batch_id);
+
+            if (!$batch->finished()) {
+                session()->flash('error', __('SIS data is currently syncing.'));
+                return back();
+            }
         }
 
         $tenant->startSisSync();

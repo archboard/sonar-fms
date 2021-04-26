@@ -52,7 +52,7 @@ class SyncSchool implements ShouldQueue
             return;
         }
 
-        $this->school->syncDataFromSis();
+//        $this->school->syncDataFromSis();
 
         if ($this->notify) {
             collect($this->school->tenant->getSyncNotificationEmails())

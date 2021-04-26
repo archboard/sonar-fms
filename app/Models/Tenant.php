@@ -122,23 +122,25 @@ class Tenant extends TenantBase
      */
     public function startSisSync(): static
     {
+        ray()->clearScreen();
+        ray('Starting sis sync');
+
         $batch = Bus::batch(
             $this->sisProvider()
                 ->syncSchools()
                 ->filter(fn (School $school) => $school->active)
-                ->map(fn (School $school) => SyncSchool::dispatch($school))
+                ->map(fn (School $school) => new SyncSchool($school))
         )->then(function (Batch $batch) {
             $this->notifySyncEmails(TenantSyncComplete::class);
-            $this->update(['batch_id' => null]);
-            $batch->cancel();
         })->catch(function (Batch $batch, \Throwable $ex) {
             $this->notifySyncEmails(TenantSyncFailed::class);
-            ray($ex)->red();
         })->finally(function (Batch $batch) {
             ray("Batch {$batch->id} has finished");
+            $this->refresh()->update(['batch_id' => null]);
         })->name('Tenant SIS Sync')->dispatch();
 
         $this->update(['batch_id' => $batch->id]);
+        ray("Batch {$batch->id} has been dispatched");
 
         return $this;
     }

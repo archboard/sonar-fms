@@ -15,6 +15,10 @@ class GetSisSyncBatchController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return response()->json(Bus::findBatch($request->tenant()->batch_id));
+        if ($batchId = $request->tenant()->batch_id) {
+            return response()->json(Bus::findBatch($batchId));
+        }
+
+        return response()->json((object) []);
     }
 }

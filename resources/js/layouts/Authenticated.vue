@@ -251,9 +251,9 @@
         </slot>
 
         <footer>
-          <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
+          <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl mt-8">
             <div class="border-t border-gray-200 dark:border-gray-500 py-8 text-sm text-gray-500 text-center sm:text-left">
-              <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} <a href="https://archboard.io" target="_blank" class="hover:underline">Archboard LLC</a>.</span>
+              <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} <a href="https://archboard.io" target="_blank" class="hover:underline">Archboard, LLC</a>.</span>
               <span class="block sm:inline"> All rights reserved.</span>
             </div>
           </div>
