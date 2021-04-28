@@ -77,6 +77,9 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/users', \App\Http\Controllers\UserController::class)
             ->except('create');
 
+        Route::get('/users/{user}/permissions', \App\Http\Controllers\GetUserPermissionsController::class)
+            ->name('users.permissions');
+
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])

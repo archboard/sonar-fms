@@ -58,14 +58,41 @@
             {{ user.full_name }}
           </Td>
           <Td>{{ user.email }}</Td>
-          <Td class="text-right">
-            <Link is="inertia-link" :href="$route('users.show', user)">{{ __('View') }}</Link>
+          <Td class="text-right align-middle">
+            <div class="flex items-center justify-end">
+              <VerticalDotMenu>
+                <div class="px-1 py-1">
+                  <SonarMenuItem>
+                    Edit
+                  </SonarMenuItem>
+                  <SonarMenuItem @click="togglePermissions(user)">
+                    Permissions
+                  </SonarMenuItem>
+                </div>
+                <div class="px-1 py-1">
+                  <SonarMenuItem>
+                    Archive
+                  </SonarMenuItem>
+                  <SonarMenuItem>
+                    Move
+                  </SonarMenuItem>
+                </div>
+
+                <div class="px-1 py-1">
+                  <SonarMenuItem>
+                    Delete
+                  </SonarMenuItem>
+                </div>
+              </VerticalDotMenu>
+            </div>
           </Td>
         </tr>
       </Tbody>
     </Table>
 
     <Pagination :meta="users.meta" :links="users.links" />
+
+    <pre>{{ permissionsUser }}</pre>
 
     <UserTableFiltersModal
       v-if="showFilters"
@@ -78,10 +105,16 @@
       v-if="showModal"
       @close="showModal = false"
     />
+    <UserPermissionsSlideout
+      v-if="permissionsUser.id"
+      :user="permissionsUser"
+      @close="togglePermissions({})"
+    />
   </Authenticated>
 </template>
 
 <script>
+import { TransitionRoot, MenuItem } from '@headlessui/vue'
 import { defineComponent, inject, ref, watch } from 'vue'
 import debounce from 'lodash/debounce'
 import handlesFilters from '../../composition/handlesFilters'
@@ -99,9 +132,17 @@ import UserTableFiltersModal from '../../components/modals/UserTableFiltersModal
 import Link from '@/components/Link'
 import Button from '../../components/Button'
 import CreateUserModal from '../../components/modals/CreateUserModal'
+import { DotsVerticalIcon } from '@heroicons/vue/outline'
+import VerticalDotMenu from '../../components/dropdown/VerticalDotMenu'
+import SonarMenuItem from '../../components/forms/SonarMenuItem'
+import UserPermissionsSlideout from '../../components/slideouts/UserPermissionsSlideout'
 
 export default defineComponent({
   components: {
+    MenuItem,
+    UserPermissionsSlideout,
+    SonarMenuItem,
+    VerticalDotMenu,
     CreateUserModal,
     Button,
     XCircleIcon,
@@ -120,6 +161,7 @@ export default defineComponent({
     Table,
     Authenticated,
     Link,
+    DotsVerticalIcon,
   },
 
   props: {
@@ -134,6 +176,13 @@ export default defineComponent({
     const showFilters = ref(false)
     const selectAll = ref(false)
     const showModal = ref(false)
+
+    // Permissions
+    const permissionsUser = ref({})
+    const togglePermissions = (user) => {
+      permissionsUser.value = user
+    }
+
     const { filters, applyFilters, resetFilters } = handlesFilters({
       s: '',
       perPage: 25,
@@ -166,6 +215,8 @@ export default defineComponent({
       selectAll,
       searchTerm,
       showModal,
+      permissionsUser,
+      togglePermissions,
     }
   }
 })
