@@ -53,6 +53,9 @@ Route::middleware('tenant')->group(function () {
         Route::put('/change-schools', \App\Http\Controllers\ChangeSchoolController::class)
             ->name('schools.change');
 
+        /**
+         * Student-related routes
+         */
         Route::get('/students', [\App\Http\Controllers\StudentController::class, 'index'])
             ->name('students.index');
 
@@ -68,12 +71,21 @@ Route::middleware('tenant')->group(function () {
         Route::delete('/student-selection', \App\Http\Controllers\RemoveStudentSelectionController::class)
             ->name('student-selection.remove');
 
+        /**
+         * Fee-related routes
+         */
         Route::resource('/departments', \App\Http\Controllers\DepartmentController::class)
             ->except('create', 'edit');
 
         Route::resource('/fee-categories', \App\Http\Controllers\FeeCategoryController::class)
             ->except('create', 'edit');
 
+        Route::resource('/fees', \App\Http\Controllers\FeeController::class)
+            ->except('create', 'edit');
+
+        /**
+         * User Routes
+         */
         Route::resource('/users', \App\Http\Controllers\UserController::class)
             ->except('create');
 
@@ -81,6 +93,9 @@ Route::middleware('tenant')->group(function () {
             ->name('users.permissions');
         Route::put('/users/{user}/permissions', \App\Http\Controllers\Settings\UpdateUserPermissions::class);
 
+        /**
+         * Settings-based routes
+         */
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
             Route::get('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'index'])

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\FeeCategory;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FeeCategoryFactory extends Factory
@@ -22,6 +23,7 @@ class FeeCategoryFactory extends Factory
     public function definition()
     {
         return [
+            'tenant_id' => Tenant::current()->id,
             'name' => $this->faker->word,
         ];
     }

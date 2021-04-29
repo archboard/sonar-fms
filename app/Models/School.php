@@ -58,6 +58,11 @@ class School extends Model
         return $this->hasMany(Term::class);
     }
 
+    public function fees(): HasMany
+    {
+        return $this->hasMany(Fee::class);
+    }
+
     public function getGradeLevelsAttribute()
     {
         return range($this->low_grade, $this->high_grade);

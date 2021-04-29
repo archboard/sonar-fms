@@ -64,14 +64,32 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Fee
+ *
+ * @property-read \App\Models\Course $course
+ * @property-read \App\Models\Department $department
+ * @property-read \App\Models\FeeCategory $feeCategory
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\FeeFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperFee extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\FeeCategory
  *
+ * @mixin IdeHelperFeeCategory
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeCategoryFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory query()
- * @mixin \Eloquent
  */
 	class IdeHelperFeeCategory extends \Eloquent {}
 }
@@ -96,6 +114,8 @@ namespace App\Models{
  * @property bool $active
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
+ * @property-read int|null $fees_count
  * @property-read mixed $grade_levels
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count

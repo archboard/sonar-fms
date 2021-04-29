@@ -367,6 +367,32 @@ class User extends Authenticatable
                         ],
                     ],
                 ],
+                [
+                    'model' => Fee::class,
+                    'label' => __('Fees'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', Fee::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', Fee::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', Fee::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', Fee::class),
+                        ],
+                    ],
+                ],
             ],
         ];
     }

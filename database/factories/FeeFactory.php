@@ -2,18 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Department;
-use App\Models\Tenant;
+use App\Models\Fee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DepartmentFactory extends Factory
+class FeeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Department::class;
+    protected $model = Fee::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +22,10 @@ class DepartmentFactory extends Factory
     public function definition()
     {
         return [
-            'tenant_id' => Tenant::current()->id,
             'name' => $this->faker->word,
+            'code' => strtoupper($this->faker->word),
+            'description' => $this->faker->sentence,
+            'amount' => $this->faker->numberBetween(1000),
         ];
     }
 }
