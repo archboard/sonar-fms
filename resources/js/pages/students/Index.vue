@@ -101,8 +101,8 @@
 <script>
 import { defineComponent, inject, nextTick, ref, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import debounce from 'lodash/debounce'
 import handlesFilters from '../../composition/handlesFilters'
+import searchesItems from '../../composition/searchesItems'
 import Authenticated from '../../layouts/Authenticated'
 import Table from '../../components/tables/Table'
 import Thead from '../../components/tables/Thead'
@@ -147,7 +147,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
-    const { filters, applyFilters, resetFilters } = handlesFilters({
+    const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 25,
       page: 1,
@@ -156,7 +156,7 @@ export default defineComponent({
       grades: [],
       enrolled: true,
     }, $route('students.index'))
-    const searchTerm = ref(filters.s)
+    const { searchTerm } = searchesItems(filters)
     const selectStudent = student => {
       nextTick(() => {
         const add = props.user.student_selection.includes(student.id)
@@ -169,27 +169,13 @@ export default defineComponent({
       await $http.delete($route('student-selection.remove'))
       props.user.student_selection = []
     }
-    const sortColumn = column => {
-      if (column === filters.orderBy) {
-        filters.orderDir = filters.orderDir === 'asc'
-          ? 'desc'
-          : 'asc'
-      } else {
-        filters.orderBy = column
-        filters.orderDir = 'asc'
-      }
-    }
     watch(selectAll, (newVal) => {
       if (newVal) {
-        Inertia.post($route('student-selection.store'), filters)
+        Inertia.post($route('student-selection.store'), filters.value)
       } else {
         clearSelection()
       }
     })
-    watch(searchTerm, debounce(newVal => {
-      filters.s = newVal
-      filters.page = 1
-    }, 500))
 
     return {
       filters,

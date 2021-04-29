@@ -114,7 +114,7 @@
 <script>
 import { MenuItem } from '@headlessui/vue'
 import { defineComponent, inject, ref, watch } from 'vue'
-import debounce from 'lodash/debounce'
+import searchesItems from '../../composition/searchesItems'
 import { Inertia } from '@inertiajs/inertia'
 import handlesFilters from '../../composition/handlesFilters'
 import Authenticated from '../../layouts/Authenticated'
@@ -172,7 +172,6 @@ export default defineComponent({
   },
 
   setup (props) {
-    const $http = inject('$http')
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
@@ -189,28 +188,14 @@ export default defineComponent({
       Inertia.reload({ preserveScroll: true })
     }
 
-    const { filters, applyFilters, resetFilters } = handlesFilters({
+    const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 25,
       page: 1,
       orderBy: 'last_name',
       orderDir: 'asc',
     }, $route('users.index'))
-    const searchTerm = ref(filters.s)
-    const sortColumn = column => {
-      if (column === filters.orderBy) {
-        filters.orderDir = filters.orderDir === 'asc'
-          ? 'desc'
-          : 'asc'
-      } else {
-        filters.orderBy = column
-        filters.orderDir = 'asc'
-      }
-    }
-    watch(searchTerm, debounce(newVal => {
-      filters.s = newVal
-      filters.page = 1
-    }, 500))
+    const { searchTerm } = searchesItems(filters)
 
     return {
       filters,
