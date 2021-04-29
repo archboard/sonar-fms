@@ -133,8 +133,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(StudentSelection::class)
             ->join('users', function (JoinClause $join) {
-                $join->on('student_selections.school_id', '=', 'users.school_id');
-            });
+                $join->on('student_selections.user_id', '=', 'users.id');
+            })
+            ->whereRaw('student_selections.school_id = users.school_id');
     }
 
     public function getPermissionsForSchool(School $school = null): array
