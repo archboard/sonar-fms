@@ -39,6 +39,7 @@ class CreateTenantController extends Controller
         ]);
 
         // Save the tenant
+        $data['sync_notification_emails'] = $data['email'];
         $tenant->forceFill(Arr::except($data, 'email'));
         $tenant->save();
 
@@ -52,18 +53,10 @@ class CreateTenantController extends Controller
         ]);
         $user->schools()->sync($tenant->schools->pluck('id'));
 
-        // This is the equivalent of doing `everything()`
-        $user->schools->each(function (School $school) use ($user) {
-            $user->givePermissionForSchool($school);
-
-            // Dispatch job to sync school in background
-            SyncSchool::dispatch($school);
-        });
-
         auth()->login($user);
 
-        session()->flash('success', __('Installation complete. Sync has been started and will take several minutes to complete.'));
+        session()->flash('success', __('Information saved successfully. Update tenant settings to finish installation.'));
 
-        return redirect()->route('home');
+        return redirect()->route('settings.tenant');
     }
 }

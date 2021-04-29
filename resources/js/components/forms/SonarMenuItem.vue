@@ -8,7 +8,7 @@
       ]"
       @click.prevent="$emit('click')"
     >
-      <slot/>
+      <slot :active="active" />
     </component>
   </MenuItem>
 </template>

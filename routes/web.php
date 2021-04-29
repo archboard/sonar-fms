@@ -79,6 +79,7 @@ Route::middleware('tenant')->group(function () {
 
         Route::get('/users/{user}/permissions', \App\Http\Controllers\GetUserPermissionsController::class)
             ->name('users.permissions');
+        Route::put('/users/{user}/permissions', \App\Http\Controllers\Settings\UpdateUserPermissions::class);
 
         Route::prefix('/settings')->group(function () {
             Route::post('personal', [\App\Http\Controllers\Settings\PersonalSettingsController::class, 'update']);
@@ -110,6 +111,9 @@ Route::middleware('tenant')->group(function () {
 
                 Route::put('tenant/schools', \App\Http\Controllers\Settings\SaveActiveSchoolsController::class)
                     ->name('tenant.schools');
+
+                Route::put('users/{user}/manager', \App\Http\Controllers\Settings\UpdateTenancyManagerStatusController::class)
+                    ->name('users.tenancy_manager');
             });
         });
     });

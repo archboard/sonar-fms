@@ -3,9 +3,12 @@
     @close="$emit('close')"
     @action="submitForm"
     :action-text="__('Create')"
-    :headline="__('Create a new user')"
+    :headline="__('Add a new user')"
     :auto-close="form.processing"
   >
+    <HelpText class="mb-4">
+      {{ __('Use this form to create a new user. If the email address already exists for a user in a different school, the existing user will be given access to this school.') }}
+    </HelpText>
     <form @submit.prevent="submitForm">
       <Fieldset>
         <InputWrap :error="form.errors.first_name">
@@ -34,9 +37,11 @@ import InputWrap from '../forms/InputWrap'
 import Input from '../forms/Input'
 import Req from '../forms/Req'
 import Label from '../forms/Label'
+import HelpText from '../HelpText'
 
 export default defineComponent({
   components: {
+    HelpText,
     Req,
     Input,
     InputWrap,

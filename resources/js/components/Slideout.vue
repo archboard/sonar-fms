@@ -10,7 +10,7 @@
         leave-to-class="opacity-0"
       >
         <div v-if="show" class="fixed inset-0 transition-opacity" style="backdrop-filter: blur(5px);" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
+          <div class="absolute inset-0 bg-gray-800 opacity-75" @click="close"></div>
         </div>
       </transition>
 
@@ -25,7 +25,7 @@
           @after-leave="$emit('close')"
         >
           <div v-if="show" ref="slideout" class="w-screen max-w-2xl relative">
-            <form class="flex flex-col h-full bg-white dark:bg-gray-600 shadow-xl">
+            <form class="flex flex-col h-full bg-white dark:bg-gray-600 shadow-xl" @submit.prevent="performAction">
               <!-- Header -->
               <div class="px-4 py-6 bg-gray-50 dark:bg-gray-700 sm:px-6">
                 <div class="flex items-start justify-between space-x-3">
@@ -47,13 +47,13 @@
               </div>
 
               <!-- Action buttons -->
-              <div class="flex-shrink-0 px-4 py-5 sm:px-6 dark:bg-gray-700">
+              <div class="flex-shrink-0 px-4 py-5 sm:px-6 bg-gray-50 dark:bg-gray-700">
                 <div class="space-x-3 flex justify-end">
                   <slot name="actions">
                     <Button type="button" color="white" @click="close">
                       {{ __('Cancel') }}
                     </Button>
-                    <Button type="submit">
+                    <Button type="submit" :loading="processing">
                       {{ __('Save') }}
                     </Button>
                   </slot>
@@ -83,6 +83,10 @@ export default defineComponent({
     autoClose: {
       type: Boolean,
       default: false,
+    },
+    processing: {
+      type: Boolean,
+      default: false
     }
   },
 

@@ -2,7 +2,7 @@
   <Authenticated>
     <template v-slot:actions>
       <Button class="text-sm" @click.prevent="showModal = true">
-        {{ __('Create') }}
+        {{ __('Add user') }}
       </Button>
     </template>
 
@@ -61,11 +61,11 @@
           <Td class="text-right align-middle">
             <div class="flex items-center justify-end">
               <VerticalDotMenu>
-                <div class="px-1 py-1">
-                  <SonarMenuItem>
+                <div class="px-1 py-1" v-if="canAny('viewAny', 'edit permissions')">
+                  <SonarMenuItem v-if="can('viewAny')">
                     Edit
                   </SonarMenuItem>
-                  <SonarMenuItem @click="togglePermissions(user)">
+                  <SonarMenuItem @click="togglePermissions(user)" v-if="can('edit permissions')">
                     Permissions
                   </SonarMenuItem>
                 </div>
@@ -78,9 +78,9 @@
                   </SonarMenuItem>
                 </div>
 
-                <div class="px-1 py-1">
-                  <SonarMenuItem>
-                    Delete
+                <div class="px-1 py-1" v-if="can('delete')">
+                  <SonarMenuItem v-slot="{ active }">
+                    <span :class="[active ? '' : 'text-red-500 dark:text-red-400']">Delete</span>
                   </SonarMenuItem>
                 </div>
               </VerticalDotMenu>
@@ -91,8 +91,6 @@
     </Table>
 
     <Pagination :meta="users.meta" :links="users.links" />
-
-    <pre>{{ permissionsUser }}</pre>
 
     <UserTableFiltersModal
       v-if="showFilters"
@@ -108,15 +106,16 @@
     <UserPermissionsSlideout
       v-if="permissionsUser.id"
       :user="permissionsUser"
-      @close="togglePermissions({})"
+      @close="closePermissions"
     />
   </Authenticated>
 </template>
 
 <script>
-import { TransitionRoot, MenuItem } from '@headlessui/vue'
+import { MenuItem } from '@headlessui/vue'
 import { defineComponent, inject, ref, watch } from 'vue'
 import debounce from 'lodash/debounce'
+import { Inertia } from '@inertiajs/inertia'
 import handlesFilters from '../../composition/handlesFilters'
 import Authenticated from '../../layouts/Authenticated'
 import Table from '../../components/tables/Table'
@@ -136,6 +135,7 @@ import { DotsVerticalIcon } from '@heroicons/vue/outline'
 import VerticalDotMenu from '../../components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '../../components/forms/SonarMenuItem'
 import UserPermissionsSlideout from '../../components/slideouts/UserPermissionsSlideout'
+import checksPermissions from '../../composition/checksPermissions'
 
 export default defineComponent({
   components: {
@@ -168,6 +168,7 @@ export default defineComponent({
     users: Object,
     user: Object,
     school: Object,
+    permissions: Object,
   },
 
   setup (props) {
@@ -176,11 +177,16 @@ export default defineComponent({
     const showFilters = ref(false)
     const selectAll = ref(false)
     const showModal = ref(false)
+    const { can, canAny } = checksPermissions(props.permissions)
 
     // Permissions
     const permissionsUser = ref({})
     const togglePermissions = (user) => {
       permissionsUser.value = user
+    }
+    const closePermissions = () => {
+      togglePermissions({})
+      Inertia.reload({ preserveScroll: true })
     }
 
     const { filters, applyFilters, resetFilters } = handlesFilters({
@@ -217,6 +223,9 @@ export default defineComponent({
       showModal,
       permissionsUser,
       togglePermissions,
+      closePermissions,
+      can,
+      canAny,
     }
   }
 })

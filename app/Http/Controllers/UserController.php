@@ -22,6 +22,8 @@ class UserController extends Controller
     {
         $school = $request->school();
         $title = __('Users');
+        /** @var User $user */
+        $user = $request->user();
 
         $users = $school->users()
             ->filter($request->all())
@@ -30,6 +32,7 @@ class UserController extends Controller
         return inertia('users/Index', [
             'users' => UserResource::collection($users),
             'title' => $title,
+            'permissions' => $user->getPermissions(User::class),
         ])->withViewData(compact('title'));
     }
 
