@@ -1,0 +1,79 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class UserPermissionTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->signIn();
+    }
+
+    public function test_cannot_change_permissions()
+    {
+        $user = $this->addUser();
+        $this->put(route('users.permissions', $user), [])
+            ->assertForbidden();
+    }
+
+    public function test_can_update_permissions()
+    {
+        $this->assignPermission('edit permissions', User::class);
+        $user = $this->addUser();
+        $permissions = [
+            'models' => [
+                [
+                    'model' => User::class,
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'can' => true,
+                        ],
+                        [
+                            'permission' => 'create',
+                            'can' => true,
+                        ],
+                        [
+                            'permission' => 'update',
+                            'can' => true,
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'can' => true,
+                        ],
+                        [
+                            'permission' => 'edit permissions',
+                            'can' => false,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertFalse($user->can('viewAny', User::class));
+        $this->assertFalse($user->can('create', User::class));
+        $this->assertFalse($user->can('update', User::class));
+        $this->assertFalse($user->can('delete', User::class));
+        $this->assertFalse($user->can('edit permissions', User::class));
+
+        $this->put(route('users.permissions', $user), $permissions)
+            ->assertOk()
+            ->assertJsonStructure([
+                'level', 'message'
+            ]);
+
+        $this->assertTrue($user->can('viewAny', User::class));
+        $this->assertTrue($user->can('create', User::class));
+        $this->assertTrue($user->can('update', User::class));
+        $this->assertTrue($user->can('delete', User::class));
+        $this->assertFalse($user->can('edit permissions', User::class));
+    }
+}

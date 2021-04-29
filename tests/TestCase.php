@@ -58,4 +58,16 @@ abstract class TestCase extends BaseTestCase
     {
         return $this->user->givePermissionForSchool($this->user->school, $permission, $model);
     }
+
+    public function addUser(): User
+    {
+        /** @var User $user */
+        $user = User::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'school_id' => $this->school->id,
+        ]);
+        $user->schools()->attach($user->id);
+
+        return $user;
+    }
 }
