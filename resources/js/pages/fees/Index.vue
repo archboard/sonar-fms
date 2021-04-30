@@ -47,24 +47,24 @@
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('fee_category')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('fee_categories.name')">
               <span>
                 {{ __('Category') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'fee_category' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'fee_category' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'fee_categories.name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'fee_categories.name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('department')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('departments.name')">
               <span>
                 {{ __('Department') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'department' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'department' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'departments.name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'departments.name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>

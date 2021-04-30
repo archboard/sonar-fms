@@ -23,8 +23,8 @@ class FeeController extends Controller
         $fees = $request->school()
             ->fees()
             ->with('feeCategory', 'department')
-            ->orderBy('name')
-            ->paginate(15);
+            ->filter($request->all())
+            ->paginate($request->input('perPage', 15));
         $title = __('Fees');
 
         return inertia('fees/Index', [

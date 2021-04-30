@@ -42,6 +42,7 @@ namespace App\Models{
 /**
  * App\Models\Currency
  *
+ * @mixin IdeHelperCurrency
  * @property int $id
  * @property string $code
  * @property string|null $number
@@ -59,7 +60,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Currency whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Currency whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Currency whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperCurrency extends \Eloquent {}
 }
@@ -111,21 +111,22 @@ namespace App\Models{
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Fee newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Fee query()
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCourseId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereDepartmentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereFeeCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fee whereUpdatedAt($value)
+ * @method static Builder|Fee filter(array $filters)
+ * @method static Builder|Fee newModelQuery()
+ * @method static Builder|Fee newQuery()
+ * @method static Builder|Fee query()
+ * @method static Builder|Fee whereAmount($value)
+ * @method static Builder|Fee whereCode($value)
+ * @method static Builder|Fee whereCourseId($value)
+ * @method static Builder|Fee whereCreatedAt($value)
+ * @method static Builder|Fee whereDepartmentId($value)
+ * @method static Builder|Fee whereDescription($value)
+ * @method static Builder|Fee whereFeeCategoryId($value)
+ * @method static Builder|Fee whereId($value)
+ * @method static Builder|Fee whereName($value)
+ * @method static Builder|Fee whereSchoolId($value)
+ * @method static Builder|Fee whereTenantId($value)
+ * @method static Builder|Fee whereUpdatedAt($value)
  */
 	class IdeHelperFee extends \Eloquent {}
 }
