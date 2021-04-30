@@ -22,6 +22,8 @@ class Fee extends Model
 
     public function scopeFilter(Builder $builder, array $filters)
     {
+        $builder->select('fees.*');
+
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
             $builder->where(function (Builder $builder) use ($search) {
                 $builder->where('name', 'ilike', "%{$search}%")

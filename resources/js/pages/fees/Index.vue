@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button class="text-sm" @click.prevent="showModal = true">
+      <Button class="text-sm" @click.prevent="displayModal({})">
         {{ __('Add fee') }}
       </Button>
     </template>
@@ -77,7 +77,7 @@
           :key="fee.id"
         >
           <Td :lighter="false">
-            {{ fee.name }} <span v-if="fee.code" class="text-gray-500 dark:text-gray-300">({{ fee.code }})</span>
+            {{ fee.name }} <span v-if="fee.code" class="text-gray-400 dark:text-gray-500">({{ fee.code }})</span>
             <HelpText v-if="fee.description">
               {{ fee.description }}
             </HelpText>
@@ -85,8 +85,9 @@
           <Td class="text-right">{{ displayCurrency(fee.amount) }}</Td>
           <Td>{{ fee.fee_category?.name }}</Td>
           <Td>{{ fee.department?.name }}</Td>
-          <Td class="text-right">
+          <Td class="text-right space-x-2">
             <Link is="inertia-link" :href="$route('fees.show', fee)">{{ __('View') }}</Link>
+            <Link is="a" href="#" @click.prevent="displayModal(fee)">{{ __('Edit') }}</Link>
           </Td>
         </tr>
       </Tbody>
@@ -156,6 +157,7 @@ export default defineComponent({
     const showFilters = ref(false)
     const selectAll = ref(false)
     const showModal = ref(false)
+    const selectedFee = ref({})
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 15,
@@ -164,8 +166,12 @@ export default defineComponent({
       orderDir: 'asc',
     }, $route('fees.index'))
     const { searchTerm } = searchesItems(filters)
-    const selectedFee = ref({})
     const { displayCurrency } = displaysCurrency()
+
+    const displayModal = (fee = {}) => {
+      selectedFee.value = fee
+      showModal.value = true
+    }
 
     return {
       filters,
@@ -178,6 +184,7 @@ export default defineComponent({
       selectedFee,
       showModal,
       displayCurrency,
+      displayModal,
     }
   }
 })
