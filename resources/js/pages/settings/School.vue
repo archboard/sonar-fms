@@ -15,21 +15,10 @@
               </div>
 
               <Fieldset>
-                <InputWrap :error="form.errors.currency_symbol">
-                  <Label for="currency_symbol">{{ __('Currency Symbol') }}</Label>
-                  <Input v-model="form.currency_symbol" type="text" id="currency_symbol" data-cy="currency_symbol" required />
+                <InputWrap :error="form.errors.currency_id">
+                  <Label for="currency_symbol">{{ __('Currency') }}</Label>
+                  <CurrencySelector v-model="form.currency_id" :currencies="currencies" />
                 </InputWrap>
-                <InputWrap :error="form.errors.currency_decimals">
-                  <Label for="currency_decimals">{{ __('Currency Decimal Places') }}</Label>
-                  <Input v-model="form.currency_decimals" type="number" id="currency_decimals" data-cy="currency_decimals" required />
-                  <help-text class="mt-1">{{ __('This is the number of decimal places to add or round to when currencies are displayed.') }}</help-text>
-                </InputWrap>
-<!--                <InputWrap :error="form.errors.use_thousands_separator">-->
-<!--                  <label>-->
-<!--                    <Checkbox v-model:checked="form.use_thousands_separator" name="use_thousands_separator" data-cy="use_thousands_separator" />-->
-<!--                    <CheckboxText>{{ __('Use thousands separator (,) when') }}</CheckboxText>-->
-<!--                  </label>-->
-<!--                </InputWrap>-->
               </Fieldset>
             </div>
           </FormMultipartWrapper>
@@ -62,9 +51,11 @@ import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
 import CardSectionHeader from '../../components/CardSectionHeader'
 import Checkbox from '../../components/forms/Checkbox'
 import CheckboxText from '../../components/forms/CheckboxText'
+import CurrencySelector from '../../components/forms/CurrencySelector'
 
 export default defineComponent({
   components: {
+    CurrencySelector,
     CheckboxText,
     Checkbox,
     CardSectionHeader,
@@ -83,12 +74,13 @@ export default defineComponent({
 
   props: {
     school: Object,
+    currencies: Array,
   },
 
   setup ({ school }) {
     const $route = inject('$route')
     const form = useForm({
-      ...pick(school, ['currency_decimals', 'currency_symbol']),
+      ...pick(school, ['currency_id']),
     })
     const submit = () => {
       form.post($route('settings.school'))

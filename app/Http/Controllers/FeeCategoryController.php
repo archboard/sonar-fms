@@ -29,7 +29,7 @@ class FeeCategoryController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -40,9 +40,16 @@ class FeeCategoryController extends Controller
             ->feeCategories()
             ->create($data);
 
+        $message = __('Category created successfully.');
+
+        if ($request->wantsInertia()) {
+            session()->flash('success', $message);
+            return back();
+        }
+
         return response()->json([
             'level' => 'success',
-            'message' => __('Category created successfully.'),
+            'message' => $message,
             'data' => $category->toResource(),
         ]);
     }
@@ -63,7 +70,7 @@ class FeeCategoryController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\FeeCategory  $feeCategory
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, FeeCategory $feeCategory)
     {
@@ -71,9 +78,16 @@ class FeeCategoryController extends Controller
 
         $feeCategory->update($data);
 
+        $message = __('Category updated successfully.');
+
+        if ($request->wantsInertia()) {
+            session()->flash('success', $message);
+            return back();
+        }
+
         return response()->json([
             'level' => 'success',
-            'message' => __('Category updated successfully.'),
+            'message' => $message,
             'data' => $feeCategory->toResource(),
         ]);
     }

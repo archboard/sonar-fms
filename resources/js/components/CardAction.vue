@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-gray-50 dark:bg-gray-700"
+    class="bg-gray-50 dark:bg-gray-700 rounded-br-md rounded-bl-md"
     :class="{
       '-mx-4 -mb-5 mt-6 sm:-mx-6': negativeMargin
     }"

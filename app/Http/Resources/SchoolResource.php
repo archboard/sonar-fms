@@ -21,10 +21,10 @@ class SchoolResource extends JsonResource
             'active' => $this->active,
             'low_grade' => $this->low_grade,
             'high_grade' => $this->high_grade,
+            'currency_id' => $this->currency_id,
             'grade_levels' => $this->grade_levels,
             'school_number' => $this->school_number,
-            'currency_symbol' => $this->currency_symbol,
-            'currency_decimals' => $this->currency_decimals,
+            'currency' => new CurrencyResource($this->whenLoaded('currency')),
         ];
     }
 }

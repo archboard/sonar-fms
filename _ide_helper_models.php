@@ -40,6 +40,32 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Currency
+ *
+ * @property int $id
+ * @property string $code
+ * @property string|null $number
+ * @property int $digits
+ * @property string|null $currency
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereDigits($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Currency whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperCurrency extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Department
  *
  * @mixin IdeHelperDepartment
@@ -66,16 +92,40 @@ namespace App\Models{
 /**
  * App\Models\Fee
  *
- * @property-read \App\Models\Course $course
- * @property-read \App\Models\Department $department
- * @property-read \App\Models\FeeCategory $feeCategory
+ * @mixin IdeHelperFee
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $name
+ * @property string|null $code
+ * @property string|null $description
+ * @property int|null $amount
+ * @property int|null $fee_category_id
+ * @property int|null $department_id
+ * @property int|null $course_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Course|null $course
+ * @property-read \App\Models\Department|null $department
+ * @property-read \App\Models\FeeCategory|null $feeCategory
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Fee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Fee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Fee query()
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereDepartmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereFeeCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fee whereUpdatedAt($value)
  */
 	class IdeHelperFee extends \Eloquent {}
 }
@@ -85,11 +135,21 @@ namespace App\Models{
  * App\Models\FeeCategory
  *
  * @mixin IdeHelperFeeCategory
+ * @property int $id
+ * @property int $tenant_id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeCategoryFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FeeCategory whereUpdatedAt($value)
  */
 	class IdeHelperFeeCategory extends \Eloquent {}
 }
@@ -108,12 +168,12 @@ namespace App\Models{
  * @property int|null $low_grade
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string $currency_symbol
- * @property int $currency_decimals
  * @property bool $use_thousands_separator
  * @property bool $active
+ * @property int|null $currency_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
+ * @property-read \App\Models\Currency|null $currency
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read mixed $grade_levels
@@ -133,8 +193,7 @@ namespace App\Models{
  * @method static Builder|School query()
  * @method static Builder|School whereActive($value)
  * @method static Builder|School whereCreatedAt($value)
- * @method static Builder|School whereCurrencyDecimals($value)
- * @method static Builder|School whereCurrencySymbol($value)
+ * @method static Builder|School whereCurrencyId($value)
  * @method static Builder|School whereHighGrade($value)
  * @method static Builder|School whereId($value)
  * @method static Builder|School whereLowGrade($value)
@@ -425,6 +484,7 @@ namespace App\Models{
  * @property int|null $contact_id
  * @property int|null $guardian_id
  * @property bool $manages_tenancy
+ * @property string $locale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
  * @property-read string $full_name
@@ -458,6 +518,7 @@ namespace App\Models{
  * @method static Builder|User whereIsAll($role)
  * @method static Builder|User whereIsNot($role)
  * @method static Builder|User whereLastName($value)
+ * @method static Builder|User whereLocale($value)
  * @method static Builder|User whereManagesTenancy($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)

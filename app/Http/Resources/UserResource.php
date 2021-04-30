@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'full_name' => $this->full_name,
             'student_selection' => $this->student_selection,
             'school_id' => $this->school_id,
+            'locale' => $this->locale,
             'manages_tenancy' => $this->manages_tenancy,
             'schools' => SchoolResource::collection($this->whenLoaded('schools')),
             'school' => new SchoolResource($this->whenLoaded('schoool')),

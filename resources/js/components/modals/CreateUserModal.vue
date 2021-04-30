@@ -4,7 +4,7 @@
     @action="submitForm"
     :action-text="__('Create')"
     :headline="__('Add a new user')"
-    :auto-close="form.processing"
+    :action-loading="form.processing"
   >
     <HelpText class="mb-4">
       {{ __('Use this form to create a new user. If the email address already exists for a user in a different school, the existing user will be given access to this school.') }}

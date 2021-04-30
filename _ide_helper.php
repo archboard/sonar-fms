@@ -10866,6 +10866,16 @@
         {
                         return \Illuminate\Http\Request::school();
         }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function wantsInertia()
+        {
+                        return \Illuminate\Http\Request::wantsInertia();
+        }
          
     }
             /**
@@ -16141,6 +16151,16 @@
         public static function school()
         {
                         return \Illuminate\Http\Request::school();
+        }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function wantsInertia()
+        {
+                        return \Illuminate\Http\Request::wantsInertia();
         }
          
     }

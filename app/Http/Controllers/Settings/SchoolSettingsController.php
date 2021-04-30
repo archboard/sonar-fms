@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CurrencyResource;
+use App\Models\Currency;
 use Illuminate\Http\Request;
 
 class SchoolSettingsController extends Controller
@@ -16,9 +18,12 @@ class SchoolSettingsController extends Controller
     public function index(Request $request)
     {
         $title = __(':school_name Settings', ['school_name' => $request->school()->name]);
+        $currencies = Currency::orderBy('currency')
+            ->get();
 
         return inertia('settings/School', [
             'title' => $title,
+            'currencies' => CurrencyResource::collection($currencies),
         ])->withViewData(compact('title'));
     }
 
@@ -31,8 +36,7 @@ class SchoolSettingsController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'currency_symbol' => 'required',
-            'currency_decimals' => 'required|integer',
+            'currency_id' => 'required|exists:currencies,id',
         ]);
 
         $request->school()

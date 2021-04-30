@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder
         if (app()->environment('testing')) {
             $this->call(TenantSeeder::class);
         }
+
+        $this->call(CurrencySeeder::class);
     }
 }

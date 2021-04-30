@@ -62,5 +62,8 @@ class AppServiceProvider extends ServiceProvider
 
         Request::macro('tenant', $currentTenant);
         Request::macro('school', $currentSchool);
+        Request::macro('wantsInertia', function () {
+            return request()->header('x-inertia');
+        });
     }
 }

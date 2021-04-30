@@ -20,6 +20,8 @@ class FeeResource extends JsonResource
             'code' => $this->code,
             'description' => $this->description,
             'amount' => $this->amount,
+            'fee_category_id' => $this->fee_category_id,
+            'department_id' => $this->department_id,
             'fee_category' => new FeeCategoryResource($this->whenLoaded('feeCategory')),
             'department' => new DepartmentResource($this->whenLoaded('department')),
         ];

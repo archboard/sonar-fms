@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FeeResource;
 use App\Models\Fee;
 use Illuminate\Http\Request;
 
@@ -23,12 +24,12 @@ class FeeController extends Controller
             ->fees()
             ->with('feeCategory', 'department')
             ->orderBy('name')
-            ->get();
+            ->paginate(15);
         $title = __('Fees');
 
         return inertia('fees/Index', [
             'title' => $title,
-            'fees' => Fee::resource($fees),
+            'fees' => FeeResource::collection($fees),
         ])->withViewData(compact('title'));
     }
 
@@ -44,7 +45,7 @@ class FeeController extends Controller
             'name' => 'required',
             'code' => 'nullable',
             'description' => 'nullable',
-            'amount' => 'nullable|integer',
+            'amount' => 'required|integer',
             'fee_category_id' => 'nullable',
             'department_id' => 'nullable',
         ]);
@@ -90,7 +91,7 @@ class FeeController extends Controller
             'name' => 'required',
             'code' => 'nullable',
             'description' => 'nullable',
-            'amount' => 'nullable|integer',
+            'amount' => 'required|integer',
             'fee_category_id' => 'nullable',
             'department_id' => 'nullable',
         ]);

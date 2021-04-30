@@ -38,9 +38,9 @@
             </div>
             <div class="sm:flex sm:items-start px-4 pt-5 pb-4 sm:p-6">
               <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <h3 v-if="headline" class="text-lg mb-2 leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-headline">
+                <ModalHeadline v-if="headline">
                   {{ headline }}
-                </h3>
+                </ModalHeadline>
                 <div>
                   <slot/>
                 </div>
@@ -49,7 +49,7 @@
             <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
               <slot name="actions">
                 <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
-                  {{ actionText }}
+                  {{ computedActionText }}
                 </Button>
                 <Button @click.prevent="close" type="button" color="white" class="text-sm">
                   Cancel
@@ -67,9 +67,10 @@
 import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import Button from './Button'
+import ModalHeadline from './modals/ModalHeadline'
 
 export default defineComponent({
-  components: {Button},
+  components: {ModalHeadline, Button},
   emits: ['close', 'action'],
 
   props: {
@@ -100,6 +101,10 @@ export default defineComponent({
   },
 
   computed: {
+    computedActionText () {
+      return this.actionText || this.__('Save')
+    },
+
     modalSize () {
       const modalSizes = {
         xs: 'sm:max-w-xs',
@@ -123,7 +128,7 @@ export default defineComponent({
   mounted () {
     this.show = true
 
-    document.addEventListener('keydown', this.listener)
+    this.attachListener()
 
     this.$nextTick(() => {
       disableBodyScroll(this.$refs.modal)
@@ -132,7 +137,7 @@ export default defineComponent({
 
   unmounted () {
     clearAllBodyScrollLocks()
-    document.removeEventListener('keydown', this.listener)
+    this.detachListener()
   },
 
   methods: {
@@ -161,6 +166,14 @@ export default defineComponent({
         e.stopPropagation()
         this.close()
       }
+    },
+
+    attachListener () {
+      document.addEventListener('keydown', this.listener)
+    },
+
+    detachListener () {
+      document.removeEventListener('keydown', this.listener)
     },
   }
 })

@@ -30,7 +30,7 @@ class DepartmentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -43,9 +43,16 @@ class DepartmentController extends Controller
             ->departments()
             ->create($data);
 
+        $message = __('Department created successfully.');
+
+        if ($request->wantsInertia()) {
+            session()->flash('success', $message);
+            return back();
+        }
+
         return response()->json([
             'level' => 'success',
-            'message' => __('Department created successfully.'),
+            'message' => $message,
             'data' => $department->toResource(),
         ]);
     }
@@ -66,7 +73,7 @@ class DepartmentController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Department $department)
     {
@@ -75,6 +82,13 @@ class DepartmentController extends Controller
         ]);
 
         $department->update($data);
+
+        $message = __('Department updated successfully.');
+
+        if ($request->wantsInertia()) {
+            session()->flash('success', $message);
+            return back();
+        }
 
         return response()->json([
             'level' => 'success',
