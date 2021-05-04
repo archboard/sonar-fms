@@ -24,6 +24,7 @@ class FeeResource extends JsonResource
             'department_id' => $this->department_id,
             'fee_category' => new FeeCategoryResource($this->whenLoaded('feeCategory')),
             'department' => new DepartmentResource($this->whenLoaded('department')),
+            'amount_formatted' => $this->whenLoaded('school', fn () => $this->amount_formatted),
         ];
     }
 }

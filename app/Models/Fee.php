@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,7 +27,7 @@ class Fee extends Model
 
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
             $builder->where(function (Builder $builder) use ($search) {
-                $builder->where('name', 'ilike', "%{$search}%")
+                $builder->where('fees.name', 'ilike', "%{$search}%")
                     ->orWhere('code', 'ilike', "%{$search}%")
                     ->orWhere('description', 'ilike', "%{$search}%");
             });
@@ -44,6 +45,12 @@ class Fee extends Model
         $builder->orderBy($orderBy, $orderDir);
 
         $builder->orderBy('fees.name', $orderDir);
+    }
+
+    public function getAmountFormattedAttribute()
+    {
+        return Money::ofMinor($this->amount, $this->school->currency->code)
+            ->formatTo(auth()->user()->locale ?? 'en');
     }
 
     public function school(): BelongsTo

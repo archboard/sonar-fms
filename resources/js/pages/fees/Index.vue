@@ -13,9 +13,9 @@
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by name, code or description')" />
       </div>
-      <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">
-        <AdjustmentsIcon class="w-6 h-6" />
-      </button>
+<!--      <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">-->
+<!--        <AdjustmentsIcon class="w-6 h-6" />-->
+<!--      </button>-->
       <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
         <XCircleIcon class="w-6 h-6" />
       </button>
@@ -82,6 +82,7 @@
               {{ fee.description }}
             </HelpText>
           </Td>
+<!--          <Td class="text-right">{{ fee.amount_formatted }}</Td>-->
           <Td class="text-right">{{ displayCurrency(fee.amount) }}</Td>
           <Td>{{ fee.fee_category?.name }}</Td>
           <Td>{{ fee.department?.name }}</Td>

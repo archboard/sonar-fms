@@ -22,7 +22,12 @@ class FeeController extends Controller
     {
         $fees = $request->school()
             ->fees()
-            ->with('feeCategory', 'department')
+            ->with([
+                'feeCategory',
+                'department',
+//                'school',
+//                'school.currency',
+            ])
             ->filter($request->all())
             ->paginate($request->input('perPage', 15));
         $title = __('Fees');
