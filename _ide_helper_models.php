@@ -161,13 +161,30 @@ namespace App\Models{
  * App\Models\Invoice
  *
  * @mixin IdeHelperInvoice
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
+ * @property-read int|null $invoice_items_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student $student
+ * @property-read \App\Models\Term $term
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
  */
 	class IdeHelperInvoice extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoiceItem
+ *
+ * @property-read \App\Models\Fee $fee
+ * @property-read \App\Models\Invoice $invoice
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoiceItem extends \Eloquent {}
 }
 
 namespace App\Models{
