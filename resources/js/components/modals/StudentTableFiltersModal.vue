@@ -16,11 +16,11 @@
       </InputWrap>
       <InputWrap>
         <Label>{{ __('Grade levels') }}</Label>
-        <div class="flex flex-wrap space-y-1">
-          <label class="w-1/6" v-for="grade in school.grade_levels">
+        <div class="flex flex-wrap">
+          <CheckboxWrapper class="w-1/6" v-for="grade in school.grade_levels">
             <Checkbox v-model:checked="localFilters.grades" :value="grade" />
             <CheckboxText>{{ grade }}</CheckboxText>
-          </label>
+          </CheckboxWrapper>
         </div>
       </InputWrap>
       <InputWrap>
@@ -43,10 +43,12 @@ import Label from '../forms/Label'
 import Select from '../forms/Select'
 import Checkbox from '../forms/Checkbox'
 import CheckboxText from '../forms/CheckboxText'
+import CheckboxWrapper from '../forms/CheckboxWrapper'
 
 export default defineComponent({
   emits: ['close', 'apply'],
   components: {
+    CheckboxWrapper,
     CheckboxText,
     Checkbox,
     Select,
