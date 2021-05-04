@@ -84,6 +84,12 @@ Route::middleware('tenant')->group(function () {
             ->except('create', 'edit');
 
         /**
+         * Invoices
+         */
+        Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
+            ->name('terms.index');
+
+        /**
          * User Routes
          */
         Route::resource('/users', \App\Http\Controllers\UserController::class)
