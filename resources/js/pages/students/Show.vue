@@ -336,7 +336,7 @@
                 <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
                 </svg>
-                <span class="text-gray-900 text-sm font-medium">4 comments</span>
+                <span class="text-sm font-medium">4 comments</span>
               </div>
               <div class="flex items-center space-x-2">
                 <!-- Heroicon name: solid/calendar -->
@@ -350,7 +350,7 @@
             </div>
             <div class="mt-6 border-t border-gray-300 py-6 space-y-8">
               <div>
-                <h2 class="text-sm font-medium text-gray-500 flex justify-between relative">
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex justify-between relative">
                   <span>
                     {{ __('Guardians') }}
                   </span>
@@ -368,30 +368,24 @@
                     v-for="guardian in student.users"
                     :key="guardian.id"
                   >
-                    <a href="#" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:underline">
+                    <a href="#" class="text-sm font-medium hover:underline">
                       {{ guardian.full_name }}
                     </a>
                   </li>
                 </ul>
               </div>
               <div>
-                <h2 class="text-sm font-medium text-gray-500">Tags</h2>
-                <ul class="mt-2 leading-8">
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>
+                <ul class="mt-2 leading-8 space-x-1">
                   <li class="inline">
-                    <a href="#" class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5">
-                      <div class="absolute flex-shrink-0 flex items-center justify-center">
-                        <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true"></span>
-                      </div>
-                      <div class="ml-3.5 text-sm font-medium text-gray-900 dark:text-gray-100">Bug</div>
-                    </a>
+                    <OutlineBadge is="a" href="#" color="bg-rose-500">
+                      Bug
+                    </OutlineBadge>
                   </li>
                   <li class="inline">
-                    <a href="#" class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5">
-                      <div class="absolute flex-shrink-0 flex items-center justify-center">
-                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true"></span>
-                      </div>
-                      <div class="ml-3.5 text-sm font-medium text-gray-900 dark:text-gray-100">Accessibility</div>
-                    </a>
+                    <OutlineBadge is="a" href="#" color="bg-indigo-500">
+                      Accessibility
+                    </OutlineBadge>
                   </li>
                 </ul>
               </div>

@@ -108,6 +108,7 @@ namespace App\Models{
  * @property-read \App\Models\Course|null $course
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\FeeCategory|null $feeCategory
+ * @property-read mixed $amount_formatted
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeFactory factory(...$parameters)
@@ -157,6 +158,20 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Invoice
+ *
+ * @mixin IdeHelperInvoice
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Student $student
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
+ */
+	class IdeHelperInvoice extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\School
  *
  * @mixin IdeHelperSchool
@@ -178,6 +193,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read mixed $grade_levels
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
@@ -274,6 +291,8 @@ namespace App\Models{
  * @property-read mixed $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
  * @property-read int|null $guardians_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \App\Models\Tenant $tenant

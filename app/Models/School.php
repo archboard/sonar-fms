@@ -69,6 +69,11 @@ class School extends Model
         return $this->belongsTo(Currency::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function getGradeLevelsAttribute()
     {
         return range($this->low_grade, $this->high_grade);
