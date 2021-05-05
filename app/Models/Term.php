@@ -26,4 +26,12 @@ class Term extends Model
         return $this->starts_at <= $today &&
             $this->ends_at >= $today;
     }
+
+    public function getSchoolYearsAttribute()
+    {
+        $start = substr($this->start_year, 2);
+        $end = substr($this->start_year + 1, 2);
+
+        return $start . '-' . $end;
+    }
 }

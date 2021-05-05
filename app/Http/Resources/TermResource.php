@@ -23,6 +23,7 @@ class TermResource extends JsonResource
             'starts_at' => $this->starts_at,
             'ends_at' => $this->ends_at,
             'is_current' => $this->is_current,
+            'school_years' => $this->school_years,
         ];
     }
 }

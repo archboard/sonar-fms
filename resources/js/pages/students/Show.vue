@@ -3,10 +3,10 @@
     <template v-slot:content>
       <div class="py-8 xl:py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:grid xl:grid-cols-3">
-          <div class="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-300">
+          <div class="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-300 xl:dark:border-gray-600">
             <div>
               <div>
-                <div class="md:flex md:items-start md:justify-between md:space-x-4 xl:border-b xl:pb-6">
+                <div class="md:flex md:items-start md:justify-between md:space-x-4 xl:border-b xl:dark:border-gray-600 xl:pb-6">
                   <div>
                     <h1 class="text-2xl font-bold">{{ student.full_name }}</h1>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -16,7 +16,7 @@
                       <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Customer Portal</a>
                     </p>
                   </div>
-                  <div class="mt-4 flex space-x-3 md:mt-0">
+                  <div class="mt-4 flex items-start space-x-3 md:mt-0">
                     <Button color="white">
                       <!-- Heroicon name: solid/pencil -->
                       <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -24,12 +24,8 @@
                       </svg>
                       <span class="text-sm">Edit</span>
                     </Button>
-                    <Button color="white">
-                      <!-- Heroicon name: solid/bell -->
-                      <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                      </svg>
-                      <span class="text-sm">Subscribe</span>
+                    <Button color="white" size="sm" @click.prevent="createInvoice = true">
+                      {{ __('New invoice') }}
                     </Button>
                   </div>
                 </div>
@@ -40,11 +36,11 @@
                   <div class="space-y-5">
                     <div v-if="student.enrolled" class="flex items-center space-x-2">
                       <CheckCircleIcon class="h-5 w-5 text-green-500" />
-                      <span class="text-green-700 text-sm font-medium">{{ __('Currently enrolled') }}</span>
+                      <span class="text-green-700 dark:text-green-400 text-sm font-medium">{{ __('Currently enrolled') }}</span>
                     </div>
                     <div v-else class="flex items-center space-x-2">
                       <XCircleIcon class="h-5 w-5 text-yellow-500" />
-                      <span class="text-yellow-700 text-sm font-medium">{{ __('Not enrolled') }}</span>
+                      <span class="text-yellow-700 dark:text-yellow-400 text-sm font-medium">{{ __('Not enrolled') }}</span>
                     </div>
 
                     <div class="flex items-center space-x-2">
@@ -65,7 +61,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="mt-6 border-t border-b border-gray-300 py-6 space-y-8">
+                  <div class="mt-6 border-t border-b border-gray-300 dark:border-gray-600 py-6 space-y-8">
                     <div>
                       <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex">
                         <span>
@@ -298,7 +294,7 @@
                               <Textarea id="comment" name="comment" rows="3" placeholder="Leave a comment"></Textarea>
                             </div>
                             <div class="mt-6 flex items-center justify-end space-x-4">
-                              <button type="button" class="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                              <button type="button" class="inline-flex justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
                                 <!-- Heroicon name: solid/check-circle -->
                                 <svg class="-ml-1 mr-2 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -325,11 +321,11 @@
             <div class="space-y-5">
               <div v-if="student.enrolled" class="flex items-center space-x-2">
                 <CheckCircleIcon class="h-5 w-5 text-green-500" />
-                <span class="text-green-700 text-sm font-medium">{{ __('Currently enrolled') }}</span>
+                <span class="text-green-700 dark:text-green-400 text-sm font-medium">{{ __('Currently enrolled') }}</span>
               </div>
               <div v-else class="flex items-center space-x-2">
                 <XCircleIcon class="h-5 w-5 text-yellow-500" />
-                <span class="text-yellow-700 text-sm font-medium">{{ __('Not enrolled') }}</span>
+                <span class="text-yellow-700 dark:text-yellow-400 text-sm font-medium">{{ __('Not enrolled') }}</span>
               </div>
               <div class="flex items-center space-x-2">
                 <!-- Heroicon name: solid/chat-alt -->
@@ -348,7 +344,7 @@
                 </span>
               </div>
             </div>
-            <div class="mt-6 border-t border-gray-300 py-6 space-y-8">
+            <div class="mt-6 border-t border-gray-300 dark:border-gray-600 py-6 space-y-8">
               <div>
                 <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex justify-between relative">
                   <span>
@@ -393,6 +389,12 @@
           </aside>
         </div>
       </div>
+
+      <StudentInvoiceSlideout
+        v-if="createInvoice"
+        @close="createInvoice = false"
+        :student="student"
+      />
     </template>
   </Authenticated>
 </template>
@@ -407,9 +409,11 @@ import Spinner from '../../components/icons/spinner'
 import OutlineBadge from '../../components/OutlineBadge'
 import Button from '../../components/Button'
 import Textarea from '../../components/forms/Textarea'
+import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
 
 export default defineComponent({
   components: {
+    StudentInvoiceSlideout,
     Button,
     OutlineBadge,
     Spinner,
@@ -429,6 +433,7 @@ export default defineComponent({
   setup ({ student }) {
     const $route = inject('$route')
     const enrolledAt = dayjs(student.initial_district_entry_date)
+    const createInvoice = ref(false)
     const syncingGuardians = ref(false)
     const syncGuardians = () => {
       syncingGuardians.value = true
@@ -444,6 +449,7 @@ export default defineComponent({
       enrolledAt,
       syncingGuardians,
       syncGuardians,
+      createInvoice,
     }
   }
 })

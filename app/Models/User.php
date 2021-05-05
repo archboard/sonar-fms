@@ -263,6 +263,15 @@ class User extends Authenticatable
         return $this;
     }
 
+    /**
+     * This gets the permissions from the permission matrix
+     * based on the given model. It will pull the set of
+     * permissions for the model as a flattened array
+     * of [permission name] => true/false
+     *
+     * @param string $model
+     * @return array
+     */
     public function getPermissions(string $model): array
     {
         $matrix = $this->getPermissionsMatrix();
@@ -391,6 +400,32 @@ class User extends Authenticatable
                             'permission' => 'delete',
                             'label' => __('Delete'),
                             'can' => $this->can('delete', Fee::class),
+                        ],
+                    ],
+                ],
+                [
+                    'model' => Invoice::class,
+                    'label' => __('Invoices'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', Invoice::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', Invoice::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', Invoice::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', Invoice::class),
                         ],
                     ],
                 ],

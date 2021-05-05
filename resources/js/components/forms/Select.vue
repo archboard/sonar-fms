@@ -1,6 +1,7 @@
 <template>
   <select
     v-model="localValue"
+    @change="e => $emit('change', e)"
     class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
   >
     <slot />
@@ -16,7 +17,7 @@ export default defineComponent({
       type: [String, Number, Boolean],
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change'],
 
   computed: {
     localValue: {

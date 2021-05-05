@@ -20,6 +20,7 @@ class CreateInvoicesTable extends Migration
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('term_id')->nullable();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('set null');
+            $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('amount_due')->nullable();
             $table->unsignedBigInteger('remaining_balance')->nullable();

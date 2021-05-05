@@ -1,4 +1,3 @@
-import { computed, ref, watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 
 export default () => {
@@ -10,7 +9,6 @@ export default () => {
 
     return new Intl.NumberFormat(locale || 'en', { style: 'currency', currency: currency.code }).format(asFloat)
   }
-
 
   return {
     displayCurrency

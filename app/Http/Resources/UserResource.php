@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'full_name' => $this->full_name,
             'student_selection' => $this->student_selection,
+            'timezone' => $this->timezone,
             'school_id' => $this->school_id,
             'locale' => $this->locale,
             'manages_tenancy' => $this->manages_tenancy,

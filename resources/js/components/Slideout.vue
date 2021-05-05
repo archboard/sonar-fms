@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div class="fixed z-10 inset-0">
+    <div class="fixed z-10 inset-0 slideout">
       <transition
         enter-active-class="duration-300 ease-out"
         enter-from-class="opacity-0"

@@ -80,6 +80,9 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/fee-categories', \App\Http\Controllers\FeeCategoryController::class)
             ->except('create', 'edit');
 
+        Route::get('/fees/all', \App\Http\Controllers\GetFeesController::class)
+            ->name('fees.all');
+
         Route::resource('/fees', \App\Http\Controllers\FeeController::class)
             ->except('create', 'edit');
 
