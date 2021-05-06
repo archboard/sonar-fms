@@ -11,6 +11,7 @@ class TermController extends Controller
     {
         $terms = $request->school()
             ->terms()
+            ->orderBy('start_year', 'desc')
             ->orderBy('starts_at')
             ->orderBy('portion')
             ->get();

@@ -59,11 +59,18 @@ Route::middleware('tenant')->group(function () {
         Route::get('/students', [\App\Http\Controllers\StudentController::class, 'index'])
             ->name('students.index');
 
-        Route::get('/students/{student}', [\App\Http\Controllers\StudentController::class, 'show'])
-            ->name('students.show');
+        Route::prefix('/students/{student}')
+            ->name('students.')
+            ->group(function () {
+                Route::get('/', [\App\Http\Controllers\StudentController::class, 'show'])
+                    ->name('students.show');
 
-        Route::post('/students/{student}/guardians/sync', \App\Http\Controllers\SyncStudentGuardiansController::class)
-            ->name('students.guardians.sync');
+                Route::post('/guardians/sync', \App\Http\Controllers\SyncStudentGuardiansController::class)
+                    ->name('students.guardians.sync');
+
+                Route::resource('/invoices', \App\Http\Controllers\Students\InvoiceController::class)
+                    ->except('create', 'edit');
+            });
 
         Route::resource('/student-selection', \App\Http\Controllers\StudentSelectionController::class)
             ->except('create', 'show', 'edit');

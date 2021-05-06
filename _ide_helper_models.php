@@ -166,12 +166,15 @@ namespace App\Models{
  * @property int $school_id
  * @property int $student_id
  * @property int|null $term_id
+ * @property string $title
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
  * @property \Illuminate\Support\Carbon|null $due_at
  * @property \Illuminate\Support\Carbon|null $paid_at
  * @property \Illuminate\Support\Carbon|null $voided_at
+ * @property \Illuminate\Support\Carbon|null $notify_at
+ * @property \Illuminate\Support\Carbon|null $notified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
@@ -187,11 +190,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDueAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotifyAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice wherePaidAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereRemainingBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereSchoolId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereStudentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTermId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereVoidedAt($value)
@@ -207,6 +213,8 @@ namespace App\Models{
  * @property int $id
  * @property int $invoice_id
  * @property int|null $fee_id
+ * @property bool $sync_with_fee
+ * @property string|null $name
  * @property string|null $description
  * @property int|null $amount_per_unit
  * @property int|null $amount
@@ -225,7 +233,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereFeeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereSyncWithFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
  */
 	class IdeHelperInvoiceItem extends \Eloquent {}
@@ -527,6 +537,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $is_current
  * @property-read mixed $school_years
+ * @method static \Database\Factories\TermFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Term newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term query()
@@ -570,6 +581,7 @@ namespace App\Models{
  * @property string $locale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
+ * @property-read mixed $date_factory
  * @property-read string $full_name
  * @property-read array $school_permissions
  * @property-read mixed $student_selection

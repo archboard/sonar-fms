@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Term extends Model
 {
+    use HasFactory;
     use HasResource;
 
     protected $guarded = [];

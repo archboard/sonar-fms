@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Students;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateInvoiceRequest;
+use App\Models\Invoice;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -21,24 +24,26 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CreateInvoiceRequest $request
+     * @param Student $student
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CreateInvoiceRequest $request, Student $student)
     {
-        //
+        $school = $request->school();
+
+        $invoice = Invoice::createFromRequest($request, $school, $student);
+        DB::table('invoice_items')
+            ->insert($invoice->getInvoiceItemAttributesForInsert(
+                collect($request->validated()['items']),
+                $school->fees->keyBy('id')
+            ));
+
+        session()->flash('success', __('Invoice created successfully.'));
+
+        return back();
     }
 
     /**
@@ -48,17 +53,6 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         //
     }

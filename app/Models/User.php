@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Carbon\Factory;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
@@ -109,6 +110,14 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getDateFactoryAttribute()
+    {
+        return new Factory([
+            'locale' => $this->locale,
+            'timezone' => $this->timezone,
+        ]);
     }
 
     public function schools(): BelongsToMany

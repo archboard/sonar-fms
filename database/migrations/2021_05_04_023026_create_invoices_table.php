@@ -27,6 +27,8 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('due_at')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->dateTime('voided_at')->nullable();
+            $table->dateTime('notify_at')->nullable();
+            $table->dateTime('notified_at')->nullable();
             $table->timestamps();
         });
     }

@@ -18,6 +18,8 @@ class CreateInvoiceItemsTable extends Migration
             $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('fee_id')->nullable();
             $table->foreign('fee_id')->references('id')->on('fees')->onDelete('set null');
+            $table->boolean('sync_with_fee')->default(false);
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->unsignedBigInteger('amount_per_unit')->nullable();
             $table->unsignedBigInteger('amount')->nullable();
