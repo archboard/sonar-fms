@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -46,6 +45,50 @@ class Invoice extends Model
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class, 'invoice_uuid', 'uuid');
+    }
+
+    public function getStatusColorAttribute()
+    {
+        if ($this->paid_at) {
+            return 'green';
+        }
+
+        if ($this->payment_made) {
+            return 'yellow';
+        }
+
+        if ($this->past_due) {
+            return 'red';
+        }
+
+        return 'gray';
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        if ($this->paid_at) {
+            return __('Paid');
+        }
+
+        if ($this->payment_made) {
+            return __('Partially paid');
+        }
+
+        if ($this->past_due) {
+            return __('Past due');
+        }
+
+        return __('Unpaid');
+    }
+
+    public function getPaymentMadeAttribute()
+    {
+        return $this->amount_due !== $this->remaining_balance;
+    }
+
+    public function getPastDueAttribute()
+    {
+        return $this->due_at && now() > $this->due_at;
     }
 
     public static function getAttributesFromRequest(

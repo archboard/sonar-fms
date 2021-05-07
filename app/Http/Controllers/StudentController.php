@@ -50,10 +50,14 @@ class StudentController extends Controller
     {
         $title = $student->full_name;
         $student->load('users');
+        $unpaidInvoices = $student->invoices()
+            ->whereNull('paid_at')
+            ->count();
 
         return inertia('students/Show', [
             'title' => $title,
             'student' => $student->toResource(),
+            'unpaidInvoices' => $unpaidInvoices,
         ])->withViewData(compact('title'));
     }
 }

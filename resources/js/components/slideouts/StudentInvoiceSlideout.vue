@@ -372,9 +372,12 @@ export default {
       return displayCurrency(form.items.reduce((total, i) => total + (i.amount_per_unit * i.quantity), 0))
     })
 
-    const saveInvoice = () => {
+    const saveInvoice = close => {
       form.post($route('students.invoices.store', [props.student]), {
         preserveScroll: true,
+        onSuccess () {
+          close()
+        }
       })
     }
     const addInvoiceLineItem = () => {

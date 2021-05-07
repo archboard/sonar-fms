@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Students;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
@@ -16,13 +16,15 @@ class InvoiceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Student $student)
     {
         $invoices = $student->invoices()
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
+
+        return InvoiceResource::collection($invoices);
     }
 
     /**

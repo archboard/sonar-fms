@@ -13,13 +13,7 @@
     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
       <div>
         <p v-if="meta.total > 0" class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">
-          Showing
-          <span class="font-medium">{{ meta.from }}</span>
-          to
-          <span class="font-medium">{{ meta.to }}</span>
-          of
-          <span class="font-medium">{{ meta.total }}</span>
-          results
+          {{ __('Showing :from to :to of :total results', { ...meta }) }}
         </p>
         <p v-else class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">No results found.</p>
       </div>
@@ -58,7 +52,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { range } from 'lodash'
+import range from 'lodash/range'
 import qs from 'qs'
 
 export default defineComponent({

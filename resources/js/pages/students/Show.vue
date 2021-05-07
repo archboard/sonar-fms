@@ -44,11 +44,13 @@
                     </div>
 
                     <div class="flex items-center space-x-2">
-                      <!-- Heroicon name: solid/chat-alt -->
-                      <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
-                      </svg>
-                      <span class="text-gray-900 dark:text-gray-100 text-sm font-medium">4 comments</span>
+                      <CalculatorIcon class="h-5 w-5 text-gray-400" />
+                      <span class="text-sm font-medium" v-if="unpaidInvoices === 1">
+                        {{ __('1 unpaid invoice') }}
+                      </span>
+                      <span v-else class="text-sm font-medium">
+                        {{ __(':number unpaid invoices', { number: unpaidInvoices }) }}
+                      </span>
                     </div>
 
                     <div class="flex items-center space-x-2">
@@ -92,45 +94,32 @@
                           </a>
                         </li>
                         <li v-if="student.users.length === 0" class="text-sm">
-                          {{ __('No guardians associated with :name', { name: student.first_name }) }}
+                          {{ __('No guardians are associated with :name. Make sure that their contacts in PowerSchool have a name and email address saved for their contact account.', { name: student.first_name }) }}
                         </li>
                       </ul>
                     </div>
-                    <div>
-                      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>
-                      <ul class="mt-2 leading-8 space-x-2">
-                        <li class="inline">
-                          <OutlineBadge is="a" href="#" color="bg-rose-500">
-                            Bug
-                          </OutlineBadge>
-                        </li>
-                        <li class="inline">
-                          <OutlineBadge is="a" href="#" color="bg-indigo-500">
-                            Accessibility
-                          </OutlineBadge>
-                        </li>
-                      </ul>
-                    </div>
+<!--                    <div>-->
+<!--                      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>-->
+<!--                      <ul class="mt-2 leading-8 space-x-2">-->
+<!--                        <li class="inline">-->
+<!--                          <OutlineBadge is="a" href="#" color="bg-rose-500">-->
+<!--                            Bug-->
+<!--                          </OutlineBadge>-->
+<!--                        </li>-->
+<!--                        <li class="inline">-->
+<!--                          <OutlineBadge is="a" href="#" color="bg-indigo-500">-->
+<!--                            Accessibility-->
+<!--                          </OutlineBadge>-->
+<!--                        </li>-->
+<!--                      </ul>-->
+<!--                    </div>-->
                   </div>
                 </aside>
 
                 <div class="py-3 xl:pt-6 xl:pb-0">
-                  <h2 class="sr-only">Description</h2>
-                  <div class="prose dark:text-gray-100 max-w-none">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, hic? Commodi cumque similique id tempora molestiae deserunt at suscipit, dolor voluptatem, numquam, harum consequatur laboriosam voluptas tempore aut voluptatum alias?
-                    </p>
-                    <ul>
-                      <li>
-                        Tempor ultrices proin nunc fames nunc ut auctor vitae sed. Eget massa parturient vulputate fermentum id facilisis nam pharetra. Aliquet leo tellus.
-                      </li>
-                      <li>
-                        Turpis ac nunc adipiscing adipiscing metus tincidunt senectus tellus.
-                      </li>
-                      <li>
-                        Semper interdum porta sit tincidunt. Dui suspendisse scelerisque amet metus eget sed. Ut tellus in sed dignissim.
-                      </li>
-                    </ul>
+                  <h2 class="sr-only">{{ __('Invoices') }}</h2>
+                  <div class="max-w-none">
+                    <StudentInvoiceTable ref="studentTable" :student="student" />
                   </div>
                 </div>
               </div>
@@ -197,8 +186,7 @@
                                 <div class="text-sm text-gray-500">
                                   <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Hilary Mahy</a>
                                   assigned
-                                  <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Kristin Watson</a>
-                                  <span class="whitespace-nowrap">2d ago</span>
+                                  <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Kristin Watson</a> <span class="whitespace-nowrap">2d ago</span>
                                 </div>
                               </div>
                             </div>
@@ -232,8 +220,7 @@
                                     <OutlineBadge is="a" href="#" color="bg-indigo-500">
                                       Accessibility
                                     </OutlineBadge>
-                                  </span>
-                                  <span class="whitespace-nowrap">6h ago</span>
+                                  </span> <span class="whitespace-nowrap">6h ago</span>
                                 </div>
                               </div>
                             </div>
@@ -329,10 +316,13 @@
               </div>
               <div class="flex items-center space-x-2">
                 <!-- Heroicon name: solid/chat-alt -->
-                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
-                </svg>
-                <span class="text-sm font-medium">4 comments</span>
+                <CalculatorIcon class="h-5 w-5 text-gray-400" />
+                <span class="text-sm font-medium" v-if="unpaidInvoices === 1">
+                  {{ __(':number unpaid invoice', { number: unpaidInvoices }) }}
+                </span>
+                <span v-else class="text-sm font-medium">
+                  {{ __(':number unpaid invoices', { number: unpaidInvoices }) }}
+                </span>
               </div>
               <div class="flex items-center space-x-2">
                 <!-- Heroicon name: solid/calendar -->
@@ -368,23 +358,26 @@
                       {{ guardian.full_name }}
                     </a>
                   </li>
-                </ul>
-              </div>
-              <div>
-                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>
-                <ul class="mt-2 leading-8 space-x-1">
-                  <li class="inline">
-                    <OutlineBadge is="a" href="#" color="bg-rose-500">
-                      Bug
-                    </OutlineBadge>
-                  </li>
-                  <li class="inline">
-                    <OutlineBadge is="a" href="#" color="bg-indigo-500">
-                      Accessibility
-                    </OutlineBadge>
+                  <li v-if="student.users.length === 0" class="text-sm">
+                    {{ __('No guardians are associated with :name. Make sure that their contacts in PowerSchool have a name and email address saved for their contact account.', { name: student.first_name }) }}
                   </li>
                 </ul>
               </div>
+<!--              <div>-->
+<!--                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>-->
+<!--                <ul class="mt-2 leading-8 space-x-1">-->
+<!--                  <li class="inline">-->
+<!--                    <OutlineBadge is="a" href="#" color="bg-rose-500">-->
+<!--                      Bug-->
+<!--                    </OutlineBadge>-->
+<!--                  </li>-->
+<!--                  <li class="inline">-->
+<!--                    <OutlineBadge is="a" href="#" color="bg-indigo-500">-->
+<!--                      Accessibility-->
+<!--                    </OutlineBadge>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </div>-->
             </div>
           </aside>
         </div>
@@ -392,7 +385,7 @@
 
       <StudentInvoiceSlideout
         v-if="createInvoice"
-        @close="createInvoice = false"
+        @close="slideoutClosed"
         :student="student"
       />
     </template>
@@ -404,15 +397,18 @@ import { defineComponent, inject, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '../../layouts/Authenticated'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
+import { CalculatorIcon } from '@heroicons/vue/solid'
 import dayjs from 'dayjs'
 import Spinner from '../../components/icons/spinner'
 import OutlineBadge from '../../components/OutlineBadge'
 import Button from '../../components/Button'
 import Textarea from '../../components/forms/Textarea'
 import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
+import StudentInvoiceTable from '../../components/StudentInvoiceTable'
 
 export default defineComponent({
   components: {
+    StudentInvoiceTable,
     StudentInvoiceSlideout,
     Button,
     OutlineBadge,
@@ -421,6 +417,7 @@ export default defineComponent({
     CheckCircleIcon,
     Authenticated,
     Textarea,
+    CalculatorIcon,
   },
 
   props: {
@@ -428,6 +425,7 @@ export default defineComponent({
     student: Object,
     user: Object,
     school: Object,
+    unpaidInvoices: Number,
   },
 
   setup ({ student }) {
@@ -435,6 +433,7 @@ export default defineComponent({
     const enrolledAt = dayjs(student.initial_district_entry_date)
     const createInvoice = ref(false)
     const syncingGuardians = ref(false)
+    const studentTable = ref(null)
     const syncGuardians = () => {
       syncingGuardians.value = true
 
@@ -444,12 +443,18 @@ export default defineComponent({
         }
       })
     }
+    const slideoutClosed = () => {
+      createInvoice.value = false
+      studentTable.value.fetchInvoices()
+    }
 
     return {
       enrolledAt,
       syncingGuardians,
       syncGuardians,
       createInvoice,
+      studentTable,
+      slideoutClosed,
     }
   }
 })
