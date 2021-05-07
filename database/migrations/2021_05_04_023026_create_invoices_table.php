@@ -15,7 +15,7 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->index();
+            $table->string('uuid')->unique()->index();
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('term_id')->nullable();
@@ -27,6 +27,7 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('due_at')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->dateTime('voided_at')->nullable();
+            $table->boolean('notify')->default(false);
             $table->dateTime('notify_at')->nullable();
             $table->dateTime('notified_at')->nullable();
             $table->timestamps();

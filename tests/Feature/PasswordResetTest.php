@@ -12,6 +12,13 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tenant->update(['allow_password_auth' => true]);
+    }
+
     public function test_reset_password_link_screen_can_be_rendered()
     {
         $response = $this->get('/forgot-password');
@@ -23,7 +30,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->post('/forgot-password', ['email' => $user->email]);
 
@@ -34,7 +41,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->post('/forgot-password', ['email' => $user->email]);
 
@@ -51,7 +58,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->post('/forgot-password', ['email' => $user->email]);
 

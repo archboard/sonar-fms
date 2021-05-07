@@ -85,7 +85,7 @@
 
           <InputWrap>
             <CheckboxWrapper>
-              <Checkbox v-model:checked="form.notify_now" />
+              <Checkbox v-model:checked="form.notify" />
               <CheckboxText>{{ __('Notify contacts of new invoice.') }}</CheckboxText>
             </CheckboxWrapper>
             <HelpText>
@@ -247,7 +247,7 @@
               {{ __('Notification') }}
             </dt>
             <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span v-if="form.notify_now">
+              <span v-if="form.notify">
                 {{ __('Contacts will be notified ') }}
               </span>
               <span v-else>
@@ -356,7 +356,7 @@ export default {
       description: null,
       term_id: null,
       due_at: null,
-      notify_now: false,
+      notify: false,
       items: []
     })
 

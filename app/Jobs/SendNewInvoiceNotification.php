@@ -33,7 +33,10 @@ class SendNewInvoiceNotification implements ShouldQueue
      */
     public function handle()
     {
-        if (now()->startOfMinute()->notEqualTo($this->invoice->notify_at->startOfMinute())) {
+        if (
+            !$this->invoice->notify ||
+            now()->startOfMinute()->diffInMinutes($this->invoice->notify_at) <= 1
+        ) {
             return;
         }
 

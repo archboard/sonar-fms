@@ -48,7 +48,7 @@ class CreateInvoiceTest extends TestCase
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
             'term_id' => $term->id,
-            'notify_now' => true,
+            'notify' => true,
             'items' => [
                 [
                     'id' => Uuid::uuid4(),
@@ -73,7 +73,7 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoice['title'], $invoice->title);
         $this->assertEquals($invoice['description'], $invoice->description);
         $this->assertEquals($invoice['term_id'], $invoice->term_id);
-        $this->assertEquals($invoice['notify_now'], $invoice->notify_now);
+        $this->assertEquals($invoice['notify'], $invoice->notify);
         $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
         $this->assertEquals(1, $invoice->invoiceItems()->count());
 
@@ -96,7 +96,7 @@ class CreateInvoiceTest extends TestCase
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
             'term_id' => null,
-            'notify_now' => false,
+            'notify' => false,
             'items' => [
                 [
                     'id' => Uuid::uuid4(),
@@ -117,11 +117,9 @@ class CreateInvoiceTest extends TestCase
             ],
         ];
 
-        ray()->showQueries();
         $this->post(route('students.invoices.store', [$student]), $invoice)
             ->assertRedirect()
             ->assertSessionHas('success');
-        ray()->stopShowingQueries();
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
 
@@ -132,7 +130,7 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoice['title'], $invoice->title);
         $this->assertEquals($invoice['description'], $invoice->description);
         $this->assertEquals($invoice['term_id'], $invoice->term_id);
-        $this->assertEquals($invoice['notify_now'], $invoice->notify_now);
+        $this->assertEquals($invoice['notify'], $invoice->notify);
         $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
         $this->assertEquals(2, $invoice->invoiceItems()->count());
 
@@ -142,5 +140,37 @@ class CreateInvoiceTest extends TestCase
             ->firstWhere('fee_id', $fee->id);
         $this->assertEquals($fee->name, $itemWithSync->name);
         $this->assertEquals($fee->amount, $itemWithSync->amount_per_unit);
+    }
+
+    public function test_invoice_does_not_get_created_if_sql_fails_for_its_items()
+    {
+        $this->assignPermission('create', Invoice::class);
+
+        Queue::fake();
+        $student = $this->school->students->random();
+        $invoice = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => true,
+            'items' => [
+                [
+                    'id' => Uuid::uuid4(),
+                    'fee_id' => null,
+                    'sync_with_fee' => false,
+                    'name' => $this->faker->paragraphs(10, true),
+                    'amount_per_unit' => 100,
+                    'quantity' => 1,
+                ],
+            ],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoice)
+            ->assertStatus(500);
+
+        $this->assertEquals(0, $student->invoices()->count());
+
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
     }
 }

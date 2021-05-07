@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
 
@@ -27,13 +28,6 @@ class Invoice extends Model
         'notified_at' => 'datetime',
     ];
 
-    protected static function booted()
-    {
-        static::creating(function ($invoice) {
-            $invoice->uuid = Uuid::uuid4();
-        });
-    }
-
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
@@ -51,51 +45,59 @@ class Invoice extends Model
 
     public function invoiceItems(): HasMany
     {
-        return $this->hasMany(InvoiceItem::class);
+        return $this->hasMany(InvoiceItem::class, 'invoice_uuid', 'uuid');
     }
 
-    public static function createFromRequest(CreateInvoiceRequest $request, School $school, Student $student): static
+    public static function getAttributesFromRequest(
+        CreateInvoiceRequest $request,
+        Student $student
+    ): array
     {
         $data = $request->validated();
         $invoiceAttributes = Arr::except($data, 'items');
-        $invoiceAttributes['school_id'] = $school->id;
 
-        if ($data['notify_now']) {
-            $invoiceAttributes['notify_at'] = now()->addMinutes(15);
-        }
+        $invoiceAttributes['uuid'] = Uuid::uuid4();
+        $invoiceAttributes['school_id'] = $request->school()->id;
+        $invoiceAttributes['student_id'] = $student->id;
 
-        /** @var Invoice $invoice */
-        $invoice = $student->invoices()
-            ->create(Arr::except($invoiceAttributes, 'notify_now'));
-
-        if ($invoice->notify_at) {
-            // Dispatch the notification for 15 minutes
-            SendNewInvoiceNotification::dispatch($invoice)
-                ->delay($invoice->notify_at);
-        }
-
-        return $invoice;
+        return $invoiceAttributes;
     }
 
-    /**
-     * @param Collection $items The collection of items from CreateNewInvoiceRequest
-     * @param Collection $fees The fees should be keyed by the id
-     * @return array
-     */
-    public function getInvoiceItemAttributesForInsert(Collection $items, Collection $fees): array
+    public function queueNotification(Carbon $notifyAt): static
     {
-        return $items->map(function ($item) use ($fees) {
-            unset($item['id']);
-            $item['invoice_id'] = $this->id;
+        $notifyAt->startOfMinute();
 
-            if ($item['sync_with_fee']) {
-                $fee = $fees->get($item['fee_id']);
+        $this->update([
+            'notify' => true,
+            'notify_at' => $notifyAt,
+            'notified_at' => null,
+        ]);
 
-                $item['name'] = $fee->name;
-                $item['amount_per_unit'] = $fee->amount;
-            }
+        // Dispatch the notification for 15 minutes
+        SendNewInvoiceNotification::dispatch($this)
+            ->delay($notifyAt);
 
-            return $item;
-        })->toArray();
+        return $this;
+    }
+
+    public function notifyLater(Carbon $dateTime = null): static
+    {
+        return $this->queueNotification($dateTime ?? now()->addMinutes(15));
+    }
+
+    public function notifyNow(): static
+    {
+        return $this->queueNotification(now());
+    }
+
+    public function cancelNotification(): static
+    {
+        $this->update([
+            'notify' => false,
+            'notify_at' => null,
+            'notified_at' => null,
+        ]);
+
+        return $this;
     }
 }

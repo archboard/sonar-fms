@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Students;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
@@ -32,14 +34,23 @@ class InvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request, Student $student)
     {
-        $school = $request->school();
+        DB::transaction(function () use ($request, $student) {
+            $invoiceAttributes = Invoice::getAttributesFromRequest($request, $student);
 
-        $invoice = Invoice::createFromRequest($request, $school, $student);
-        DB::table('invoice_items')
-            ->insert($invoice->getInvoiceItemAttributesForInsert(
-                collect($request->validated()['items']),
-                $school->fees->keyBy('id')
-            ));
+            /** @var Invoice $invoice */
+            $invoice = Invoice::create($invoiceAttributes);
+            DB::table('invoice_items')
+                ->insert(InvoiceItem::generateAttributesForInsert(
+                    $invoiceAttributes['uuid'],
+                    collect($request->validated()['items']),
+                    $request->school()->fees->keyBy('id')
+                ));
+
+            // Trigger the notification if it is set to queue
+            if ($invoiceAttributes['notify']) {
+                $invoice->notifyLater();
+            }
+        });
 
         session()->flash('success', __('Invoice created successfully.'));
 

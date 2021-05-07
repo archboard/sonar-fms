@@ -26,17 +26,14 @@ abstract class TestCase extends BaseTestCase
         $this->tenant->load('schools');
         $this->tenant->makeCurrent();
 
+        $this->school = $this->tenant->schools->random();
+        \Bouncer::scope()->to($this->school->id);
+
         \Bouncer::refresh();
     }
 
-    public function signIn(): User
+    public function createUser(): User
     {
-        if ($this->user) {
-            return $this->user;
-        }
-
-        $this->school = $this->tenant->schools->random();
-
         /** @var User $user */
         $user = $this->tenant->users()
             ->save(
@@ -46,7 +43,17 @@ abstract class TestCase extends BaseTestCase
             );
 
         $user->schools()->attach($this->school->id);
-        \Bouncer::scope()->to($this->school->id);
+
+        return $user;
+    }
+
+    public function signIn(): User
+    {
+        if ($this->user) {
+            return $this->user;
+        }
+
+        $user = $this->createUser();
 
         $this->be($user);
         $this->user = $user;

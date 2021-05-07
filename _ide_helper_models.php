@@ -170,13 +170,14 @@ namespace App\Models{
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
- * @property \Illuminate\Support\Carbon|null $due_at
- * @property \Illuminate\Support\Carbon|null $paid_at
- * @property \Illuminate\Support\Carbon|null $voided_at
- * @property \Illuminate\Support\Carbon|null $notify_at
- * @property \Illuminate\Support\Carbon|null $notified_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $due_at
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $voided_at
+ * @property bool $notify
+ * @property Carbon|null $notify_at
+ * @property Carbon|null $notified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
  * @property-read \App\Models\School $school
@@ -191,6 +192,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDueAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotify($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotifyAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice wherePaidAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereRemainingBalance($value)
