@@ -3,7 +3,7 @@
     @close="$emit('close')"
     @action="saveInvoice"
     :auto-close="false"
-    :processing="saving"
+    :processing="form.processing"
   >
     <template v-slot:header>
       <div class="space-y-1">
@@ -367,20 +367,14 @@ export default {
         ? dayjs(form.due_at).tz(timezone.value).format('MMMM D, YYYY H:mm')
         : ''
     })
-    const saving = ref(false)
     const { displayCurrency } = displaysCurrency()
     const totalDue = computed(() => {
       return displayCurrency(form.items.reduce((total, i) => total + (i.amount_per_unit * i.quantity), 0))
     })
 
     const saveInvoice = () => {
-      saving.value = true
-
       form.post($route('students.invoices.store', [props.student]), {
         preserveScroll: true,
-        onFinish () {
-          saving.value = false
-        }
       })
     }
     const addInvoiceLineItem = () => {
@@ -413,7 +407,6 @@ export default {
 
     return {
       school,
-      saving,
       terms,
       fees,
       form,
