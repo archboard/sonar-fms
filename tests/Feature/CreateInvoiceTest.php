@@ -10,6 +10,7 @@ use App\Models\Term;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CreateInvoiceTest extends TestCase
@@ -50,6 +51,7 @@ class CreateInvoiceTest extends TestCase
             'notify_now' => true,
             'items' => [
                 [
+                    'id' => Uuid::uuid4(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -97,6 +99,7 @@ class CreateInvoiceTest extends TestCase
             'notify_now' => false,
             'items' => [
                 [
+                    'id' => Uuid::uuid4(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -104,6 +107,7 @@ class CreateInvoiceTest extends TestCase
                     'quantity' => 1,
                 ],
                 [
+                    'id' => Uuid::uuid4(),
                     'fee_id' => $fee->id,
                     'sync_with_fee' => true,
                     'name' => 'Not matching name',

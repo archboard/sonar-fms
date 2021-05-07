@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -86,6 +85,7 @@ class Invoice extends Model
     public function getInvoiceItemAttributesForInsert(Collection $items, Collection $fees): array
     {
         return $items->map(function ($item) use ($fees) {
+            unset($item['id']);
             $item['invoice_id'] = $this->id;
 
             if ($item['sync_with_fee']) {
