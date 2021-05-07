@@ -24,6 +24,14 @@ class CreateInvoiceTest extends TestCase
         $this->signIn();
     }
 
+    public function test_cannot_create_without_permission()
+    {
+        $student = $this->school->students->random();
+
+        $this->post(route('students.invoices.store', [$student]), [])
+            ->assertForbidden();
+    }
+
     public function test_can_create_invoice_for_student_with_notify_now()
     {
         $this->withoutExceptionHandling();
