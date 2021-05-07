@@ -22,6 +22,8 @@ class StudentResource extends JsonResource
             'last_name' => $this->last_name,
             'full_name' => $this->full_name,
             'grade_level' => $this->grade_level,
+            'grade_level_formatted' => $this->grade_level_formatted,
+            'grade_level_short_formatted' => $this->grade_level_short_formatted,
             'email' => $this->email,
             'enroll_status' => $this->enroll_status,
             'enrolled' => $this->enrolled,

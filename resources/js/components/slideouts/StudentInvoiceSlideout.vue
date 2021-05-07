@@ -248,7 +248,7 @@
             </dt>
             <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
               <span v-if="form.notify">
-                {{ __('Contacts will be notified ') }}
+                {{ __('Contacts will be notified in 15 minutes, unless cancelled.') }}
               </span>
               <span v-else>
                 {{ __('Manually notify.') }}

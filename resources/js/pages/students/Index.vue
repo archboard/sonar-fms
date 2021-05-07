@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4">
-      {{ __(':count students selected', { count: user.student_selection.length }) }} <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="clearSelection">Remove selection</a>
+      {{ __(':count students selected', { count: user.student_selection.length }) }} <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="selectAll = false">Remove selection</a>
     </div>
 
     <Table>
@@ -78,7 +78,7 @@
             <label :for="`student_${student.id}`" class="cursor-pointer">{{ student.full_name }}</label>
           </Td>
           <Td>{{ student.student_number }}</Td>
-          <Td>{{ student.grade_level }}</Td>
+          <Td>{{ student.grade_level_short_formatted }}</Td>
           <Td class="text-right">
             <Link is="inertia-link" :href="$route('students.show', student)">{{ __('View') }}</Link>
           </Td>

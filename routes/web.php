@@ -63,10 +63,10 @@ Route::middleware('tenant')->group(function () {
             ->name('students.')
             ->group(function () {
                 Route::get('/', [\App\Http\Controllers\StudentController::class, 'show'])
-                    ->name('students.show');
+                    ->name('show');
 
                 Route::post('/guardians/sync', \App\Http\Controllers\SyncStudentGuardiansController::class)
-                    ->name('students.guardians.sync');
+                    ->name('guardians.sync');
 
                 Route::resource('/invoices', \App\Http\Controllers\Students\InvoiceController::class)
                     ->except('create', 'edit');

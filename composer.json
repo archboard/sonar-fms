@@ -25,7 +25,8 @@
     "silber/bouncer": "v1.0.0-rc.10",
     "spatie/laravel-multitenancy": "^1.0",
     "spatie/laravel-ray": "^1.17",
-    "tightenco/ziggy": "^1.0"
+    "tightenco/ziggy": "^1.0",
+    "ext-intl": "*"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^2.9",

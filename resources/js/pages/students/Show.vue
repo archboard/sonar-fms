@@ -10,20 +10,20 @@
                   <div>
                     <h1 class="text-2xl font-bold">{{ student.full_name }}</h1>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      #400 opened by
-                      <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Hilary Mahy</a>
-                      in
-                      <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Customer Portal</a>
+                      {{ student.grade_level_formatted }}
+<!--                      <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Hilary Mahy</a>-->
+<!--                      in-->
+<!--                      <a href="#" class="font-medium text-gray-900 dark:text-gray-100">Customer Portal</a>-->
                     </p>
                   </div>
                   <div class="mt-4 flex items-start space-x-3 md:mt-0">
-                    <Button color="white">
-                      <!-- Heroicon name: solid/pencil -->
-                      <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                      <span class="text-sm">Edit</span>
-                    </Button>
+<!--                    <Button color="white">-->
+<!--                      &lt;!&ndash; Heroicon name: solid/pencil &ndash;&gt;-->
+<!--                      <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">-->
+<!--                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />-->
+<!--                      </svg>-->
+<!--                      <span class="text-sm">Edit</span>-->
+<!--                    </Button>-->
                     <Button color="white" size="sm" @click.prevent="createInvoice = true">
                       {{ __('New invoice') }}
                     </Button>

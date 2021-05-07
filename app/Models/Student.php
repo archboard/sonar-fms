@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use NumberFormatter;
 
 /**
  * @mixin IdeHelperStudent
@@ -26,6 +27,7 @@ class Student extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'grade_level' => 'integer',
         'current_entry_date' => 'date',
         'current_exit_date' => 'date',
         'initial_district_entry_date' => 'date',
@@ -72,6 +74,32 @@ class Student extends Model
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getGradeLevelShortFormattedAttribute()
+    {
+        if ($this->grade_level > 0) {
+            return $this->grade_level;
+        }
+
+        if ($this->grade_level === 0) {
+            return __('K');
+        }
+
+        return __('PK:age', ['age' => 5 - $this->grade_level]);
+    }
+
+    public function getGradeLevelFormattedAttribute()
+    {
+        if ($this->grade_level > 0) {
+            return __('Grade :grade', ['grade' => $this->grade_level]);
+        }
+
+        if ($this->grade_level === 0) {
+            return __('Kindergarten');
+        }
+
+        return __('Pre-Kindergarten age :age', ['age' => 5 - $this->grade_level]);
     }
 
     public function sections(): BelongsToMany
