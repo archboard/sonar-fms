@@ -50,17 +50,44 @@ class Invoice extends Model
 
     public static function getAttributesFromRequest(
         CreateInvoiceRequest $request,
-        Student $student
+        Student $student = null
     ): array
     {
+        $school = $request->school();
         $data = $request->validated();
         $invoiceAttributes = Arr::except($data, 'items');
 
         $invoiceAttributes['uuid'] = Uuid::uuid4();
-        $invoiceAttributes['school_id'] = $request->school()->id;
-        $invoiceAttributes['student_id'] = $student->id;
+        $invoiceAttributes['school_id'] = $school->id;
+        $invoiceAttributes['student_id'] = optional($student)->id;
+
+        /** @var int $total */
+        $total = array_reduce(
+            $data['items'],
+            fn (int $total, $item) => $total + ($item['amount_per_unit'] * $item['quantity']), 0
+        );
+
+        $invoiceAttributes['amount_due'] = $total;
+        $invoiceAttributes['remaining_balance'] = $total;
 
         return $invoiceAttributes;
+    }
+
+    public function setAmountDue(): static
+    {
+        $amountDue = $this->invoiceItems
+            ->reduce(fn (int $total, InvoiceItem $item) => $total + ($item->amount_per_unit * $item->quantity), 0);
+
+        // Calculate how much has already been paid in
+        // and set the remaining_balance value based on that
+        $paid = 0;
+
+        $this->update([
+            'amount_due' => $amountDue,
+            'remaining_balance' => $amountDue - $paid,
+        ]);
+
+        return $this;
     }
 
     public function queueNotification(Carbon $notifyAt): static

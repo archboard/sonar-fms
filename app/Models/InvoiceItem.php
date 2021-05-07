@@ -43,6 +43,9 @@ class InvoiceItem extends Model
                 $item['amount_per_unit'] = $fee->amount;
             }
 
+            // Cache the total line item
+            $item['amount'] = $item['amount_per_unit'] * $item['quantity'];
+
             return $item;
         })->toArray();
     }

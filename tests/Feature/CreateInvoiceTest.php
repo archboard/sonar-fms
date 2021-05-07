@@ -74,6 +74,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoice['description'], $invoice->description);
         $this->assertEquals($invoice['term_id'], $invoice->term_id);
         $this->assertEquals($invoice['notify'], $invoice->notify);
+        $this->assertEquals(100, $invoice->amount_due);
+        $this->assertEquals(100, $invoice->remaining_balance);
         $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
         $this->assertEquals(1, $invoice->invoiceItems()->count());
 
@@ -131,6 +133,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoice['description'], $invoice->description);
         $this->assertEquals($invoice['term_id'], $invoice->term_id);
         $this->assertEquals($invoice['notify'], $invoice->notify);
+        $this->assertEquals(300, $invoice->amount_due);
+        $this->assertEquals(300, $invoice->remaining_balance);
         $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
         $this->assertEquals(2, $invoice->invoiceItems()->count());
 
@@ -140,6 +144,7 @@ class CreateInvoiceTest extends TestCase
             ->firstWhere('fee_id', $fee->id);
         $this->assertEquals($fee->name, $itemWithSync->name);
         $this->assertEquals($fee->amount, $itemWithSync->amount_per_unit);
+        $this->assertEquals($fee->amount * $itemWithSync->quantity, $itemWithSync->amount);
     }
 
     public function test_invoice_does_not_get_created_if_sql_fails_for_its_items()
