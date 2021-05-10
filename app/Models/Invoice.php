@@ -70,6 +70,10 @@ class Invoice extends Model
             return __('Paid');
         }
 
+        if ($this->voided_at) {
+            return __('Void');
+        }
+
         if ($this->payment_made) {
             return __('Partially paid');
         }
