@@ -94,6 +94,12 @@ Route::middleware('tenant')->group(function () {
             ->except('create', 'edit');
 
         /**
+         * Scholarships
+         */
+        Route::resource('/scholarships', \App\Http\Controllers\ScholarshipController::class)
+            ->except('create', 'edit');
+
+        /**
          * Invoices
          */
         Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])

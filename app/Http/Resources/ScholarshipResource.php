@@ -14,6 +14,12 @@ class ScholarshipResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+            'amount' => $this->amount,
+            'percentage' => $this->percentage,
+            'created_at' => $this->created_at,
+        ];
     }
 }

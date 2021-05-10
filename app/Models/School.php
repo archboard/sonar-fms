@@ -64,6 +64,11 @@ class School extends Model
         return $this->hasMany(Fee::class);
     }
 
+    public function scholarships(): HasMany
+    {
+        return $this->hasMany(Scholarship::class);
+    }
+
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);

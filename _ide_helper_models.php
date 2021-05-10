@@ -178,6 +178,10 @@ namespace App\Models{
  * @property Carbon|null $notified_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read mixed $past_due
+ * @property-read mixed $payment_made
+ * @property-read mixed $status_color
+ * @property-read mixed $status_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
  * @property-read \App\Models\School $school
@@ -213,7 +217,7 @@ namespace App\Models{
  *
  * @mixin IdeHelperInvoiceItem
  * @property int $id
- * @property int $invoice_id
+ * @property string $invoice_uuid
  * @property int|null $fee_id
  * @property bool $sync_with_fee
  * @property string|null $name
@@ -234,13 +238,43 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereFeeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereSyncWithFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
  */
 	class IdeHelperInvoiceItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoiceScholarship
+ *
+ * @property-read \App\Models\Invoice $invoice
+ * @property-read \App\Models\Scholarship $scholarship
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoiceScholarship extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Scholarship
+ *
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\ScholarshipFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Scholarship filter(array $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Scholarship newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Scholarship newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Scholarship query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperScholarship extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -268,6 +302,8 @@ namespace App\Models{
  * @property-read mixed $grade_levels
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships
+ * @property-read int|null $scholarships_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
  * @property-read int|null $sections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
@@ -349,7 +385,7 @@ namespace App\Models{
  * @property string|null $first_name
  * @property string|null $last_name
  * @property string|null $email
- * @property string|null $grade_level
+ * @property int|null $grade_level
  * @property bool $enrolled
  * @property int $enroll_status
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -362,6 +398,8 @@ namespace App\Models{
  * @property string|null $initial_district_grade_level
  * @property string|null $initial_school_grade_level
  * @property-read mixed $full_name
+ * @property-read mixed $grade_level_formatted
+ * @property-read mixed $grade_level_short_formatted
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
  * @property-read int|null $guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
