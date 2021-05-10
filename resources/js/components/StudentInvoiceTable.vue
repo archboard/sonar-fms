@@ -93,6 +93,7 @@ export default defineComponent({
       displayCurrency,
       filters,
       paged,
+      fetchInvoices,
     }
   }
 })
