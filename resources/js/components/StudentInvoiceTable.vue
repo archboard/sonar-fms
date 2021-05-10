@@ -6,6 +6,7 @@
           <Th>{{ __('Title') }}</Th>
           <Th>{{ __('Status') }}</Th>
           <Th class="text-right">{{ __('Total') }}</Th>
+          <Th class="text-right">{{ __('Remaining') }}</Th>
         </tr>
       </Thead>
       <Tbody>
@@ -21,6 +22,9 @@
           </Td>
           <Td class="text-right">
             {{ displayCurrency(invoice.amount_due) }}
+          </Td>
+          <Td class="text-right">
+            {{ displayCurrency(invoice.remaining_balance) }}
           </Td>
         </tr>
       </Tbody>
