@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\ResolutionStrategies\Greatest;
+use App\ResolutionStrategies\Least;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -21,6 +23,10 @@ class Scholarship extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'percentage' => 'float',
+    ];
+
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
@@ -35,5 +41,18 @@ class Scholarship extends Model
 
         $builder->orderBy($orderBy, $orderDir);
         $builder->orderBy('scholarships.name', $orderDir);
+    }
+
+    public function getPercentageFormattedAttribute()
+    {
+        return $this->percentage . '%';
+    }
+
+    public static function getResolutionStrategies(): array
+    {
+        return [
+            Least::class => __('Least'),
+            Greatest::class => __('Greatest'),
+        ];
     }
 }

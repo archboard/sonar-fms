@@ -47,13 +47,13 @@
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('percentage')">
+            <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('percentage')">
               <span>
                 {{ __('Percentage') }}
               </span>
-              <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'percentage' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'percentage' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              <span v-if="filters.orderBy === 'percentage'" class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -68,11 +68,11 @@
           <Td :lighter="false">
             {{ scholarship.name }}
             <HelpText v-if="scholarship.description">
-              {{ fee.description }}
+              {{ scholarship.description }}
             </HelpText>
           </Td>
           <Td class="text-right">{{ displayCurrency(scholarship.amount) }}</Td>
-          <Td class="text-right">{{ scholarship.percentage }}</Td>
+          <Td class="text-right">{{ scholarship.percentage_formatted }}</Td>
           <Td class="text-right space-x-2">
             <Link is="inertia-link" :href="$route('scholarships.show', scholarship)">{{ __('View') }}</Link>
             <Link is="a" href="#" @click.prevent="displayModal(scholarship)">{{ __('Edit') }}</Link>
@@ -86,6 +86,7 @@
     <ScholarshipFormModal
       v-if="showModal"
       :scholarship="selectedScholarship"
+      :strategies="strategies"
       @close="showModal = false"
     />
   </Authenticated>
@@ -127,6 +128,7 @@ export default defineComponent({
     scholarships: Object,
     user: Object,
     school: Object,
+    strategies: Object,
   },
 
   setup () {

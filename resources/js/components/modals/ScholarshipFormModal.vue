@@ -10,17 +10,17 @@
     <Fieldset>
       <InputWrap :error="form.errors.name">
         <Label for="name" :required="true">{{ __('Name') }}</Label>
-        <Input v-model="form.name" id="name" />
+        <Input v-model="form.name" id="name" autofocus />
         <HelpText>{{ __('This is the name will appear in the application and on invoices.') }}</HelpText>
       </InputWrap>
       <InputWrap :error="form.errors.description">
         <Label for="description">{{ __('Description') }}</Label>
         <Textarea v-model="form.description" id="description" />
-        <HelpText>{{ __('This is for internal use and reference only.') }}</HelpText>
+        <HelpText>{{ __('This describes the scholarship that will be displayed on the invoice.') }}</HelpText>
       </InputWrap>
 
       <p class="mb-4">
-        {{ __('A scholarship can be a set amount and/or percentage that reduces the amount due for an invoice. You may set either a static amount or percentage to be applied to an invoice. If you provide both, you will need to choose a resolution strategy. A resolu') }}
+        {{ __('A scholarship can be a set amount and/or percentage that reduces the amount due for an invoice. You may set either a static amount or percentage to be applied to an invoice. If you provide both, you will need to choose a resolution strategy. A resolution strategy is what determines whether to apply the amount or discount percentage.') }}
       </p>
 
       <InputWrap :error="form.errors.amount">
@@ -32,7 +32,23 @@
         <Label for="percentage">{{ __('Default percentage') }}</Label>
         <Input v-model="form.percentage" id="percentage" />
         <HelpText>
-          {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [calculated total].') }}
+          {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
+        </HelpText>
+      </InputWrap>
+
+      <InputWrap v-if="form.percentage && form.amount" :error="form.errors.resolution_strategy">
+        <Label for="resolution_strategy">{{ __('Resolution strategy') }}</Label>
+        <Select v-model="form.resolution_strategy" id="resolution_strategy">
+          <option
+            v-for="(label, strategy) in strategies"
+            :key="strategy"
+            :value="strategy"
+          >
+            {{ label }}
+          </option>
+        </Select>
+        <HelpText>
+          {{ __('This resolves whether to use the percentage or amount for the scholarship when both are provided. Least will use whichever has the least amount of discount. Greatest will use whichever has the greatest discount.') }}
         </HelpText>
       </InputWrap>
     </Fieldset>
@@ -74,7 +90,8 @@ export default defineComponent({
     scholarship: {
       type: Object,
       default: () => ({})
-    }
+    },
+    strategies: Object,
   },
 
   setup (props) {
@@ -91,6 +108,7 @@ export default defineComponent({
       description: props.scholarship.description,
       amount: props.scholarship.amount,
       percentage: props.scholarship.percentage,
+      resolution_strategy: props.scholarship.resolution_strategy || 'App\\ResolutionStrategies\\Least',
     })
     const submitForm = () => {
       const route = props.scholarship.id

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ScholarshipResource;
 use App\Models\Scholarship;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ScholarshipController extends Controller
 {
@@ -25,10 +26,12 @@ class ScholarshipController extends Controller
             ->scholarships()
             ->filter($request->all())
             ->paginate($request->input('perPage', 15));
+        $strategies = Scholarship::getResolutionStrategies();
 
         return inertia('scholarships/Index', [
             'title' => $title,
             'scholarships' => ScholarshipResource::collection($scholarships),
+            'strategies' => $strategies,
         ])->withViewData(compact('title'));
     }
 
@@ -45,6 +48,11 @@ class ScholarshipController extends Controller
             'description' => 'nullable',
             'percentage' => 'nullable|numeric|required_without:amount|max:100',
             'amount' => 'nullable|integer|required_without:percentage',
+            'resolution_strategy' => [
+                'nullable',
+                'required_with:amount,percentage',
+                Rule::in(array_keys(Scholarship::getResolutionStrategies())),
+            ],
         ]);
 
         $school = $request->school();
@@ -80,8 +88,13 @@ class ScholarshipController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'description' => 'nullable',
-            'percentage' => 'nullable|numeric',
-            'amount' => 'nullable|integer',
+            'percentage' => 'nullable|numeric|required_without:amount|max:100',
+            'amount' => 'nullable|integer|required_without:percentage',
+            'resolution_strategy' => [
+                'nullable',
+                'required_with:amount,percentage',
+                Rule::in(array_keys(Scholarship::getResolutionStrategies())),
+            ],
         ]);
 
         $scholarship->update($data);

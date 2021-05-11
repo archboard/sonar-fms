@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Scholarship;
+use App\ResolutionStrategies\Least;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -39,6 +40,7 @@ class ScholarshipTest extends TestCase
             'description' => 'This is a test scholarship',
             'percentage' => '70.99',
             'amount' => 20000,
+            'resolution_strategy' => Least::class,
         ];
 
         $this->post(route('scholarships.store'), $data)
@@ -50,6 +52,27 @@ class ScholarshipTest extends TestCase
         $this->assertDatabaseHas('scholarships', $data);
 
         $this->assertEquals(1, $this->school->scholarships()->count());
+    }
+
+    public function test_fails_validation_without_strategy()
+    {
+        $this->assignPermission('create', Scholarship::class);
+        $data = [
+            'name' => 'Tuition Assistance',
+            'description' => 'This is a test scholarship',
+            'percentage' => '70.99',
+            'amount' => 20000,
+            'resolution_strategy' => null,
+        ];
+
+        $this->post(route('scholarships.store'), $data)
+            ->assertRedirect()
+            ->assertSessionHasErrors('resolution_strategy');
+
+        $data['resolution_strategy'] = 'Least';
+        $this->post(route('scholarships.store'), $data)
+            ->assertRedirect()
+            ->assertSessionHasErrors('resolution_strategy');
     }
 
     public function test_needs_an_amount_or_percentage()
