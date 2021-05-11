@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent py-6 flex items-center justify-between">
+  <div class="bg-transparent flex items-center justify-between">
     <div v-if="meta.total > 0" class="flex-1 flex justify-between sm:hidden">
       <button @click.prevent="goto(prevPage)" :class="`rounded-md ${inactiveClass} ${buttonClass}`">
         {{ __('Previous') }}

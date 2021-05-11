@@ -27,13 +27,20 @@
             {{ displayCurrency(invoice.remaining_balance) }}
           </Td>
         </tr>
+        <tr v-if="invoices.data.length === 0">
+          <Td colspan="4" class="text-center">
+            {{ __('No invoices exist for this student.') }}
+          </Td>
+        </tr>
       </Tbody>
     </Table>
 
-    <Pagination
-      :meta="invoices.meta"
-      @paged="paged"
-    />
+    <div :class="{ 'py-6': invoices.data.length > 0 }">
+      <Pagination
+        :meta="invoices.meta"
+        @paged="paged"
+      />
+    </div>
   </section>
 </template>
 
