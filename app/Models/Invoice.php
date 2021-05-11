@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -188,6 +189,16 @@ class Invoice extends Model
             'notify_at' => null,
             'notified_at' => null,
         ]);
+
+        return $this;
+    }
+
+    public function updateFromRequest(UpdateInvoiceRequest $request): static
+    {
+        $data = $request->validated();
+        $school = $request->school();
+        $items = $this->invoiceItems->keyBy('id');
+        $scholarships = $this->invoiceScholarships->keyBy('id');
 
         return $this;
     }

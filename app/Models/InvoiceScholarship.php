@@ -30,6 +30,11 @@ class InvoiceScholarship extends Model
         return $this->belongsTo(Scholarship::class);
     }
 
+    public function getPercentageFormattedAttribute()
+    {
+        return $this->percentage . '%';
+    }
+
     public function getAmountAttribute($value)
     {
         return $value ?? 0;

@@ -413,6 +413,32 @@ class User extends Authenticatable
                     ],
                 ],
                 [
+                    'model' => Scholarship::class,
+                    'label' => __('Scholarships'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', Scholarship::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', Scholarship::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', Scholarship::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', Scholarship::class),
+                        ],
+                    ],
+                ],
+                [
                     'model' => Invoice::class,
                     'label' => __('Invoices'),
                     'permissions' => [

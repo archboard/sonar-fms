@@ -24,7 +24,7 @@
 <!--                      </svg>-->
 <!--                      <span class="text-sm">Edit</span>-->
 <!--                    </Button>-->
-                    <Button color="white" size="sm" @click.prevent="createInvoice = true">
+                    <Button color="white" size="sm" @click.prevent="showSlideout = true">
                       {{ __('New invoice') }}
                     </Button>
                   </div>
@@ -119,7 +119,12 @@
                 <div class="py-3 xl:pt-6 xl:pb-0">
                   <h2 class="sr-only">{{ __('Invoices') }}</h2>
                   <div class="max-w-none">
-                    <StudentInvoiceTable ref="studentTable" :student="student" />
+                    <StudentInvoiceTable
+                      ref="studentTable"
+                      :student="student"
+                      :permissions="permissions"
+                      @edit="editInvoice"
+                    />
                   </div>
                 </div>
               </div>
@@ -384,9 +389,10 @@
       </div>
 
       <StudentInvoiceSlideout
-        v-if="createInvoice"
+        v-if="showSlideout"
         @close="slideoutClosed"
         :student="student"
+        :invoice="selectedInvoice"
       />
     </template>
   </Authenticated>
@@ -405,6 +411,7 @@ import Button from '../../components/Button'
 import Textarea from '../../components/forms/Textarea'
 import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
 import StudentInvoiceTable from '../../components/StudentInvoiceTable'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default defineComponent({
   components: {
@@ -426,14 +433,16 @@ export default defineComponent({
     user: Object,
     school: Object,
     unpaidInvoices: Number,
+    permissions: Object,
   },
 
   setup ({ student }) {
     const $route = inject('$route')
     const enrolledAt = dayjs(student.initial_district_entry_date)
-    const createInvoice = ref(false)
+    const showSlideout = ref(false)
     const syncingGuardians = ref(false)
     const studentTable = ref(null)
+    const selectedInvoice = ref({})
     const syncGuardians = () => {
       syncingGuardians.value = true
 
@@ -444,17 +453,23 @@ export default defineComponent({
       })
     }
     const slideoutClosed = () => {
-      createInvoice.value = false
+      showSlideout.value = false
       studentTable.value.fetchInvoices()
+    }
+    const editInvoice = invoice => {
+      selectedInvoice.value = cloneDeep(invoice)
+      showSlideout.value = true
     }
 
     return {
       enrolledAt,
       syncingGuardians,
       syncGuardians,
-      createInvoice,
+      showSlideout,
       studentTable,
       slideoutClosed,
+      selectedInvoice,
+      editInvoice,
     }
   }
 })

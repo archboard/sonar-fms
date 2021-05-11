@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Students;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -22,6 +23,10 @@ class InvoiceController extends Controller
     public function index(Student $student)
     {
         $invoices = $student->invoices()
+            ->with([
+                'invoiceItems',
+                'invoiceScholarships',
+            ])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -90,13 +95,18 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateInvoiceRequest $request
+     * @param Student $student
+     * @param Invoice $invoice
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(UpdateInvoiceRequest $request, Student $student, Invoice $invoice)
     {
-        //
+        $invoice->updateFromRequest($request);
+
+        session()->flash('success', __('Invoice updated successfully.'));
+
+        return back();
     }
 
     /**

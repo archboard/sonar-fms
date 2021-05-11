@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StudentResource;
+use App\Models\Invoice;
 use App\Models\School;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -53,11 +54,13 @@ class StudentController extends Controller
         $unpaidInvoices = $student->invoices()
             ->whereNull('paid_at')
             ->count();
+        $permissions = $request->user()->getPermissions(Invoice::class);
 
         return inertia('students/Show', [
             'title' => $title,
             'student' => $student->toResource(),
             'unpaidInvoices' => $unpaidInvoices,
+            'permissions' => $permissions,
         ])->withViewData(compact('title'));
     }
 }

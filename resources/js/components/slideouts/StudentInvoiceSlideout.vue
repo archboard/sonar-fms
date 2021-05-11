@@ -503,6 +503,10 @@ export default {
   },
   props: {
     student: Object,
+    invoice: {
+      type: Object,
+      default: () => ({})
+    }
   },
   emits: ['close'],
 
@@ -515,13 +519,13 @@ export default {
     const page = usePage()
     const isDark = computed(() => window.isDark)
     const form = useForm({
-      title: null,
-      description: null,
-      term_id: null,
-      due_at: null,
-      notify: false,
-      items: [],
-      scholarships: [],
+      title: props.invoice.title || null,
+      description: props.invoice.description || null,
+      term_id: props.invoice.term_id || null,
+      due_at: props.invoice.due_at || null,
+      notify: props.invoice.notify || false,
+      items: props.invoice.items || [],
+      scholarships: props.invoice.scholarships || [],
     })
 
     const school = computed(() => page.props.value.school)
@@ -563,7 +567,14 @@ export default {
     })
 
     const saveInvoice = close => {
-      form.post($route('students.invoices.store', [props.student]), {
+      const route = props.invoice.id
+        ? $route('students.invoices.update', [props.student, props.invoice])
+        : $route('students.invoices.store', [props.student])
+      const method = props.invoice.id
+        ? 'put'
+        : 'post'
+
+      form[method](route, {
         preserveScroll: true,
         onSuccess () {
           close()
