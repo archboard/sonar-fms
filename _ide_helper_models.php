@@ -184,6 +184,8 @@ namespace App\Models{
  * @property-read mixed $status_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
+ * @property-read int|null $invoice_scholarships_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\Term|null $term
@@ -251,12 +253,34 @@ namespace App\Models{
 /**
  * App\Models\InvoiceScholarship
  *
+ * @mixin IdeHelperInvoiceScholarship
+ * @property int $id
+ * @property string $invoice_uuid
+ * @property int|null $scholarship_id
+ * @property bool $sync_with_scholarship
+ * @property string $name
+ * @property float|null $percentage
+ * @property int|null $amount
+ * @property string|null $resolution_strategy
+ * @property int|null $calculated_amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Invoice $invoice
- * @property-read \App\Models\Scholarship $scholarship
+ * @property-read \App\Models\Scholarship|null $scholarship
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship query()
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCalculatedAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship wherePercentage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereResolutionStrategy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereScholarshipId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereSyncWithScholarship($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUpdatedAt($value)
  */
 	class IdeHelperInvoiceScholarship extends \Eloquent {}
 }
@@ -265,14 +289,35 @@ namespace App\Models{
 /**
  * App\Models\Scholarship
  *
+ * @mixin IdeHelperScholarship
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $name
+ * @property string|null $description
+ * @property float|null $percentage
+ * @property int|null $amount
+ * @property string|null $resolution_strategy
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $percentage_formatted
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\ScholarshipFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Scholarship filter(array $filters)
- * @method static \Illuminate\Database\Eloquent\Builder|Scholarship newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Scholarship newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Scholarship query()
- * @mixin \Eloquent
+ * @method static Builder|Scholarship filter(array $filters)
+ * @method static Builder|Scholarship newModelQuery()
+ * @method static Builder|Scholarship newQuery()
+ * @method static Builder|Scholarship query()
+ * @method static Builder|Scholarship whereAmount($value)
+ * @method static Builder|Scholarship whereCreatedAt($value)
+ * @method static Builder|Scholarship whereDescription($value)
+ * @method static Builder|Scholarship whereId($value)
+ * @method static Builder|Scholarship whereName($value)
+ * @method static Builder|Scholarship wherePercentage($value)
+ * @method static Builder|Scholarship whereResolutionStrategy($value)
+ * @method static Builder|Scholarship whereSchoolId($value)
+ * @method static Builder|Scholarship whereTenantId($value)
+ * @method static Builder|Scholarship whereUpdatedAt($value)
  */
 	class IdeHelperScholarship extends \Eloquent {}
 }

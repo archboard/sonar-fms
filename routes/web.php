@@ -96,6 +96,12 @@ Route::middleware('tenant')->group(function () {
         /**
          * Scholarships
          */
+        Route::get('/resolution-strategies', \App\Http\Controllers\GetResolutionStrategies::class)
+            ->name('resolution-strategies.all');
+
+        Route::get('/scholarships/all', \App\Http\Controllers\GetScholarshipsController::class)
+            ->name('scholarships.all');
+
         Route::resource('/scholarships', \App\Http\Controllers\ScholarshipController::class)
             ->except('create', 'edit');
 

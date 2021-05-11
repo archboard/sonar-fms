@@ -7,6 +7,7 @@ use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\InvoiceScholarship;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,15 +39,31 @@ class InvoiceController extends Controller
     {
         DB::transaction(function () use ($request, $student) {
             $invoiceAttributes = Invoice::getAttributesFromRequest($request, $student);
+            $data = $request->validated();
+            $school = $request->school();
 
             /** @var Invoice $invoice */
             $invoice = Invoice::create($invoiceAttributes);
             DB::table('invoice_items')
                 ->insert(InvoiceItem::generateAttributesForInsert(
                     $invoiceAttributes['uuid'],
-                    collect($request->validated()['items']),
-                    $request->school()->fees->keyBy('id')
+                    collect($data['items']),
+                    $school->fees->keyBy('id')
                 ));
+
+            if (!empty($data['scholarships'])) {
+                DB::table('invoice_scholarships')
+                    ->insert(
+                        InvoiceScholarship::generateAttributesForInsert(
+                            $invoiceAttributes['uuid'],
+                            collect($data['scholarships']),
+                            $invoice->amount_due,
+                            $school->scholarships->keyBy('id')
+                        )
+                    );
+
+                $invoice->setAmountDue();
+            }
 
             // Trigger the notification if it is set to queue
             if ($invoiceAttributes['notify']) {

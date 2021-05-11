@@ -21,10 +21,10 @@ class CreateInvoiceScholarshipsTable extends Migration
             $table->foreign('scholarship_id')->references('id')->on('scholarships')->onDelete('set null');
             $table->boolean('sync_with_scholarship')->default(false);
             $table->string('name');
-            $table->text('description')->nullable();
             $table->decimal('percentage', 8, 4)->nullable();
             $table->unsignedBigInteger('amount')->nullable();
             $table->string('resolution_strategy')->nullable();
+            $table->unsignedBigInteger('calculated_amount')->nullable();
             $table->timestamps();
         });
     }

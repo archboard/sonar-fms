@@ -2,12 +2,10 @@
 
 namespace App\ResolutionStrategies;
 
-use App\Models\Invoice;
-
 class Least
 {
-    public function __invoke(Invoice $invoice)
+    public function __invoke(int $amountDiscount, int $percentageDiscount): int
     {
-
+        return min($amountDiscount, $percentageDiscount);
     }
 }

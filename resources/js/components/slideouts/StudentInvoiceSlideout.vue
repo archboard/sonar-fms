@@ -41,7 +41,7 @@
             </HelpText>
           </InputWrap>
 
-          <InputWrap>
+          <InputWrap :error="form.errors.due_at">
             <Label for="due_at">{{ __('Due date') }}</Label>
             <div class="grid grid-cols-2 gap-6">
               <DatePicker
@@ -95,6 +95,7 @@
         </Fieldset>
       </div>
 
+      <!-- Invoice line items -->
       <div class="pt-8">
         <div class="mb-6">
           <CardSectionHeader>
@@ -104,6 +105,10 @@
             {{ __('Add line items to the build the invoice and total receivable amount.') }}
           </HelpText>
         </div>
+
+        <Error v-if="form.errors.items">
+          {{ __('You must have at least one invoice item.') }}
+        </Error>
 
         <ul class="space-y-3 py-3">
           <TransitionGroup
@@ -120,7 +125,7 @@
               class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md px-6 py-4"
             >
               <Fieldset>
-                <InputWrap>
+                <InputWrap :error="form.errors[`items.${index}.fee_id`]">
                   <Label :for="`fee_id_${index}`">{{ __('Fee') }}</Label>
                   <Select
                     v-model="item.fee_id" :id="`fee_id_${index}`"
@@ -150,22 +155,22 @@
                   </HelpText>
                 </InputWrap>
 
-                <InputWrap v-if="!item.sync_with_fee">
-                  <Label :for="`name_${index}`">{{ __('Name') }}</Label>
+                <InputWrap v-if="!item.sync_with_fee" :error="form.errors[`items.${index}.name`]">
+                  <Label :for="`name_${index}`" :required="true">{{ __('Name') }}</Label>
                   <Input v-model="item.name" :id="`name_${index}`" />
                   <HelpText>
                     {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
                   </HelpText>
                 </InputWrap>
 
-                <InputWrap v-if="!item.sync_with_fee">
-                  <Label :for="`amount_per_unit_${index}`">{{ __('Amount per unit') }}</Label>
+                <InputWrap v-if="!item.sync_with_fee" :error="form.errors[`items.${index}.amount_per_unit`]">
+                  <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
                   <Input v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" type="number" />
                   <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(item.amount_per_unit) })" />
                 </InputWrap>
 
-                <InputWrap>
-                  <Label :for="`quantity_${index}`">{{ __('Quantity') }}</Label>
+                <InputWrap :error="form.errors[`items.${index}.quantity`]">
+                  <Label :for="`quantity_${index}`" :required="true">{{ __('Quantity') }}</Label>
                   <Input v-model="item.quantity" :id="`quantity_${index}`" type="number" />
                 </InputWrap>
 
@@ -191,6 +196,127 @@
             <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
               <span>{{ __('Add invoice line item') }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scholarships -->
+      <div class="pt-8">
+        <div class="mb-6">
+          <CardSectionHeader>
+            {{ __('Scholarships') }}
+          </CardSectionHeader>
+          <HelpText class="text-sm mt-1">
+            {{ __('Add scholarships to reduce the amount due for the invoice.') }}
+          </HelpText>
+        </div>
+
+        <ul class="space-y-3 py-3">
+          <TransitionGroup
+            enter-active-class="transition duration-150 ease-in-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-150 ease-in-out"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <li
+              v-for="(item, index) in form.scholarships"
+              :key="item.id"
+              class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md px-6 py-4"
+            >
+              <Fieldset>
+                <InputWrap :error="form.errors[`scholarships.${index}.scholarship_id`]">
+                  <Label :for="`scholarship_id_${index}`">{{ __('Scholarship') }}</Label>
+                  <Select
+                    v-model="item.scholarship_id" :id="`scholarship_id_${index}`"
+                    @change="scholarshipSelected(item)"
+                  >
+                    <option :value="null">{{ __('Use a custom scholarship') }}</option>
+                    <option
+                      v-for="scholarship in scholarships"
+                      :key="scholarship.id"
+                      :value="scholarship.id"
+                    >
+                      {{ scholarship.name }} - {{ scholarship.description }}
+                    </option>
+                  </Select>
+                  <HelpText>
+                    {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
+                  </HelpText>
+                </InputWrap>
+
+                <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">
+                  <CheckboxWrapper>
+                    <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />
+                    <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>
+                  </CheckboxWrapper>
+                  <HelpText>
+                    {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}
+                  </HelpText>
+                </InputWrap>
+
+                <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.name`]">
+                  <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
+                  <Input v-model="item.name" :id="`scholarship_name_${index}`" />
+                  <HelpText>
+                    {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
+                  </HelpText>
+                </InputWrap>
+
+                <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.amount`]">
+                  <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
+                  <Input v-model="item.amount" :id="`scholarship_amount_${index}`" type="number" />
+                  <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(item.amount_per_unit) })" />
+                </InputWrap>
+
+                <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
+                  <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
+                  <Input v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
+                  <HelpText>
+                    {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
+                  </HelpText>
+                </InputWrap>
+
+                <InputWrap v-if="!item.sync_with_scholarship && item.percentage && item.amount" :error="form.errors[`scholarships.${index}.resolution_strategy`]">
+                  <Label for="resolution_strategy">{{ __('Resolution strategy') }}</Label>
+                  <Select v-model="item.resolution_strategy" id="resolution_strategy">
+                    <option
+                      v-for="(label, strategy) in strategies"
+                      :key="strategy"
+                      :value="strategy"
+                    >
+                      {{ label }}
+                    </option>
+                  </Select>
+                  <HelpText>
+                    {{ __('This resolves whether to use the percentage or amount for the scholarship when both are provided. Least will use whichever has the least amount of discount. Greatest will use whichever has the greatest discount.') }}
+                  </HelpText>
+                </InputWrap>
+
+                <div class="flex justify-between items-center">
+                  <h4 class="font-bold">
+                    {{ __('Discount total: :total', { total: displayCurrency(getItemDiscount(item)) }) }}
+                  </h4>
+                  <Button color="red" size="sm" type="button" @click.prevent="form.scholarships.splice(index, 1)">
+                    <TrashIcon class="w-4 h-4" />
+                    <span class="ml-2">{{ __('Remove scholarship') }}</span>
+                  </Button>
+                </div>
+              </Fieldset>
+            </li>
+          </TransitionGroup>
+        </ul>
+
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
+          </div>
+          <div class="relative flex justify-center">
+            <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+              <span>{{ __('Add scholarship') }}</span>
             </button>
           </div>
         </div>
@@ -263,7 +389,7 @@
               <div
                 v-for="item in form.items"
                 :key="item.id"
-                class="flex justify-between"
+                class="flex justify-between py-1"
               >
                 <div>
                   {{ __(':name x :quantity', { ...item }) }}
@@ -271,6 +397,38 @@
                 <div>
                   {{ displayCurrency(item.amount_per_unit * item.quantity) }}
                 </div>
+              </div>
+              <div class="mt-2 pt-2 flex justify-between font-bold border-t border-gray-200 dark:border-gray-400">
+                <div>{{ __('Total' )}}</div>
+                <div>{{ displayCurrency(itemsTotal) }}</div>
+              </div>
+            </dd>
+          </div>
+          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+              {{ __('Scholarships') }}
+            </dt>
+            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+              <div
+                v-for="item in form.scholarships"
+                :key="item.id"
+                class="flex justify-between py-1"
+              >
+                <div>
+                  {{ item.name }}
+                </div>
+                <div>
+                  {{ displayCurrency(getItemDiscount(item)) }}
+                </div>
+              </div>
+              <div
+                class="font-bold flex justify-between"
+                :class="{
+                  'mt-2 pt-2 border-t border-gray-200 dark:border-gray-400': form.scholarships.length > 0
+                }"
+              >
+                <div>{{ __('Discount total' )}}</div>
+                <div>{{ displayCurrency(discountTotal) }}</div>
               </div>
             </dd>
           </div>
@@ -308,6 +466,8 @@ import Textarea from '../forms/Textarea'
 import { nanoid } from 'nanoid'
 import displaysCurrency from '../../composition/displaysCurrency'
 import fetchesFees from '../../composition/fetchesFees'
+import fetchesScholarships from '../../composition/fetchesScholarships'
+import fetchesResolutionStrategies from '../../composition/fetchesResolutionStrategies'
 import Input from '../forms/Input'
 import Button from '../Button'
 import FormMultipartWrapper from '../forms/FormMultipartWrapper'
@@ -315,9 +475,11 @@ import CardSectionHeader from '../CardSectionHeader'
 import { Calendar, DatePicker } from 'v-calendar'
 import dayjs from '../../plugins/dayjs'
 import FadeIn from '../transitions/FadeIn'
+import Error from '../forms/Error'
 
 export default {
   components: {
+    Error,
     FadeIn,
     CardSectionHeader,
     FormMultipartWrapper,
@@ -346,9 +508,10 @@ export default {
 
   setup (props) {
     const $route = inject('$route')
-    const $http = inject('$http')
     const { terms } = fetchesTerms()
     const { fees } = fetchesFees()
+    const { scholarships } = fetchesScholarships()
+    const { strategies } = fetchesResolutionStrategies()
     const page = usePage()
     const isDark = computed(() => window.isDark)
     const form = useForm({
@@ -357,7 +520,8 @@ export default {
       term_id: null,
       due_at: null,
       notify: false,
-      items: []
+      items: [],
+      scholarships: [],
     })
 
     const school = computed(() => page.props.value.school)
@@ -368,8 +532,34 @@ export default {
         : ''
     })
     const { displayCurrency } = displaysCurrency()
+    const getItemDiscount = item => {
+      let discount = item.amount || 0
+      const percentage = item.percentage || 0
+      let percentageDiscount = itemsTotal.value * (percentage / 100)
+
+      if (discount && percentage) {
+        discount = item.resolution_strategy.includes('Least')
+          ? Math.min(discount, percentageDiscount)
+          : Math.max(discount, percentageDiscount)
+      }
+
+      if (!discount && percentageDiscount) {
+        discount = percentageDiscount
+      }
+
+      return parseFloat(discount)
+    }
+
+    const itemsTotal = computed(() => form.items.reduce((total, i) => total + (i.amount_per_unit * i.quantity), 0))
+    const discountTotal = computed(() => form.scholarships.reduce((total, i) => total + getItemDiscount(i), 0))
     const totalDue = computed(() => {
-      return displayCurrency(form.items.reduce((total, i) => total + (i.amount_per_unit * i.quantity), 0))
+      let total = itemsTotal.value - discountTotal.value
+
+      if (total < 0) {
+        total = 0
+      }
+
+      return displayCurrency(total)
     })
 
     const saveInvoice = close => {
@@ -380,6 +570,8 @@ export default {
         }
       })
     }
+
+    // Invoice line items
     const addInvoiceLineItem = () => {
       form.items.push({
         id: nanoid(),
@@ -408,6 +600,38 @@ export default {
       }
     }
 
+    // Scholarships
+    const addScholarship = () => {
+      form.scholarships.push({
+        id: nanoid(),
+        scholarship_id: null,
+        sync_with_scholarship: false,
+        name: null,
+        amount: null,
+        percentage: null,
+        resolution_strategy: 'App\\ResolutionStrategies\\Least',
+      })
+    }
+    const syncWithScholarship = item => {
+      const scholarship = scholarships.value.find(s => s.id === item.scholarship_id)
+
+      if (scholarship) {
+        item.name = scholarship.name
+        item.amount = scholarship.amount
+        item.percentage = scholarship.percentage
+        item.resolution_strategy = scholarship.resolution_strategy
+      }
+    }
+    const scholarshipSelected = item => {
+      syncWithScholarship(item)
+      item.sync_with_scholarship = false
+    }
+    const scholarshipSyncChanged = item => {
+      if (item.sync_with_scholarship) {
+        syncWithScholarship(item)
+      }
+    }
+
     return {
       school,
       terms,
@@ -420,8 +644,16 @@ export default {
       isDark,
       dueDate,
       timezone,
+      getItemDiscount,
+      itemsTotal,
+      discountTotal,
       totalDue,
       itemSyncChanged,
+      strategies,
+      scholarships,
+      addScholarship,
+      scholarshipSelected,
+      scholarshipSyncChanged,
     }
   },
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperInvoiceScholarship
@@ -11,6 +12,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class InvoiceScholarship extends Model
 {
     protected $guarded = [];
+
+    protected $casts = [
+        'amount' => 'integer',
+        'calculated_amount' => 'integer',
+        'percentage' => 'float',
+        'sync_with_scholarship' => 'boolean',
+    ];
 
     public function invoice(): BelongsTo
     {
@@ -20,5 +28,54 @@ class InvoiceScholarship extends Model
     public function scholarship(): BelongsTo
     {
         return $this->belongsTo(Scholarship::class);
+    }
+
+    public function getAmountAttribute($value)
+    {
+        return $value ?? 0;
+    }
+
+    public function getPercentageAttribute($value)
+    {
+        return $value ?? 0;
+    }
+
+    public function calculateAmount(int $invoiceTotal): int
+    {
+        $discount = $this->amount;
+        $percentageDiscount = (int) round($invoiceTotal * ($this->percentage / 100));
+
+        if ($discount > 0 && $percentageDiscount > 0) {
+            $strategy = $this->resolution_strategy;
+            $resolver = new $strategy();
+
+            return $resolver($discount, $percentageDiscount);
+        }
+
+        return $discount > 0
+            ? $discount
+            : $percentageDiscount;
+    }
+
+    public static function generateAttributesForInsert(string $invoiceUuid, Collection $scholarshipItems, int $invoiceTotal, Collection $scholarships): array
+    {
+        return $scholarshipItems->map(function ($item) use ($invoiceUuid, $invoiceTotal, $scholarships) {
+            unset($item['id']);
+            $item['invoice_uuid'] = $invoiceUuid;
+
+            if ($item['sync_with_scholarship']) {
+                $scholarship = $scholarships->get($item['scholarship_id']);
+
+                $item['name'] = $scholarship->name;
+                $item['amount'] = $scholarship->amount;
+                $item['percentage'] = $scholarship->percentage;
+                $item['resolution_strategy'] = $scholarship->resolution_strategy;
+            }
+
+            // Cache the total line item
+            $item['calculated_amount'] = (new static($item))->calculateAmount($invoiceTotal);
+
+            return $item;
+        })->toArray();
     }
 }

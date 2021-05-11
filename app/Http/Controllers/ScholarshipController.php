@@ -26,12 +26,10 @@ class ScholarshipController extends Controller
             ->scholarships()
             ->filter($request->all())
             ->paginate($request->input('perPage', 15));
-        $strategies = Scholarship::getResolutionStrategies();
 
         return inertia('scholarships/Index', [
             'title' => $title,
             'scholarships' => ScholarshipResource::collection($scholarships),
-            'strategies' => $strategies,
         ])->withViewData(compact('title'));
     }
 

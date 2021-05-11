@@ -2,12 +2,10 @@
 
 namespace App\ResolutionStrategies;
 
-use App\Models\Invoice;
-
 class Greatest
 {
-    public function __invoke(Invoice $invoice)
+    public function __invoke(int $amountDiscount, int $percentageDiscount): int
     {
-
+        return max($amountDiscount, $percentageDiscount);
     }
 }

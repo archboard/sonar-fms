@@ -47,6 +47,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class, 'invoice_uuid', 'uuid');
     }
 
+    public function invoiceScholarships(): HasMany
+    {
+        return $this->hasMany(InvoiceScholarship::class, 'invoice_uuid', 'uuid');
+    }
+
     public function getStatusColorAttribute()
     {
         if ($this->paid_at) {
@@ -102,7 +107,7 @@ class Invoice extends Model
     {
         $school = $request->school();
         $data = $request->validated();
-        $invoiceAttributes = Arr::except($data, 'items');
+        $invoiceAttributes = Arr::except($data, ['items', 'scholarships']);
 
         $invoiceAttributes['uuid'] = Uuid::uuid4();
         $invoiceAttributes['school_id'] = $school->id;
@@ -122,16 +127,28 @@ class Invoice extends Model
 
     public function setAmountDue(): static
     {
-        $amountDue = $this->invoiceItems
+        $grossTotal = $this->invoiceItems
             ->reduce(fn (int $total, InvoiceItem $item) => $total + ($item->amount_per_unit * $item->quantity), 0);
+
+        $discount = $this->invoiceScholarships
+            ->reduce(fn (int $total, InvoiceScholarship $scholarship) => $total + $scholarship->calculateAmount($grossTotal), 0);
+
+        $amountDue = $grossTotal - $discount;
+
+        if ($amountDue < 0) {
+            $amountDue = 0;
+        }
 
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
         $paid = 0;
 
+        $remaining = $amountDue - $paid;
+
         $this->update([
             'amount_due' => $amountDue,
-            'remaining_balance' => $amountDue - $paid,
+            'remaining_balance' => $remaining,
+            'paid_at' => $remaining === 0 ? now() : null,
         ]);
 
         return $this;

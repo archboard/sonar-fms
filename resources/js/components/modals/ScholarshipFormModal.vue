@@ -16,7 +16,7 @@
       <InputWrap :error="form.errors.description">
         <Label for="description">{{ __('Description') }}</Label>
         <Textarea v-model="form.description" id="description" />
-        <HelpText>{{ __('This describes the scholarship that will be displayed on the invoice.') }}</HelpText>
+        <HelpText>{{ __('This is for internal use and reference only.') }}</HelpText>
       </InputWrap>
 
       <p class="mb-4">
@@ -66,6 +66,7 @@ import HelpText from '../HelpText'
 import Textarea from '../forms/Textarea'
 import Label from '../forms/Label'
 import displaysCurrency from '../../composition/displaysCurrency'
+import fetchesResolutionStrategies from '../../composition/fetchesResolutionStrategies'
 import Select from '../forms/Select'
 import Link from '../Link'
 import DepartmentsModal from './DepartmentsModal'
@@ -91,12 +92,12 @@ export default defineComponent({
       type: Object,
       default: () => ({})
     },
-    strategies: Object,
   },
 
   setup (props) {
     const $route = inject('$route')
     const $translate = inject('$translate')
+    const { strategies } = fetchesResolutionStrategies()
     const modal = ref(null)
     const showDeptModal = ref(false)
     const showCatModal = ref(false)
@@ -135,6 +136,7 @@ export default defineComponent({
       displayCurrency,
       showDeptModal,
       showCatModal,
+      strategies,
     }
   }
 })

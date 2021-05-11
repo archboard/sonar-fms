@@ -86,7 +86,6 @@
     <ScholarshipFormModal
       v-if="showModal"
       :scholarship="selectedScholarship"
-      :strategies="strategies"
       @close="showModal = false"
     />
   </Authenticated>
@@ -128,7 +127,6 @@ export default defineComponent({
     scholarships: Object,
     user: Object,
     school: Object,
-    strategies: Object,
   },
 
   setup () {
