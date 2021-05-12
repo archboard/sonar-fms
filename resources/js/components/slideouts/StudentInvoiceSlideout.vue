@@ -7,11 +7,17 @@
   >
     <template v-slot:header>
       <div class="space-y-1">
-        <CardHeader>
+        <CardHeader v-if="isNew">
           {{ __('New invoice for :name', { name: student.full_name }) }}
         </CardHeader>
-        <HelpText>
+        <CardHeader v-else>
+          {{ __('Update invoice for :name', { name: student.full_name }) }}
+        </CardHeader>
+        <HelpText v-if="isNew">
           {{ __('Create a new invoice by providing the following details.') }}
+        </HelpText>
+        <HelpText v-else>
+          {{ __('Modify invoice details.') }}
         </HelpText>
       </div>
     </template>
@@ -516,6 +522,7 @@ export default {
     const { fees } = fetchesFees()
     const { scholarships } = fetchesScholarships()
     const { strategies } = fetchesResolutionStrategies()
+    const isNew = computed(() => !props.invoice.id)
     const page = usePage()
     const isDark = computed(() => window.isDark)
     const form = useForm({
@@ -644,6 +651,7 @@ export default {
     }
 
     return {
+      isNew,
       school,
       terms,
       fees,
