@@ -5,11 +5,15 @@ namespace App\Models;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -17,6 +21,9 @@ use Ramsey\Uuid\Uuid;
  */
 class Invoice extends Model
 {
+    use HasFactory;
+    use HasResource;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -146,7 +153,7 @@ class Invoice extends Model
 
         $remaining = $amountDue - $paid;
 
-        $this->update([
+        $this->forceFill([
             'amount_due' => $amountDue,
             'remaining_balance' => $remaining,
             'paid_at' => $remaining === 0 ? now() : null,
@@ -195,11 +202,104 @@ class Invoice extends Model
 
     public function updateFromRequest(UpdateInvoiceRequest $request): static
     {
-        $data = $request->validated();
-        $school = $request->school();
-        $items = $this->invoiceItems->keyBy('id');
-        $scholarships = $this->invoiceScholarships->keyBy('id');
+        DB::transaction(function () use ($request) {
+            $data = $request->validated();
+
+            $school = $request->school();
+
+            $existingItems = $this->invoiceItems->keyBy('id');
+            $existingScholarshipItems = $this->invoiceScholarships->keyBy('id');
+
+            // Contains the submitted items for the invoice
+            $items = collect($data['items']);
+
+            // Delete items that aren't present on the request
+            $missingItems = $this->invoiceItems
+                ->filter(fn ($item) => !$items->contains('id', $item->id));
+
+            if ($missingItems->isNotEmpty()) {
+                $this->invoiceItems()
+                    ->whereIn('id', $missingItems->pluck('id'))
+                    ->delete();
+            }
+
+            // Update the items
+            $fees = $school->fees->keyBy('id');
+            $newItems = $items
+                ->reduce(function (array $newItems, $item) use ($existingItems, $fees) {
+                    if ($existingItem = $existingItems->get($item['id'])) {
+                        $existingItem->update($item);
+                        return $newItems;
+                    }
+
+                    $newItems[] = InvoiceItem::generateAttributesForInsert(
+                        $this->uuid,
+                        $item,
+                        $fees
+                    );
+
+                    return $newItems;
+                }, []);
+
+            if (!empty($newItems)) {
+                DB::table('invoice_items')
+                    ->insert($newItems);
+            }
+
+            $scholarshipItems = collect($data['scholarships']);
+
+            // Delete scholarships not present in the request
+            $missingScholarships = $this->invoiceScholarships
+                ->filter(fn ($item) => !$scholarshipItems->contains('id', $item->id));
+
+            if ($missingScholarships->isNotEmpty()) {
+                $this->invoiceScholarships()
+                    ->whereIn('id', $missingScholarships->pluck('id'))
+                    ->delete();
+            }
+
+            // Update the scholarships
+            $scholarships = $school->scholarships->keyBy('id');
+            $itemsTotal = static::getSubmittedItemsTotal($items, $fees);
+            $newScholarshipItems = $scholarshipItems
+                ->reduce(function (array $newItems, array $item) use ($existingScholarshipItems, $itemsTotal, $scholarships) {
+                    if ($existingItem = $existingScholarshipItems->get($item['id'])) {
+                        $existingItem->update($item);
+                        return $newItems;
+                    }
+
+                    $newItems[] = InvoiceScholarship::generateAttributesForInsert(
+                        $this->uuid,
+                        $item,
+                        $itemsTotal,
+                        $scholarships
+                    );
+
+                    return $newItems;
+                }, []);
+
+            if (!empty($newScholarshipItems)) {
+                DB::table('invoice_scholarships')
+                    ->insert($newScholarshipItems);
+            }
+
+            $this->unsetRelations();
+            $this->setAmountDue()
+                ->forceFill(Arr::except($data, ['items', 'scholarships']))
+                ->save();
+        });
 
         return $this;
+    }
+
+    public static function getSubmittedItemsTotal(Collection $items, Collection $fees): int
+    {
+        return $items->reduce(function (int $total, array $item) use ($fees) {
+            if ($item['sync_with_fee'] && $fee = $fees->get($item['fee_id'])) {
+                $item['amount_per_unit'] = $fee->amount;
+            }
+
+            return $total + ($item['amount_per_unit'] * $item['quantity']);
+        }, 0);
     }
 }

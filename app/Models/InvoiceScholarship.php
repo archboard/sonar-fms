@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -11,7 +12,16 @@ use Illuminate\Support\Collection;
  */
 class InvoiceScholarship extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'invoice_uuid',
+        'scholarship_id',
+        'sync_with_scholarship',
+        'name',
+        'percentage',
+        'amount',
+        'resolution_strategy',
+        'calculated_amount',
+    ];
 
     protected $casts = [
         'amount' => 'integer',
@@ -62,25 +72,24 @@ class InvoiceScholarship extends Model
             : $percentageDiscount;
     }
 
-    public static function generateAttributesForInsert(string $invoiceUuid, Collection $scholarshipItems, int $invoiceTotal, Collection $scholarships): array
+    public static function generateAttributesForInsert(string $invoiceUuid, array $item, int $invoiceTotal, Collection $scholarships): array
     {
-        return $scholarshipItems->map(function ($item) use ($invoiceUuid, $invoiceTotal, $scholarships) {
-            unset($item['id']);
-            $item['invoice_uuid'] = $invoiceUuid;
+        unset($item['id']);
+        $item['invoice_uuid'] = $invoiceUuid;
 
-            if ($item['sync_with_scholarship']) {
-                $scholarship = $scholarships->get($item['scholarship_id']);
+        if (
+            $item['sync_with_scholarship'] &&
+            $scholarship = $scholarships->get($item['scholarship_id'])
+        ) {
+            $item['name'] = $scholarship->name;
+            $item['amount'] = $scholarship->amount;
+            $item['percentage'] = $scholarship->percentage;
+            $item['resolution_strategy'] = $scholarship->resolution_strategy;
+        }
 
-                $item['name'] = $scholarship->name;
-                $item['amount'] = $scholarship->amount;
-                $item['percentage'] = $scholarship->percentage;
-                $item['resolution_strategy'] = $scholarship->resolution_strategy;
-            }
+        // Cache the total line item
+        $item['calculated_amount'] = (new static($item))->calculateAmount($invoiceTotal);
 
-            // Cache the total line item
-            $item['calculated_amount'] = (new static($item))->calculateAmount($invoiceTotal);
-
-            return $item;
-        })->toArray();
+        return Arr::only($item, static::make()->fillable);
     }
 }

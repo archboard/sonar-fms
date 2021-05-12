@@ -49,25 +49,33 @@ class InvoiceController extends Controller
 
             /** @var Invoice $invoice */
             $invoice = Invoice::create($invoiceAttributes);
-            DB::table('invoice_items')
-                ->insert(InvoiceItem::generateAttributesForInsert(
+
+            $fees = $school->fees->keyBy('id');
+            $invoiceItems = collect($data['items'])
+                ->map(fn (array $item) => InvoiceItem::generateAttributesForInsert(
                     $invoiceAttributes['uuid'],
-                    collect($data['items']),
-                    $school->fees->keyBy('id')
+                    $item,
+                    $fees
                 ));
 
-            if (!empty($data['scholarships'])) {
-                DB::table('invoice_scholarships')
-                    ->insert(
-                        InvoiceScholarship::generateAttributesForInsert(
-                            $invoiceAttributes['uuid'],
-                            collect($data['scholarships']),
-                            $invoice->amount_due,
-                            $school->scholarships->keyBy('id')
-                        )
-                    );
+            DB::table('invoice_items')
+                ->insert($invoiceItems->toArray());
 
-                $invoice->setAmountDue();
+            if (!empty($data['scholarships'])) {
+                $scholarships = $school->scholarships->keyBy('id');
+                $scholarshipItems = collect($data['scholarships'])
+                    ->map(fn (array $item) => InvoiceScholarship::generateAttributesForInsert(
+                        $invoiceAttributes['uuid'],
+                        $item,
+                        $invoice->amount_due,
+                        $scholarships
+                    ));
+
+                DB::table('invoice_scholarships')
+                    ->insert($scholarshipItems->toArray());
+
+                $invoice->setAmountDue()
+                    ->save();
             }
 
             // Trigger the notification if it is set to queue

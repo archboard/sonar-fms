@@ -111,6 +111,7 @@ class ScholarshipTest extends TestCase
 
     public function test_can_update_existing_scholarship()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('update', Scholarship::class);
         $scholarship = $this->school->scholarships()
             ->save(
@@ -121,6 +122,7 @@ class ScholarshipTest extends TestCase
             'description' => 'This is a test scholarship',
             'percentage' => '70.99',
             'amount' => 20000,
+            'resolution_strategy' => Least::class,
         ];
 
         $this->put(route('scholarships.update', $scholarship), $data)

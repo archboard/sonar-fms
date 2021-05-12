@@ -36,27 +36,23 @@ class InvoiceItem extends Model
 
     /**
      * @param string $invoiceUuid
-     * @param Collection $items The collection of items from CreateNewInvoiceRequest
+     * @param array $item The item received from CreateNewInvoiceRequest
      * @param Collection $fees The fees should be keyed by the id
      * @return array
      */
-    public static function generateAttributesForInsert(string $invoiceUuid, Collection $items, Collection $fees): array
+    public static function generateAttributesForInsert(string $invoiceUuid, array $item, Collection $fees): array
     {
-        return $items->map(function ($item) use ($invoiceUuid, $fees) {
-            unset($item['id']);
-            $item['invoice_uuid'] = $invoiceUuid;
+        unset($item['id']);
+        $item['invoice_uuid'] = $invoiceUuid;
 
-            if ($item['sync_with_fee']) {
-                $fee = $fees->get($item['fee_id']);
+        if ($item['sync_with_fee'] && $fee = $fees->get($item['fee_id'])) {
+            $item['name'] = $fee->name;
+            $item['amount_per_unit'] = $fee->amount;
+        }
 
-                $item['name'] = $fee->name;
-                $item['amount_per_unit'] = $fee->amount;
-            }
+        // Cache the total line item
+        $item['amount'] = $item['amount_per_unit'] * $item['quantity'];
 
-            // Cache the total line item
-            $item['amount'] = $item['amount_per_unit'] * $item['quantity'];
-
-            return Arr::only($item, static::make()->fillable);
-        })->toArray();
+        return Arr::only($item, static::make()->fillable);
     }
 }
