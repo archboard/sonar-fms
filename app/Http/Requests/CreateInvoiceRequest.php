@@ -37,7 +37,7 @@ class CreateInvoiceRequest extends FormRequest
                 Rule::in($school->terms->pluck('id')),
             ],
             'notify' => 'boolean',
-            'items' => 'array|min:1',
+            'items' => 'required|array|min:1',
             'items.*.fee_id' => [
                 'nullable',
                 Rule::in($school->fees->pluck('id')),
