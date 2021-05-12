@@ -113,6 +113,7 @@ class CreateInvoiceTest extends TestCase
                     'name' => 'Line item 1',
                     'amount_per_unit' => 100,
                     'quantity' => 1,
+                    'random_key' => 'random value',
                 ],
                 [
                     'id' => Uuid::uuid4(),

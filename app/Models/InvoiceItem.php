@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -12,7 +13,16 @@ use Illuminate\Support\Collection;
  */
 class InvoiceItem extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'invoice_uuid',
+        'sync_with_fee',
+        'fee_id',
+        'name',
+        'description',
+        'amount_per_unit',
+        'amount',
+        'quantity',
+    ];
 
     public function invoice(): BelongsTo
     {
@@ -46,7 +56,7 @@ class InvoiceItem extends Model
             // Cache the total line item
             $item['amount'] = $item['amount_per_unit'] * $item['quantity'];
 
-            return $item;
+            return Arr::only($item, static::make()->fillable);
         })->toArray();
     }
 }
