@@ -32,6 +32,7 @@ class CreateInvoiceRequest extends FormRequest
             'title' => 'required',
             'description' => 'nullable',
             'due_at' => 'nullable|date',
+            'available_at' => 'nullable|date',
             'term_id' => [
                 'nullable',
                 Rule::in($school->terms->pluck('id')),

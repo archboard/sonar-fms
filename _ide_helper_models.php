@@ -178,6 +178,8 @@ namespace App\Models{
  * @property Carbon|null $notified_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $available_at
+ * @property-read bool $available
  * @property-read mixed $past_due
  * @property-read mixed $payment_made
  * @property-read mixed $status_color
@@ -189,10 +191,12 @@ namespace App\Models{
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\Term|null $term
+ * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereAmountDue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereAvailableAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDueAt($value)
@@ -265,6 +269,7 @@ namespace App\Models{
  * @property int|null $calculated_amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $percentage_formatted
  * @property-read \App\Models\Invoice $invoice
  * @property-read \App\Models\Scholarship|null $scholarship
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newModelQuery()

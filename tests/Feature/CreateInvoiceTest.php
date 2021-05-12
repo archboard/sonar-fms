@@ -48,9 +48,10 @@ class CreateInvoiceTest extends TestCase
         $term = $this->school->terms()->save(
             Term::factory()->make()
         );
-        $invoice = [
+        $invoiceData = [
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
+            'available_at' => null,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
             'term_id' => $term->id,
             'notify' => true,
@@ -67,7 +68,7 @@ class CreateInvoiceTest extends TestCase
             'scholarships' => [],
         ];
 
-        $this->post(route('students.invoices.store', [$student]), $invoice)
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
 
@@ -76,13 +77,14 @@ class CreateInvoiceTest extends TestCase
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
-        $this->assertEquals($invoice['title'], $invoice->title);
-        $this->assertEquals($invoice['description'], $invoice->description);
-        $this->assertEquals($invoice['term_id'], $invoice->term_id);
-        $this->assertEquals($invoice['notify'], $invoice->notify);
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(100, $invoice->amount_due);
         $this->assertEquals(100, $invoice->remaining_balance);
-        $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
+        $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
+        $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
 
         Queue::assertPushed(SendNewInvoiceNotification::class);
@@ -99,9 +101,12 @@ class CreateInvoiceTest extends TestCase
         $fee = $this->school->fees()->save(
             Fee::factory()->make(['tenant_id' => $this->tenant->id])
         );
-        $invoice = [
+        $available = now()->startOfSecond();
+
+        $invoiceData = [
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
+            'available_at' => $available->format('Y-m-d\TH:i:s.v\Z'),
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
             'term_id' => null,
             'notify' => false,
@@ -127,7 +132,7 @@ class CreateInvoiceTest extends TestCase
             'scholarships' => [],
         ];
 
-        $this->post(route('students.invoices.store', [$student]), $invoice)
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
 
@@ -137,13 +142,15 @@ class CreateInvoiceTest extends TestCase
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
-        $this->assertEquals($invoice['title'], $invoice->title);
-        $this->assertEquals($invoice['description'], $invoice->description);
-        $this->assertEquals($invoice['term_id'], $invoice->term_id);
-        $this->assertEquals($invoice['notify'], $invoice->notify);
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(300, $invoice->amount_due);
         $this->assertEquals(300, $invoice->remaining_balance);
-        $this->assertEquals(now()->addMonth()->startOfMinute(), $invoice->due_at->startOfMinute());
+        $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
+        $this->assertEquals($available, $invoice->available_at);
         $this->assertEquals(2, $invoice->invoiceItems()->count());
 
         // Test that the name and amount matches from the underlying fee, not the one we sent
@@ -161,7 +168,7 @@ class CreateInvoiceTest extends TestCase
 
         Queue::fake();
         $student = $this->school->students->random();
-        $invoice = [
+        $invoiceData = [
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -180,7 +187,7 @@ class CreateInvoiceTest extends TestCase
             'scholarships' => [],
         ];
 
-        $this->post(route('students.invoices.store', [$student]), $invoice)
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertStatus(500);
 
         $this->assertEquals(0, $student->invoices()->count());
@@ -195,7 +202,7 @@ class CreateInvoiceTest extends TestCase
 
         Queue::fake();
         $student = $this->school->students->random();
-        $invoice = [
+        $invoiceData = [
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -232,7 +239,7 @@ class CreateInvoiceTest extends TestCase
             ],
         ];
 
-        $this->post(route('students.invoices.store', [$student]), $invoice)
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
 
@@ -242,10 +249,10 @@ class CreateInvoiceTest extends TestCase
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
-        $this->assertEquals($invoice['title'], $invoice->title);
-        $this->assertEquals($invoice['description'], $invoice->description);
-        $this->assertEquals($invoice['term_id'], $invoice->term_id);
-        $this->assertEquals($invoice['notify'], $invoice->notify);
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(200, $invoice->amount_due);
         $this->assertEquals(200, $invoice->remaining_balance);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
@@ -273,7 +280,7 @@ class CreateInvoiceTest extends TestCase
                 'amount' => 200,
             ])
         );
-        $invoice = [
+        $invoiceData = [
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -310,7 +317,7 @@ class CreateInvoiceTest extends TestCase
             ],
         ];
 
-        $this->post(route('students.invoices.store', [$student]), $invoice)
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
 

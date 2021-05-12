@@ -33,6 +33,7 @@ class Invoice extends Model
         'paid_at' => 'datetime',
         'notify_at' => 'datetime',
         'notified_at' => 'datetime',
+        'available_at' => 'datetime',
     ];
 
     public function school(): BelongsTo
@@ -66,7 +67,7 @@ class Invoice extends Model
             return 'green';
         }
 
-        if ($this->payment_made) {
+        if ($this->payment_made || !$this->available) {
             return 'yellow';
         }
 
@@ -95,6 +96,10 @@ class Invoice extends Model
             return __('Past due');
         }
 
+        if (!$this->available) {
+            return __('Unavailable');
+        }
+
         return __('Unpaid');
     }
 
@@ -106,6 +111,15 @@ class Invoice extends Model
     public function getPastDueAttribute()
     {
         return $this->due_at && now() > $this->due_at;
+    }
+
+    public function getAvailableAttribute(): bool
+    {
+        if (!$this->available_at) {
+            return true;
+        }
+
+        return now() >= $this->available_at;
     }
 
     public static function getAttributesFromRequest(
