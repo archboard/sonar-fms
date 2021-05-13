@@ -10,10 +10,9 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;
 use App\Models\Student;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class InvoiceController extends Controller
+class StudentInvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
