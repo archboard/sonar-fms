@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class StudentInvoiceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Invoice::class, 'invoice');
+    }
+
     /**
      * Display a listing of the resource.
      *
