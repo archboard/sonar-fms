@@ -30,6 +30,28 @@
                   </div>
                 </div>
 
+                <div>
+                  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div class="px-4 py-5 bg-gradient-to-br from-primary-500 to-fuchsia-600 dark:from-primary-700 dark:to-fuchsia-600 shadow rounded-lg overflow-hidden sm:p-6">
+                      <dt class="text-sm font-medium text-primary-100 dark:text-gray-300 truncate">
+                        {{ __('Unpaid Invoices') }}
+                      </dt>
+                      <dd class="mt-1 text-3xl font-semibold text-white">
+                        {{ displayCurrency(unpaidAmount) }}
+                      </dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-gradient-to-br from-gray-500 to-gray-600 dark:from-gray-700 dark:to-gray-600 shadow rounded-lg overflow-hidden sm:p-6">
+                      <dt class="text-sm font-medium text-gray-100 dark:text-gray-300 truncate">
+                        {{ __('Revenue') }}
+                      </dt>
+                      <dd class="mt-1 text-3xl font-semibold text-white">
+                        {{ displayCurrency(revenue) }}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+
                 <!-- Mobile details -->
                 <aside class="mt-8 xl:hidden">
                   <h2 class="sr-only">Details</h2>
@@ -130,6 +152,7 @@
               </div>
             </div>
 
+            <!-- Activity feed -->
             <section aria-labelledby="activity-title" class="mt-8 xl:mt-10">
               <div>
                 <div class="divide-y divide-gray-300 dark:divide-gray-600">
@@ -412,6 +435,7 @@ import Textarea from '../../components/forms/Textarea'
 import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
 import StudentInvoiceTable from '../../components/StudentInvoiceTable'
 import cloneDeep from 'lodash/cloneDeep'
+import displaysCurrency from '../../composition/displaysCurrency'
 
 export default defineComponent({
   components: {
@@ -434,6 +458,8 @@ export default defineComponent({
     school: Object,
     unpaidInvoices: Number,
     permissions: Object,
+    unpaidAmount: [Number, String],
+    revenue: [Number, String],
   },
 
   setup ({ student }) {
@@ -460,6 +486,7 @@ export default defineComponent({
       selectedInvoice.value = cloneDeep(invoice)
       showSlideout.value = true
     }
+    const { displayCurrency } = displaysCurrency()
 
     return {
       enrolledAt,
@@ -470,6 +497,7 @@ export default defineComponent({
       slideoutClosed,
       selectedInvoice,
       editInvoice,
+      displayCurrency,
     }
   }
 })

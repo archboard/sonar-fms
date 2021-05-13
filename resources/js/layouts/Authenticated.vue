@@ -172,7 +172,12 @@
     </div>
 
     <div class="flex flex-col w-0 flex-1 overflow-hidden">
-      <div class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
+      <div
+        class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800"
+        :class="{
+          'shadow': props.breadcrumbs.length === 0
+        }"
+      >
         <button @click.prevent="showMenuWrapper = true" class="px-4 border-r border-gray-200 dark:border-gray-600 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden">
           <span class="sr-only">Open sidebar</span>
           <!-- Heroicon name: outline/menu-alt-2 -->
@@ -227,7 +232,39 @@
 <!--            </div>-->
           </div>
         </div>
+
       </div>
+
+      <nav v-if="props.breadcrumbs.length > 0" class="flex bg-white dark:bg-gray-800 py-3 px-4 shadow" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <div>
+              <inertia-link :href="$route('home')" class="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200 transition">
+                <!-- Heroicon name: solid/home -->
+                <svg class="flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                <span class="sr-only">Home</span>
+              </inertia-link>
+            </div>
+          </li>
+
+          <li
+            v-for="crumb in props.breadcrumbs"
+            :key="crumb.route"
+          >
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <inertia-link :href="crumb.route" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition">
+                {{ crumb.label }}
+              </inertia-link>
+            </div>
+          </li>
+        </ol>
+      </nav>
+
 
       <main class="relative overflow-y-auto focus:outline-none" tabindex="0">
         <slot name="content">
@@ -238,6 +275,7 @@
                   <h2 class="text-2xl font-bold leading-7 sm:text-3xl sm:truncate" data-cy="page-title">
                     {{ props.title }}
                   </h2>
+                  <slot name="afterTitle" />
                 </div>
                 <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
                   <slot name="actions" />

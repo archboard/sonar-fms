@@ -22,6 +22,10 @@
       </div>
     </template>
 
+    <Alert v-if="invoice.past_due" level="warning" class="mb-8">
+      {{ __('This invoice is past due.') }}
+    </Alert>
+
     <FormMultipartWrapper>
       <div>
         <div class="mb-6">
@@ -385,11 +389,29 @@
           </div>
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+              {{ __('Availability date') }}
+            </dt>
+            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+              <span v-if="form.available_at" class="flex items-end">
+                <span>{{ displayDate(form.available_at, 'MMMM D, YYYY H:mm') }}</span>
+                <span class="inline-flex ml-3">
+                  <button class="text-gray-500 dark:text-gray-300 hover:underline focus:outline-none" type="button" @click.prevent="form.available_at = null">
+                    {{ __('Remove') }}
+                  </button>
+                </span>
+              </span>
+              <span v-else>
+                {{ __('No due date.') }}
+              </span>
+            </dd>
+          </div>
+          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
               {{ __('Due date') }}
             </dt>
             <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span v-if="dueDate" class="flex items-end">
-                <span>{{ dueDate }}</span>
+              <span v-if="form.due_at" class="flex items-end">
+                <span>{{ displayDate(form.due_at, 'MMMM D, YYYY H:mm') }}</span>
                 <span class="inline-flex ml-3">
                   <button class="text-gray-500 dark:text-gray-300 hover:underline focus:outline-none" type="button" @click.prevent="form.due_at = null">
                     {{ __('Remove') }}
@@ -509,9 +531,12 @@ import { Calendar, DatePicker } from 'v-calendar'
 import dayjs from '../../plugins/dayjs'
 import FadeIn from '../transitions/FadeIn'
 import Error from '../forms/Error'
+import Alert from '../Alert'
+import displaysDate from '../../composition/displaysDate'
 
 export default {
   components: {
+    Alert,
     Error,
     FadeIn,
     CardSectionHeader,
@@ -568,12 +593,8 @@ export default {
     })
 
     const school = computed(() => page.props.value.school)
-    const timezone = computed(() => page.props.value.user?.timezone || 'UTC')
-    const dueDate = computed(() => {
-      return form.due_at
-        ? dayjs(form.due_at).tz(timezone.value).format('MMMM D, YYYY H:mm')
-        : ''
-    })
+
+    const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
     const getItemDiscount = item => {
       let discount = item.amount || 0
@@ -693,7 +714,7 @@ export default {
       displayCurrency,
       feeSelected,
       isDark,
-      dueDate,
+      displayDate,
       timezone,
       getItemDiscount,
       itemsTotal,

@@ -92,12 +92,38 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Student $student
+     * @param Invoice $invoice
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function show($id)
+    public function show(Student $student, Invoice $invoice)
     {
-        //
+        $title = $invoice->title;
+        $invoice->fullLoad();
+        $student->load('users');
+
+        $breadcrumbs = [
+            [
+                'label' => __('Students'),
+                'route' => route('students.index'),
+            ],
+            [
+                'label' => $student->full_name,
+                'route' => route('students.show', $student),
+            ],
+            [
+                'label' => $invoice->title,
+                'route' => route('students.invoices.show', [$student, $invoice]),
+            ],
+        ];
+
+        return inertia('invoices/Show', [
+            'title' => $title,
+            'invoice' => $invoice->toResource(),
+            'student' => $student->toResource(),
+            'breadcrumbs' => $breadcrumbs,
+            'permissions' => auth()->user()->getPermissions(Invoice::class),
+        ])->withViewData(compact('title'));
     }
 
     /**

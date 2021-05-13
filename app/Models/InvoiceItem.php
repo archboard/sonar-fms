@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,34 @@ class InvoiceItem extends Model
     public function fee(): BelongsTo
     {
         return $this->belongsTo(Fee::class);
+    }
+
+    public function getAmountFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('school') ||
+            !$this->invoice->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->amount, $this->invoice->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
+    }
+
+    public function getAmountPerUnitFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('school') ||
+            !$this->invoice->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->amount_per_unit, $this->invoice->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
     }
 
     /**

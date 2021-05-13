@@ -54,13 +54,30 @@ class StudentController extends Controller
         $unpaidInvoices = $student->invoices()
             ->whereNull('paid_at')
             ->count();
+        $unpaidAmount = $student->invoices()
+            ->sum('remaining_balance');
+        $totalAmount = $student->invoices()
+            ->sum('amount_due');
         $permissions = $request->user()->getPermissions(Invoice::class);
+        $breadcrumbs = [
+            [
+                'label' => __('Students'),
+                'route' => route('students.index'),
+            ],
+            [
+                'label' => $student->full_name,
+                'route' => route('students.show', $student),
+            ],
+        ];
 
         return inertia('students/Show', [
             'title' => $title,
             'student' => $student->toResource(),
             'unpaidInvoices' => $unpaidInvoices,
             'permissions' => $permissions,
+            'breadcrumbs' => $breadcrumbs,
+            'unpaidAmount' => $unpaidAmount,
+            'revenue' => $totalAmount - $unpaidAmount,
         ])->withViewData(compact('title'));
     }
 }

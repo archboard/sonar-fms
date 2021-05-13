@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
@@ -26,7 +27,6 @@ class InvoiceScholarship extends Model
     protected $casts = [
         'amount' => 'integer',
         'calculated_amount' => 'integer',
-        'percentage' => 'float',
         'sync_with_scholarship' => 'boolean',
     ];
 
@@ -52,7 +52,40 @@ class InvoiceScholarship extends Model
 
     public function getPercentageAttribute($value)
     {
-        return $value ?? 0;
+        return (float) $value ?? 0;
+    }
+
+    public function getPercentageDecimalAttribute()
+    {
+        return $this->percentage / 100;
+    }
+
+    public function getAmountFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('school') ||
+            !$this->invoice->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->amount, $this->invoice->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
+    }
+
+    public function getCalculatedAmountFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('school') ||
+            !$this->invoice->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->calculated_amount, $this->invoice->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
     }
 
     public function calculateAmount(int $invoiceTotal): int

@@ -1,6 +1,6 @@
 <template>
   <span :class="[
-    'inline-flex items-center rounded-full font-medium',
+    'inline-flex items-center rounded-full font-medium whitespace-nowrap',
     badgeSize,
     badgeColor
   ]">

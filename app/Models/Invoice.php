@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -61,6 +62,32 @@ class Invoice extends Model
         return $this->hasMany(InvoiceScholarship::class, 'invoice_uuid', 'uuid');
     }
 
+    public function getAmountDueFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('school') ||
+            !$this->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->amount_due, $this->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
+    }
+
+    public function getRemainingBalanceFormattedAttribute()
+    {
+        if (
+            !$this->relationLoaded('school') ||
+            !$this->school->relationLoaded('currency')
+        ) {
+            return null;
+        }
+
+        return Money::ofMinor($this->remaining_balance, $this->school->currency->code)
+            ->formatTo(optional(auth()->user())->locale ?? 'en');
+    }
+
     public function getStatusColorAttribute()
     {
         if ($this->paid_at) {
@@ -73,6 +100,10 @@ class Invoice extends Model
 
         if ($this->past_due) {
             return 'red';
+        }
+
+        if (!$this->paid_at) {
+            return 'yellow';
         }
 
         return 'gray';
@@ -120,6 +151,22 @@ class Invoice extends Model
         }
 
         return now() >= $this->available_at;
+    }
+
+    public function fullLoad(): static
+    {
+        return $this->load([
+            'school',
+            'school.currency',
+            'invoiceItems',
+            'invoiceItems.invoice',
+            'invoiceItems.invoice.school',
+            'invoiceItems.invoice.school.currency',
+            'invoiceScholarships',
+            'invoiceScholarships.invoice',
+            'invoiceScholarships.invoice.school',
+            'invoiceScholarships.invoice.school.currency',
+        ]);
     }
 
     public static function getAttributesFromRequest(

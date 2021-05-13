@@ -167,6 +167,7 @@ class HandleInertiaRequests extends Middleware
 
                 return $links;
             },
+            'breadcrumbs' => [],
         ]);
     }
 }

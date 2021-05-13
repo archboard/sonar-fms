@@ -5,6 +5,7 @@
       <Table>
         <Thead>
           <tr>
+            <Th>#</Th>
             <Th>{{ __('Title') }}</Th>
             <Th>{{ __('Status') }}</Th>
             <Th class="text-right">{{ __('Total') }}</Th>
@@ -17,7 +18,10 @@
             v-for="invoice in invoices.data"
             :key="invoice.id"
           >
-            <Td :lighter="false">
+            <Td>
+              {{ invoice.id }}
+            </Td>
+            <Td :lighter="false" class="whitespace-nowrap">
               {{ invoice.title }}
             </Td>
             <Td>
@@ -31,6 +35,9 @@
             </Td>
             <Td>
               <div class="flex items-center justify-end space-x-2">
+                <Link :href="$route('students.invoices.show', [student, invoice])" class="text-sm">
+                  {{ __('View') }}
+                </Link>
                 <Link is="button" class="text-sm" @click.prevent="$emit('edit', invoice)">
                   {{ __('Edit') }}
                 </Link>
