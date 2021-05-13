@@ -179,9 +179,12 @@ namespace App\Models{
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $available_at
+ * @property string|null $batch_id
+ * @property-read mixed $amount_due_formatted
  * @property-read bool $available
  * @property-read mixed $past_due
  * @property-read mixed $payment_made
+ * @property-read mixed $remaining_balance_formatted
  * @property-read mixed $status_color
  * @property-read mixed $status_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
@@ -197,6 +200,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereAmountDue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereAvailableAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDueAt($value)
@@ -234,6 +238,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Fee|null $fee
+ * @property-read mixed $amount_formatted
+ * @property-read mixed $amount_per_unit_formatted
  * @property-read \App\Models\Invoice $invoice
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newQuery()
@@ -263,12 +269,15 @@ namespace App\Models{
  * @property int|null $scholarship_id
  * @property bool $sync_with_scholarship
  * @property string $name
- * @property float|null $percentage
+ * @property string|null $percentage
  * @property int|null $amount
  * @property string|null $resolution_strategy
  * @property int|null $calculated_amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $amount_formatted
+ * @property-read mixed $calculated_amount_formatted
+ * @property-read mixed $percentage_decimal
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\Invoice $invoice
  * @property-read \App\Models\Scholarship|null $scholarship
