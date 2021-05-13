@@ -163,6 +163,8 @@ namespace App\Models{
  * @mixin IdeHelperInvoice
  * @property int $id
  * @property string $uuid
+ * @property string|null $batch_id
+ * @property int $tenant_id
  * @property int $school_id
  * @property int $student_id
  * @property int|null $term_id
@@ -170,6 +172,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
+ * @property Carbon|null $available_at
  * @property Carbon|null $due_at
  * @property Carbon|null $paid_at
  * @property Carbon|null $voided_at
@@ -178,8 +181,6 @@ namespace App\Models{
  * @property Carbon|null $notified_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Carbon|null $available_at
- * @property string|null $batch_id
  * @property-read mixed $amount_due_formatted
  * @property-read bool $available
  * @property-read mixed $past_due
@@ -212,6 +213,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereRemainingBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereSchoolId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereStudentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)

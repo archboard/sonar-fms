@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Traits\BelongsToSchool;
+use App\Traits\BelongsToTenant;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +24,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Invoice extends Model
 {
+    use BelongsToTenant;
+    use BelongsToSchool;
     use HasFactory;
     use HasResource;
 
@@ -36,11 +40,6 @@ class Invoice extends Model
         'notified_at' => 'datetime',
         'available_at' => 'datetime',
     ];
-
-    public function school(): BelongsTo
-    {
-        return $this->belongsTo(School::class);
-    }
 
     public function student(): BelongsTo
     {

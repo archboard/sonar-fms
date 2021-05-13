@@ -16,6 +16,8 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique()->index();
+            $table->string('batch_id')->unique()->index()->nullable();
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('term_id')->nullable();
@@ -24,6 +26,7 @@ class CreateInvoicesTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('amount_due')->nullable();
             $table->unsignedBigInteger('remaining_balance')->nullable();
+            $table->dateTime('available_at')->nullable();
             $table->dateTime('due_at')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->dateTime('voided_at')->nullable();
