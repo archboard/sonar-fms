@@ -9,6 +9,7 @@ use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,22 @@ class Invoice extends Model
         'notified_at' => 'datetime',
         'available_at' => 'datetime',
     ];
+
+    public function scopeFilter(Builder $builder, array $filters)
+    {
+        $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
+            $builder->where(function (Builder $builder) use ($search) {
+                $builder->where('id', 'ilike', "{$search}%")
+                    ->orWhere('title', 'ilike', "%{$search}%");
+            });
+        });
+
+        $orderBy = $filters['orderBy'] ?? 'title';
+        $orderDir = $filters['orderDir'] ?? 'asc';
+
+        $builder->orderBy($orderBy, $orderDir);
+        $builder->orderBy('invoices.title', $orderDir);
+    }
 
     public function student(): BelongsTo
     {

@@ -54,7 +54,7 @@
           <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="px-4 py-5 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-700 dark:to-primary-600 shadow rounded-lg overflow-hidden sm:p-6">
               <dt class="text-sm font-medium text-primary-100 dark:text-gray-300 truncate">
-                {{ __('Invoice Total') }}
+                {{ __('Invoice total') }}
               </dt>
               <dd class="mt-1 text-3xl font-semibold text-white">
                 {{ invoice.amount_due_formatted }}
@@ -63,7 +63,7 @@
 
             <div class="px-4 py-5 bg-gradient-to-br from-gray-500 to-gray-600 dark:from-gray-700 dark:to-gray-600 shadow rounded-lg overflow-hidden sm:p-6">
               <dt class="text-sm font-medium text-gray-100 dark:text-gray-300 truncate">
-                {{ __('Remaining Balance') }}
+                {{ __('Remaining balance') }}
               </dt>
               <dd class="mt-1 text-3xl font-semibold text-white">
                 {{ invoice.remaining_balance_formatted }}

@@ -33,6 +33,8 @@ class InvoiceResource extends JsonResource
             'status_label' => $this->status_label,
             'past_due' => $this->past_due,
             'payment_made' => $this->payment_made,
+            'student_id' => $this->student_id,
+            'student' => new StudentResource($this->whenLoaded('student')),
             'items' => InvoiceItemResource::collection($this->whenLoaded('invoiceItems')),
             'scholarships' => InvoiceScholarshipResource::collection($this->whenLoaded('invoiceScholarships')),
         ];
