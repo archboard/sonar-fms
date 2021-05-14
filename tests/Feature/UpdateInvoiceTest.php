@@ -36,6 +36,7 @@ class UpdateInvoiceTest extends TestCase
     {
         /** @var Invoice $invoice */
         $invoice = Invoice::factory()->create([
+            'tenant_id' => $this->tenant->id,
             'school_id' => $this->school->id,
             'student_id' => $this->student->id,
         ]);

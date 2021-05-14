@@ -195,6 +195,7 @@ class Invoice extends Model
         $invoiceAttributes = Arr::except($data, ['items', 'scholarships']);
 
         $invoiceAttributes['uuid'] = Uuid::uuid4();
+        $invoiceAttributes['tenant_id'] = $school->tenant_id;
         $invoiceAttributes['school_id'] = $school->id;
         $invoiceAttributes['student_id'] = optional($student)->id;
 
