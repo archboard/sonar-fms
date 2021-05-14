@@ -638,6 +638,9 @@ export default {
         preserveScroll: true,
         onSuccess () {
           close()
+        },
+        onFinish () {
+          form.processing = false
         }
       })
     }
