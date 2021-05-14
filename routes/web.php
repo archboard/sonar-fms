@@ -71,8 +71,7 @@ Route::middleware('tenant')->group(function () {
                 Route::post('/guardians/sync', \App\Http\Controllers\SyncStudentGuardiansController::class)
                     ->name('guardians.sync');
 
-                Route::resource('/invoices', \App\Http\Controllers\Students\StudentInvoiceController::class)
-                    ->except('create', 'edit');
+                Route::resource('/invoices', \App\Http\Controllers\Students\StudentInvoiceController::class);
             });
 
         Route::resource('/student-selection', \App\Http\Controllers\StudentSelectionController::class)

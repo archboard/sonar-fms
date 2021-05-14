@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;
 use App\Models\Student;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StudentInvoiceController extends Controller
@@ -35,6 +36,18 @@ class StudentInvoiceController extends Controller
             ->paginate(10);
 
         return InvoiceResource::collection($invoices);
+    }
+
+    public function create(Request $request, Student $student)
+    {
+        $title = __('Create a new invoice for :student', [
+            'student' => $student->full_name,
+        ]);
+
+        return inertia('invoices/Create', [
+            'title' => $title,
+            'student' => $student->toResource(),
+        ])->withViewData(compact('title'));
     }
 
     /**
