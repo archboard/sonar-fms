@@ -111,6 +111,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
             ->name('invoices.index');
 
+        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
+            ->name('invoices.show');
+
         Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
             ->name('terms.index');
 

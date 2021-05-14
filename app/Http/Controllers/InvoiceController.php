@@ -23,7 +23,11 @@ class InvoiceController extends Controller
         $title = __('Invoices');
         $invoices = $request->school()
             ->invoices()
-            ->with('student')
+            ->with([
+                'student',
+                'school',
+                'school.currency',
+            ])
             ->filter($request->all())
             ->paginate($request->input('perPage', 25));
 
@@ -37,11 +41,35 @@ class InvoiceController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Invoice $invoice)
     {
-        //
+        $title = __(':invoice_title for :student_name', [
+            'invoice_title' => $invoice->title,
+            'student_name' => $invoice->student->full_name,
+        ]);
+        $invoice->fullLoad();
+
+        $breadcrumbs = [
+            [
+                'label' => __('Invoices'),
+                'route' => back()->getTargetUrl(),
+            ],
+            [
+                'label' => __('Invoice #:invoice_number', [
+                    'invoice_number' => $invoice->id,
+                ]),
+                'route' => route('invoices.show', $invoice),
+            ]
+        ];
+
+        return inertia('invoices/Show', [
+            'title' => $title,
+            'invoice' => $invoice->toResource(),
+            'student' => $invoice->student->toResource(),
+            'breadcrumbs' => $breadcrumbs,
+        ])->withViewData(compact('title'));
     }
 
     /**

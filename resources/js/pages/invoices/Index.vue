@@ -18,7 +18,7 @@
     <Table>
       <Thead>
         <tr>
-          <Th>
+          <Th class="w-1">
             <div class="flex items-center cursor-pointer" @click="sortColumn('id')">
               <span>
                 #
@@ -67,19 +67,19 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(invoice, index) in invoices.data"
+          v-for="invoice in invoices.data"
           :key="invoice.id"
         >
           <Td>
-            {{ fee.id }}
+            {{ invoice.id }}
           </Td>
           <Td :lighter="false">
-            {{ fee.title }}
+            {{ invoice.title }}
           </Td>
-          <Td class="text-right">{{ fee.amount_due_formatted }}</Td>
-          <Td class="text-right">{{ fee.remaining_balance_formatted }}</Td>
+          <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
+          <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
           <Td class="text-right space-x-2">
-            <Link is="inertia-link" :href="$route('students.invoices.show', [invoice.student_id, invoice])">{{ __('View') }}</Link>
+            <Link is="inertia-link" :href="$route('invoices.show', [invoice])">{{ __('View') }}</Link>
             <Link is="button" @click.prevent="editInvoice(invoice)">{{ __('Edit') }}</Link>
           </Td>
         </tr>
