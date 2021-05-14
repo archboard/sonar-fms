@@ -64,7 +64,7 @@ class StudentPolicy
      * @param  \App\Models\Student  $student
      * @return mixed
      */
-    public function update(User $user, Student $student)
+    public function update(User $user, Student $student = null)
     {
         //
     }
@@ -76,7 +76,7 @@ class StudentPolicy
      * @param  \App\Models\Student  $student
      * @return mixed
      */
-    public function delete(User $user, Student $student)
+    public function delete(User $user, Student $student = null)
     {
         //
     }
