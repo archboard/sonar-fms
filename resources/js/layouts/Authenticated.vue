@@ -89,6 +89,8 @@
                     </inertia-link>
                   </div>
                 </div>
+
+                <LocaleSelector class="px-2 mt-4" />
               </nav>
             </div>
           </div>
@@ -165,13 +167,15 @@
                   </inertia-link>
                 </div>
               </div>
+
+              <LocaleSelector class="px-2 mt-4" />
             </nav>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col w-0 flex-1 overflow-hidden">
+    <div class="flex flex-col w-0 flex-1 min-h-screen">
       <div
         class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800"
         :class="{
@@ -265,8 +269,7 @@
         </ol>
       </nav>
 
-
-      <main class="relative overflow-y-auto focus:outline-none" tabindex="0">
+      <main class="relative flex-1 overflow-y-auto focus:outline-none" tabindex="0">
         <slot name="content">
           <div class="py-6 space-y-6">
             <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -310,10 +313,12 @@ import Notifications from '../components/Notifications'
 import { usePage } from '@inertiajs/inertia-vue3'
 import TopSearch from '../components/TopSearch'
 import SchoolSwitcher from '../components/SchoolSwitcher'
+import LocaleSelector from '../components/LocaleSelector'
 
 export default defineComponent({
   components: {
     SchoolSwitcher,
+    LocaleSelector,
     TopSearch,
     Notifications
   },

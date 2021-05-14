@@ -62,6 +62,8 @@ class HandleInertiaRequests extends Middleware
 
                 return $school->toResource();
             },
+            'locales' => config('app.locales'),
+            'locale' => fn () => app()->getLocale(),
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error'),

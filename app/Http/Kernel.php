@@ -9,6 +9,7 @@ use App\Http\Middleware\Installed;
 use App\Http\Middleware\ManagesTenancy;
 use App\Http\Middleware\ScopeBouncer;
 use App\Http\Middleware\SelfHosted;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -45,6 +46,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             ScopeBouncer::class,
+            SetLocale::class,
 
             // This needs to be last
             HandleInertiaRequests::class,

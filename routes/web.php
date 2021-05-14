@@ -53,6 +53,9 @@ Route::middleware('tenant')->group(function () {
         Route::put('/change-schools', \App\Http\Controllers\ChangeSchoolController::class)
             ->name('schools.change');
 
+        Route::post('/locale', \App\Http\Controllers\ChangeLocaleController::class)
+            ->name('locale');
+
         /**
          * Student-related routes
          */
