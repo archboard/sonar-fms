@@ -24,8 +24,8 @@
           leave-to-class="translate-x-full"
           @after-leave="$emit('close')"
         >
-          <div v-if="show" ref="slideout" class="w-screen max-w-2xl relative">
-            <form class="flex flex-col h-full bg-white dark:bg-gray-600 shadow-xl" @submit.prevent="performAction">
+          <div v-if="show" ref="slideout" class="w-screen max-w-3xl relative">
+            <div class="flex flex-col h-full bg-white dark:bg-gray-600 shadow-xl">
               <!-- Header -->
               <div class="px-4 py-6 bg-gray-50 dark:bg-gray-700 sm:px-6">
                 <div class="flex items-start justify-between space-x-3">
@@ -49,17 +49,17 @@
               <!-- Action buttons -->
               <div class="flex-shrink-0 px-4 py-5 sm:px-6 bg-gray-50 dark:bg-gray-700">
                 <div class="space-x-3 flex justify-end">
-                  <slot name="actions">
+                  <slot name="actions" :close="close" :action="performAction">
                     <Button type="button" color="white" @click="close">
                       {{ __('Cancel') }}
                     </Button>
-                    <Button type="submit" :loading="processing">
+                    <Button type="button" @click.prevent="performAction" :loading="processing">
                       {{ __('Save') }}
                     </Button>
                   </slot>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </transition>
       </div>

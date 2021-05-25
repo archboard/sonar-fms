@@ -1,22 +1,5 @@
 <template>
   <form @submit.prevent="saveInvoice">
-<!--    <template v-slot:header>-->
-<!--      <div class="space-y-1">-->
-<!--        <CardHeader v-if="isNew">-->
-<!--          {{ __('New invoice for :name', { name: student.full_name }) }}-->
-<!--        </CardHeader>-->
-<!--        <CardHeader v-else>-->
-<!--          {{ __('Update invoice for :name', { name: student.full_name }) }}-->
-<!--        </CardHeader>-->
-<!--        <HelpText v-if="isNew">-->
-<!--          {{ __('Create a new invoice by providing the following details.') }}-->
-<!--        </HelpText>-->
-<!--        <HelpText v-else>-->
-<!--          {{ __('Modify invoice details.') }}-->
-<!--        </HelpText>-->
-<!--      </div>-->
-<!--    </template>-->
-
     <Alert v-if="invoice.past_due" level="warning" class="mb-8">
       {{ __('This invoice is past due.') }}
     </Alert>
