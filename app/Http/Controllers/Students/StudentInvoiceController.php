@@ -43,9 +43,24 @@ class StudentInvoiceController extends Controller
         $title = __('Create a new invoice for :student', [
             'student' => $student->full_name,
         ]);
+        $breadcrumbs = [
+            [
+                'label' => __('Students'),
+                'route' => route('students.index'),
+            ],
+            [
+                'label' => $student->full_name,
+                'route' => route('students.show', $student),
+            ],
+            [
+                'label' => __('New invoice'),
+                'route' => route('students.invoices.create', $student),
+            ],
+        ];
 
         return inertia('invoices/Create', [
             'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
             'student' => $student->toResource(),
         ])->withViewData(compact('title'));
     }
