@@ -354,7 +354,119 @@
 
       <!-- Payment schedules -->
       <div class="pt-8">
+        <div class="mb-6">
+          <CardSectionHeader>
+            {{ __('Payment schedules') }}
+          </CardSectionHeader>
+          <HelpText class="text-sm mt-1">
+            {{ __('Add available payment schedules to allow the invoice to be paid in separate payments rather than all at once.') }}
+          </HelpText>
+        </div>
 
+        <ul class="space-y-3 py-3">
+          <TransitionGroup
+            enter-active-class="transition duration-150 ease-in-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-150 ease-in-out"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <li
+              v-for="(item, index) in form.payment_schedules"
+              :key="item.id"
+              class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md p-6"
+            >
+              <ul class="flex flex-wrap -mx-2">
+                <TransitionGroup
+                  enter-active-class="transition duration-150 ease-in-out"
+                  enter-from-class="opacity-0"
+                  enter-to-class="opacity-100"
+                  leave-active-class="transition duration-150 ease-in-out"
+                  leave-from-class="opacity-100"
+                  leave-to-class="opacity-0"
+                >
+                  <li
+                    v-for="(payment, paymentIndex) in item.payments"
+                    :key="payment.id"
+                    class="px-2 w-full md:w-1/2 lg:w-1/3"
+                  >
+                    <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
+                      <Fieldset>
+<!--                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.percentage`]">-->
+<!--                          <Label :for="`schedule_${index}_${paymentIndex}_percentage`">{{ __('Percentage') }}</Label>-->
+<!--                          <Input v-model="payment.percentage" :id="`schedule_${index}_${paymentIndex}_percentage`" />-->
+<!--                          <HelpText>-->
+<!--                            {{ __('') }}-->
+<!--                          </HelpText>-->
+<!--                        </InputWrap>-->
+
+                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
+                          <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
+                          <Input v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" type="number" />
+<!--                          <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(payment.amount) })" />-->
+                        </InputWrap>
+
+                        <InputWrap>
+                          <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due') }}</Label>
+                          <DatePicker
+                            v-model="payment.due_at"
+                            color="pink"
+                            :is-dark="isDark"
+                            mode="dateTime"
+                            :minute-increment="15"
+                            :model-config="{ timeAdjust: '00:00:00' }"
+                          >
+                            <template v-slot="{ inputValue, inputEvents }">
+                              <Input :id="`schedule_${index}_${paymentIndex}_due_at`" :model-value="inputValue" v-on="inputEvents" />
+                            </template>
+                          </DatePicker>
+                        </InputWrap>
+
+                        <div class="flex justify-end">
+                          <Button color="red" @click.prevent="item.payments.splice(paymentIndex, 1)" size="sm">
+                            <TrashIcon class="w-4 h-4" />
+                            <span class="ml-2">{{ __('Remove term') }}</span>
+                          </Button>
+                        </div>
+                      </Fieldset>
+                    </div>
+                  </li>
+                </TransitionGroup>
+
+                <li class="px-2 w-full md:w-1/2 lg:w-1/3 flex">
+                  <div class="rounded-md px-2 py-8 flex items-center justify-center w-full">
+                    <Button @click.prevent="addPaymentTerm(item)" size="sm">
+                      {{ __('Add payment term') }}
+                    </Button>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="flex justify-between items-center pt-6">
+                <h4 class="font-bold">
+                  {{ __('Total with schedule: :total', { total: displayCurrency(getScheduleTotal(item)) }) }}
+                </h4>
+                <Button color="red" size="sm" type="button" @click.prevent="form.payment_schedules.splice(index, 1)">
+                  <TrashIcon class="w-4 h-4" />
+                  <span class="ml-2">{{ __('Remove schedule') }}</span>
+                </Button>
+              </div>
+            </li>
+          </TransitionGroup>
+        </ul>
+
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
+          </div>
+          <div class="relative flex justify-center">
+            <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+              <span>{{ __('Add payment schedule') }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Summary -->
@@ -529,6 +641,7 @@ import Alert from '../../components/Alert'
 import displaysDate from '../../composition/displaysDate'
 import invoiceItemForm from '../../composition/invoiceItemForm'
 import invoiceScholarshipForm from '../../composition/invoiceScholarshipForm'
+import invoicePaymentScheduleForm from '../../composition/invoicePaymentScheduleForm'
 
 export default {
   components: {
@@ -586,6 +699,7 @@ export default {
       notify: props.invoice.notify || false,
       items: props.invoice.items || [],
       scholarships: props.invoice.scholarships || [],
+      payment_schedules: props.invoice.payment_schedules || [],
     })
 
     const school = computed(() => page.props.value.school)
@@ -612,15 +726,16 @@ export default {
 
     const itemsTotal = computed(() => form.items.reduce((total, i) => total + (i.amount_per_unit * i.quantity), 0))
     const discountTotal = computed(() => form.scholarships.reduce((total, i) => total + getItemDiscount(i), 0))
-    const totalDue = computed(() => {
+    const total = computed(() => {
       let total = itemsTotal.value - discountTotal.value
 
       if (total < 0) {
         total = 0
       }
 
-      return displayCurrency(total)
+      return total
     })
+    const totalDue = computed(() => displayCurrency(total.value))
 
     const saveInvoice = close => {
       const route = props.invoice.id
@@ -655,7 +770,14 @@ export default {
       addScholarship,
       scholarshipSelected,
       scholarshipSyncChanged,
-    } = invoiceScholarshipForm()
+    } = invoiceScholarshipForm(form)
+
+    // Payment schedules
+    const {
+      addPaymentSchedule,
+      addPaymentTerm,
+      getScheduleTotal,
+    } = invoicePaymentScheduleForm(form, total)
 
     return {
       isNew,
@@ -673,6 +795,7 @@ export default {
       getItemDiscount,
       itemsTotal,
       discountTotal,
+      total,
       totalDue,
       itemSyncChanged,
       strategies,
@@ -680,6 +803,9 @@ export default {
       addScholarship,
       scholarshipSelected,
       scholarshipSyncChanged,
+      addPaymentSchedule,
+      addPaymentTerm,
+      getScheduleTotal,
     }
   },
 }
