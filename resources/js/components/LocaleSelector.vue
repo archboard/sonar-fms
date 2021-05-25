@@ -2,7 +2,7 @@
   <div>
     <Listbox v-model="locale">
       <div class="relative mt-1">
-        <SonarListboxButton class="bg-primary-800 dark:bg-primary-600 border-0">
+        <SonarListboxButton class="text-white bg-primary-800 dark:bg-primary-600 border-0">
           <span class="block truncate">{{ locales[locale] }}</span>
 
           <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
