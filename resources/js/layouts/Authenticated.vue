@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-900" data-cy="page">
+  <div class="h-screen flex overflow-hidden bg-gray-50 dark:bg-gray-900" data-cy="page">
     <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
     <div v-if="showMenuWrapper" class="md:hidden">
       <div class="fixed inset-0 flex z-40">
