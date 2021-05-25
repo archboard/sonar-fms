@@ -25,8 +25,7 @@
       </InputWrap>
       <InputWrap :error="feeForm.errors.amount">
         <Label for="amount" :required="true">{{ __('Default amount') }}</Label>
-        <Input v-model="feeForm.amount" id="amount" type="number" />
-        <HelpText v-html="__('This is the default amount that will be applied to the invoice. The value should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(feeForm.amount) })" />
+        <CurrencyInput v-model="feeForm.amount" id="amount" />
       </InputWrap>
       <InputWrap :error="feeForm.errors.fee_category_id">
         <Label for="fee_category_id">{{ __('Fee category') }}</Label>
@@ -92,9 +91,11 @@ import Select from '../forms/Select'
 import Link from '../Link'
 import DepartmentsModal from './DepartmentsModal'
 import FeeCategoriesModal from './FeeCategoriesModal'
+import CurrencyInput from '../forms/CurrencyInput'
 
 export default defineComponent({
   components: {
+    CurrencyInput,
     FeeCategoriesModal,
     DepartmentsModal,
     Select,

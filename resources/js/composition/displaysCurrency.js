@@ -11,6 +11,8 @@ export default () => {
   }
 
   return {
-    displayCurrency
+    displayCurrency,
+    currency,
+    locale,
   }
 }

@@ -178,8 +178,7 @@
 
                 <InputWrap v-if="!item.sync_with_fee" :error="form.errors[`items.${index}.amount_per_unit`]">
                   <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
-                  <Input v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" type="number" />
-                  <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(item.amount_per_unit) })" />
+                  <CurrencyInput v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" />
                 </InputWrap>
 
                 <InputWrap :error="form.errors[`items.${index}.quantity`]">
@@ -280,8 +279,7 @@
 
                 <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.amount`]">
                   <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
-                  <Input v-model="item.amount" :id="`scholarship_amount_${index}`" type="number" />
-                  <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(item.amount_per_unit) })" />
+                  <CurrencyInput v-model="item.amount" :id="`scholarship_amount_${index}`" />
                 </InputWrap>
 
                 <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
@@ -386,8 +384,7 @@
 
                         <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
                           <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
-                          <Input v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" type="number" />
-<!--                          <HelpText v-html="__('The amount should be in the smallest units possible for your currency, such as cents. This amount will be displayed as <strong>:amount</strong>', { amount: displayCurrency(payment.amount) })" />-->
+                          <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
                         </InputWrap>
 
                         <InputWrap>
@@ -625,9 +622,11 @@ import displaysDate from '../../composition/displaysDate'
 import invoiceItemForm from '../../composition/invoiceItemForm'
 import invoiceScholarshipForm from '../../composition/invoiceScholarshipForm'
 import invoicePaymentScheduleForm from '../../composition/invoicePaymentScheduleForm'
+import CurrencyInput from '../../components/forms/CurrencyInput'
 
 export default {
   components: {
+    CurrencyInput,
     Alert,
     Error,
     FadeIn,
