@@ -33,3 +33,11 @@ body {
     }
   }
 }
+
+.vc-container {
+  .vc-select {
+    select {
+      background-image: none;
+    }
+  }
+}
