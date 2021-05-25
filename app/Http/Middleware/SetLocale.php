@@ -22,7 +22,7 @@ class SetLocale
 
         $locale = $user
             ? $user->locale
-            : session('locale', $request->getPreferredLanguage(config('app.locales')));
+            : session('locale', $request->getPreferredLanguage(array_keys(config('app.locales'))));
 
         session(compact('locale'));
         app()->setLocale($locale);
