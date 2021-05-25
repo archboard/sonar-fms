@@ -24,7 +24,10 @@
 <!--                      </svg>-->
 <!--                      <span class="text-sm">Edit</span>-->
 <!--                    </Button>-->
-                    <Button color="white" size="sm" @click.prevent="showSlideout = true">
+<!--                    <Button color="white" size="sm" @click.prevent="showSlideout = true">-->
+<!--                      {{ __('New invoice') }}-->
+<!--                    </Button>-->
+                    <Button component="inertia-link" color="white" size="sm" :href="$route('students.invoices.create', student)">
                       {{ __('New invoice') }}
                     </Button>
                   </div>
