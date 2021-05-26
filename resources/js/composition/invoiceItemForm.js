@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import fetchesFees from './fetchesFees'
+import { computed } from 'vue'
 
 export default (form) => {
   const { fees } = fetchesFees()
@@ -31,9 +32,19 @@ export default (form) => {
       syncItemWithFee(item)
     }
   }
+  const getItemTotal = item => Number(item.amount_per_unit) * Number(item.quantity)
+  const getItemsTotal = items => {
+    return items.reduce((total, item) => {
+      return total + getItemTotal(item)
+    }, 0)
+  }
+  const subtotal = computed(() => getItemsTotal(form.items))
 
   return {
     fees,
+    subtotal,
+    getItemsTotal,
+    getItemTotal,
     addInvoiceLineItem,
     syncItemWithFee,
     feeSelected,

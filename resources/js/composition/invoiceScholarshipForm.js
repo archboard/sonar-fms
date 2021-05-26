@@ -1,7 +1,10 @@
 import { nanoid } from 'nanoid'
 import fetchesScholarships from './fetchesScholarships'
+import invoiceItemForm from './invoiceItemForm'
+import { computed } from 'vue'
 
 export default (form) => {
+  const { subtotal, getItemsTotal } = invoiceItemForm(form)
   const { scholarships } = fetchesScholarships()
   const addScholarship = () => {
     form.scholarships.push({
@@ -12,6 +15,7 @@ export default (form) => {
       amount: null,
       percentage: null,
       resolution_strategy: 'App\\ResolutionStrategies\\Least',
+      applies_to: [],
     })
   }
   const syncWithScholarship = item => {
@@ -33,9 +37,44 @@ export default (form) => {
       syncWithScholarship(item)
     }
   }
+  const getItemDiscount = item => {
+    let total = subtotal.value
+
+    // If we're applying the total to none
+    // or all, the total is the invoice subtotal
+    if (
+      item.applies_to.length !== 0 ||
+      item.applies_to.length !== form.items.length
+    ) {
+      // Find the items for which this scholarship applies
+      const items = form.items.filter(i => item.applies_to.includes(i.id))
+      total = getItemsTotal(items)
+    }
+
+    let discount = item.amount || 0
+    const percentage = item.percentage || 0
+    let percentageDiscount = total * (percentage / 100)
+
+    if (discount && percentage) {
+      discount = item.resolution_strategy.includes('Least')
+        ? Math.min(discount, percentageDiscount)
+        : Math.max(discount, percentageDiscount)
+    }
+
+    if (!discount && percentageDiscount) {
+      discount = percentageDiscount
+    }
+
+    return parseFloat(discount)
+  }
+  const scholarshipSubtotal = computed(() => {
+    return form.scholarships.reduce((total, i) => total + getItemDiscount(i), 0)
+  })
 
   return {
     scholarships,
+    scholarshipSubtotal,
+    getItemDiscount,
     addScholarship,
     scholarshipSelected,
     scholarshipSyncChanged,
