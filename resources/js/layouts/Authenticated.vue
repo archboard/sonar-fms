@@ -273,7 +273,7 @@
         <slot name="content">
           <div class="py-6 space-y-6">
             <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              <div class="md:flex md:items-center md:justify-between">
+              <div class="md:flex md:items-start md:justify-between">
                 <div class="flex-1 min-w-0">
                   <h2 class="text-2xl font-bold leading-7 sm:text-3xl sm:truncate" data-cy="page-title">
                     {{ props.title }}
