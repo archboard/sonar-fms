@@ -231,6 +231,7 @@ namespace App\Models{
  *
  * @mixin IdeHelperInvoiceItem
  * @property int $id
+ * @property string $uuid
  * @property string $invoice_uuid
  * @property int|null $fee_id
  * @property bool $sync_with_fee
@@ -259,6 +260,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereSyncWithFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUuid($value)
  */
 	class IdeHelperInvoiceItem extends \Eloquent {}
 }
@@ -269,6 +271,7 @@ namespace App\Models{
  *
  * @mixin IdeHelperInvoiceScholarship
  * @property int $id
+ * @property string $uuid
  * @property string $invoice_uuid
  * @property int|null $scholarship_id
  * @property bool $sync_with_scholarship
@@ -279,6 +282,8 @@ namespace App\Models{
  * @property int|null $calculated_amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $appliesTo
+ * @property-read int|null $applies_to_count
  * @property-read mixed $amount_formatted
  * @property-read mixed $calculated_amount_formatted
  * @property-read mixed $percentage_decimal
@@ -299,6 +304,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereScholarshipId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereSyncWithScholarship($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUuid($value)
  */
 	class IdeHelperInvoiceScholarship extends \Eloquent {}
 }

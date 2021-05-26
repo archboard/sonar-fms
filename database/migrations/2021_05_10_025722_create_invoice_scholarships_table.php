@@ -15,7 +15,8 @@ class CreateInvoiceScholarshipsTable extends Migration
     {
         Schema::create('invoice_scholarships', function (Blueprint $table) {
             $table->id();
-            $table->string('invoice_uuid')->index();
+            $table->uuid('uuid')->unique()->index();
+            $table->uuid('invoice_uuid')->index();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
             $table->unsignedBigInteger('scholarship_id')->nullable();
             $table->foreign('scholarship_id')->references('id')->on('scholarships')->onDelete('set null');

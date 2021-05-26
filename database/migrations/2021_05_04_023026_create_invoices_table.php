@@ -15,7 +15,7 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->unique()->index();
+            $table->uuid('uuid')->unique()->index();
             $table->string('batch_id')->unique()->index()->nullable();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('school_id')->constrained()->onDelete('cascade');

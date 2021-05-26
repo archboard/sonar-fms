@@ -14,9 +14,11 @@ class CreateLineItemScholarshipPivotTable extends Migration
     public function up()
     {
         Schema::create('invoice_item_invoice_scholarship', function (Blueprint $table) {
-            $table->foreignId('invoice_item_id')->constrained()->onDelete('cascade');
-            $table->foreignId('invoice_scholarship_id')->constrained()->onDelete('cascade');
-            $table->primary(['invoice_item_id', 'invoice_scholarship_id']);
+            $table->uuid('invoice_item_uuid');
+            $table->foreign('invoice_item_uuid')->references('uuid')->on('invoice_items')->onDelete('cascade');
+            $table->uuid('invoice_scholarship_uuid');
+            $table->foreign('invoice_scholarship_uuid')->references('uuid')->on('invoice_scholarships')->onDelete('cascade');
+            $table->primary(['invoice_item_uuid', 'invoice_scholarship_uuid']);
         });
     }
 
