@@ -5,6 +5,7 @@ namespace App\Models;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -38,6 +39,11 @@ class InvoiceScholarship extends Model
     public function scholarship(): BelongsTo
     {
         return $this->belongsTo(Scholarship::class);
+    }
+
+    public function appliesTo(): BelongsToMany
+    {
+        return $this->belongsToMany(InvoiceItem::class);
     }
 
     public function getPercentageFormattedAttribute()
