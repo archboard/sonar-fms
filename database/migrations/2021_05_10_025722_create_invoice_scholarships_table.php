@@ -18,6 +18,7 @@ class CreateInvoiceScholarshipsTable extends Migration
             $table->uuid('uuid')->unique()->index();
             $table->uuid('invoice_uuid')->index();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
+            $table->string('batch_id')->index()->nullable();
             $table->unsignedBigInteger('scholarship_id')->nullable();
             $table->foreign('scholarship_id')->references('id')->on('scholarships')->onDelete('set null');
             $table->boolean('sync_with_scholarship')->default(false);

@@ -8,14 +8,52 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Ramsey\Uuid\Uuid;
 
 /**
+ * App\Models\InvoiceItem
+ *
  * @mixin IdeHelperInvoiceItem
+ * @property int $id
+ * @property string $uuid
+ * @property string $invoice_uuid
+ * @property string|null $batch_id
+ * @property int|null $fee_id
+ * @property bool $sync_with_fee
+ * @property string|null $name
+ * @property string|null $description
+ * @property int|null $amount_per_unit
+ * @property int|null $amount
+ * @property int $quantity
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Fee|null $fee
+ * @property-read mixed $amount_formatted
+ * @property-read mixed $amount_per_unit_formatted
+ * @property-read \App\Models\Invoice $invoice
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereAmountPerUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereFeeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereSyncWithFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUuid($value)
  */
 class InvoiceItem extends Model
 {
     protected $fillable = [
+        'uuid',
         'invoice_uuid',
+        'batch_id',
         'sync_with_fee',
         'fee_id',
         'name',
@@ -63,25 +101,8 @@ class InvoiceItem extends Model
             ->formatTo(optional(auth()->user())->locale ?? 'en');
     }
 
-    /**
-     * @param string $invoiceUuid
-     * @param array $item The item received from CreateNewInvoiceRequest
-     * @param Collection $fees The fees should be keyed by the id
-     * @return array
-     */
-    public static function generateAttributesForInsert(string $invoiceUuid, array $item, Collection $fees): array
+    public function calculateTotal(): int
     {
-        unset($item['id']);
-        $item['invoice_uuid'] = $invoiceUuid;
-
-        if ($item['sync_with_fee'] && $fee = $fees->get($item['fee_id'])) {
-            $item['name'] = $fee->name;
-            $item['amount_per_unit'] = $fee->amount;
-        }
-
-        // Cache the total line item
-        $item['amount'] = $item['amount_per_unit'] * $item['quantity'];
-
-        return Arr::only($item, static::make()->fillable);
+        return $this->amount_per_unit * $this->quantity;
     }
 }

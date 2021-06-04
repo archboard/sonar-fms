@@ -15,7 +15,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Queue;
-use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CreateInvoiceTest extends TestCase
@@ -57,7 +56,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => true,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -86,6 +85,7 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
+        $this->assertNotNull($invoice->invoice_date);
 
         Queue::assertPushed(SendNewInvoiceNotification::class);
     }
@@ -112,7 +112,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => false,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -121,7 +121,7 @@ class CreateInvoiceTest extends TestCase
                     'random_key' => 'random value',
                 ],
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => $fee->id,
                     'sync_with_fee' => true,
                     'name' => 'Not matching name',
@@ -176,7 +176,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => true,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => $this->faker->paragraphs(10, true),
@@ -210,7 +210,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => false,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -218,7 +218,7 @@ class CreateInvoiceTest extends TestCase
                     'quantity' => 1,
                 ],
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Not matching name',
@@ -228,7 +228,7 @@ class CreateInvoiceTest extends TestCase
             ],
             'scholarships' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => null,
                     'name' => 'Tuition Assistance A',
                     'sync_with_scholarship' => false,
@@ -266,6 +266,89 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals(0, $scholarship->percentage);
     }
 
+    public function test_can_create_invoice_with_scholarships_that_apply_to_certain_items_only()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+
+        Queue::fake();
+        $student = $this->school->students->random();
+
+        $item1Id = $this->uuid();
+        $item2id = $this->uuid();
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $item1Id,
+                    'fee_id' => null,
+                    'sync_with_fee' => false,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 1000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item2id,
+                    'fee_id' => null,
+                    'sync_with_fee' => false,
+                    'name' => 'Not matching name',
+                    'amount_per_unit' => 100,
+                    'quantity' => 2,
+                ]
+            ],
+            'scholarships' => [
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance A',
+                    'sync_with_scholarship' => false,
+                    'amount' => 100,
+                    'percentage' => null,
+                    'resolution_strategy' => Least::class,
+                    'applies_to' => [$item1Id]
+                ]
+            ],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
+
+        $this->assertEquals(1, $student->invoices()->count());
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
+        $this->assertEquals(1100, $invoice->amount_due);
+        $this->assertEquals(1100, $invoice->remaining_balance);
+        $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
+        $this->assertEquals(2, $invoice->invoiceItems()->count());
+
+        $this->assertEquals(1, $invoice->invoiceScholarships()->count());
+
+        /** @var InvoiceScholarship $scholarship */
+        $scholarship = $invoice->invoiceScholarships()->first();
+        $this->assertEquals('Tuition Assistance A', $scholarship->name);
+        $this->assertEquals(100, $scholarship->amount);
+        $this->assertEquals(0, $scholarship->percentage);
+        $this->assertEquals(1, $scholarship->appliesTo->count());
+
+        $item = $scholarship->appliesTo->first();
+        $this->assertEquals(
+            $invoice->invoiceItems->first()->uuid,
+            $item->uuid
+        );
+    }
+
     public function test_can_create_invoice_with_scholarships_that_sync()
     {
         $this->withoutExceptionHandling();
@@ -288,7 +371,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => false,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -296,7 +379,7 @@ class CreateInvoiceTest extends TestCase
                     'quantity' => 1,
                 ],
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Not matching name',
@@ -306,7 +389,7 @@ class CreateInvoiceTest extends TestCase
             ],
             'scholarships' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => $scholarship->id,
                     'name' => 'Tuition Assistance A',
                     'sync_with_scholarship' => true,
@@ -354,7 +437,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => false,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -364,7 +447,7 @@ class CreateInvoiceTest extends TestCase
             ],
             'scholarships' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => null,
                     'name' => 'Tuition Assistance A',
                     'sync_with_scholarship' => false,
@@ -373,7 +456,7 @@ class CreateInvoiceTest extends TestCase
                     'resolution_strategy' => Least::class,
                 ],
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => null,
                     'name' => 'Tuition Assistance B',
                     'sync_with_scholarship' => false,
@@ -422,7 +505,7 @@ class CreateInvoiceTest extends TestCase
             'notify' => false,
             'items' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'fee_id' => null,
                     'sync_with_fee' => false,
                     'name' => 'Line item 1',
@@ -432,7 +515,7 @@ class CreateInvoiceTest extends TestCase
             ],
             'scholarships' => [
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => null,
                     'name' => 'Tuition Assistance A',
                     'sync_with_scholarship' => false,
@@ -441,7 +524,7 @@ class CreateInvoiceTest extends TestCase
                     'resolution_strategy' => Least::class,
                 ],
                 [
-                    'id' => Uuid::uuid4(),
+                    'id' => $this->uuid(),
                     'scholarship_id' => null,
                     'name' => 'Tuition Assistance B',
                     'sync_with_scholarship' => false,

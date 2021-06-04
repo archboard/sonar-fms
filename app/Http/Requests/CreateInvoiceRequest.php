@@ -3,8 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\InvoiceScholarship;
 use App\Models\Scholarship;
+use App\Models\Student;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class CreateInvoiceRequest extends FormRequest
@@ -61,6 +65,7 @@ class CreateInvoiceRequest extends FormRequest
                 'required_with:scholarships.*.amount,scholarships.*.percentage',
                 Rule::in(array_keys(Scholarship::getResolutionStrategies())),
             ],
+            'scholarships.*.applies_to' => 'array',
         ];
     }
 

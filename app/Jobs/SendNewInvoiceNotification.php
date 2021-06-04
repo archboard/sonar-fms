@@ -14,16 +14,16 @@ class SendNewInvoiceNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $invoice;
+    public string $invoiceUuid;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Invoice $invoice)
+    public function __construct(string $invoiceUuid)
     {
-        $this->invoice = $invoice;
+        $this->invoiceUuid = $invoiceUuid;
     }
 
     /**
@@ -33,9 +33,11 @@ class SendNewInvoiceNotification implements ShouldQueue
      */
     public function handle()
     {
+        $invoice = Invoice::findOrFail($this->invoiceUuid);
+
         if (
-            !$this->invoice->notify ||
-            now()->startOfMinute()->diffInMinutes($this->invoice->notify_at) <= 1
+            !$invoice->notify ||
+            now()->startOfMinute()->diffInMinutes($invoice->notify_at) <= 1
         ) {
             return;
         }

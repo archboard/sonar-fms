@@ -19,7 +19,68 @@ use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 
 /**
+ * App\Models\User
+ *
  * @mixin IdeHelperUser
+ * @property int $id
+ * @property int $tenant_id
+ * @property int|null $sis_id
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string $email
+ * @property string|null $password
+ * @property int|null $school_id
+ * @property string|null $timezone
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $contact_id
+ * @property int|null $guardian_id
+ * @property bool $manages_tenancy
+ * @property string $locale
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
+ * @property-read int|null $abilities_count
+ * @property-read mixed $date_factory
+ * @property-read string $full_name
+ * @property-read array $school_permissions
+ * @property-read mixed $student_selection
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
+ * @property-read int|null $roles_count
+ * @property-read \App\Models\School|null $school
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
+ * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\StudentSelection[] $studentSelections
+ * @property-read int|null $student_selections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static Builder|User filter(array $filters)
+ * @method static Builder|User newModelQuery()
+ * @method static Builder|User newQuery()
+ * @method static Builder|User query()
+ * @method static Builder|User whereCan(string $ability)
+ * @method static Builder|User whereContactId($value)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User whereFirstName($value)
+ * @method static Builder|User whereGuardianId($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereIs($role)
+ * @method static Builder|User whereIsAll($role)
+ * @method static Builder|User whereIsNot($role)
+ * @method static Builder|User whereLastName($value)
+ * @method static Builder|User whereLocale($value)
+ * @method static Builder|User whereManagesTenancy($value)
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereSchoolId($value)
+ * @method static Builder|User whereSisId($value)
+ * @method static Builder|User whereTenantId($value)
+ * @method static Builder|User whereTimezone($value)
+ * @method static Builder|User whereUpdatedAt($value)
  */
 class User extends Authenticatable
 {

@@ -203,18 +203,20 @@
           </TransitionGroup>
         </ul>
 
-        <CardWrapper v-if="form.items.length > 0" class="mb-4">
-          <CardPadding>
-            <div class="flex justify-between">
-              <h4 class="font-bold">
-                {{ __('Invoice subtotal') }}
-              </h4>
-              <div class="font-bold">
-                {{ displayCurrency(subtotal) }}
+        <FadeIn>
+          <CardWrapper v-if="form.items.length > 0" class="mb-4">
+            <CardPadding>
+              <div class="flex justify-between">
+                <h4 class="font-bold">
+                  {{ __('Invoice subtotal') }}
+                </h4>
+                <div class="font-bold">
+                  {{ displayCurrency(subtotal) }}
+                </div>
               </div>
-            </div>
-          </CardPadding>
-        </CardWrapper>
+            </CardPadding>
+          </CardWrapper>
+        </FadeIn>
 
         <div class="relative">
           <div class="absolute inset-0 flex items-center" aria-hidden="true">

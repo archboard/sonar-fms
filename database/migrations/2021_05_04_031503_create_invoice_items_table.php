@@ -18,6 +18,7 @@ class CreateInvoiceItemsTable extends Migration
             $table->uuid('uuid')->unique()->index();
             $table->uuid('invoice_uuid')->index();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
+            $table->string('batch_id')->index()->nullable();
             $table->unsignedBigInteger('fee_id')->nullable();
             $table->foreign('fee_id')->references('id')->on('fees')->onDelete('set null');
             $table->boolean('sync_with_fee')->default(false);

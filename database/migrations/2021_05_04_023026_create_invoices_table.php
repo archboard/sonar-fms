@@ -16,16 +16,20 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->index();
-            $table->string('batch_id')->unique()->index()->nullable();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            // Used for batch creations, e.g. creating an invoice from the student selection
+            $table->string('batch_id')->index()->nullable();
+            // Used for tracking imports via excel/csv
+            $table->string('import_id')->index()->nullable();
+            $table->foreignId('tenant_id')->index()->constrained()->onDelete('cascade');
+            $table->foreignId('school_id')->index()->constrained()->onDelete('cascade');
+            $table->foreignId('student_id')->index()->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('term_id')->nullable();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('set null');
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('amount_due')->nullable();
             $table->unsignedBigInteger('remaining_balance')->nullable();
+            $table->date('invoice_date');
             $table->dateTime('available_at')->nullable();
             $table->dateTime('due_at')->nullable();
             $table->dateTime('paid_at')->nullable();

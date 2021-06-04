@@ -18,6 +18,7 @@ export default (form) => {
       applies_to: [],
     })
   }
+  const getApplicableItems = item => form.items.filter(i => item.applies_to.includes(i.id))
   const syncWithScholarship = item => {
     const scholarship = scholarships.value.find(s => s.id === item.scholarship_id)
 
@@ -47,7 +48,7 @@ export default (form) => {
       item.applies_to.length !== form.items.length
     ) {
       // Find the items for which this scholarship applies
-      const items = form.items.filter(i => item.applies_to.includes(i.id))
+      const items = getApplicableItems(item)
       total = getItemsTotal(items)
     }
 

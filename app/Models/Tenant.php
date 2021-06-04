@@ -16,7 +16,76 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Multitenancy\Models\Tenant as TenantBase;
 
 /**
+ * App\Models\Tenant
+ *
  * @mixin IdeHelperTenant
+ * @property int $id
+ * @property string $name
+ * @property string $domain
+ * @property string|null $ps_url
+ * @property string|null $ps_client_id
+ * @property string|null $ps_secret
+ * @property bool $allow_password_auth
+ * @property string|null $subscription_started_at
+ * @property string|null $subscription_expires_at
+ * @property string $license
+ * @property string $sis_provider
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $sync_notification_emails
+ * @property bool $allow_oidc_login
+ * @property string|null $smtp_host
+ * @property string|null $smtp_port
+ * @property string|null $smtp_username
+ * @property string|null $smtp_password
+ * @property string|null $smtp_from_name
+ * @property string|null $smtp_from_address
+ * @property string|null $smtp_encryption
+ * @property string|null $batch_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $departments
+ * @property-read int|null $departments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FeeCategory[] $feeCategories
+ * @property-read int|null $fee_categories_count
+ * @property-read string $sis
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
+ * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
+ * @property-read int|null $sections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SyncTime[] $syncTimes
+ * @property-read int|null $sync_times_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static \Spatie\Multitenancy\TenantCollection|static[] all($columns = ['*'])
+ * @method static \Database\Factories\TenantFactory factory(...$parameters)
+ * @method static \Spatie\Multitenancy\TenantCollection|static[] get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowOidcLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereAllowPasswordAuth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereLicense($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant wherePsClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant wherePsSecret($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant wherePsUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpEncryption($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpFromAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpFromName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpPort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSmtpUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSubscriptionStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSyncNotificationEmails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereUpdatedAt($value)
  */
 class Tenant extends TenantBase
 {

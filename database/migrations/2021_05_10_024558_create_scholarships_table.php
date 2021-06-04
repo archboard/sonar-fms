@@ -15,8 +15,8 @@ class CreateScholarshipsTable extends Migration
     {
         Schema::create('scholarships', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('school_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tenant_id')->index()->constrained()->onDelete('cascade');
+            $table->foreignId('school_id')->index()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('percentage', 8, 4)->nullable();

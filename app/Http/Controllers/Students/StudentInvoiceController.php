@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
+use App\Invoices\InvoiceFromRequestFactory;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;
@@ -74,51 +75,12 @@ class StudentInvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request, Student $student)
     {
-        DB::transaction(function () use ($request, $student) {
-            $invoiceAttributes = Invoice::getAttributesFromRequest($request, $student);
-            $data = $request->validated();
-            $school = $request->school();
-
-            /** @var Invoice $invoice */
-            $invoice = Invoice::create($invoiceAttributes);
-
-            $fees = $school->fees->keyBy('id');
-            $invoiceItems = collect($data['items'])
-                ->map(fn (array $item) => InvoiceItem::generateAttributesForInsert(
-                    $invoiceAttributes['uuid'],
-                    $item,
-                    $fees
-                ));
-
-            DB::table('invoice_items')
-                ->insert($invoiceItems->toArray());
-
-            if (!empty($data['scholarships'])) {
-                $scholarships = $school->scholarships->keyBy('id');
-                $scholarshipItems = collect($data['scholarships'])
-                    ->map(fn (array $item) => InvoiceScholarship::generateAttributesForInsert(
-                        $invoiceAttributes['uuid'],
-                        $item,
-                        $invoice->amount_due,
-                        $scholarships
-                    ));
-
-                DB::table('invoice_scholarships')
-                    ->insert($scholarshipItems->toArray());
-
-                $invoice->setAmountDue()
-                    ->save();
-            }
-
-            // Trigger the notification if it is set to queue
-            if ($invoiceAttributes['notify']) {
-                $invoice->notifyLater();
-            }
-        });
+        InvoiceFromRequestFactory::make($request, $student)
+            ->build();
 
         session()->flash('success', __('Invoice created successfully.'));
 
-        return back();
+        return redirect()->route('students.show', $student);
     }
 
     /**

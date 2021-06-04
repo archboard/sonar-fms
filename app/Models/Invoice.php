@@ -21,7 +21,71 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 /**
+ * App\Models\Invoice
+ *
  * @mixin IdeHelperInvoice
+ * @property int $id
+ * @property string $uuid
+ * @property string|null $batch_id
+ * @property string|null $import_id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property int $student_id
+ * @property int|null $term_id
+ * @property string $title
+ * @property string|null $description
+ * @property int|null $amount_due
+ * @property int|null $remaining_balance
+ * @property Carbon|null $available_at
+ * @property Carbon|null $due_at
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $voided_at
+ * @property bool $notify
+ * @property Carbon|null $notify_at
+ * @property Carbon|null $notified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read mixed $amount_due_formatted
+ * @property-read bool $available
+ * @property-read mixed $past_due
+ * @property-read mixed $payment_made
+ * @property-read mixed $remaining_balance_formatted
+ * @property-read mixed $status_color
+ * @property-read mixed $status_label
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
+ * @property-read int|null $invoice_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
+ * @property-read int|null $invoice_scholarships_count
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Student $student
+ * @property-read \App\Models\Tenant $tenant
+ * @property-read \App\Models\Term|null $term
+ * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
+ * @method static Builder|Invoice filter(array $filters)
+ * @method static Builder|Invoice newModelQuery()
+ * @method static Builder|Invoice newQuery()
+ * @method static Builder|Invoice query()
+ * @method static Builder|Invoice whereAmountDue($value)
+ * @method static Builder|Invoice whereAvailableAt($value)
+ * @method static Builder|Invoice whereBatchId($value)
+ * @method static Builder|Invoice whereCreatedAt($value)
+ * @method static Builder|Invoice whereDescription($value)
+ * @method static Builder|Invoice whereDueAt($value)
+ * @method static Builder|Invoice whereId($value)
+ * @method static Builder|Invoice whereImportId($value)
+ * @method static Builder|Invoice whereNotifiedAt($value)
+ * @method static Builder|Invoice whereNotify($value)
+ * @method static Builder|Invoice whereNotifyAt($value)
+ * @method static Builder|Invoice wherePaidAt($value)
+ * @method static Builder|Invoice whereRemainingBalance($value)
+ * @method static Builder|Invoice whereSchoolId($value)
+ * @method static Builder|Invoice whereStudentId($value)
+ * @method static Builder|Invoice whereTenantId($value)
+ * @method static Builder|Invoice whereTermId($value)
+ * @method static Builder|Invoice whereTitle($value)
+ * @method static Builder|Invoice whereUpdatedAt($value)
+ * @method static Builder|Invoice whereUuid($value)
+ * @method static Builder|Invoice whereVoidedAt($value)
  */
 class Invoice extends Model
 {
@@ -30,7 +94,27 @@ class Invoice extends Model
     use HasFactory;
     use HasResource;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'uuid',
+        'batch_id',
+        'import_id',
+        'tenant_id',
+        'school_id',
+        'student_id',
+        'term_id',
+        'title',
+        'description',
+        'amount_due',
+        'remaining_balance',
+        'invoice_date',
+        'available_at',
+        'due_at',
+        'paid_at',
+        'voided_at',
+        'notify',
+        'notify_at',
+        'notified_at',
+    ];
 
     protected $casts = [
         'notify_now' => 'boolean',
@@ -185,10 +269,7 @@ class Invoice extends Model
         ]);
     }
 
-    public static function getAttributesFromRequest(
-        CreateInvoiceRequest $request,
-        Student $student = null
-    ): array
+    public static function getAttributesFromRequest(CreateInvoiceRequest $request, Student $student = null): array
     {
         $school = $request->school();
         $data = $request->validated();
@@ -198,12 +279,7 @@ class Invoice extends Model
         $invoiceAttributes['tenant_id'] = $school->tenant_id;
         $invoiceAttributes['school_id'] = $school->id;
         $invoiceAttributes['student_id'] = optional($student)->id;
-
-        /** @var int $total */
-        $total = array_reduce(
-            $data['items'],
-            fn (int $total, $item) => $total + ($item['amount_per_unit'] * $item['quantity']), 0
-        );
+        $total = static::getSubmittedItemsTotal($data['items'], $school->fees->keyBy('id'));
 
         $invoiceAttributes['amount_due'] = $total;
         $invoiceAttributes['remaining_balance'] = $total;
@@ -211,15 +287,39 @@ class Invoice extends Model
         return $invoiceAttributes;
     }
 
+    public static function calculateSubtotalFromItems(Collection $items)
+    {
+        return $items
+            ->reduce(function (int $total, InvoiceItem $item) {
+                return $total + $item->calculateTotal();
+            }, 0);
+    }
+
+    public function calculateSubtotal(): int
+    {
+        return static::calculateSubtotalFromItems($this->invoiceItems);
+    }
+
+    public function calculateScholarshipSubtotal()
+    {
+        return $this->invoiceScholarships
+            ->reduce(function (int $total, InvoiceScholarship $scholarship) {
+                return $total + $scholarship->calculateAmount();
+            }, 0);
+    }
+
+    /**
+     * Sets the amount due, remaining balance, and paid time stamp.
+     * Does not save in the database.
+     *
+     * @return $this
+     */
     public function setAmountDue(): static
     {
-        $grossTotal = $this->invoiceItems
-            ->reduce(fn (int $total, InvoiceItem $item) => $total + ($item->amount_per_unit * $item->quantity), 0);
+        $subtotal = $this->calculateSubtotal();
+        $discount = $this->calculateScholarshipSubtotal();
 
-        $discount = $this->invoiceScholarships
-            ->reduce(fn (int $total, InvoiceScholarship $scholarship) => $total + $scholarship->calculateAmount($grossTotal), 0);
-
-        $amountDue = $grossTotal - $discount;
+        $amountDue = $subtotal - $discount;
 
         if ($amountDue < 0) {
             $amountDue = 0;
@@ -240,6 +340,28 @@ class Invoice extends Model
         return $this;
     }
 
+    public function cacheCalculations()
+    {
+        // Cache all items
+        $this->invoiceItems->each(function (InvoiceItem $item) {
+            $item->update([
+                'amount' => $item->calculateTotal(),
+            ]);
+        });
+
+        // Cache all scholarship calculations
+        $scholarships = $this->invoiceScholarships()
+            ->with('invoice', 'invoice.invoiceItems')
+            ->get();
+        $scholarships->each(function (InvoiceScholarship $scholarship) {
+            $scholarship->update([
+                'calculated_amount' => $scholarship->calculateAmount(),
+            ]);
+        });
+
+        $this->setAmountDue()->save();
+    }
+
     public function queueNotification(Carbon $notifyAt): static
     {
         $notifyAt->startOfMinute();
@@ -251,7 +373,7 @@ class Invoice extends Model
         ]);
 
         // Dispatch the notification for 15 minutes
-        SendNewInvoiceNotification::dispatch($this)
+        SendNewInvoiceNotification::dispatch($this->uuid)
             ->delay($notifyAt);
 
         return $this;
@@ -276,6 +398,81 @@ class Invoice extends Model
         ]);
 
         return $this;
+    }
+
+    public static function createFromRequest(CreateInvoiceRequest $request, Student $student): static
+    {
+        // Generate generic invoice data
+        // 1. The basic attributes
+        // 2. Calculate the the total based on items
+
+        // Generate generic items data
+        // There are no fields dependent on other entity data
+
+        // Generate generic scholarship data
+        // 1. Basic attributes
+        // 2. Calculated cached fields based on total or items
+        $attributes = static::getAttributesFromRequest($request, $student);
+        $uuid = $attributes['uuid'];
+        $data = $request->validated();
+        $school = $request->school();
+
+        // This stores the the table name as the key
+        // and the entries to be inserted as the value
+        $tableData = [
+            'invoice' => [$attributes],
+            'invoice_items' => [],
+            'invoice_scholarships' => [],
+            'invoice_item_invoice_scholarship' => [],
+            'item_id_map' => [],
+        ];
+
+        $fees = $school->fees->keyBy('id');
+
+        // This generates all the items to be inserted in a single sql statement
+        // and the id => uuid map that is needed for scholarship's `applies_to`
+        $tableData = collect($data['items'])
+            ->reduce(function (array $data, array $item) use ($uuid, $fees) {
+                $attributes = InvoiceItem::generateAttributesForInsert($uuid, $item, $fees);
+
+                $data['invoice_items'][] = $attributes;
+                $data['item_id_map'][$item['id']] = $attributes['uuid'];
+
+                return $data;
+            }, $tableData);
+
+        if (!empty($data['scholarships'])) {
+            $scholarships = $school->scholarships->keyBy('id');
+
+            $scholarshipItems = collect($data['scholarships'])
+                ->reduce(function (array $inserts, array $item) use ($uuid, $scholarships, $itemData) {
+                    $attributes = InvoiceScholarship::generateAttributesForInsert($uuid, $item, $scholarships);
+
+                    $inserts['scholarships'][] = $attributes;
+
+                    if (!empty($item['applies_to'])) {
+                        $items = $invoiceItems
+                            ->filter(fn ($i) => in_array($i['id'], $item['applies_to']))
+                            ->map(fn ($i) => ['invoice_item_uuid' => $i['uuid'], 'invoice_scholarship_uuid' => $attributes['uuid']])
+                            ->toArray();
+
+                        $inserts['applies'] = array_merge($inserts['applies'], $items);
+                    }
+
+                    return $inserts;
+                }, ['scholarships' => [], 'applies' => []]);
+
+            DB::table('invoice_scholarships')
+                ->insert($scholarshipItems->get('scholarships'));
+
+            DB::table('invoice_item_invoice_scholarship')
+                ->insert($scholarshipItems->get('applies'));
+        }
+
+        // Trigger the notification if it is set to queue
+        if ($attributes['notify']) {
+            $this->notifyLater();
+        }
     }
 
     public function updateFromRequest(UpdateInvoiceRequest $request): static
@@ -338,9 +535,8 @@ class Invoice extends Model
 
             // Update the scholarships
             $scholarships = $school->scholarships->keyBy('id');
-            $itemsTotal = static::getSubmittedItemsTotal($items, $fees);
             $newScholarshipItems = $scholarshipItems
-                ->reduce(function (array $newItems, array $item) use ($existingScholarshipItems, $itemsTotal, $scholarships) {
+                ->reduce(function (array $newItems, array $item) use ($existingScholarshipItems, $scholarships) {
                     if ($existingItem = $existingScholarshipItems->get($item['id'])) {
                         $existingItem->update($item);
                         return $newItems;
@@ -349,7 +545,6 @@ class Invoice extends Model
                     $newItems[] = InvoiceScholarship::generateAttributesForInsert(
                         $this->uuid,
                         $item,
-                        $itemsTotal,
                         $scholarships
                     );
 

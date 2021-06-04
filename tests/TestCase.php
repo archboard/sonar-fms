@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Ramsey\Uuid\Uuid;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -30,6 +31,11 @@ abstract class TestCase extends BaseTestCase
         \Bouncer::scope()->to($this->school->id);
 
         \Bouncer::refresh();
+    }
+
+    protected function uuid(): string
+    {
+        return Uuid::uuid4()->toString();
     }
 
     public function createUser(): User
