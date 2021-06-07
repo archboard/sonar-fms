@@ -11,46 +11,7 @@ use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
 
 /**
- * App\Models\InvoiceScholarship
- *
  * @mixin IdeHelperInvoiceScholarship
- * @property int $id
- * @property string $uuid
- * @property string $invoice_uuid
- * @property string|null $batch_id
- * @property int|null $scholarship_id
- * @property bool $sync_with_scholarship
- * @property string $name
- * @property string|null $percentage
- * @property int|null $amount
- * @property string|null $resolution_strategy
- * @property int|null $calculated_amount
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $appliesTo
- * @property-read int|null $applies_to_count
- * @property-read mixed $amount_formatted
- * @property-read mixed $calculated_amount_formatted
- * @property-read mixed $percentage_decimal
- * @property-read mixed $percentage_formatted
- * @property-read \App\Models\Invoice $invoice
- * @property-read \App\Models\Scholarship|null $scholarship
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship query()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereBatchId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCalculatedAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereInvoiceUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship wherePercentage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereResolutionStrategy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereScholarshipId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereSyncWithScholarship($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUuid($value)
  */
 class InvoiceScholarship extends Model
 {

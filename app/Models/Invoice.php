@@ -21,71 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 /**
- * App\Models\Invoice
- *
  * @mixin IdeHelperInvoice
- * @property int $id
- * @property string $uuid
- * @property string|null $batch_id
- * @property string|null $import_id
- * @property int $tenant_id
- * @property int $school_id
- * @property int $student_id
- * @property int|null $term_id
- * @property string $title
- * @property string|null $description
- * @property int|null $amount_due
- * @property int|null $remaining_balance
- * @property Carbon|null $available_at
- * @property Carbon|null $due_at
- * @property Carbon|null $paid_at
- * @property Carbon|null $voided_at
- * @property bool $notify
- * @property Carbon|null $notify_at
- * @property Carbon|null $notified_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read mixed $amount_due_formatted
- * @property-read bool $available
- * @property-read mixed $past_due
- * @property-read mixed $payment_made
- * @property-read mixed $remaining_balance_formatted
- * @property-read mixed $status_color
- * @property-read mixed $status_label
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
- * @property-read int|null $invoice_items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
- * @property-read int|null $invoice_scholarships_count
- * @property-read \App\Models\School $school
- * @property-read \App\Models\Student $student
- * @property-read \App\Models\Tenant $tenant
- * @property-read \App\Models\Term|null $term
- * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
- * @method static Builder|Invoice filter(array $filters)
- * @method static Builder|Invoice newModelQuery()
- * @method static Builder|Invoice newQuery()
- * @method static Builder|Invoice query()
- * @method static Builder|Invoice whereAmountDue($value)
- * @method static Builder|Invoice whereAvailableAt($value)
- * @method static Builder|Invoice whereBatchId($value)
- * @method static Builder|Invoice whereCreatedAt($value)
- * @method static Builder|Invoice whereDescription($value)
- * @method static Builder|Invoice whereDueAt($value)
- * @method static Builder|Invoice whereId($value)
- * @method static Builder|Invoice whereImportId($value)
- * @method static Builder|Invoice whereNotifiedAt($value)
- * @method static Builder|Invoice whereNotify($value)
- * @method static Builder|Invoice whereNotifyAt($value)
- * @method static Builder|Invoice wherePaidAt($value)
- * @method static Builder|Invoice whereRemainingBalance($value)
- * @method static Builder|Invoice whereSchoolId($value)
- * @method static Builder|Invoice whereStudentId($value)
- * @method static Builder|Invoice whereTenantId($value)
- * @method static Builder|Invoice whereTermId($value)
- * @method static Builder|Invoice whereTitle($value)
- * @method static Builder|Invoice whereUpdatedAt($value)
- * @method static Builder|Invoice whereUuid($value)
- * @method static Builder|Invoice whereVoidedAt($value)
  */
 class Invoice extends Model
 {

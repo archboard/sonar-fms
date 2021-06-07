@@ -16,67 +16,7 @@ use Illuminate\Support\Facades\DB;
 use NumberFormatter;
 
 /**
- * App\Models\Student
- *
  * @mixin IdeHelperStudent
- * @property int $id
- * @property int $tenant_id
- * @property int $school_id
- * @property int $sis_id
- * @property string|null $student_number
- * @property string|null $first_name
- * @property string|null $last_name
- * @property string|null $email
- * @property int|null $grade_level
- * @property bool $enrolled
- * @property int $enroll_status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $preferred_name
- * @property \Illuminate\Support\Carbon|null $current_entry_date
- * @property \Illuminate\Support\Carbon|null $current_exit_date
- * @property \Illuminate\Support\Carbon|null $initial_district_entry_date
- * @property \Illuminate\Support\Carbon|null $initial_school_entry_date
- * @property string|null $initial_district_grade_level
- * @property string|null $initial_school_grade_level
- * @property-read mixed $full_name
- * @property-read mixed $grade_level_formatted
- * @property-read mixed $grade_level_short_formatted
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
- * @property-read int|null $guardians_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
- * @property-read int|null $invoices_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
- * @property-read int|null $sections_count
- * @property-read \App\Models\Tenant $tenant
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
- * @property-read int|null $users_count
- * @method static \Database\Factories\StudentFactory factory(...$parameters)
- * @method static Builder|Student filter(array $filters)
- * @method static Builder|Student newModelQuery()
- * @method static Builder|Student newQuery()
- * @method static Builder|Student query()
- * @method static Builder|Student sisId($sisId)
- * @method static Builder|Student whereCreatedAt($value)
- * @method static Builder|Student whereCurrentEntryDate($value)
- * @method static Builder|Student whereCurrentExitDate($value)
- * @method static Builder|Student whereEmail($value)
- * @method static Builder|Student whereEnrollStatus($value)
- * @method static Builder|Student whereEnrolled($value)
- * @method static Builder|Student whereFirstName($value)
- * @method static Builder|Student whereGradeLevel($value)
- * @method static Builder|Student whereId($value)
- * @method static Builder|Student whereInitialDistrictEntryDate($value)
- * @method static Builder|Student whereInitialDistrictGradeLevel($value)
- * @method static Builder|Student whereInitialSchoolEntryDate($value)
- * @method static Builder|Student whereInitialSchoolGradeLevel($value)
- * @method static Builder|Student whereLastName($value)
- * @method static Builder|Student wherePreferredName($value)
- * @method static Builder|Student whereSchoolId($value)
- * @method static Builder|Student whereSisId($value)
- * @method static Builder|Student whereStudentNumber($value)
- * @method static Builder|Student whereTenantId($value)
- * @method static Builder|Student whereUpdatedAt($value)
  */
 class Student extends Model
 {

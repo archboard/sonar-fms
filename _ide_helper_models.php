@@ -164,6 +164,7 @@ namespace App\Models{
  * @property int $id
  * @property string $uuid
  * @property string|null $batch_id
+ * @property string|null $import_id
  * @property int $tenant_id
  * @property int $school_id
  * @property int $student_id
@@ -208,6 +209,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereDescription($value)
  * @method static Builder|Invoice whereDueAt($value)
  * @method static Builder|Invoice whereId($value)
+ * @method static Builder|Invoice whereImportId($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -221,6 +223,8 @@ namespace App\Models{
  * @method static Builder|Invoice whereUpdatedAt($value)
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
+ * @property string $invoice_date
+ * @method static Builder|Invoice whereInvoiceDate($value)
  */
 	class IdeHelperInvoice extends \Eloquent {}
 }
@@ -233,8 +237,8 @@ namespace App\Models{
  * @property int $id
  * @property string $uuid
  * @property string $invoice_uuid
+ * @property string|null $batch_id
  * @property int|null $fee_id
- * @property bool $sync_with_fee
  * @property string|null $name
  * @property string|null $description
  * @property int|null $amount_per_unit
@@ -251,6 +255,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereAmountPerUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereFeeId($value)
@@ -258,7 +263,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereSyncWithFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUuid($value)
  */
@@ -273,6 +277,7 @@ namespace App\Models{
  * @property int $id
  * @property string $uuid
  * @property string $invoice_uuid
+ * @property string|null $batch_id
  * @property int|null $scholarship_id
  * @property bool $sync_with_scholarship
  * @property string $name
@@ -294,6 +299,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship query()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCalculatedAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereId($value)

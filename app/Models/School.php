@@ -14,57 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
- * App\Models\School
- *
  * @mixin IdeHelperSchool
- * @property int $id
- * @property int $tenant_id
- * @property int $sis_id
- * @property int|null $school_number
- * @property string $name
- * @property int|null $high_grade
- * @property int|null $low_grade
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $use_thousands_separator
- * @property bool $active
- * @property int|null $currency_id
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
- * @property-read int|null $courses_count
- * @property-read \App\Models\Currency|null $currency
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
- * @property-read int|null $fees_count
- * @property-read mixed $grade_levels
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
- * @property-read int|null $invoices_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships
- * @property-read int|null $scholarships_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections
- * @property-read int|null $sections_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
- * @property-read int|null $students_count
- * @property-read \App\Models\Tenant $tenant
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Term[] $terms
- * @property-read int|null $terms_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
- * @property-read int|null $users_count
- * @method static Builder|School active()
- * @method static \Database\Factories\SchoolFactory factory(...$parameters)
- * @method static Builder|School newModelQuery()
- * @method static Builder|School newQuery()
- * @method static Builder|School query()
- * @method static Builder|School whereActive($value)
- * @method static Builder|School whereCreatedAt($value)
- * @method static Builder|School whereCurrencyId($value)
- * @method static Builder|School whereHighGrade($value)
- * @method static Builder|School whereId($value)
- * @method static Builder|School whereLowGrade($value)
- * @method static Builder|School whereName($value)
- * @method static Builder|School whereSchoolNumber($value)
- * @method static Builder|School whereSisId($value)
- * @method static Builder|School whereTenantId($value)
- * @method static Builder|School whereUpdatedAt($value)
- * @method static Builder|School whereUseThousandsSeparator($value)
  */
 class School extends Model
 {
