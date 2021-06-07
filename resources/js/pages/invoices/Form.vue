@@ -5,6 +5,7 @@
     </Alert>
 
     <FormMultipartWrapper class="divide-y-0">
+      <!-- Invoice details -->
       <div>
         <div class="mb-6">
           <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
@@ -398,18 +399,10 @@
                   <li
                     v-for="(payment, paymentIndex) in item.payments"
                     :key="payment.id"
-                    class="px-2 w-full md:w-1/2 lg:w-1/3"
+                    class="px-2 w-full md:w-1/2 lg:w-1/3 mb-4"
                   >
                     <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                       <Fieldset>
-<!--                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.percentage`]">-->
-<!--                          <Label :for="`schedule_${index}_${paymentIndex}_percentage`">{{ __('Percentage') }}</Label>-->
-<!--                          <Input v-model="payment.percentage" :id="`schedule_${index}_${paymentIndex}_percentage`" />-->
-<!--                          <HelpText>-->
-<!--                            {{ __('') }}-->
-<!--                          </HelpText>-->
-<!--                        </InputWrap>-->
-
                         <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
                           <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
                           <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
@@ -442,8 +435,39 @@
                   </li>
                 </TransitionGroup>
 
-                <li class="px-2 w-full md:w-1/2 lg:w-1/3 flex">
-                  <div class="rounded-md px-2 py-8 flex items-center justify-center w-full">
+                <li class="px-2 w-full md:w-1/2 lg:w-1/3 relative">
+                  <div class="opacity-50 rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
+                    <Fieldset>
+                      <InputWrap>
+                        <Mocker :inline="true">
+                          <Label>{{ __('Amount') }}</Label>
+                        </Mocker>
+                        <Mocker>
+                          <CurrencyInput />
+                        </Mocker>
+                      </InputWrap>
+
+                      <InputWrap>
+                        <Mocker :inline="true">
+                          <Label>{{ __('Due') }}</Label>
+                        </Mocker>
+                        <Mocker>
+                          <Input />
+                        </Mocker>
+                      </InputWrap>
+
+                      <div class="flex justify-end">
+                        <Mocker :inline="true">
+                          <Button color="red" size="sm">
+                            <TrashIcon class="w-4 h-4" />
+                            <span class="ml-2">{{ __('Remove term') }}</span>
+                          </Button>
+                        </Mocker>
+                      </div>
+                    </Fieldset>
+                  </div>
+
+                  <div class="absolute inset-0 -mt-4 flex items-center justify-center">
                     <Button @click.prevent="addPaymentTerm(item)" size="sm">
                       {{ __('Add payment term') }}
                     </Button>
@@ -519,9 +543,11 @@ import CurrencyInput from '../../components/forms/CurrencyInput'
 import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
 import InvoiceSummary from '../../components/InvoiceSummary'
+import Mocker from '../../components/Mocker'
 
 export default {
   components: {
+    Mocker,
     InvoiceSummary,
     CardPadding,
     CardWrapper,
