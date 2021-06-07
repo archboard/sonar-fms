@@ -425,7 +425,7 @@
                         </InputWrap>
 
                         <div class="flex justify-end">
-                          <Button color="red" @click.prevent="item.payments.splice(paymentIndex, 1)" size="sm">
+                          <Button color="red" @click.prevent="removePaymentTerm(item, paymentIndex)" size="sm">
                             <TrashIcon class="w-4 h-4" />
                             <span class="ml-2">{{ __('Remove term') }}</span>
                           </Button>
@@ -435,6 +435,7 @@
                   </li>
                 </TransitionGroup>
 
+                <!-- Mock term that just has the button -->
                 <li class="px-2 w-full md:w-1/2 lg:w-1/3 relative">
                   <div class="opacity-50 rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                     <Fieldset>
@@ -665,6 +666,7 @@ export default {
       addPaymentSchedule,
       addPaymentTerm,
       getScheduleTotal,
+      removePaymentTerm,
     } = invoicePaymentScheduleForm(form, total)
 
     return {
@@ -692,6 +694,7 @@ export default {
       addPaymentSchedule,
       addPaymentTerm,
       getScheduleTotal,
+      removePaymentTerm,
     }
   },
 }

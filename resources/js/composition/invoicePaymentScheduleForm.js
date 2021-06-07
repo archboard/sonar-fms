@@ -10,6 +10,14 @@ export default (form, total) => {
   const addPaymentTerm = schedule => {
     schedule.payments.push(generateTerm())
   }
+  const removePaymentTerm = (schedule, index) => {
+    schedule.payments.splice(index, 1)
+
+    if (schedule.payments.length < 2) {
+      const scheduleIndex = form.payment_schedules.findIndex(s => s.id === schedule.id)
+      form.payment_schedules.splice(scheduleIndex, 1)
+    }
+  }
   const addPaymentSchedule = () => {
     const schedule = {
       id: nanoid(),
@@ -34,5 +42,6 @@ export default (form, total) => {
     addPaymentSchedule,
     addPaymentTerm,
     getScheduleTotal,
+    removePaymentTerm,
   }
 }
