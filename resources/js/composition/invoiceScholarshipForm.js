@@ -10,7 +10,6 @@ export default (form) => {
     form.scholarships.push({
       id: nanoid(),
       scholarship_id: null,
-      sync_with_scholarship: false,
       name: null,
       amount: null,
       percentage: null,
@@ -31,12 +30,6 @@ export default (form) => {
   }
   const scholarshipSelected = item => {
     syncWithScholarship(item)
-    item.sync_with_scholarship = false
-  }
-  const scholarshipSyncChanged = item => {
-    if (item.sync_with_scholarship) {
-      syncWithScholarship(item)
-    }
   }
   const getItemDiscount = item => {
     let total = subtotal.value
@@ -78,6 +71,5 @@ export default (form) => {
     getItemDiscount,
     addScholarship,
     scholarshipSelected,
-    scholarshipSyncChanged,
   }
 }

@@ -9,7 +9,6 @@ export default (form) => {
     form.items.push({
       id: nanoid(),
       fee_id: null,
-      sync_with_fee: false,
       name: null,
       amount_per_unit: null,
       quantity: 1,
@@ -25,12 +24,6 @@ export default (form) => {
   }
   const feeSelected = item => {
     syncItemWithFee(item)
-    item.sync_with_fee = false
-  }
-  const itemSyncChanged = item => {
-    if (item.sync_with_fee) {
-      syncItemWithFee(item)
-    }
   }
   const getItemTotal = item => Number(item.amount_per_unit) * Number(item.quantity)
   const getItemsTotal = items => {
@@ -48,6 +41,5 @@ export default (form) => {
     addInvoiceLineItem,
     syncItemWithFee,
     feeSelected,
-    itemSyncChanged,
   }
 }

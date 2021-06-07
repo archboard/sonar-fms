@@ -1,637 +1,490 @@
 <template>
-  <form @submit.prevent="saveInvoice">
-    <Alert v-if="invoice.past_due" level="warning" class="mb-8">
-      {{ __('This invoice is past due.') }}
-    </Alert>
+  <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-5">
 
-    <FormMultipartWrapper class="divide-y-0">
-      <div>
-        <div class="mb-6">
-          <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
-          <HelpText>
-            {{ __('These are the general details about the invoice.') }}
-          </HelpText>
-        </div>
-        <Fieldset>
-          <InputWrap :error="form.errors.title">
-            <Label for="title" :required="true">{{ __('Title') }}</Label>
-            <Input v-model="form.title" id="title" required autofocus />
+    <form class="xl:col-span-3" @submit.prevent="saveInvoice">
+      <Alert v-if="invoice.past_due" level="warning" class="mb-8">
+        {{ __('This invoice is past due.') }}
+      </Alert>
+
+      <FormMultipartWrapper class="divide-y-0">
+        <div>
+          <div class="mb-6">
+            <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
             <HelpText>
-              {{ __('Give the invoice a meaningful title that is easily recognizable and descriptive.') }}
+              {{ __('These are the general details about the invoice.') }}
             </HelpText>
-          </InputWrap>
+          </div>
+          <Fieldset>
+            <InputWrap :error="form.errors.title">
+              <Label for="title" :required="true">{{ __('Title') }}</Label>
+              <Input v-model="form.title" id="title" required autofocus />
+              <HelpText>
+                {{ __('Give the invoice a meaningful title that is easily recognizable and descriptive.') }}
+              </HelpText>
+            </InputWrap>
 
-          <InputWrap>
-            <Label for="description">{{ __('Description') }}</Label>
-            <Textarea v-model="form.description" id="description" />
-            <HelpText>
-              {{ __('This is a description of the invoice that will be displayed with the invoice.') }}
-            </HelpText>
-          </InputWrap>
+            <InputWrap>
+              <Label for="description">{{ __('Description') }}</Label>
+              <Textarea v-model="form.description" id="description" />
+              <HelpText>
+                {{ __('This is a description of the invoice that will be displayed with the invoice.') }}
+              </HelpText>
+            </InputWrap>
 
-          <InputWrap :error="form.errors.available_at">
-            <Label for="due_at">{{ __('Availability') }}</Label>
-            <div class="grid grid-cols-2 gap-6">
-              <DatePicker
-                v-model="form.available_at"
-                color="pink"
-                :is-dark="isDark"
-                mode="dateTime"
-                :minute-increment="15"
-                :model-config="{ timeAdjust: '00:00:00' }"
-              />
-              <div>
-                <HelpText>
-                  {{ __("Set a date and time that this invoice is available to the student's guardians or other contacts. Before the configured time, it will only be viewable to admins. This is helpful to use if you want to prepare and preview invoices before actually making them available for the student. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-                </HelpText>
-                <FadeIn>
-                  <div class="mt-4" v-show="form.available_at">
-                    <Button size="sm" type="button" @click.prevent="form.available_at = null">
-                      {{ __('Remove') }}
-                    </Button>
-                  </div>
-                </FadeIn>
-              </div>
-            </div>
-          </InputWrap>
-
-          <InputWrap :error="form.errors.due_at">
-            <Label for="due_at">{{ __('Due date') }}</Label>
-            <div class="grid grid-cols-2 gap-6">
-              <DatePicker
-                v-model="form.due_at"
-                color="pink"
-                :is-dark="isDark"
-                mode="dateTime"
-                :minute-increment="15"
-                :model-config="{ timeAdjust: '00:00:00' }"
-              />
-              <div>
-                <HelpText>
-                  {{ __("Set the date and time that this invoice is due, or don't set one to not have a due date. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-                </HelpText>
-                <FadeIn>
-                  <div class="mt-4" v-show="form.due_at">
-                    <Button size="sm" type="button" @click.prevent="form.due_at = null">
-                      {{ __('Remove') }}
-                    </Button>
-                  </div>
-                </FadeIn>
-              </div>
-            </div>
-          </InputWrap>
-
-          <InputWrap>
-            <Label for="term_id">{{ __('Term') }}</Label>
-            <Select v-model="form.term_id" id="term_id">
-              <option :value="null">{{ __('No term') }}</option>
-              <option
-                v-for="term in terms"
-                :key="term.id"
-                :value="term.id"
-              >
-                {{ term.school_years }} - {{ term.name }}
-              </option>
-            </Select>
-            <HelpText>{{ __('Associating a term with an invoice allows you to group invoices by school term and offers another reporting perspective.') }}</HelpText>
-          </InputWrap>
-
-          <InputWrap>
-            <CheckboxWrapper>
-              <Checkbox v-model:checked="form.notify" />
-              <CheckboxText>{{ __('Send notification') }}</CheckboxText>
-            </CheckboxWrapper>
-            <HelpText>
-              {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
-            </HelpText>
-          </InputWrap>
-        </Fieldset>
-      </div>
-
-      <!-- Invoice line items -->
-      <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Invoice line items') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add line items to the build the invoice and total receivable amount.') }}
-          </HelpText>
-        </div>
-
-        <Error v-if="form.errors.items">
-          {{ __('You must have at least one invoice item.') }}
-        </Error>
-
-        <ul class="space-y-3 py-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <li
-              v-for="(item, index) in form.items"
-              :key="item.id"
-            >
-              <CardWrapper>
-                <CardPadding>
-                  <Fieldset>
-                    <InputWrap :error="form.errors[`items.${index}.fee_id`]">
-                      <Label :for="`fee_id_${index}`">{{ __('Fee') }}</Label>
-                      <Select
-                        v-model="item.fee_id" :id="`fee_id_${index}`"
-                        @change="feeSelected(item)"
-                      >
-                        <option :value="null">{{ __('Use a custom fee') }}</option>
-                        <option
-                          v-for="fee in fees"
-                          :key="fee.id"
-                          :value="fee.id"
-                        >
-                          {{ fee.name }}{{ fee.code ? ` (${fee.code})` : '' }} - {{ fee.amount_formatted }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __("Associating line items with a fee will help with reporting and syncing data, but isn't required.") }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="item.fee_id">
-                      <CheckboxWrapper>
-                        <Checkbox v-model:checked="item.sync_with_fee" @change="itemSyncChanged(item)" />
-                        <CheckboxText>{{ __('Sync title and amount with associated fee') }}</CheckboxText>
-                      </CheckboxWrapper>
-                      <HelpText>
-                        {{ __("This option will keep the line item name and amount in sync with the name and amount of the underlying fee. This means that if you change the fee's name or amount, this line item will reflect those changes. If it is not enabled, the title and amount set below will be set unless changed manually later.") }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_fee" :error="form.errors[`items.${index}.name`]">
-                      <Label :for="`name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <Input v-model="item.name" :id="`name_${index}`" />
-                      <HelpText>
-                        {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_fee" :error="form.errors[`items.${index}.amount_per_unit`]">
-                      <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
-                      <CurrencyInput v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" />
-                    </InputWrap>
-
-                    <InputWrap :error="form.errors[`items.${index}.quantity`]">
-                      <Label :for="`quantity_${index}`" :required="true">{{ __('Quantity') }}</Label>
-                      <Input v-model="item.quantity" :id="`quantity_${index}`" type="number" />
-                    </InputWrap>
-
-                    <div class="flex justify-between items-center">
-                      <h4 class="font-bold">
-                        {{ __('Line item total: :total', { total: displayCurrency(item.amount_per_unit * item.quantity) }) }}
-                      </h4>
-                      <Button color="red" size="sm" type="button" @click.prevent="form.items.splice(index, 1)">
-                        <TrashIcon class="w-4 h-4" />
-                        <span class="ml-2">{{ __('Remove line item') }}</span>
+            <InputWrap :error="form.errors.available_at">
+              <Label for="due_at">{{ __('Availability') }}</Label>
+              <div class="grid grid-cols-2 gap-6">
+                <DatePicker
+                  v-model="form.available_at"
+                  color="pink"
+                  :is-dark="isDark"
+                  mode="dateTime"
+                  :minute-increment="15"
+                  :model-config="{ timeAdjust: '00:00:00' }"
+                />
+                <div>
+                  <HelpText>
+                    {{ __("Set a date and time that this invoice is available to the student's guardians or other contacts. Before the configured time, it will only be viewable to admins. This is helpful to use if you want to prepare and preview invoices before actually making them available for the student. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
+                  </HelpText>
+                  <FadeIn>
+                    <div class="mt-4" v-show="form.available_at">
+                      <Button size="sm" type="button" @click.prevent="form.available_at = null">
+                        {{ __('Remove') }}
                       </Button>
                     </div>
-                  </Fieldset>
-                </CardPadding>
-              </CardWrapper>
-            </li>
-          </TransitionGroup>
-        </ul>
-
-        <FadeIn>
-          <CardWrapper v-if="form.items.length > 0" class="mb-4">
-            <CardPadding>
-              <div class="flex justify-between">
-                <h4 class="font-bold">
-                  {{ __('Invoice subtotal') }}
-                </h4>
-                <div class="font-bold">
-                  {{ displayCurrency(subtotal) }}
+                  </FadeIn>
                 </div>
               </div>
-            </CardPadding>
-          </CardWrapper>
-        </FadeIn>
+            </InputWrap>
 
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add invoice line item') }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scholarships -->
-      <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Scholarships') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add scholarships to reduce the amount due for the invoice.') }}
-          </HelpText>
-        </div>
-
-        <ul class="space-y-3 py-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <li
-              v-for="(item, index) in form.scholarships"
-              :key="item.id"
-            >
-              <CardWrapper>
-                <CardPadding>
-                  <Fieldset>
-                    <InputWrap :error="form.errors[`scholarships.${index}.scholarship_id`]">
-                      <Label :for="`scholarship_id_${index}`">{{ __('Scholarship') }}</Label>
-                      <Select
-                        v-model="item.scholarship_id" :id="`scholarship_id_${index}`"
-                        @change="scholarshipSelected(item)"
-                      >
-                        <option :value="null">{{ __('Use a custom scholarship') }}</option>
-                        <option
-                          v-for="scholarship in scholarships"
-                          :key="scholarship.id"
-                          :value="scholarship.id"
-                        >
-                          {{ scholarship.name }} - {{ scholarship.description }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">
-                      <CheckboxWrapper>
-                        <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />
-                        <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>
-                      </CheckboxWrapper>
-                      <HelpText>
-                        {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.name`]">
-                      <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <Input v-model="item.name" :id="`scholarship_name_${index}`" />
-                      <HelpText>
-                        {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.amount`]">
-                      <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
-                      <CurrencyInput v-model="item.amount" :id="`scholarship_amount_${index}`" />
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
-                      <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
-                      <Input v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
-                      <HelpText>
-                        {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship && item.percentage && item.amount" :error="form.errors[`scholarships.${index}.resolution_strategy`]">
-                      <Label for="resolution_strategy">{{ __('Resolution strategy') }}</Label>
-                      <Select v-model="item.resolution_strategy" id="resolution_strategy">
-                        <option
-                          v-for="(label, strategy) in strategies"
-                          :key="strategy"
-                          :value="strategy"
-                        >
-                          {{ label }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __('This resolves whether to use the percentage or amount for the scholarship when both are provided. Least will use whichever has the least amount of discount. Greatest will use whichever has the greatest discount.') }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="form.items.length > 1">
-                      <HelpText>
-                        {{ __('Choose the items for which this scholarship applies. If no items are selected, it will be applied to the entire invoice total.') }}
-                      </HelpText>
-                      <div class="mt-3 space-y-1">
-                        <div
-                          v-for="lineItem in form.items"
-                          :key="lineItem.id"
-                        >
-                          <CheckboxWrapper>
-                            <Checkbox v-model:checked="item.applies_to" :value="lineItem.id" />
-                            <CheckboxText>{{ lineItem.name }}</CheckboxText>
-                          </CheckboxWrapper>
-                        </div>
-                      </div>
-                    </InputWrap>
-
-                    <div class="flex justify-between items-center">
-                      <h4 class="font-bold">
-                        {{ __('Discount total: :total', { total: displayCurrency(getItemDiscount(item)) }) }}
-                      </h4>
-                      <Button color="red" size="sm" type="button" @click.prevent="form.scholarships.splice(index, 1)">
-                        <TrashIcon class="w-4 h-4" />
-                        <span class="ml-2">{{ __('Remove scholarship') }}</span>
+            <InputWrap :error="form.errors.due_at">
+              <Label for="due_at">{{ __('Due date') }}</Label>
+              <div class="grid grid-cols-2 gap-6">
+                <DatePicker
+                  v-model="form.due_at"
+                  color="pink"
+                  :is-dark="isDark"
+                  mode="dateTime"
+                  :minute-increment="15"
+                  :model-config="{ timeAdjust: '00:00:00' }"
+                />
+                <div>
+                  <HelpText>
+                    {{ __("Set the date and time that this invoice is due, or don't set one to not have a due date. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
+                  </HelpText>
+                  <FadeIn>
+                    <div class="mt-4" v-show="form.due_at">
+                      <Button size="sm" type="button" @click.prevent="form.due_at = null">
+                        {{ __('Remove') }}
                       </Button>
                     </div>
-                  </Fieldset>
-                </CardPadding>
-              </CardWrapper>
-            </li>
-          </TransitionGroup>
-        </ul>
+                  </FadeIn>
+                </div>
+              </div>
+            </InputWrap>
 
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add scholarship') }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Payment schedules -->
-      <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Payment schedules') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add available payment schedules to allow the invoice to be paid in separate payments rather than all at once.') }}
-          </HelpText>
-        </div>
-
-        <ul class="space-y-3 py-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <li
-              v-for="(item, index) in form.payment_schedules"
-              :key="item.id"
-              class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md p-6"
-            >
-              <ul class="flex flex-wrap -mx-2">
-                <TransitionGroup
-                  enter-active-class="transition duration-150 ease-in-out"
-                  enter-from-class="opacity-0"
-                  enter-to-class="opacity-100"
-                  leave-active-class="transition duration-150 ease-in-out"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
+            <InputWrap>
+              <Label for="term_id">{{ __('Term') }}</Label>
+              <Select v-model="form.term_id" id="term_id">
+                <option :value="null">{{ __('No term') }}</option>
+                <option
+                  v-for="term in terms"
+                  :key="term.id"
+                  :value="term.id"
                 >
-                  <li
-                    v-for="(payment, paymentIndex) in item.payments"
-                    :key="payment.id"
-                    class="px-2 w-full md:w-1/2 lg:w-1/3"
-                  >
-                    <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
-                      <Fieldset>
-<!--                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.percentage`]">-->
-<!--                          <Label :for="`schedule_${index}_${paymentIndex}_percentage`">{{ __('Percentage') }}</Label>-->
-<!--                          <Input v-model="payment.percentage" :id="`schedule_${index}_${paymentIndex}_percentage`" />-->
-<!--                          <HelpText>-->
-<!--                            {{ __('') }}-->
-<!--                          </HelpText>-->
-<!--                        </InputWrap>-->
+                  {{ term.school_years }} - {{ term.name }}
+                </option>
+              </Select>
+              <HelpText>{{ __('Associating a term with an invoice allows you to group invoices by school term and offers another reporting perspective.') }}</HelpText>
+            </InputWrap>
 
-                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
-                          <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
-                          <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
-                        </InputWrap>
+            <InputWrap>
+              <CheckboxWrapper>
+                <Checkbox v-model:checked="form.notify" />
+                <CheckboxText>{{ __('Send notification') }}</CheckboxText>
+              </CheckboxWrapper>
+              <HelpText>
+                {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
+              </HelpText>
+            </InputWrap>
+          </Fieldset>
+        </div>
 
-                        <InputWrap>
-                          <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due') }}</Label>
-                          <DatePicker
-                            v-model="payment.due_at"
-                            color="pink"
-                            :is-dark="isDark"
-                            mode="dateTime"
-                            :minute-increment="15"
-                            :model-config="{ timeAdjust: '00:00:00' }"
+        <!-- Invoice line items -->
+        <div class="pt-8">
+          <div class="mb-6">
+            <CardSectionHeader>
+              {{ __('Invoice line items') }}
+            </CardSectionHeader>
+            <HelpText class="text-sm mt-1">
+              {{ __('Add line items to the build the invoice and total receivable amount.') }}
+            </HelpText>
+          </div>
+
+          <Error v-if="form.errors.items">
+            {{ __('You must have at least one invoice item.') }}
+          </Error>
+
+          <ul class="space-y-3 py-3">
+            <TransitionGroup
+              enter-active-class="transition duration-150 ease-in-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in-out"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <li
+                v-for="(item, index) in form.items"
+                :key="item.id"
+              >
+                <CardWrapper>
+                  <CardPadding>
+                    <Fieldset>
+                      <InputWrap :error="form.errors[`items.${index}.fee_id`]">
+                        <Label :for="`fee_id_${index}`">{{ __('Fee') }}</Label>
+                        <Select
+                          v-model="item.fee_id" :id="`fee_id_${index}`"
+                          @change="feeSelected(item)"
+                        >
+                          <option :value="null">{{ __('Use a custom fee') }}</option>
+                          <option
+                            v-for="fee in fees"
+                            :key="fee.id"
+                            :value="fee.id"
                           >
-                            <template v-slot="{ inputValue, inputEvents }">
-                              <Input :id="`schedule_${index}_${paymentIndex}_due_at`" :model-value="inputValue" v-on="inputEvents" />
-                            </template>
-                          </DatePicker>
-                        </InputWrap>
+                            {{ fee.name }}{{ fee.code ? ` (${fee.code})` : '' }} - {{ fee.amount_formatted }}
+                          </option>
+                        </Select>
+                        <HelpText>
+                          {{ __("Associating line items with a fee will help with reporting and syncing data, but isn't required.") }}
+                        </HelpText>
+                      </InputWrap>
 
-                        <div class="flex justify-end">
-                          <Button color="red" @click.prevent="item.payments.splice(paymentIndex, 1)" size="sm">
-                            <TrashIcon class="w-4 h-4" />
-                            <span class="ml-2">{{ __('Remove term') }}</span>
-                          </Button>
+                      <InputWrap :error="form.errors[`items.${index}.name`]">
+                        <Label :for="`name_${index}`" :required="true">{{ __('Name') }}</Label>
+                        <Input v-model="item.name" :id="`name_${index}`" />
+                        <HelpText>
+                          {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap :error="form.errors[`items.${index}.amount_per_unit`]">
+                        <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
+                        <CurrencyInput v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" />
+                      </InputWrap>
+
+                      <InputWrap :error="form.errors[`items.${index}.quantity`]">
+                        <Label :for="`quantity_${index}`" :required="true">{{ __('Quantity') }}</Label>
+                        <Input v-model="item.quantity" :id="`quantity_${index}`" type="number" />
+                      </InputWrap>
+
+                      <div class="flex justify-between items-center">
+                        <h4 class="font-bold">
+                          {{ __('Line item total: :total', { total: displayCurrency(item.amount_per_unit * item.quantity) }) }}
+                        </h4>
+                        <Button color="red" size="sm" type="button" @click.prevent="form.items.splice(index, 1)">
+                          <TrashIcon class="w-4 h-4" />
+                          <span class="ml-2">{{ __('Remove line item') }}</span>
+                        </Button>
+                      </div>
+                    </Fieldset>
+                  </CardPadding>
+                </CardWrapper>
+              </li>
+            </TransitionGroup>
+          </ul>
+
+          <FadeIn>
+            <CardWrapper v-if="form.items.length > 0" class="mb-4">
+              <CardPadding>
+                <div class="flex justify-between">
+                  <h4 class="font-bold">
+                    {{ __('Invoice subtotal') }}
+                  </h4>
+                  <div class="font-bold">
+                    {{ displayCurrency(subtotal) }}
+                  </div>
+                </div>
+              </CardPadding>
+            </CardWrapper>
+          </FadeIn>
+
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-gray-300 dark:border-gray-400" />
+            </div>
+            <div class="relative flex justify-center">
+              <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+                <span>{{ __('Add invoice line item') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scholarships -->
+        <div class="pt-8">
+          <div class="mb-6">
+            <CardSectionHeader>
+              {{ __('Scholarships') }}
+            </CardSectionHeader>
+            <HelpText class="text-sm mt-1">
+              {{ __('Add scholarships to reduce the amount due for the invoice.') }}
+            </HelpText>
+          </div>
+
+          <ul class="space-y-3 py-3">
+            <TransitionGroup
+              enter-active-class="transition duration-150 ease-in-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in-out"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <li
+                v-for="(item, index) in form.scholarships"
+                :key="item.id"
+              >
+                <CardWrapper>
+                  <CardPadding>
+                    <Fieldset>
+                      <InputWrap :error="form.errors[`scholarships.${index}.scholarship_id`]">
+                        <Label :for="`scholarship_id_${index}`">{{ __('Scholarship') }}</Label>
+                        <Select
+                          v-model="item.scholarship_id" :id="`scholarship_id_${index}`"
+                          @change="scholarshipSelected(item)"
+                        >
+                          <option :value="null">{{ __('Use a custom scholarship') }}</option>
+                          <option
+                            v-for="scholarship in scholarships"
+                            :key="scholarship.id"
+                            :value="scholarship.id"
+                          >
+                            {{ scholarship.name }} - {{ scholarship.description }}
+                          </option>
+                        </Select>
+                        <HelpText>
+                          {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">
+                        <CheckboxWrapper>
+                          <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />
+                          <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>
+                        </CheckboxWrapper>
+                        <HelpText>
+                          {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.name`]">
+                        <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
+                        <Input v-model="item.name" :id="`scholarship_name_${index}`" />
+                        <HelpText>
+                          {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.amount`]">
+                        <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
+                        <CurrencyInput v-model="item.amount" :id="`scholarship_amount_${index}`" />
+                      </InputWrap>
+
+                      <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
+                        <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
+                        <Input v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
+                        <HelpText>
+                          {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap v-if="!item.sync_with_scholarship && item.percentage && item.amount" :error="form.errors[`scholarships.${index}.resolution_strategy`]">
+                        <Label for="resolution_strategy">{{ __('Resolution strategy') }}</Label>
+                        <Select v-model="item.resolution_strategy" id="resolution_strategy">
+                          <option
+                            v-for="(label, strategy) in strategies"
+                            :key="strategy"
+                            :value="strategy"
+                          >
+                            {{ label }}
+                          </option>
+                        </Select>
+                        <HelpText>
+                          {{ __('This resolves whether to use the percentage or amount for the scholarship when both are provided. Least will use whichever has the least amount of discount. Greatest will use whichever has the greatest discount.') }}
+                        </HelpText>
+                      </InputWrap>
+
+                      <InputWrap v-if="form.items.length > 1">
+                        <HelpText>
+                          {{ __('Choose the items for which this scholarship applies. If no items are selected, it will be applied to the entire invoice total.') }}
+                        </HelpText>
+                        <div class="mt-3 space-y-1">
+                          <div
+                            v-for="lineItem in form.items"
+                            :key="lineItem.id"
+                          >
+                            <CheckboxWrapper>
+                              <Checkbox v-model:checked="item.applies_to" :value="lineItem.id" />
+                              <CheckboxText>{{ lineItem.name }}</CheckboxText>
+                            </CheckboxWrapper>
+                          </div>
                         </div>
-                      </Fieldset>
+                      </InputWrap>
+
+                      <div class="flex justify-between items-center">
+                        <h4 class="font-bold">
+                          {{ __('Discount total: :total', { total: displayCurrency(getItemDiscount(item)) }) }}
+                        </h4>
+                        <Button color="red" size="sm" type="button" @click.prevent="form.scholarships.splice(index, 1)">
+                          <TrashIcon class="w-4 h-4" />
+                          <span class="ml-2">{{ __('Remove scholarship') }}</span>
+                        </Button>
+                      </div>
+                    </Fieldset>
+                  </CardPadding>
+                </CardWrapper>
+              </li>
+            </TransitionGroup>
+          </ul>
+
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-gray-300 dark:border-gray-400" />
+            </div>
+            <div class="relative flex justify-center">
+              <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+                <span>{{ __('Add scholarship') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment schedules -->
+        <div class="pt-8">
+          <div class="mb-6">
+            <CardSectionHeader>
+              {{ __('Payment schedules') }}
+            </CardSectionHeader>
+            <HelpText class="text-sm mt-1">
+              {{ __('Add available payment schedules to allow the invoice to be paid in separate payments rather than all at once.') }}
+            </HelpText>
+          </div>
+
+          <ul class="space-y-3 py-3">
+            <TransitionGroup
+              enter-active-class="transition duration-150 ease-in-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in-out"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <li
+                v-for="(item, index) in form.payment_schedules"
+                :key="item.id"
+                class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md p-6"
+              >
+                <ul class="flex flex-wrap -mx-2">
+                  <TransitionGroup
+                    enter-active-class="transition duration-150 ease-in-out"
+                    enter-from-class="opacity-0"
+                    enter-to-class="opacity-100"
+                    leave-active-class="transition duration-150 ease-in-out"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                  >
+                    <li
+                      v-for="(payment, paymentIndex) in item.payments"
+                      :key="payment.id"
+                      class="px-2 w-full md:w-1/2 lg:w-1/3"
+                    >
+                      <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
+                        <Fieldset>
+  <!--                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.percentage`]">-->
+  <!--                          <Label :for="`schedule_${index}_${paymentIndex}_percentage`">{{ __('Percentage') }}</Label>-->
+  <!--                          <Input v-model="payment.percentage" :id="`schedule_${index}_${paymentIndex}_percentage`" />-->
+  <!--                          <HelpText>-->
+  <!--                            {{ __('') }}-->
+  <!--                          </HelpText>-->
+  <!--                        </InputWrap>-->
+
+                          <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
+                            <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
+                            <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
+                          </InputWrap>
+
+                          <InputWrap>
+                            <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due') }}</Label>
+                            <DatePicker
+                              v-model="payment.due_at"
+                              color="pink"
+                              :is-dark="isDark"
+                              mode="dateTime"
+                              :minute-increment="15"
+                              :model-config="{ timeAdjust: '00:00:00' }"
+                            >
+                              <template v-slot="{ inputValue, inputEvents }">
+                                <Input :id="`schedule_${index}_${paymentIndex}_due_at`" :model-value="inputValue" v-on="inputEvents" />
+                              </template>
+                            </DatePicker>
+                          </InputWrap>
+
+                          <div class="flex justify-end">
+                            <Button color="red" @click.prevent="item.payments.splice(paymentIndex, 1)" size="sm">
+                              <TrashIcon class="w-4 h-4" />
+                              <span class="ml-2">{{ __('Remove term') }}</span>
+                            </Button>
+                          </div>
+                        </Fieldset>
+                      </div>
+                    </li>
+                  </TransitionGroup>
+
+                  <li class="px-2 w-full md:w-1/2 lg:w-1/3 flex">
+                    <div class="rounded-md px-2 py-8 flex items-center justify-center w-full">
+                      <Button @click.prevent="addPaymentTerm(item)" size="sm">
+                        {{ __('Add payment term') }}
+                      </Button>
                     </div>
                   </li>
-                </TransitionGroup>
+                </ul>
 
-                <li class="px-2 w-full md:w-1/2 lg:w-1/3 flex">
-                  <div class="rounded-md px-2 py-8 flex items-center justify-center w-full">
-                    <Button @click.prevent="addPaymentTerm(item)" size="sm">
-                      {{ __('Add payment term') }}
-                    </Button>
-                  </div>
-                </li>
-              </ul>
+                <div class="flex justify-between items-center pt-6">
+                  <h4 class="font-bold">
+                    {{ __('Total with schedule: :total', { total: displayCurrency(getScheduleTotal(item)) }) }}
+                  </h4>
+                  <Button color="red" size="sm" type="button" @click.prevent="form.payment_schedules.splice(index, 1)">
+                    <TrashIcon class="w-4 h-4" />
+                    <span class="ml-2">{{ __('Remove schedule') }}</span>
+                  </Button>
+                </div>
+              </li>
+            </TransitionGroup>
+          </ul>
 
-              <div class="flex justify-between items-center pt-6">
-                <h4 class="font-bold">
-                  {{ __('Total with schedule: :total', { total: displayCurrency(getScheduleTotal(item)) }) }}
-                </h4>
-                <Button color="red" size="sm" type="button" @click.prevent="form.payment_schedules.splice(index, 1)">
-                  <TrashIcon class="w-4 h-4" />
-                  <span class="ml-2">{{ __('Remove schedule') }}</span>
-                </Button>
-              </div>
-            </li>
-          </TransitionGroup>
-        </ul>
-
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add payment schedule') }}</span>
-            </button>
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-gray-300 dark:border-gray-400" />
+            </div>
+            <div class="relative flex justify-center">
+              <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+                <span>{{ __('Add payment schedule') }}</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </FormMultipartWrapper>
+    </form>
 
-      <!-- Summary -->
-      <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Summary') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Below is the summary of the invoice, including all relevant details that will be displayed when viewing the invoice.') }}
-          </HelpText>
-        </div>
-
-        <dl class="sm:divide-y sm:divide-gray-200 dark:sm:divide-gray-500">
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Title') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              {{ form.title }}
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Description') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              {{ form.description }}
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Availability date') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span v-if="form.available_at" class="flex items-end">
-                <span>{{ displayDate(form.available_at, 'MMMM D, YYYY H:mm') }}</span>
-                <span class="inline-flex ml-3">
-                  <button class="text-gray-500 dark:text-gray-300 hover:underline focus:outline-none" type="button" @click.prevent="form.available_at = null">
-                    {{ __('Remove') }}
-                  </button>
-                </span>
-              </span>
-              <span v-else>
-                {{ __('No due date.') }}
-              </span>
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Due date') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span v-if="form.due_at" class="flex items-end">
-                <span>{{ displayDate(form.due_at, 'MMMM D, YYYY H:mm') }}</span>
-                <span class="inline-flex ml-3">
-                  <button class="text-gray-500 dark:text-gray-300 hover:underline focus:outline-none" type="button" @click.prevent="form.due_at = null">
-                    {{ __('Remove') }}
-                  </button>
-                </span>
-              </span>
-              <span v-else>
-                {{ __('No due date.') }}
-              </span>
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Notification') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span v-if="form.notify">
-                {{ __('Contacts will be notified in 15 minutes, unless cancelled.') }}
-              </span>
-              <span v-else>
-                {{ __('Manually notify.') }}
-              </span>
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Line items') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <div
-                v-for="item in form.items"
-                :key="item.id"
-                class="flex justify-between py-1"
-              >
-                <div>
-                  {{ __(':name x :quantity', { ...item }) }}
-                </div>
-                <div>
-                  {{ displayCurrency(item.amount_per_unit * item.quantity) }}
-                </div>
-              </div>
-              <div
-                class="flex justify-between font-bold"
-                :class="{
-                  'mt-2 pt-2 border-t border-gray-200 dark:border-gray-400': form.items.length > 0
-                }"
-              >
-                <div>{{ __('Subtotal' )}}</div>
-                <div>{{ displayCurrency(subtotal) }}</div>
-              </div>
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-              {{ __('Scholarships') }}
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <div
-                v-for="item in form.scholarships"
-                :key="item.id"
-                class="flex justify-between py-1"
-              >
-                <div>
-                  {{ item.name }}
-                </div>
-                <div>
-                  {{ displayCurrency(getItemDiscount(item)) }}
-                </div>
-              </div>
-              <div
-                class="font-bold flex justify-between"
-                :class="{
-                  'mt-2 pt-2 border-t border-gray-200 dark:border-gray-400': form.scholarships.length > 0
-                }"
-              >
-                <div>{{ __('Scholarship subtotal' )}}</div>
-                <div>{{ displayCurrency(scholarshipSubtotal) }}</div>
-              </div>
-            </dd>
-          </div>
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium">
-              <strong>{{ __('Invoice total') }}</strong>
-            </dt>
-            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2 text-right">
-              <strong>{{ totalDue }}</strong>
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </FormMultipartWrapper>
-  </form>
+    <div class="pt-8 lg:pt-0 xl:col-span-2">
+      <InvoiceSummary :invoice="form" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -668,9 +521,11 @@ import invoicePaymentScheduleForm from '../../composition/invoicePaymentSchedule
 import CurrencyInput from '../../components/forms/CurrencyInput'
 import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
+import InvoiceSummary from '../../components/InvoiceSummary'
 
 export default {
   components: {
+    InvoiceSummary,
     CardPadding,
     CardWrapper,
     CurrencyInput,
@@ -770,8 +625,7 @@ export default {
       fees,
       subtotal,
       addInvoiceLineItem,
-      feeSelected,
-      itemSyncChanged
+      feeSelected
     } = invoiceItemForm(form)
 
     // Scholarships
@@ -780,8 +634,7 @@ export default {
       scholarshipSubtotal,
       getItemDiscount,
       addScholarship,
-      scholarshipSelected,
-      scholarshipSyncChanged,
+      scholarshipSelected
     } = invoiceScholarshipForm(form)
 
     // Payment schedules
@@ -809,12 +662,10 @@ export default {
       scholarshipSubtotal,
       total,
       totalDue,
-      itemSyncChanged,
       strategies,
       scholarships,
       addScholarship,
       scholarshipSelected,
-      scholarshipSyncChanged,
       addPaymentSchedule,
       addPaymentTerm,
       getScheduleTotal,

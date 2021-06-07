@@ -54,7 +54,6 @@ class InvoiceItem extends Model
         'uuid',
         'invoice_uuid',
         'batch_id',
-        'sync_with_fee',
         'fee_id',
         'name',
         'description',

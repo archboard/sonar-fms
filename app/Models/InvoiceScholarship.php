@@ -59,7 +59,6 @@ class InvoiceScholarship extends Model
         'invoice_uuid',
         'batch_id',
         'scholarship_id',
-        'sync_with_scholarship',
         'name',
         'percentage',
         'amount',

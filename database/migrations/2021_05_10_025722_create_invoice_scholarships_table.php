@@ -21,7 +21,6 @@ class CreateInvoiceScholarshipsTable extends Migration
             $table->string('batch_id')->index()->nullable();
             $table->unsignedBigInteger('scholarship_id')->nullable();
             $table->foreign('scholarship_id')->references('id')->on('scholarships')->onDelete('set null');
-            $table->boolean('sync_with_scholarship')->default(false);
             $table->string('name');
             $table->decimal('percentage', 8, 4)->nullable();
             $table->unsignedBigInteger('amount')->nullable();
