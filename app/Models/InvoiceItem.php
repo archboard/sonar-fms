@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToInvoice;
 use Brick\Money\Money;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @mixin IdeHelperInvoiceItem
  */
 class InvoiceItem extends Model
 {
+    use HasResource;
+    use BelongsToInvoice;
+
     protected $fillable = [
         'uuid',
         'invoice_uuid',
@@ -26,11 +27,6 @@ class InvoiceItem extends Model
         'amount',
         'quantity',
     ];
-
-    public function invoice(): BelongsTo
-    {
-        return $this->belongsTo(Invoice::class, 'invoice_uuid', 'uuid');
-    }
 
     public function fee(): BelongsTo
     {

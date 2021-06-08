@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToInvoice;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,8 @@ use Ramsey\Uuid\Uuid;
  */
 class InvoiceScholarship extends Model
 {
+    use BelongsToInvoice;
+
     protected $fillable = [
         'uuid',
         'invoice_uuid',
@@ -32,11 +35,6 @@ class InvoiceScholarship extends Model
         'calculated_amount' => 'integer',
         'sync_with_scholarship' => 'boolean',
     ];
-
-    public function invoice(): BelongsTo
-    {
-        return $this->belongsTo(Invoice::class, 'invoice_uuid', 'uuid');
-    }
 
     public function scholarship(): BelongsTo
     {
