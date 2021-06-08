@@ -373,12 +373,12 @@
                         </InputWrap>
 
                         <InputWrap>
-                          <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due') }}</Label>
+                          <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due date') }}</Label>
                           <DatePicker :id="`schedule_${index}_${paymentIndex}_due_at`" v-model="payment.due_at" />
                         </InputWrap>
 
                         <div class="flex justify-end">
-                          <Button color="red" @click.prevent="removePaymentTerm(item, paymentIndex)" size="sm">
+                          <Button color="red" @click.prevent="removePaymentTerm(item, paymentIndex)" size="xs">
                             <TrashIcon class="w-4 h-4" />
                             <span class="ml-2">{{ __('Remove term') }}</span>
                           </Button>
