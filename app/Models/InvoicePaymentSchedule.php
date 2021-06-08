@@ -6,6 +6,9 @@ use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @mixin IdeHelperInvoicePaymentSchedule
+ */
 class InvoicePaymentSchedule extends Model
 {
     use BelongsToTenant;

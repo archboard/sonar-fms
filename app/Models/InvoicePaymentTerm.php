@@ -7,6 +7,9 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperInvoicePaymentTerm
+ */
 class InvoicePaymentTerm extends Model
 {
     use BelongsToInvoice;

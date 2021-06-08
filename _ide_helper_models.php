@@ -173,6 +173,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
+ * @property string $invoice_date
  * @property Carbon|null $available_at
  * @property Carbon|null $due_at
  * @property Carbon|null $paid_at
@@ -210,6 +211,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereDueAt($value)
  * @method static Builder|Invoice whereId($value)
  * @method static Builder|Invoice whereImportId($value)
+ * @method static Builder|Invoice whereInvoiceDate($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -223,8 +225,6 @@ namespace App\Models{
  * @method static Builder|Invoice whereUpdatedAt($value)
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
- * @property string $invoice_date
- * @method static Builder|Invoice whereInvoiceDate($value)
  */
 	class IdeHelperInvoice extends \Eloquent {}
 }
@@ -271,6 +271,71 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\InvoicePaymentSchedule
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property string|null $invoice_uuid
+ * @property string|null $batch_id
+ * @property int $amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
+ * @property-read int|null $invoice_payment_terms_count
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUuid($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoicePaymentSchedule extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoicePaymentTerm
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property string|null $invoice_uuid
+ * @property string|null $invoice_payment_schedule_uuid
+ * @property string|null $batch_id
+ * @property int $amount
+ * @property \Illuminate\Support\Carbon|null $due_at
+ * @property string|null $notified_at
+ * @property bool $notify
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Invoice|null $invoice
+ * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereDueAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereInvoicePaymentScheduleUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotify($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUuid($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoicePaymentTerm extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\InvoiceScholarship
  *
  * @mixin IdeHelperInvoiceScholarship
@@ -279,7 +344,6 @@ namespace App\Models{
  * @property string $invoice_uuid
  * @property string|null $batch_id
  * @property int|null $scholarship_id
- * @property bool $sync_with_scholarship
  * @property string $name
  * @property string|null $percentage
  * @property int|null $amount
@@ -308,7 +372,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship wherePercentage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereResolutionStrategy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereScholarshipId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereSyncWithScholarship($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUuid($value)
  */
