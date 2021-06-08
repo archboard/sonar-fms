@@ -31,55 +31,19 @@
           </InputWrap>
 
           <InputWrap :error="form.errors.available_at">
-            <Label for="due_at">{{ __('Availability') }}</Label>
-            <div class="grid grid-cols-2 gap-6">
-              <DatePicker
-                v-model="form.available_at"
-                color="pink"
-                :is-dark="isDark"
-                mode="dateTime"
-                :minute-increment="15"
-                :model-config="{ timeAdjust: '00:00:00' }"
-              />
-              <div>
-                <HelpText>
-                  {{ __("Set a date and time that this invoice is available to the student's guardians or other contacts. Before the configured time, it will only be viewable to admins. This is helpful to use if you want to prepare and preview invoices before actually making them available for the student. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-                </HelpText>
-                <FadeIn>
-                  <div class="mt-4" v-show="form.available_at">
-                    <Button size="sm" type="button" @click.prevent="form.available_at = null">
-                      {{ __('Remove') }}
-                    </Button>
-                  </div>
-                </FadeIn>
-              </div>
-            </div>
+            <Label for="available_at">{{ __('Availability') }}</Label>
+            <DatePicker v-model="form.available_at" id="available_at" />
+            <HelpText>
+              {{ __("Set a date and time that this invoice is available to the student's guardians or other contacts. Before the configured time, it will only be viewable to admins. This is helpful to use if you want to prepare and preview invoices before actually making them available for the student. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
+            </HelpText>
           </InputWrap>
 
           <InputWrap :error="form.errors.due_at">
             <Label for="due_at">{{ __('Due date') }}</Label>
-            <div class="grid grid-cols-2 gap-6">
-              <DatePicker
-                v-model="form.due_at"
-                color="pink"
-                :is-dark="isDark"
-                mode="dateTime"
-                :minute-increment="15"
-                :model-config="{ timeAdjust: '00:00:00' }"
-              />
-              <div>
-                <HelpText>
-                  {{ __("Set the date and time that this invoice is due, or don't set one to not have a due date. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-                </HelpText>
-                <FadeIn>
-                  <div class="mt-4" v-show="form.due_at">
-                    <Button size="sm" type="button" @click.prevent="form.due_at = null">
-                      {{ __('Remove') }}
-                    </Button>
-                  </div>
-                </FadeIn>
-              </div>
-            </div>
+            <DatePicker v-model="form.due_at" id="due_at" />
+            <HelpText>
+              {{ __("Set the date and time that this invoice is due, or don't set one to not have a due date. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
+            </HelpText>
           </InputWrap>
 
           <InputWrap>
@@ -404,24 +368,13 @@
                     <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                       <Fieldset>
                         <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
-                          <Label :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
+                          <Label :required="true" :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
                           <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
                         </InputWrap>
 
                         <InputWrap>
                           <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due') }}</Label>
-                          <DatePicker
-                            v-model="payment.due_at"
-                            color="pink"
-                            :is-dark="isDark"
-                            mode="dateTime"
-                            :minute-increment="15"
-                            :model-config="{ timeAdjust: '00:00:00' }"
-                          >
-                            <template v-slot="{ inputValue, inputEvents }">
-                              <Input :id="`schedule_${index}_${paymentIndex}_due_at`" :model-value="inputValue" v-on="inputEvents" />
-                            </template>
-                          </DatePicker>
+                          <DatePicker :id="`schedule_${index}_${paymentIndex}_due_at`" v-model="payment.due_at" />
                         </InputWrap>
 
                         <div class="flex justify-end">
@@ -441,7 +394,7 @@
                     <Fieldset>
                       <InputWrap>
                         <Mocker :inline="true">
-                          <Label>{{ __('Amount') }}</Label>
+                          <Label>&nbsp;</Label>
                         </Mocker>
                         <Mocker>
                           <CurrencyInput />
@@ -450,7 +403,7 @@
 
                       <InputWrap>
                         <Mocker :inline="true">
-                          <Label>{{ __('Due') }}</Label>
+                          <Label>&nbsp;</Label>
                         </Mocker>
                         <Mocker>
                           <Input />
@@ -531,10 +484,10 @@ import Input from '../../components/forms/Input'
 import Button from '../../components/Button'
 import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
 import CardSectionHeader from '../../components/CardSectionHeader'
-import { Calendar, DatePicker } from 'v-calendar'
 import dayjs from '@/plugins/dayjs'
 import FadeIn from '../../components/transitions/FadeIn'
 import Error from '../../components/forms/Error'
+import DatePicker from '../../components/forms/DatePicker'
 import Alert from '../../components/Alert'
 import displaysDate from '../../composition/displaysDate'
 import invoiceItemForm from '../../composition/invoiceItemForm'
@@ -572,7 +525,6 @@ export default {
     Label,
     PlusSmIcon,
     TrashIcon,
-    Calendar,
     DatePicker,
   },
   props: {
