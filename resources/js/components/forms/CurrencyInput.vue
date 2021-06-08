@@ -1,9 +1,12 @@
 <template>
-  <div>
+  <div class="relative">
+    <div class="absolute top-0 bottom-0 left-0 flex items-center justify-center px-4">
+      <CashIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+    </div>
     <input
       :id="id"
       type="text"
-      class="shadow-sm focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 block w-full border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
+      class="pl-10 shadow-sm focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 block w-full border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
       ref="inputRef"
     />
   </div>
@@ -13,9 +16,11 @@
 import { defineComponent, watch } from 'vue'
 import useCurrencyInput from 'vue-currency-input'
 import displaysCurrency from '../../composition/displaysCurrency'
+import { CashIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({
   components: {
+    CashIcon,
   },
   props: {
     id: String,
