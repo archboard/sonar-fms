@@ -412,7 +412,7 @@
 
                       <div class="flex justify-end">
                         <Mocker :inline="true">
-                          <Button color="red" size="sm">
+                          <Button color="red" size="xs">
                             <TrashIcon class="w-4 h-4" />
                             <span class="ml-2">{{ __('Remove term') }}</span>
                           </Button>
