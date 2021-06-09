@@ -2,11 +2,11 @@
 
 namespace Tests;
 
+use App\Factories\UuidFactory;
 use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Ramsey\Uuid\Uuid;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -35,7 +35,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function uuid(): string
     {
-        return Uuid::uuid4()->toString();
+        return UuidFactory::make();
     }
 
     public function createUser(): User

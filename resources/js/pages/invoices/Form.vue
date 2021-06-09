@@ -361,24 +361,24 @@
                   leave-to-class="opacity-0"
                 >
                   <li
-                    v-for="(payment, paymentIndex) in item.payments"
-                    :key="payment.id"
+                    v-for="(term, termIndex) in item.terms"
+                    :key="term.id"
                     class="px-2 w-full md:w-1/2 lg:w-1/3 mb-4"
                   >
                     <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                       <Fieldset>
-                        <InputWrap :error="form.errors[`payment_schedules.${index}.payments.${paymentIndex}.amount`]">
-                          <Label :required="true" :for="`schedule_${index}_${paymentIndex}_amount`">{{ __('Amount') }}</Label>
-                          <CurrencyInput v-model="payment.amount" :id="`schedule_${index}_${paymentIndex}_amount`" />
+                        <InputWrap :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.amount`]">
+                          <Label :required="true" :for="`schedule_${index}_${termIndex}_amount`">{{ __('Amount') }}</Label>
+                          <CurrencyInput v-model="term.amount" :id="`schedule_${index}_${termIndex}_amount`" />
                         </InputWrap>
 
-                        <InputWrap>
-                          <Label :for="`schedule_${index}_${paymentIndex}_due_at`">{{ __('Due date') }}</Label>
-                          <DatePicker :id="`schedule_${index}_${paymentIndex}_due_at`" v-model="payment.due_at" />
+                        <InputWrap :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.due_at`]">
+                          <Label :for="`schedule_${index}_${termIndex}_due_at`">{{ __('Due date') }}</Label>
+                          <DatePicker :id="`schedule_${index}_${termIndex}_due_at`" v-model="term.due_at" />
                         </InputWrap>
 
                         <div class="flex justify-end">
-                          <Button color="red" @click.prevent="removePaymentTerm(item, paymentIndex)" size="xs">
+                          <Button color="red" @click.prevent="removePaymentTerm(item, termIndex)" size="xs">
                             <TrashIcon class="w-4 h-4" />
                             <span class="ml-2">{{ __('Remove term') }}</span>
                           </Button>

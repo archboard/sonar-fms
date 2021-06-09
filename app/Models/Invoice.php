@@ -98,6 +98,16 @@ class Invoice extends Model
         return $this->hasMany(InvoiceScholarship::class, 'invoice_uuid', 'uuid');
     }
 
+    public function invoicePaymentSchedules(): HasMany
+    {
+        return $this->hasMany(InvoicePaymentSchedule::class, 'invoice_uuid', 'uuid');
+    }
+
+    public function invoicePaymentTerms(): HasMany
+    {
+        return $this->hasMany(InvoicePaymentTerm::class, 'invoice_uuid', 'uuid');
+    }
+
     public function getAmountDueFormattedAttribute()
     {
         if (

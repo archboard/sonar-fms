@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Invoices;
+namespace App\Factories;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Student;
@@ -19,6 +19,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected array $invoiceAttributes = [];
     protected array $invoiceItemAttributes = [];
     protected array $invoiceScholarshipAttributes = [];
+    protected array $invoicePaymentScheduleAttributes = [];
+    protected array $invoicePaymentTermAttributes = [];
 
     protected int $subtotal = 0;
 
@@ -49,6 +51,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         return $this->setSubtotal()
             ->setInvoiceItemAttributes()
             ->setScholarshipAttributes()
+            ->setPaymentScheduleAttributes()
             ->setInvoiceAttributes();
     }
 
@@ -131,10 +134,33 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 $items[] = $item;
 
                 return $items;
-            }, []
+            },
+            []
         );
 
         ray('Scholarship attributes', $this->invoiceScholarshipAttributes);
+
+        return $this;
+    }
+
+    protected function setPaymentScheduleAttributes(): static
+    {
+        $this->invoicePaymentScheduleAttributes = array_map(
+            function (array $item) {
+                $item['batch_id'] = $this->batchId;
+                $item['amount'] = array_reduce(
+                    $item['terms'],
+                    fn (int $total, array $term) => $total + (int) $term['amount'],
+                    0
+                );
+
+                // We have to sanitize keys later because
+                // we need to keep the reference for terms
+                // when building the final insert attributes
+                return $item;
+            },
+            $this->validatedData['payment_schedules']
+        );
 
         return $this;
     }
@@ -223,7 +249,29 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 }, $this->invoiceScholarshipAttributes)
             );
 
-            // TODO payment schedules
+            // Payment schedules
+            if (!empty($this->validatedData['payment_schedules'])) {
+                $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge(
+                    array_map(function (array $item) use ($invoiceUuid) {
+                        $scheduleUuid = $this->uuid();
+                        $item['uuid'] = $scheduleUuid;
+                        $item['invoice_uuid'] = $invoiceUuid;
+
+                        $this->invoicePaymentTerms = $this->invoicePaymentTerms->merge(
+                            array_map(function (array $item) use ($invoiceUuid, $scheduleUuid) {
+                                $item['uuid'] = $this->uuid();
+                                $item['batch_id'] = $this->batchId;
+                                $item['invoice_uuid'] = $invoiceUuid;
+                                $item['invoice_payment_schedule_uuid'] = $scheduleUuid;
+
+                                return $this->cleanPaymentTermAttributes($item);
+                            }, $item['terms'])
+                        );
+
+                        return $this->cleanPaymentScheduleAttributes($item);
+                    }, $this->invoicePaymentScheduleAttributes)
+                );
+            }
         });
 
         return $this->store();

@@ -8,12 +8,12 @@ export default (form, total) => {
     due_at: null,
   })
   const addPaymentTerm = schedule => {
-    schedule.payments.push(generateTerm())
+    schedule.terms.push(generateTerm())
   }
   const removePaymentTerm = (schedule, index) => {
-    schedule.payments.splice(index, 1)
+    schedule.terms.splice(index, 1)
 
-    if (schedule.payments.length < 2) {
+    if (schedule.terms.length < 2) {
       const scheduleIndex = form.payment_schedules.findIndex(s => s.id === schedule.id)
       form.payment_schedules.splice(scheduleIndex, 1)
     }
@@ -21,21 +21,21 @@ export default (form, total) => {
   const addPaymentSchedule = () => {
     const schedule = {
       id: nanoid(),
-      payments: [],
+      terms: [],
     }
-    let payments = 2 + form.payment_schedules.length
-    const amount = Math.round(total.value / payments)
+    let terms = 2 + form.payment_schedules.length
+    const amount = Math.round(total.value / terms)
 
-    for (let i = 0; i < payments; i++) {
+    for (let i = 0; i < terms; i++) {
       const term = generateTerm()
       term.amount = amount
-      schedule.payments.push(term)
+      schedule.terms.push(term)
     }
 
     form.payment_schedules.push(schedule)
   }
   const getScheduleTotal = schedule => {
-    return schedule.payments.reduce((t, p) => t + Number(p.amount), 0)
+    return schedule.terms.reduce((t, p) => t + Number(p.amount), 0)
   }
 
   return {

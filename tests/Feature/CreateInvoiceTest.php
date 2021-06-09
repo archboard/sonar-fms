@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Fee;
 use App\Models\Invoice;
+use App\Models\InvoicePaymentSchedule;
+use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\Term;
 use App\ResolutionStrategies\Greatest;
@@ -62,6 +64,7 @@ class CreateInvoiceTest extends TestCase
                 ],
             ],
             'scholarships' => [],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -125,6 +128,7 @@ class CreateInvoiceTest extends TestCase
                 ]
             ],
             'scholarships' => [],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -171,6 +175,7 @@ class CreateInvoiceTest extends TestCase
                 ],
             ],
             'scholarships' => [],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -220,6 +225,7 @@ class CreateInvoiceTest extends TestCase
                     'resolution_strategy' => Least::class,
                 ]
             ],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -292,6 +298,7 @@ class CreateInvoiceTest extends TestCase
                     'applies_to' => [$item1Id]
                 ]
             ],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -369,6 +376,7 @@ class CreateInvoiceTest extends TestCase
                     'resolution_strategy' => Least::class,
                 ],
             ],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -434,6 +442,7 @@ class CreateInvoiceTest extends TestCase
                     'resolution_strategy' => Greatest::class,
                 ],
             ],
+            'payment_schedules' => [],
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -457,5 +466,230 @@ class CreateInvoiceTest extends TestCase
 
             $this->assertDatabaseHas('invoice_scholarships', $row);
         }
+    }
+
+    public function test_can_create_invoice_with_a_payment_schedule()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+
+        Queue::fake();
+        $student = $this->school->students->random();
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 100,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [
+                [
+
+                    'id' => $this->uuid(),
+                    'terms' => [
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 110,
+                            'due_at' => now()->addMonths()->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 110,
+                            'due_at' => now()->addMonths(2)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $student->refresh();
+        $this->assertEquals(1, $student->invoices()->count());
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+        $this->assertNotNull($invoice->batch_id);
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
+        $this->assertEquals(100, $invoice->amount_due);
+        $this->assertEquals(100, $invoice->remaining_balance);
+        $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
+        $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
+        $this->assertEquals(1, $invoice->invoiceItems()->count());
+        $this->assertNotNull($invoice->invoice_date);
+
+        $this->assertEquals(1, $invoice->invoicePaymentSchedules->count());
+        $this->assertEquals(2, $invoice->invoicePaymentTerms->count());
+
+        /** @var InvoicePaymentSchedule $schedule */
+        $schedule = $invoice->invoicePaymentSchedules->first();
+        $this->assertEquals(220, $schedule->amount);
+        $this->assertEquals($invoice->batch_id, $schedule->batch_id);
+
+        $schedule->invoicePaymentTerms->each(function (InvoicePaymentTerm $term, $index) use ($invoice) {
+            $this->assertEquals(now()->addMonths($index + 1)->startOfMinute(), $term->due_at->startOfMinute());
+            $this->assertEquals(110, $term->amount);
+            $this->assertEquals($invoice->batch_id, $term->batch_id);
+        });
+
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
+    }
+
+    public function test_can_create_invoice_with_all_the_fixins()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+
+        Queue::fake();
+        $student = $this->school->students->random();
+
+        $item1 = $this->uuid();
+        $item2 = $this->uuid();
+        $item3 = $this->uuid();
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $item1,
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item2,
+                    'fee_id' => null,
+                    'name' => 'Line item 2',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item3,
+                    'fee_id' => null,
+                    'name' => 'Line item 3',
+                    'amount_per_unit' => 5000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance A',
+                    'amount' => null,
+                    'percentage' => 10,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance B',
+                    'amount' => 1000,
+                    'percentage' => null,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance C',
+                    'amount' => 100,
+                    'percentage' => 50,
+                    'resolution_strategy' => Greatest::class,
+                    'applies_to' => [$item1, $item2],
+                ],
+            ],
+            'payment_schedules' => [
+                [
+
+                    'id' => $this->uuid(),
+                    'terms' => [
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 6000,
+                            'due_at' => now()->addMonths()->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 6000,
+                            'due_at' => now()->addMonths(2)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                    ],
+                ],
+                [
+
+                    'id' => $this->uuid(),
+                    'terms' => [
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths()->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths(2)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths(3)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $student->refresh();
+        $this->assertEquals(1, $student->invoices()->count());
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+        $this->assertNotNull($invoice->batch_id);
+        $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['description'], $invoice->description);
+        $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
+        $this->assertEquals($invoiceData['notify'], $invoice->notify);
+        $this->assertEquals(11500, $invoice->amount_due);
+        $this->assertEquals(11500, $invoice->remaining_balance);
+        $this->assertEquals(3, $invoice->invoiceItems()->count());
+        $this->assertEquals(3, $invoice->invoiceScholarships()->count());
+        $this->assertEquals(2, $invoice->invoicePaymentSchedules()->count());
+        $this->assertEquals(5, $invoice->invoicePaymentTerms()->count());
+
+        foreach ($invoiceData['payment_schedules'] as $schedule) {
+            $this->assertDatabaseHas(
+                'invoice_payment_schedules',
+                [
+                    'invoice_uuid' => $invoice->uuid,
+                    'amount' => array_reduce($schedule['terms'], fn (int $total, array $item) => $total + $item['amount'], 0)
+                ]
+            );
+        }
+
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
     }
 }

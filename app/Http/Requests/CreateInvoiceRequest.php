@@ -64,6 +64,10 @@ class CreateInvoiceRequest extends FormRequest
                 Rule::in(array_keys(Scholarship::getResolutionStrategies())),
             ],
             'scholarships.*.applies_to' => 'array',
+            'payment_schedules' => 'array',
+            'payment_schedules.*.terms' => 'array',
+            'payment_schedules.*.terms.*.amount' => 'required|integer',
+            'payment_schedules.*.terms.*.due_at' => 'nullable|date',
         ];
     }
 

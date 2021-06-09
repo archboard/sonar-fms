@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
-use App\Invoices\InvoiceFromRequestFactory;
+use App\Factories\InvoiceFromRequestFactory;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;

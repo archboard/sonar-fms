@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTenant;
+use App\Traits\BelongsToInvoice;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class InvoicePaymentSchedule extends Model
 {
-    use BelongsToTenant;
+    use BelongsToInvoice;
 
     protected $fillable = [
         'uuid',

@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Invoices;
+namespace App\Factories;
 
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\InvoicePaymentSchedule;
+use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\School;
 use Carbon\Carbon;
@@ -23,10 +25,14 @@ abstract class InvoiceFactory
     protected Collection $invoiceItems;
     protected Collection $invoiceScholarships;
     protected Collection $itemScholarshipPivot;
+    protected Collection $invoicePaymentSchedules;
+    protected Collection $invoicePaymentTerms;
 
     protected array $fillableInvoiceAttributes;
     protected array $fillableInvoiceItemAttributes;
     protected array $fillableScholarshipAttributes;
+    protected array $fillablePaymentScheduleAttributes;
+    protected array $fillablePaymentTermAttributes;
 
     public function __construct()
     {
@@ -34,15 +40,19 @@ abstract class InvoiceFactory
         $this->invoiceItems = collect();
         $this->invoiceScholarships = collect();
         $this->itemScholarshipPivot = collect();
+        $this->invoicePaymentSchedules = collect();
+        $this->invoicePaymentTerms = collect();
 
         $this->fillableInvoiceAttributes = (new Invoice)->getFillable();
         $this->fillableInvoiceItemAttributes = (new InvoiceItem)->getFillable();
         $this->fillableScholarshipAttributes = (new InvoiceScholarship)->getFillable();
+        $this->fillablePaymentScheduleAttributes = (new InvoicePaymentSchedule)->getFillable();
+        $this->fillablePaymentTermAttributes = (new InvoicePaymentTerm)->getFillable();
     }
 
     protected function uuid(): string
     {
-        return Uuid::uuid4()->toString();
+        return UuidFactory::make();
     }
 
     protected function cleanInvoiceAttributes(array $attributes): array
@@ -60,6 +70,16 @@ abstract class InvoiceFactory
         return Arr::only($attributes, $this->fillableScholarshipAttributes);
     }
 
+    protected function cleanPaymentScheduleAttributes(array $attributes): array
+    {
+        return Arr::only($attributes, $this->fillablePaymentScheduleAttributes);
+    }
+
+    protected function cleanPaymentTermAttributes(array $attributes): array
+    {
+        return Arr::only($attributes, $this->fillablePaymentTermAttributes);
+    }
+
     protected function store(): Collection
     {
         ray(
@@ -67,7 +87,9 @@ abstract class InvoiceFactory
             $this->invoices->toArray(),
             $this->invoiceItems->toArray(),
             $this->invoiceScholarships->toArray(),
-            $this->itemScholarshipPivot->toArray()
+            $this->itemScholarshipPivot->toArray(),
+            $this->invoicePaymentSchedules->toArray(),
+            $this->invoicePaymentTerms->toArray()
         )->green();
 
         DB::transaction(function () {
@@ -77,11 +99,23 @@ abstract class InvoiceFactory
             DB::table('invoice_items')
                 ->insert($this->invoiceItems->toArray());
 
-            DB::table('invoice_scholarships')
-                ->insert($this->invoiceScholarships->toArray());
+            if ($this->invoiceScholarships->isNotEmpty()) {
+                DB::table('invoice_scholarships')
+                    ->insert($this->invoiceScholarships->toArray());
+            }
 
-            DB::table('invoice_item_invoice_scholarship')
-                ->insert($this->itemScholarshipPivot->toArray());
+            if ($this->itemScholarshipPivot->isNotEmpty()) {
+                DB::table('invoice_item_invoice_scholarship')
+                    ->insert($this->itemScholarshipPivot->toArray());
+            }
+
+            if ($this->invoicePaymentSchedules->isNotEmpty()) {
+                DB::table('invoice_payment_schedules')
+                    ->insert($this->invoicePaymentSchedules->toArray());
+
+                DB::table('invoice_payment_terms')
+                    ->insert($this->invoicePaymentTerms->toArray());
+            }
         });
 
         return $this->invoices->map(function (array $invoice) {

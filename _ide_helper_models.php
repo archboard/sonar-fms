@@ -192,6 +192,10 @@ namespace App\Models{
  * @property-read mixed $status_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentSchedule[] $invoicePaymentSchedules
+ * @property-read int|null $invoice_payment_schedules_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
+ * @property-read int|null $invoice_payment_terms_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
  * @property-read int|null $invoice_scholarships_count
  * @property-read \App\Models\School $school
@@ -273,6 +277,7 @@ namespace App\Models{
 /**
  * App\Models\InvoicePaymentSchedule
  *
+ * @mixin IdeHelperInvoicePaymentSchedule
  * @property int $id
  * @property string $uuid
  * @property string|null $invoice_uuid
@@ -293,7 +298,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUuid($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoicePaymentSchedule extends \Eloquent {}
 }
@@ -302,6 +306,7 @@ namespace App\Models{
 /**
  * App\Models\InvoicePaymentTerm
  *
+ * @mixin IdeHelperInvoicePaymentTerm
  * @property int $id
  * @property string $uuid
  * @property string|null $invoice_uuid
@@ -329,7 +334,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotify($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUuid($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoicePaymentTerm extends \Eloquent {}
 }
