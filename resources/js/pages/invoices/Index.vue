@@ -1,5 +1,11 @@
 <template>
   <Authenticated>
+    <template v-slot:actions>
+      <Button component="inertia-link" :href="$route('invoices.index')" size="sm">
+        {{ __('Create invoice') }}
+      </Button>
+    </template>
+
     <div class="mb-6 flex space-x-4">
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -70,8 +76,11 @@
           v-for="invoice in invoices.data"
           :key="invoice.id"
         >
-          <Td>
-            {{ invoice.id }}
+          <Td class="pr-0">
+            <div class="flex items-center">
+              <span class="mr-2">{{ invoice.id }}</span>
+              <InvoiceStatusBadge :invoice="invoice" size="sm" />
+            </div>
           </Td>
           <Td :lighter="false">
             {{ invoice.title }}
@@ -111,9 +120,11 @@ import HelpText from '../../components/HelpText'
 import Button from '../../components/Button'
 import FeeFormModal from '../../components/modals/FeeFormModal'
 import displaysCurrency from '../../composition/displaysCurrency'
+import InvoiceStatusBadge from '../../components/InvoiceStatusBadge'
 
 export default defineComponent({
   components: {
+    InvoiceStatusBadge,
     FeeFormModal,
     Button,
     HelpText,
