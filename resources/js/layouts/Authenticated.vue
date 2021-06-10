@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex overflow-hidden bg-gray-50 dark:bg-gray-900" data-cy="page">
+  <div class="min-h-screen flex bg-gray-50 dark:bg-gray-900" data-cy="page">
     <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
     <div v-if="showMenuWrapper" class="md:hidden">
       <div class="fixed inset-0 flex z-40">
@@ -17,6 +17,7 @@
             <div class="absolute inset-0 bg-gray-600 opacity-75"></div>
           </div>
         </transition>
+
         <!-- Off-canvas menu, show/hide based on off-canvas menu state. -->
         <transition
           enter-active-class="transition ease-in-out duration-300 transform"
@@ -30,10 +31,7 @@
             <div class="absolute top-0 right-0 -mr-12 pt-2">
               <button @click.prevent="showMenu = false" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span class="sr-only">Close sidebar</span>
-                <!-- Heroicon name: outline/x -->
-                <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XIcon class="h-6 w-6 text-white" />
               </button>
             </div>
             <div class="flex-shrink-0 flex items-center px-4">
@@ -42,7 +40,6 @@
             <div class="mt-5 flex-1 h-0 overflow-y-auto">
               <nav class="px-2 space-y-6">
                 <div class="space-y-1">
-                  <!-- Current: "bg-primary-900 dark:bg-primary-600 text-white", Default: "text-primary-100 hover:bg-primary-800 dark:hover:bg-primary-600" -->
                   <inertia-link
                     v-for="link in props.mainNav"
                     :href="link.route"
@@ -108,8 +105,8 @@
     </div>
 
     <!-- Static sidebar for desktop -->
-    <div class="hidden bg-gradient-to-t from-primary-500 to-primary-700 dark:from-primary-700 dark:to-primary-900 md:flex md:flex-shrink-0">
-      <div class="flex flex-col w-64">
+    <div class="hidden bg-gradient-to-t from-primary-500 to-primary-700 dark:from-primary-700 dark:to-primary-900 md:flex md:flex-shrink-0 w-64">
+      <div class="flex flex-col w-64 h-screen fixed z-10 top-0 bottom-0">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
         <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div class="flex items-center flex-shrink-0 px-4">
@@ -175,14 +172,14 @@
       </div>
     </div>
 
-    <div class="flex flex-col w-0 flex-1 min-h-screen">
+    <div class="flex flex-col justify-between w-0 flex-1 min-h-screen">
       <div
         class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800"
         :class="{
           'shadow': props.breadcrumbs.length === 0
         }"
       >
-        <button @click.prevent="showMenuWrapper = true" class="px-4 border-r border-gray-200 dark:border-gray-600 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden">
+        <button @click.prevent="showMenuWrapper = true" class="px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden">
           <span class="sr-only">Open sidebar</span>
           <!-- Heroicon name: outline/menu-alt-2 -->
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -236,7 +233,6 @@
 <!--            </div>-->
           </div>
         </div>
-
       </div>
 
       <nav v-if="props.breadcrumbs.length > 0" class="flex bg-white dark:bg-gray-800 py-3 px-4 shadow" aria-label="Breadcrumb">
@@ -244,10 +240,7 @@
           <li>
             <div>
               <inertia-link :href="$route('home')" class="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200 transition">
-                <!-- Heroicon name: solid/home -->
-                <svg class="flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                </svg>
+                <HomeIcon class="flex-shrink-0 h-5 w-5" />
                 <span class="sr-only">Home</span>
               </inertia-link>
             </div>
@@ -269,7 +262,7 @@
         </ol>
       </nav>
 
-      <main class="relative flex-1 overflow-y-auto focus:outline-none" tabindex="0">
+      <main class="relative flex-1 focus:outline-none" tabindex="0">
         <slot name="content">
           <div class="py-6 space-y-6">
             <div v-if="props.title" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -290,16 +283,16 @@
             </div>
           </div>
         </slot>
-
-        <footer>
-          <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl mt-8">
-            <div class="border-t border-gray-200 dark:border-gray-500 py-8 text-sm text-gray-500 text-center sm:text-left">
-              <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} <a href="https://archboard.io" target="_blank" class="hover:underline">Archboard, LLC</a>.</span>
-              <span class="block sm:inline"> All rights reserved.</span>
-            </div>
-          </div>
-        </footer>
       </main>
+
+      <footer>
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl mt-8">
+          <div class="border-t border-gray-200 dark:border-gray-500 py-8 text-sm text-gray-500 text-center sm:text-left">
+            <span class="block sm:inline">&copy; {{ (new Date).getFullYear() }} <a href="https://archboard.io" target="_blank" class="hover:underline">Archboard, LLC</a>.</span>
+            <span class="block sm:inline"> All rights reserved.</span>
+          </div>
+        </div>
+      </footer>
 
     </div>
 
@@ -315,13 +308,17 @@ import TopSearch from '../components/TopSearch'
 import SchoolSwitcher from '../components/SchoolSwitcher'
 import LocaleSelector from '../components/LocaleSelector'
 import darkStore from '@/stores/theme'
+import { HomeIcon } from '@heroicons/vue/solid'
+import { XIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({
   components: {
     SchoolSwitcher,
     LocaleSelector,
     TopSearch,
-    Notifications
+    Notifications,
+    HomeIcon,
+    XIcon,
   },
 
   setup () {
