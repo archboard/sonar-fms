@@ -31,6 +31,9 @@ abstract class TestCase extends BaseTestCase
         \Bouncer::scope()->to($this->school->id);
 
         \Bouncer::refresh();
+
+        $this->app->bind(School::class, fn () => $this->school);
+        $this->app->bind(Tenant::class, fn () => $this->tenant);
     }
 
     protected function uuid(): string
