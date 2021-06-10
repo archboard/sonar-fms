@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Fee;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
@@ -689,6 +690,29 @@ class CreateInvoiceTest extends TestCase
                 ]
             );
         }
+
+        $this->assertNotNull($invoice->created_at);
+        $this->assertNotNull($invoice->updated_at);
+
+        $invoice->invoiceItems->each(function (InvoiceItem $item) {
+            $this->assertNotNull($item->created_at);
+            $this->assertNotNull($item->updated_at);
+        });
+
+        $invoice->invoiceScholarships->each(function (InvoiceScholarship $scholarship) {
+            $this->assertNotNull($scholarship->created_at);
+            $this->assertNotNull($scholarship->updated_at);
+        });
+
+        $invoice->invoicePaymentSchedules->each(function (InvoicePaymentSchedule $schedule) {
+            $this->assertNotNull($schedule->created_at);
+            $this->assertNotNull($schedule->updated_at);
+
+            $schedule->invoicePaymentTerms->each(function (InvoicePaymentTerm $term) {
+                $this->assertNotNull($term->created_at);
+                $this->assertNotNull($term->updated_at);
+            });
+        });
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
     }

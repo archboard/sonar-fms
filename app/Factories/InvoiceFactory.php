@@ -34,6 +34,8 @@ abstract class InvoiceFactory
     protected array $fillablePaymentScheduleAttributes;
     protected array $fillablePaymentTermAttributes;
 
+    protected string $now;
+
     public function __construct()
     {
         $this->invoices = collect();
@@ -48,6 +50,8 @@ abstract class InvoiceFactory
         $this->fillableScholarshipAttributes = (new InvoiceScholarship)->getFillable();
         $this->fillablePaymentScheduleAttributes = (new InvoicePaymentSchedule)->getFillable();
         $this->fillablePaymentTermAttributes = (new InvoicePaymentTerm)->getFillable();
+
+        $this->now = now()->toDateTimeString();
     }
 
     protected function uuid(): string
@@ -55,29 +59,36 @@ abstract class InvoiceFactory
         return UuidFactory::make();
     }
 
+    protected function cleanAttributes(array $attributes, array $fillable, array $additional = ['created_at', 'updated_at']): array
+    {
+        $allowed = array_merge($fillable, $additional);
+
+        return Arr::only($attributes, $allowed);
+    }
+
     protected function cleanInvoiceAttributes(array $attributes): array
     {
-        return Arr::only($attributes, $this->fillableInvoiceAttributes);
+        return $this->cleanAttributes($attributes, $this->fillableInvoiceAttributes);
     }
 
     protected function cleanInvoiceItemAttributes(array $attributes): array
     {
-        return Arr::only($attributes, $this->fillableInvoiceItemAttributes);
+        return $this->cleanAttributes($attributes, $this->fillableInvoiceItemAttributes);
     }
 
     protected function cleanInvoiceScholarshipAttributes(array $attributes): array
     {
-        return Arr::only($attributes, $this->fillableScholarshipAttributes);
+        return $this->cleanAttributes($attributes, $this->fillableScholarshipAttributes);
     }
 
     protected function cleanPaymentScheduleAttributes(array $attributes): array
     {
-        return Arr::only($attributes, $this->fillablePaymentScheduleAttributes);
+        return $this->cleanAttributes($attributes, $this->fillablePaymentScheduleAttributes);
     }
 
     protected function cleanPaymentTermAttributes(array $attributes): array
     {
-        return Arr::only($attributes, $this->fillablePaymentTermAttributes);
+        return $this->cleanAttributes($attributes, $this->fillablePaymentTermAttributes);
     }
 
     protected function store(): Collection

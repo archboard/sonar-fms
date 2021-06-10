@@ -82,6 +82,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->invoiceAttributes['batch_id'] = $this->batchId;
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
+        $this->invoiceAttributes['created_at'] = $this->now;
+        $this->invoiceAttributes['updated_at'] = $this->now;
 
         $total = $this->calculateInvoiceTotal();
 
@@ -107,6 +109,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 // Cache the total line item
                 $item['amount'] = (int) $item['amount_per_unit'] * (int) $item['quantity'];
                 $item['batch_id'] = $this->batchId;
+                $item['created_at'] = $this->now;
+                $item['updated_at'] = $this->now;
 
                 $items[$item['id']] = $this->cleanInvoiceItemAttributes($item);
 
@@ -128,6 +132,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 // Need to know which line items this applies to
                 $item['calculated_amount'] = $this->calculateScholarshipAmount($item);
                 $item['batch_id'] = $this->batchId;
+                $item['created_at'] = $this->now;
+                $item['updated_at'] = $this->now;
 
                 // This can't be cleaned here because we need
                 // to have access to `applies_to` later
@@ -148,6 +154,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->invoicePaymentScheduleAttributes = array_map(
             function (array $item) {
                 $item['batch_id'] = $this->batchId;
+                $item['created_at'] = $this->now;
+                $item['updated_at'] = $this->now;
                 $item['amount'] = array_reduce(
                     $item['terms'],
                     fn (int $total, array $term) => $total + (int) $term['amount'],
@@ -263,6 +271,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                                 $item['batch_id'] = $this->batchId;
                                 $item['invoice_uuid'] = $invoiceUuid;
                                 $item['invoice_payment_schedule_uuid'] = $scheduleUuid;
+                                $item['created_at'] = $this->now;
+                                $item['updated_at'] = $this->now;
 
                                 return $this->cleanPaymentTermAttributes($item);
                             }, $item['terms'])
