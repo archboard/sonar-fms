@@ -79,6 +79,11 @@ class School extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function invoiceTemplates(): HasMany
+    {
+        return $this->hasMany(InvoiceTemplate::class);
+    }
+
     public function getGradeLevelsAttribute()
     {
         return range($this->low_grade, $this->high_grade);

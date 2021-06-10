@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\InvoiceTemplateResource;
+use App\Models\InvoiceTemplate;
+use App\Models\School;
+use Illuminate\Http\Request;
+
+class InvoiceTemplateController extends Controller
+{
+    public function __construct()
+    {
+        $this->authorizeResource(InvoiceTemplate::class, 'template');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function index(School $school)
+    {
+        $templates = $school->invoiceTemplates()
+            ->orderBy('name')
+            ->get();
+
+        return InvoiceTemplateResource::collection($templates);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'template' => 'required|array',
+        ]);
+
+        $data['user_id'] = $request->user()->id;
+
+        /** @var InvoiceTemplate $template */
+        $template = $request->school()
+            ->invoiceTemplates()
+            ->create($data);
+
+        return response()->json([
+            'level' => 'success',
+            'message' => __('Template created successfully.'),
+            'data' => $template
+                ->load('user')
+                ->toResource(),
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param InvoiceTemplate $template
+     * @return \Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function show(InvoiceTemplate $template)
+    {
+        return $template->load('user')
+            ->toResource();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, InvoiceTemplate $template)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'template' => 'required|array',
+        ]);
+
+        $template->update($data);
+
+        return response()->json([
+            'level' => 'success',
+            'message' => __('Template updated successfully.'),
+            'data' => $template
+                ->load('user')
+                ->toResource(),
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(InvoiceTemplate $template)
+    {
+        $template->delete();
+
+        return response()->json([
+            'level' => 'success',
+            'message' => __('Template deleted successfully.'),
+        ]);
+    }
+}

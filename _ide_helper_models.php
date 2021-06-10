@@ -285,9 +285,9 @@ namespace App\Models{
  * @property int $amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Invoice|null $invoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
  * @property-read int|null $invoice_payment_terms_count
- * @property-read \App\Models\Tenant $tenant
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule query()
@@ -384,6 +384,35 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\InvoiceTemplate
+ *
+ * @mixin IdeHelperInvoiceTemplate
+ * @property int $id
+ * @property int $school_id
+ * @property int|null $user_id
+ * @property string $name
+ * @property array $template
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\InvoiceTemplateFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereTemplate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereUserId($value)
+ */
+	class IdeHelperInvoiceTemplate extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Scholarship
  *
  * @mixin IdeHelperScholarship
@@ -442,6 +471,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read mixed $grade_levels
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTemplate[] $invoiceTemplates
+ * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships
