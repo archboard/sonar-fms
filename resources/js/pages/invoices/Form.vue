@@ -1,7 +1,10 @@
 <template>
-  <form class="xl:col-span-3" @submit.prevent="saveInvoice">
+  <form class="xl:col-span-3" @submit.prevent="reviewing = true">
     <Alert v-if="invoice.past_due" level="warning" class="mb-8">
       {{ __('This invoice is past due.') }}
+    </Alert>
+    <Alert v-if="form.hasErrors" level="error" class="mb-8">
+      {{ __('Please correct the errors below and try again.') }}
     </Alert>
 
     <FormMultipartWrapper class="divide-y-0">
@@ -457,9 +460,25 @@
     </FormMultipartWrapper>
   </form>
 
+<!--  <div class="pt-8">-->
+<!--    <InvoiceSummary :invoice="form" />-->
+<!--  </div>-->
+
   <div class="pt-8">
-    <InvoiceSummary :invoice="form" />
+    <Button type="button" size="lg" @click.prevent="reviewing = true">
+      {{ __('Review invoice') }}
+    </Button>
   </div>
+
+  <Modal
+    v-if="reviewing"
+    @close="reviewing = false"
+    @action="saveInvoice"
+    :action-loading="form.processing"
+    size="xl"
+  >
+    <InvoiceSummary :invoice="form" />
+  </Modal>
 </template>
 
 <script>
@@ -498,9 +517,11 @@ import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
 import InvoiceSummary from '../../components/InvoiceSummary'
 import Mocker from '../../components/Mocker'
+import Modal from '../../components/Modal'
 
 export default {
   components: {
+    Modal,
     Mocker,
     InvoiceSummary,
     CardPadding,
@@ -542,6 +563,7 @@ export default {
   setup (props) {
     const $route = inject('$route')
     const { terms } = fetchesTerms()
+    const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
     const isNew = computed(() => !props.invoice.id)
     const page = usePage()
@@ -586,9 +608,10 @@ export default {
         : 'post'
 
       form[method](route, {
-        preserveScroll: true,
         onSuccess () {
-          close()
+          if (typeof close === 'function') {
+            close()
+          }
         },
         onFinish () {
           form.processing = false
@@ -622,6 +645,7 @@ export default {
     } = invoicePaymentScheduleForm(form, total)
 
     return {
+      reviewing,
       isNew,
       school,
       terms,
