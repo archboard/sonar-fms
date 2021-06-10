@@ -14,8 +14,7 @@ class CreateInvoiceItemsTable extends Migration
     public function up()
     {
         Schema::create('invoice_items', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique()->index();
+            $table->uuid('uuid')->unique()->index()->primary();
             $table->uuid('invoice_uuid')->index();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
             $table->uuid('batch_id')->index()->nullable();

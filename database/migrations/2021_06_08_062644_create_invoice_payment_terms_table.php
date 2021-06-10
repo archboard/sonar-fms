@@ -14,8 +14,7 @@ class CreateInvoicePaymentTermsTable extends Migration
     public function up()
     {
         Schema::create('invoice_payment_terms', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique()->index();
+            $table->uuid('uuid')->unique()->index()->primary();
             $table->uuid('invoice_uuid')->index()->nullable();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
             $table->uuid('invoice_payment_schedule_uuid')->index()->nullable();

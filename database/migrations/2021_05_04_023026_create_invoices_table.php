@@ -14,6 +14,7 @@ class CreateInvoicesTable extends Migration
     public function up()
     {
         Schema::create('invoices', function (Blueprint $table) {
+            // This is just used as the invoice number
             $table->id();
             $table->uuid('uuid')->unique()->index();
             // Used for batch creations, e.g. creating an invoice from the student selection
