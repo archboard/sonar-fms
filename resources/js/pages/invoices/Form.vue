@@ -445,7 +445,7 @@
     </FormMultipartWrapper>
   </form>
 
-  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded">
+  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
     <Button type="button" size="lg" @click.prevent="reviewing = true">
       {{ __('Review and save') }}
     </Button>
@@ -464,7 +464,7 @@
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, watch, watchEffect } from 'vue'
 import { useForm, usePage } from '@inertiajs/inertia-vue3'
 import { PlusSmIcon } from '@heroicons/vue/solid'
 import { TrashIcon } from '@heroicons/vue/outline'
@@ -538,11 +538,19 @@ export default {
     invoice: {
       type: Object,
       default: () => ({})
-    }
+    },
+    invoiceTemplate: {
+      type: Object,
+      default: () => ({})
+    },
+    invoiceForm: {
+      type: Object,
+      default: () => ({})
+    },
   },
-  emits: ['close'],
+  emits: ['update:invoiceForm'],
 
-  setup (props) {
+  setup (props, { emit }) {
     const $route = inject('$route')
     const { terms } = fetchesTerms()
     const reviewing = ref(false)
@@ -565,10 +573,12 @@ export default {
       scholarships: props.invoice.scholarships || [],
       payment_schedules: props.invoice.payment_schedules || [],
     })
+    // Emit the initial value
+    emit('update:invoiceForm', form)
 
     const school = computed(() => page.props.value.school)
 
-    const { timezone, displayDate } = displaysDate()
+    const { timezone, displayDate, getDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
     const total = computed(() => {
       let total = subtotal.value - scholarshipSubtotal.value
@@ -600,6 +610,21 @@ export default {
         }
       })
     }
+
+    // Watch for changes to apply a template
+    watch(() => props.invoiceTemplate, () => {
+      console.log('watch', props.invoiceTemplate)
+      Object.keys(form.data())
+        .forEach(field => {
+          if (typeof props.invoiceTemplate[field] !== 'undefined') {
+            form[field] = props.invoiceTemplate[field]
+          }
+        })
+    })
+
+    watch(form, () => {
+      emit('update:invoiceForm', form)
+    })
 
     // Invoice line items
     const {

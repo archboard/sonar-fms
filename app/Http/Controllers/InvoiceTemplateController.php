@@ -22,6 +22,7 @@ class InvoiceTemplateController extends Controller
     public function index(School $school)
     {
         $templates = $school->invoiceTemplates()
+            ->with('user')
             ->orderBy('name')
             ->get();
 

@@ -6,12 +6,12 @@ export default () => {
   const page = usePage()
   const timezone = computed(() => page.props.value.user?.timezone || 'UTC')
 
-  const displayDate = (date, format) => {
-    return dayjs(date).tz(timezone.value).format(format)
-  }
+  const getDate = (date) => dayjs(date).tz(timezone.value)
+  const displayDate = (date, format) => getDate(date).format(format)
 
   return {
     timezone,
     displayDate,
+    getDate,
   }
 }

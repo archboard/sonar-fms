@@ -5,8 +5,9 @@
     :is-dark="darkStore.state.isDark"
     mode="dateTime"
     :minute-increment="15"
-    :model-config="{ timeAdjust: '00:00:00' }"
+    :model-config="modelConfig"
     :attributes="attributes"
+    :timezone="timezone"
   >
     <template v-slot="{ inputValue, inputEvents }">
       <div class="relative w-full">
@@ -33,6 +34,7 @@ import darkStore from '@/stores/theme'
 import Input from './Input'
 import FadeIn from '../transitions/FadeIn'
 import { CalendarIcon, TrashIcon } from '@heroicons/vue/outline'
+import displaysDate from '@/composition/displaysDate'
 
 export default defineComponent({
   components: {
@@ -53,16 +55,22 @@ export default defineComponent({
   emits: ['update:modelValue'],
 
   setup (props, { emit }) {
+    const { timezone, getDate } = displaysDate()
     const localValue = computed({
-      get: () => props.modelValue,
+      get: () => getDate(props.modelValue).toDate(),
       set: value => emit('update:modelValue', value)
     })
     const attributes = []
+    const modelConfig = {
+      timeAdjust: '00:00:00'
+    }
 
     return {
       localValue,
       darkStore,
       attributes,
+      timezone,
+      modelConfig,
     }
   }
 })
