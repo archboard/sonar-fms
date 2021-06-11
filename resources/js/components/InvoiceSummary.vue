@@ -131,6 +131,44 @@
       </dd>
     </div>
     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+        {{ __('Payment schedules') }}
+      </dt>
+      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+        <div class="space-y-2 divide-y divide-gray-200 dark:divide-gray-500">
+          <div
+            v-for="(item, index) in invoice.payment_schedules"
+            :key="item.id"
+            class="space-y-1"
+            :class="{
+              'pt-2': index > 0
+            }"
+          >
+            <div class="flex justify-between">
+              <div class="font-bold">
+                {{ __(':count payments', { count: item.terms.length }) }}
+              </div>
+              <div class="font-bold">
+                {{ displayCurrency(getScheduleTotal(item)) }}
+              </div>
+            </div>
+
+            <div
+              v-for="term in item.terms"
+              class="flex justify-between"
+            >
+              <div>
+                {{ term.due_at ? displayDate(term.due_at, 'MMMM D, YYYY H:mm') : __('No due date') }}
+              </div>
+              <div>
+                {{ displayCurrency(term.amount) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </dd>
+    </div>
+    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
       <dt class="text-sm font-medium">
         <strong>{{ __('Invoice total') }}</strong>
       </dt>
@@ -202,7 +240,7 @@ export default {
     } = invoiceScholarshipForm(props.invoice)
 
     // Payment schedules
-    const { } = invoicePaymentScheduleForm(props.invoice, total)
+    const { getScheduleTotal } = invoicePaymentScheduleForm(props.invoice, total)
 
     return {
       school,
@@ -214,6 +252,7 @@ export default {
       total,
       totalDue,
       getItemDiscount,
+      getScheduleTotal,
     }
   },
 }

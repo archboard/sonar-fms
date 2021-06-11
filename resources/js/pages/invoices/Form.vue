@@ -7,7 +7,7 @@
       {{ __('Please correct the errors below and try again.') }}
     </Alert>
 
-    <FormMultipartWrapper class="divide-y-0">
+    <FormMultipartWrapper>
       <!-- Invoice details -->
       <div>
         <div class="mb-6">
@@ -91,7 +91,7 @@
           {{ __('You must have at least one invoice item.') }}
         </Error>
 
-        <ul class="space-y-3 py-3">
+        <ul class="space-y-3">
           <TransitionGroup
             enter-active-class="transition duration-150 ease-in-out"
             enter-from-class="opacity-0"
@@ -162,7 +162,7 @@
         </ul>
 
         <FadeIn>
-          <CardWrapper v-if="form.items.length > 0" class="mb-4">
+          <CardWrapper v-if="form.items.length > 0" class="my-4">
             <CardPadding>
               <div class="flex justify-between">
                 <h4 class="font-bold">
@@ -176,16 +176,11 @@
           </CardWrapper>
         </FadeIn>
 
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add invoice line item') }}</span>
-            </button>
-          </div>
+        <div class="relative flex justify-center mt-6">
+          <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+            <span>{{ __('Add invoice line item') }}</span>
+          </button>
         </div>
       </div>
 
@@ -200,7 +195,7 @@
           </HelpText>
         </div>
 
-        <ul class="space-y-3 py-3">
+        <ul class="space-y-3">
           <TransitionGroup
             enter-active-class="transition duration-150 ease-in-out"
             enter-from-class="opacity-0"
@@ -316,16 +311,11 @@
           </TransitionGroup>
         </ul>
 
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add scholarship') }}</span>
-            </button>
-          </div>
+        <div class="relative flex justify-center mt-6">
+          <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+            <span>{{ __('Add scholarship') }}</span>
+          </button>
         </div>
       </div>
 
@@ -340,7 +330,7 @@
           </HelpText>
         </div>
 
-        <ul class="space-y-3 py-3">
+        <ul class="space-y-3">
           <TransitionGroup
             enter-active-class="transition duration-150 ease-in-out"
             enter-from-class="opacity-0"
@@ -366,7 +356,7 @@
                   <li
                     v-for="(term, termIndex) in item.terms"
                     :key="term.id"
-                    class="px-2 w-full md:w-1/2 lg:w-1/3 mb-4"
+                    class="px-2 w-full sm:w-1/2 md:w-full lg:w-1/2 xl:w-1/3 mb-4"
                   >
                     <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                       <Fieldset>
@@ -445,28 +435,19 @@
           </TransitionGroup>
         </ul>
 
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-300 dark:border-gray-400" />
-          </div>
-          <div class="relative flex justify-center">
-            <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-              <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-              <span>{{ __('Add payment schedule') }}</span>
-            </button>
-          </div>
+        <div class="relative flex justify-center mt-6">
+          <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
+            <span>{{ __('Add payment schedule') }}</span>
+          </button>
         </div>
       </div>
     </FormMultipartWrapper>
   </form>
 
-<!--  <div class="pt-8">-->
-<!--    <InvoiceSummary :invoice="form" />-->
-<!--  </div>-->
-
-  <div class="pt-8">
+  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded">
     <Button type="button" size="lg" @click.prevent="reviewing = true">
-      {{ __('Review invoice') }}
+      {{ __('Review and save') }}
     </Button>
   </div>
 
@@ -476,6 +457,7 @@
     @action="saveInvoice"
     :action-loading="form.processing"
     size="xl"
+    :auto-close="false"
   >
     <InvoiceSummary :invoice="form" />
   </Modal>
