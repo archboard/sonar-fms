@@ -105,8 +105,8 @@
     </div>
 
     <!-- Static sidebar for desktop -->
-    <div class="hidden bg-gradient-to-t from-primary-500 to-primary-700 dark:from-primary-700 dark:to-primary-900 md:flex md:flex-shrink-0 w-64">
-      <div class="flex flex-col w-64 h-screen fixed z-10 top-0 bottom-0">
+    <div class="hidden md:flex md:flex-shrink-0 w-64">
+      <div class="flex flex-col bg-gradient-to-t from-primary-500 to-primary-700 dark:from-primary-700 dark:to-primary-900 w-64 h-screen fixed z-10 top-0 bottom-0">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
         <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div class="flex items-center flex-shrink-0 px-4">
