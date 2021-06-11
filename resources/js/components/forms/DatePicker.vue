@@ -8,10 +8,11 @@
     :model-config="modelConfig"
     :attributes="attributes"
     :timezone="timezone"
+    :input-debounce="250"
   >
-    <template v-slot="{ inputValue, inputEvents }">
+    <template v-slot="{ inputValue, inputEvents, togglePopover }">
       <div class="relative w-full">
-        <div class="absolute top-0 bottom-0 left-0 flex items-center justify-center px-4">
+        <div class="absolute top-0 bottom-0 left-0 flex items-center justify-center px-4 cursor-pointer" @click="togglePopover()">
           <CalendarIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
         </div>
         <Input :id="id" :model-value="inputValue" v-on="inputEvents" class="px-10" />
