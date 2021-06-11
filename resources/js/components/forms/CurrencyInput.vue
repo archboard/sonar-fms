@@ -8,6 +8,7 @@
       type="text"
       class="pl-10 shadow-sm focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 block w-full border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
       ref="inputRef"
+      :placeholder="displayCurrency(0)"
     />
   </div>
 </template>
@@ -45,6 +46,7 @@ export default defineComponent({
       autoSign: true,
       useGrouping: true,
     }
+    const { displayCurrency } = displaysCurrency()
     const {
       inputRef,
       setValue
@@ -56,6 +58,7 @@ export default defineComponent({
 
     return {
       inputRef,
+      displayCurrency,
     }
   }
 })
