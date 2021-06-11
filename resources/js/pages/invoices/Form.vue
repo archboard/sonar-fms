@@ -592,13 +592,18 @@ export default {
     const totalDue = computed(() => displayCurrency(total.value))
 
     const saveInvoice = close => {
-      const route = props.invoice.id
-        ? $route('students.invoices.update', [props.student, props.invoice])
-        : $route('students.invoices.store', [props.student])
+      let route = $route('selection.invoices.create')
+
+      if (props.student.id) {
+        route = props.invoice.id
+          ? $route('students.invoices.update', [props.student, props.invoice])
+          : $route('students.invoices.store', [props.student])
+      }
       const method = props.invoice.id
         ? 'put'
         : 'post'
 
+      console.log(method, route)
       form[method](route, {
         onSuccess () {
           if (typeof close === 'function') {

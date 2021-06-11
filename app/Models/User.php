@@ -101,7 +101,7 @@ class User extends Authenticatable
     public function getStudentSelectionAttribute()
     {
         if ($this->relationLoaded('studentSelections')) {
-            return $this->studentSelections->map->student_id;
+            return $this->studentSelections->pluck('student_id');
         }
 
         return collect();

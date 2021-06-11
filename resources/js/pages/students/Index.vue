@@ -16,7 +16,11 @@
     </div>
 
     <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4">
-      {{ __(':count students selected', { count: user.student_selection.length }) }} <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="clearSelection">Remove selection</a>
+      {{ __(':count students selected', { count: user.student_selection.length }) }}
+      <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="clearSelection">{{ __('Remove selection') }}</a>
+      <inertia-link class="ml-3 font-medium hover:underline" :href="$route('selection.invoices.create')">
+        {{ __('Create invoice') }}
+      </inertia-link>
     </div>
 
     <Table>

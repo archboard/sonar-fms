@@ -119,6 +119,10 @@ Route::middleware('tenant')->group(function () {
         Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
             ->except('create', 'edit');
 
+        Route::get('/selection/invoices/create', [\App\Http\Controllers\StudentSelectionInvoiceController::class, 'index'])
+            ->name('selection.invoices.create');
+        Route::post('/selection/invoices/create', [\App\Http\Controllers\StudentSelectionInvoiceController::class, 'store']);
+
         Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
             ->name('terms.index');
 
