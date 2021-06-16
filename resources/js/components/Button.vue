@@ -51,8 +51,12 @@
 
 <script>
 import Spinner from './icons/spinner'
+
 export default {
-  components: {Spinner},
+  components: {
+    Spinner
+  },
+
   props: {
     component: {
       type: String,
