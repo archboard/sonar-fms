@@ -620,6 +620,8 @@ namespace App\Models{
  * @property int $school_id
  * @property int $student_id
  * @property int $user_id
+ * @property-read \App\Models\Student $student
+ * @property-read \App\Models\User $user
  * @method static Builder|StudentSelection newModelQuery()
  * @method static Builder|StudentSelection newQuery()
  * @method static Builder|StudentSelection query()
