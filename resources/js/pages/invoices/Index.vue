@@ -1,9 +1,20 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" :href="$route('invoices.index')" size="sm">
+      <Dropdown
+        :menu-items="[
+          {
+            label: __('By hand'),
+            route: '#',
+          },
+          {
+            label: __('From import'),
+            route: '#',
+          },
+        ]"
+      >
         {{ __('Create invoice') }}
-      </Button>
+      </Dropdown>
     </template>
 
     <div class="mb-6 flex space-x-4">
@@ -121,9 +132,11 @@ import Button from '../../components/Button'
 import FeeFormModal from '../../components/modals/FeeFormModal'
 import displaysCurrency from '../../composition/displaysCurrency'
 import InvoiceStatusBadge from '../../components/InvoiceStatusBadge'
+import Dropdown from '../../components/forms/Dropdown'
 
 export default defineComponent({
   components: {
+    Dropdown,
     InvoiceStatusBadge,
     FeeFormModal,
     Button,
