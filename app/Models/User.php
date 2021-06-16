@@ -490,6 +490,32 @@ class User extends Authenticatable
                         ],
                     ],
                 ],
+                [
+                    'model' => InvoiceImport::class,
+                    'label' => __('Invoice Imports'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', InvoiceImport::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', InvoiceImport::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', InvoiceImport::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', InvoiceImport::class),
+                        ],
+                    ],
+                ],
             ],
         ];
     }

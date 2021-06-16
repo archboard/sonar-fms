@@ -9,7 +9,7 @@
           },
           {
             label: __('From import'),
-            route: '#',
+            route: $route('invoices.imports.index'),
           },
         ]"
       >

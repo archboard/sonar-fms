@@ -113,6 +113,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
             ->name('invoices.index');
 
+        Route::name('invoices')
+            ->resource('/invoices/imports', \App\Http\Controllers\InvoiceImportController::class);
+
         Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
             ->name('invoices.show');
 
