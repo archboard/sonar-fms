@@ -19,6 +19,7 @@ class InvoiceImportController extends Controller
         $title = __('Invoice Imports');
         $imports = $school->invoiceImports()
             ->orderBy('created_at', 'desc')
+            ->filter($request->all())
             ->paginate($request->input('perPage', 15));
 
         return inertia('invoices/imports/Index', [

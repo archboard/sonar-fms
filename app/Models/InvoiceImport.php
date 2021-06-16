@@ -5,8 +5,12 @@ namespace App\Models;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperInvoiceImport
+ */
 class InvoiceImport extends Model
 {
     use HasResource;
@@ -22,4 +26,10 @@ class InvoiceImport extends Model
         'failed_records' => 'int',
         'imported_at' => 'date',
     ];
+
+    public function scopeFilter(Builder $builder, array $filters)
+    {
+        $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
+        });
+    }
 }

@@ -235,6 +235,43 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\InvoiceImport
+ *
+ * @property int $id
+ * @property int $school_id
+ * @property int $user_id
+ * @property string $file_path
+ * @property array|null $mapping
+ * @property int|null $total_records
+ * @property int|null $imported_records
+ * @property int|null $failed_records
+ * @property \Illuminate\Support\Carbon|null $imported_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\User $user
+ * @method static Builder|InvoiceImport filter(array $filters)
+ * @method static Builder|InvoiceImport newModelQuery()
+ * @method static Builder|InvoiceImport newQuery()
+ * @method static Builder|InvoiceImport query()
+ * @method static Builder|InvoiceImport whereCreatedAt($value)
+ * @method static Builder|InvoiceImport whereFailedRecords($value)
+ * @method static Builder|InvoiceImport whereFilePath($value)
+ * @method static Builder|InvoiceImport whereId($value)
+ * @method static Builder|InvoiceImport whereImportedAt($value)
+ * @method static Builder|InvoiceImport whereImportedRecords($value)
+ * @method static Builder|InvoiceImport whereMapping($value)
+ * @method static Builder|InvoiceImport whereSchoolId($value)
+ * @method static Builder|InvoiceImport whereTotalRecords($value)
+ * @method static Builder|InvoiceImport whereUpdatedAt($value)
+ * @method static Builder|InvoiceImport whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoiceImport extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\InvoiceItem
  *
  * @mixin IdeHelperInvoiceItem
@@ -471,6 +508,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read mixed $grade_levels
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
+ * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTemplate[] $invoiceTemplates
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
