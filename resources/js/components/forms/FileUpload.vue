@@ -88,7 +88,6 @@ export default defineComponent({
       files.value = Array.from(e.target.files).map(fileMap)
     }
     const handleDrop = e => {
-      console.log(e)
       dragClasses.value = defaultDragClass
       const dataFiles = e.dataTransfer.items || e.dataTransfer.files
 
