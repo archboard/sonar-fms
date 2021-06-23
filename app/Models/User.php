@@ -147,6 +147,11 @@ class User extends Authenticatable
             ->whereRaw('student_selections.school_id = users.school_id');
     }
 
+    public function invoiceImports(): HasMany
+    {
+        return $this->hasMany(InvoiceImport::class);
+    }
+
     public function getPermissionsForSchool(School $school = null): array
     {
         $school = $school ?? $this->school;

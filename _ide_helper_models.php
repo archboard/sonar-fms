@@ -237,6 +237,7 @@ namespace App\Models{
 /**
  * App\Models\InvoiceImport
  *
+ * @mixin IdeHelperInvoiceImport
  * @property int $id
  * @property int $school_id
  * @property int $user_id
@@ -265,7 +266,6 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereTotalRecords($value)
  * @method static Builder|InvoiceImport whereUpdatedAt($value)
  * @method static Builder|InvoiceImport whereUserId($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoiceImport extends \Eloquent {}
 }
@@ -839,6 +839,8 @@ namespace App\Models{
  * @property-read string $full_name
  * @property-read array $school_permissions
  * @property-read mixed $student_selection
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
+ * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
