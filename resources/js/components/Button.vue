@@ -39,7 +39,7 @@
     >
       <span
         v-show="!loading"
-        class="inline-flex items-center"
+        class="inline-flex items-center whitespace-nowrap"
       >
         <slot>
           {{ __('Save') }}
