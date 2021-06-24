@@ -242,6 +242,7 @@ namespace App\Models{
  * @property int $school_id
  * @property int $user_id
  * @property string $file_path
+ * @property int $heading_row
  * @property array|null $mapping
  * @property int|null $total_records
  * @property int|null $imported_records
@@ -249,6 +250,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $imported_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $absolute_path
  * @property-read \App\Models\School $school
  * @property-read \App\Models\User $user
  * @method static Builder|InvoiceImport filter(array $filters)
@@ -258,6 +260,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereCreatedAt($value)
  * @method static Builder|InvoiceImport whereFailedRecords($value)
  * @method static Builder|InvoiceImport whereFilePath($value)
+ * @method static Builder|InvoiceImport whereHeadingRow($value)
  * @method static Builder|InvoiceImport whereId($value)
  * @method static Builder|InvoiceImport whereImportedAt($value)
  * @method static Builder|InvoiceImport whereImportedRecords($value)

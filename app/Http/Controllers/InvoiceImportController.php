@@ -33,7 +33,7 @@ class InvoiceImportController extends Controller
 
     public function create()
     {
-        $title = __('Import Invoices');
+        $title = __('Create an Import');
         $breadcrumbs = [
             [
                 'label' => __('Invoice imports'),
@@ -57,6 +57,7 @@ class InvoiceImportController extends Controller
         $data = $request->validate([
             'files' => 'array|required',
             'files.*.file' => 'file',
+            'heading_row' => 'required|integer',
         ]);
 
         $fileData = Arr::first($data['files']);
@@ -72,8 +73,8 @@ class InvoiceImportController extends Controller
                     "imports/{$school->id}/{$now}",
                     $uploadedFile->getClientOriginalName()
                 ),
+                'heading_row' => $data['heading_row'],
             ]);
-        ray($import);
 
         session()->flash('success', __('Invoice import created successfully.'));
 

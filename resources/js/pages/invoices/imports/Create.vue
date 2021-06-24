@@ -1,11 +1,19 @@
 <template>
   <Authenticated>
     <CardWrapper>
-      <form @submit.prevent="save">
+      <form @submit.prevent="form.post($route('invoices.imports.store'))">
         <CardPadding>
-          <InputWrap>
-            <FileUpload v-model="form.files" :extensions="extensions" />
-          </InputWrap>
+          <Fieldset>
+            <InputWrap :error="form.errors.files">
+              <FileUpload v-model="form.files" :extensions="extensions" />
+            </InputWrap>
+
+            <InputWrap :error="form.errors.heading_row">
+              <Label for="heading_row" :required="true">{{ __('Heading row') }}</Label>
+              <Input v-model="form.heading_row" id="heading_row" type="number" />
+              <HelpText>{{ __('A heading row is the row that labels the columns of data. Enter the row number in which the headings are located, which is typically row 1 (the first row).') }}</HelpText>
+            </InputWrap>
+          </Fieldset>
         </CardPadding>
 
         <CardAction>
@@ -30,9 +38,13 @@ import Input from '@/components/forms/Input'
 import { useForm } from '@inertiajs/inertia-vue3'
 import Button from '@/components/Button'
 import FileUpload from '@/components/forms/FileUpload'
+import Fieldset from '@/components/forms/Fieldset'
+import HelpText from '@/components/HelpText'
 
 export default defineComponent({
   components: {
+    HelpText,
+    Fieldset,
     FileUpload,
     Button,
     Input,
@@ -52,14 +64,10 @@ export default defineComponent({
     const $route = inject('$route')
     const form = useForm({
       files: null,
+      heading_row: 1,
     })
     const save = () => {
-      form.post($route('invoices.imports.store'), {
-        onFinish () {
-          // form.processing = false
-          form.reset()
-        }
-      })
+      form.post($route('invoices.imports.store'))
     }
 
     return {

@@ -18,6 +18,7 @@ class CreateInvoiceImportsTable extends Migration
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('file_path');
+            $table->integer('heading_row')->default(1);
             $table->json('mapping')->nullable();
             $table->integer('total_records')->nullable();
             $table->integer('imported_records')->nullable();

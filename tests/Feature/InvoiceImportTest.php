@@ -43,7 +43,8 @@ class InvoiceImportTest extends TestCase
         $data = [
             'files' => [[
                 'file' => UploadedFile::fake()->create('import.xls', 2, 'application/vnd.ms-excel')
-            ]]
+            ]],
+            'heading_row' => 1,
         ];
 
         $this->post(route('invoices.imports.store'), $data)
@@ -56,5 +57,6 @@ class InvoiceImportTest extends TestCase
         /** @var InvoiceImport $import */
         $import = $this->user->invoiceImports()->first();
         Storage::assertExists($import->file_path);
+        $this->assertEquals(1, $import->heading_row);
     }
 }
