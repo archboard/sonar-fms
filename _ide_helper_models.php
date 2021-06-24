@@ -250,7 +250,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $imported_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read mixed $absolute_path
+ * @property-read string $absolute_path
+ * @property-read string $file_name
  * @property-read \App\Models\School $school
  * @property-read \App\Models\User $user
  * @method static Builder|InvoiceImport filter(array $filters)

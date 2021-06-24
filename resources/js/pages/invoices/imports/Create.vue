@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <CardWrapper>
-      <form @submit.prevent="form.post($route('invoices.imports.store'))">
+      <form @submit.prevent="save">
         <CardPadding>
           <Fieldset>
             <InputWrap :error="form.errors.files">
@@ -58,16 +58,25 @@ export default defineComponent({
 
   props: {
     extensions: Array,
+    invoiceImport: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const form = useForm({
-      files: null,
-      heading_row: 1,
+      files: props.invoiceImport.files || null,
+      heading_row: props.invoiceImport.heading_row || 1,
+      _method: props.invoiceImport.id ? 'put' : 'post',
     })
     const save = () => {
-      form.post($route('invoices.imports.store'))
+      const route = props.invoiceImport.id
+        ? $route('invoices.imports.update', props.invoiceImport)
+        : $route('invoices.imports.store')
+
+      form.post(route)
     }
 
     return {

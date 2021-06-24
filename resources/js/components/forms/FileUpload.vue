@@ -81,7 +81,7 @@ export default defineComponent({
     const $error = inject('$error')
     const $translate = inject('$translate')
     const file = ref()
-    const files = ref([])
+    const files = ref(props.modelValue || [])
     const defaultDragClass = 'border-gray-300 dark:border-gray-500 border-dashed'
     const dragClasses = ref(defaultDragClass)
     const fileSelected = e => {

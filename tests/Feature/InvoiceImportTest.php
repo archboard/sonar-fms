@@ -59,4 +59,79 @@ class InvoiceImportTest extends TestCase
         Storage::assertExists($import->file_path);
         $this->assertEquals(1, $import->heading_row);
     }
+
+    public function test_can_view_edit_import_page()
+    {
+        $this->assignPermission('update', InvoiceImport::class);
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => '/tmp/file.csv',
+        ]);
+
+        $this->get(route('invoices.imports.edit', $import))
+            ->assertOk();
+    }
+
+    public function test_can_update_existing_import_with_different_file()
+    {
+        $this->assignPermission('update', InvoiceImport::class);
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+        ]);
+
+        $data = [
+            'files' => [[
+                'file' => UploadedFile::fake()->create('new-file.csv', 2)
+            ]],
+            'heading_row' => 2,
+        ];
+
+        $this->put(route('invoices.imports.update', $import), $data)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $import->refresh();
+        $this->assertEquals('new-file.csv', $import->file_name);
+        $this->assertEquals(2, $import->heading_row);
+        Storage::assertExists($import->file_path);
+        Storage::assertMissing($originalPath);
+        Storage::assertMissing(dirname($originalPath));
+    }
+
+    public function test_can_update_existing_import_with_same_file()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('update', InvoiceImport::class);
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+        ]);
+
+        $data = [
+            'files' => [[
+                'file' => null,
+                'existing' => true,
+            ]],
+            'heading_row' => 2,
+        ];
+
+        $this->put(route('invoices.imports.update', $import), $data)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $import->refresh();
+        $this->assertEquals('original.xlsx', $import->file_name);
+        $this->assertEquals(2, $import->heading_row);
+        Storage::assertExists($import->file_path);
+    }
 }

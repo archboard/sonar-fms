@@ -8,6 +8,7 @@ use App\Models\School;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InvoiceImportController extends Controller
@@ -63,21 +64,81 @@ class InvoiceImportController extends Controller
         $fileData = Arr::first($data['files']);
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $fileData['file'];
-        $now = now()->format('U') . '-' . Str::random(8);
 
         /** @var InvoiceImport $import */
         $import = $school->invoiceImports()
             ->create([
                 'user_id' => $request->user()->id,
-                'file_path' => $uploadedFile->storeAs(
-                    "imports/{$school->id}/{$now}",
-                    $uploadedFile->getClientOriginalName()
-                ),
+                'file_path' => InvoiceImport::storeFile($uploadedFile, $school),
                 'heading_row' => $data['heading_row'],
             ]);
 
         session()->flash('success', __('Invoice import created successfully.'));
 
-        return redirect()->route('invoices.imports.show', $import);
+        return redirect()->route('invoices.imports.map', $import);
+    }
+
+    public function show(InvoiceImport $import)
+    {
+        //
+    }
+
+    public function edit(InvoiceImport $import)
+    {
+        $title = __('Edit Import');
+        $breadcrumbs = [
+            [
+                'label' => __('Invoice imports'),
+                'route' => route('invoices.imports.index'),
+            ],
+            [
+                'label' => $import->file_name,
+                'route' => route('invoices.imports.show', $import),
+            ],
+            [
+                'label' => __('Edit import'),
+                'route' => route('invoices.imports.edit', $import),
+            ],
+        ];
+
+        return inertia('invoices/imports/Create', [
+            'title' => $title,
+            'extensions' => ['csv', 'xlsx', 'xls'],
+            'breadcrumbs' => $breadcrumbs,
+            'invoiceImport' => $import->toResource(),
+        ])->withViewData(compact('title'));
+    }
+
+    public function update(Request $request, InvoiceImport $import)
+    {
+        $data = $request->validate([
+            'files' => 'array|required',
+            'heading_row' => 'required|integer',
+        ]);
+
+        $fileData = Arr::first($data['files']);
+
+        // This key only exists if the file hasn't been changed
+        if (!isset($fileData['existing'])) {
+            /** @var UploadedFile $file */
+            $file = $fileData['file'];
+
+            if (!$file->isValid()) {
+                session()->flash('error', __('Invalid file.'));
+
+                return back();
+            }
+
+            Storage::delete($import->file_path);
+            Storage::deleteDirectory(dirname($import->file_path));
+            $import->file_path = InvoiceImport::storeFile($file, $request->school());
+        }
+
+        $import->fill(Arr::only($data, 'heading_row'));
+        $import->save();
+
+        session()->flash('success', __('Import updated successfully.'));
+
+        return redirect()->route('invoices.imports.map', $import);
     }
 }
