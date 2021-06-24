@@ -11,7 +11,13 @@
             <InputWrap :error="form.errors.heading_row">
               <Label for="heading_row" :required="true">{{ __('Heading row') }}</Label>
               <Input v-model="form.heading_row" id="heading_row" type="number" />
-              <HelpText>{{ __('A heading row is the row that labels the columns of data. Enter the row number in which the headings are located, which is typically row 1 (the first row).') }}</HelpText>
+              <HelpText>{{ __('A heading row is the row that labels the columns of data. Enter the row number at which the headings are located, which is typically row 1 (the first row).') }}</HelpText>
+            </InputWrap>
+
+            <InputWrap :error="form.errors.starting_row">
+              <Label for="starting_row" :required="true">{{ __('Data starting row') }}</Label>
+              <Input v-model="form.starting_row" id="starting_row" type="number" />
+              <HelpText>{{ __('Enter the row number at which you wish to start importing, which is typically row 2 (the row after the header row).') }}</HelpText>
             </InputWrap>
           </Fieldset>
         </CardPadding>
@@ -69,6 +75,7 @@ export default defineComponent({
     const form = useForm({
       files: props.invoiceImport.files || null,
       heading_row: props.invoiceImport.heading_row || 1,
+      starting_row: props.invoiceImport.starting_row || 2,
       _method: props.invoiceImport.id ? 'put' : 'post',
     })
     const save = () => {

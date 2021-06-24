@@ -23,6 +23,7 @@ class InvoiceImportResource extends JsonResource
             'failed_records' => $this->failed_records,
             'imported_at' => $this->imported_at,
             'heading_row' => $this->heading_row,
+            'starting_row' => $this->starting_row,
             'files' => [
                 [
                     'id' => $this->id,

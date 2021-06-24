@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\InvoiceImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -45,6 +44,7 @@ class InvoiceImportTest extends TestCase
                 'file' => UploadedFile::fake()->create('import.xls', 2, 'application/vnd.ms-excel')
             ]],
             'heading_row' => 1,
+            'starting_row' => 2,
         ];
 
         $this->post(route('invoices.imports.store'), $data)
@@ -90,6 +90,7 @@ class InvoiceImportTest extends TestCase
                 'file' => UploadedFile::fake()->create('new-file.csv', 2)
             ]],
             'heading_row' => 2,
+            'starting_row' => 3,
         ];
 
         $this->put(route('invoices.imports.update', $import), $data)
@@ -99,6 +100,7 @@ class InvoiceImportTest extends TestCase
         $import->refresh();
         $this->assertEquals('new-file.csv', $import->file_name);
         $this->assertEquals(2, $import->heading_row);
+        $this->assertEquals(3, $import->starting_row);
         Storage::assertExists($import->file_path);
         Storage::assertMissing($originalPath);
         Storage::assertMissing(dirname($originalPath));
@@ -123,6 +125,7 @@ class InvoiceImportTest extends TestCase
                 'existing' => true,
             ]],
             'heading_row' => 2,
+            'starting_row' => 3,
         ];
 
         $this->put(route('invoices.imports.update', $import), $data)
@@ -132,6 +135,7 @@ class InvoiceImportTest extends TestCase
         $import->refresh();
         $this->assertEquals('original.xlsx', $import->file_name);
         $this->assertEquals(2, $import->heading_row);
+        $this->assertEquals(3, $import->starting_row);
         Storage::assertExists($import->file_path);
     }
 }

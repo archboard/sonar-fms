@@ -59,6 +59,7 @@ class InvoiceImportController extends Controller
             'files' => 'array|required',
             'files.*.file' => 'file',
             'heading_row' => 'required|integer',
+            'starting_row' => 'required|integer',
         ]);
 
         $fileData = Arr::first($data['files']);
@@ -114,6 +115,7 @@ class InvoiceImportController extends Controller
         $data = $request->validate([
             'files' => 'array|required',
             'heading_row' => 'required|integer',
+            'starting_row' => 'required|integer',
         ]);
 
         $fileData = Arr::first($data['files']);
@@ -134,7 +136,7 @@ class InvoiceImportController extends Controller
             $import->file_path = InvoiceImport::storeFile($file, $request->school());
         }
 
-        $import->fill(Arr::only($data, 'heading_row'));
+        $import->fill(Arr::except($data, 'files'));
         $import->save();
 
         session()->flash('success', __('Import updated successfully.'));

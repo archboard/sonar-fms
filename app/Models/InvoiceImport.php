@@ -28,6 +28,7 @@ class InvoiceImport extends Model
         'imported_records' => 'int',
         'failed_records' => 'int',
         'heading_row' => 'int',
+        'starting_row' => 'int',
         'imported_at' => 'datetime',
     ];
 
