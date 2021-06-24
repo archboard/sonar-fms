@@ -116,6 +116,9 @@ Route::middleware('tenant')->group(function () {
         Route::name('invoices')
             ->resource('/invoices/imports', \App\Http\Controllers\InvoiceImportController::class);
 
+        Route::get('invoices/imports/{import}/map', \App\Http\Controllers\MapInvoiceImportController::class)
+            ->name('invoices.imports.map');
+
         Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
             ->name('invoices.show');
 

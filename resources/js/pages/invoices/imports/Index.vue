@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" :href="$route('invoices.imports.create')" size="sm">
+      <Button component="inertia-link" :href="$route('invoices.imports.create')">
         {{ __('Import') }}
       </Button>
     </template>
@@ -82,7 +82,7 @@
           <Td>{{ invoiceImport.student_number }}</Td>
           <Td>{{ invoiceImport.grade_level_short_formatted }}</Td>
           <Td class="text-right">
-            <Link is="inertia-link" :href="$route('students.show', invoiceImport)">{{ __('View') }}</Link>
+            <Link is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
           </Td>
         </tr>
       </Tbody>

@@ -8,8 +8,10 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\HeadingRowImport;
 
 /**
  * @mixin IdeHelperInvoiceImport
@@ -46,6 +48,19 @@ class InvoiceImport extends Model
     public function getFileNameAttribute(): string
     {
         return basename($this->file_path);
+    }
+
+    public function getHeadersAttribute(): array
+    {
+        if (!$this->file_path) {
+            return [];
+        }
+
+        $workbook = (new HeadingRowImport($this->heading_row))
+            ->toArray($this->file_path);
+        $sheets = Arr::first($workbook);
+
+        return Arr::first($sheets);
     }
 
     public static function storeFile(UploadedFile $file, School $school): string
