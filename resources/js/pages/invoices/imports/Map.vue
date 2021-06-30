@@ -6,6 +6,8 @@
       </Button>
     </template>
 
+    <MapForm :headers="headers" />
+
     <pre>{{ headers }}</pre>
     <pre>{{ invoiceImport }}</pre>
   </Authenticated>
@@ -15,9 +17,11 @@
 import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import Button from '@/components/Button'
+import MapForm from '@/pages/invoices/imports/MapForm'
 
 export default defineComponent({
   components: {
+    MapForm,
     Button,
     Authenticated,
   },
