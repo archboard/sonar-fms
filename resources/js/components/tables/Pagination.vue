@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-transparent py-6 flex items-center justify-between">
+  <div v-if="meta.total > 0" class="bg-transparent py-6 flex items-center justify-between">
     <div v-if="meta.total > 0" class="flex-1 flex justify-between sm:hidden">
       <component :is="prevPage ? 'inertia-link' : 'button'" :href="prevPage" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-500 text-sm leading-5 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
         Previous
@@ -8,14 +8,12 @@
         Next
       </component>
     </div>
-    <p v-else class="sm:hidden text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">No results found.</p>
 
     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
       <div>
-        <p v-if="meta.total > 0" class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">
+        <p class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">
           {{ __('Showing :from to :to of :total results', { ...meta }) }}
         </p>
-        <p v-else class="text-sm leading-5 text-gray-700 dark:text-gray-300 mb-0">No results found.</p>
       </div>
       <div>
         <nav v-if="pageLinks.length > 1" class="relative z-0 inline-flex shadow-sm">
