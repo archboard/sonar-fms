@@ -4,7 +4,7 @@
   <div>
     <button @click.prevent="localValue.isManual = !localValue.isManual" class="text-sm text-primary-500 hover:text-primary-400 focus:outline-none focus:underline translate">
       <span v-if="localValue.isManual">{{ __('Map to column') }}</span>
-      <span v-else>{{ __('Add custom value') }}</span>
+      <span v-else>{{ __('Set custom value') }}</span>
     </button>
   </div>
   <slot name="after" />
