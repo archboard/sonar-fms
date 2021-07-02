@@ -85,6 +85,12 @@
             <Link is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
           </Td>
         </tr>
+
+        <tr v-if="imports.data.length === 0">
+          <Td colspan="5" class="text-center">
+            {{ __('No imports exist.') }} <Link :href="$route('invoices.imports.create')">{{ __('Add one') }}</Link>.
+          </Td>
+        </tr>
       </Tbody>
     </Table>
 

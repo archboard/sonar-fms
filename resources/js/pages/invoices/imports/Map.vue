@@ -6,10 +6,9 @@
       </Button>
     </template>
 
-    <MapForm :headers="headers" />
+    <MapForm :headers="headers" v-model:invoice-form="form" />
 
-    <pre>{{ headers }}</pre>
-    <pre>{{ invoiceImport }}</pre>
+    <pre>{{ form }}</pre>
   </Authenticated>
 </template>
 
@@ -32,7 +31,11 @@ export default defineComponent({
   },
 
   setup (props) {
+    const form = {}
 
+    return {
+      form
+    }
   }
 })
 </script>

@@ -132,46 +132,55 @@
                   <Fieldset>
                     <InputWrap :error="form.errors[`items.${index}.fee_id`]">
                       <Label :for="`fee_id_${index}`">{{ __('Fee') }}</Label>
-                      <Select
-                        v-model="item.fee_id" :id="`fee_id_${index}`"
-                        @change="feeSelected(item)"
-                      >
-                        <option :value="null">{{ __('Use a custom fee') }}</option>
-                        <option
-                          v-for="fee in fees"
-                          :key="fee.id"
-                          :value="fee.id"
+                      <MapField v-model="item.fee_id" :headers="headers" :id="`fee_id_${index}`">
+                        <Select
+                          v-model="item.fee_id.value" :id="`fee_id_${index}`"
+                          @change="feeSelected(item)"
                         >
-                          {{ fee.name }}{{ fee.code ? ` (${fee.code})` : '' }} - {{ fee.amount_formatted }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __("Associating line items with a fee will help with reporting and syncing data, but isn't required.") }}
-                      </HelpText>
+                          <option :value="null">{{ __('Use a custom fee') }}</option>
+                          <option
+                            v-for="fee in fees"
+                            :key="fee.id"
+                            :value="fee.id"
+                          >
+                            {{ fee.name }}{{ fee.code ? ` (${fee.code})` : '' }} - {{ fee.amount_formatted }}
+                          </option>
+                        </Select>
+                        <template v-slot:after>
+                          <HelpText>
+                            {{ __("Associating line items with a fee will help with reporting and syncing data, but isn't required.") }}
+                          </HelpText>
+                        </template>
+                      </MapField>
                     </InputWrap>
 
                     <InputWrap :error="form.errors[`items.${index}.name`]">
                       <Label :for="`name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <Input v-model="item.name" :id="`name_${index}`" />
-                      <HelpText>
-                        {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                      </HelpText>
+                      <MapField v-model="item.name" :headers="headers" :id="`name_${index}`">
+                        <Input v-model="item.name.value" :id="`name_${index}`" />
+                        <template v-slot:after>
+                          <HelpText>
+                            {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
+                          </HelpText>
+                        </template>
+                      </MapField>
                     </InputWrap>
 
                     <InputWrap :error="form.errors[`items.${index}.amount_per_unit`]">
                       <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
-                      <CurrencyInput v-model="item.amount_per_unit" :id="`amount_per_unit_${index}`" />
+                      <MapField v-model="item.amount_per_unit" :headers="headers" :id="`amount_per_unit_${index}`">
+                        <CurrencyInput v-model="item.amount_per_unit.value" :id="`amount_per_unit_${index}`" />
+                      </MapField>
                     </InputWrap>
 
                     <InputWrap :error="form.errors[`items.${index}.quantity`]">
                       <Label :for="`quantity_${index}`" :required="true">{{ __('Quantity') }}</Label>
-                      <Input v-model="item.quantity" :id="`quantity_${index}`" type="number" />
+                      <MapField v-model="item.quantity" :headers="headers" :id="`quantity_${index}`">
+                        <Input v-model="item.quantity.value" :id="`quantity_${index}`" type="number" />
+                      </MapField>
                     </InputWrap>
 
-                    <div class="flex justify-between items-center">
-                      <h4 class="font-bold">
-                        {{ __('Line item total: :total', { total: displayCurrency(item.amount_per_unit * item.quantity) }) }}
-                      </h4>
+                    <div class="flex justify-end">
                       <Button color="red" size="sm" type="button" @click.prevent="form.items.splice(index, 1)">
                         <TrashIcon class="w-4 h-4" />
                         <span class="ml-2">{{ __('Remove line item') }}</span>
@@ -236,69 +245,74 @@
                   <Fieldset>
                     <InputWrap :error="form.errors[`scholarships.${index}.scholarship_id`]">
                       <Label :for="`scholarship_id_${index}`">{{ __('Scholarship') }}</Label>
-                      <Select
-                        v-model="item.scholarship_id" :id="`scholarship_id_${index}`"
-                        @change="scholarshipSelected(item)"
-                      >
-                        <option :value="null">{{ __('Use a custom scholarship') }}</option>
-                        <option
-                          v-for="scholarship in scholarships"
-                          :key="scholarship.id"
-                          :value="scholarship.id"
+                      <MapField v-model="item.scholarship_id" :headers="headers" :id="`scholarship_id_${index}`">
+                        <Select
+                          v-model="item.scholarship_id.value" :id="`scholarship_id_${index}`"
+                          @change="scholarshipSelected(item)"
                         >
-                          {{ scholarship.name }} - {{ scholarship.description }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
-                      </HelpText>
+                          <option :value="null">{{ __('Use a custom scholarship') }}</option>
+                          <option
+                            v-for="scholarship in scholarships"
+                            :key="scholarship.id"
+                            :value="scholarship.id"
+                          >
+                            {{ scholarship.name }} - {{ scholarship.description }}
+                          </option>
+                        </Select>
+                        <template v-slot:after>
+                          <HelpText>
+                            {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
+                          </HelpText>
+                        </template>
+                      </MapField>
                     </InputWrap>
 
-                    <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">
-                      <CheckboxWrapper>
-                        <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />
-                        <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>
-                      </CheckboxWrapper>
-                      <HelpText>
-                        {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.name`]">
+                    <InputWrap :error="form.errors[`scholarships.${index}.name`]">
                       <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <Input v-model="item.name" :id="`scholarship_name_${index}`" />
-                      <HelpText>
-                        {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                      </HelpText>
+                      <MapField v-model="item.name" :headers="headers" :id="`scholarship_name_${index}`">
+                        <Input v-model="item.name.value" :id="`scholarship_name_${index}`" :placeholder="__('Scholarship name')" />
+                        <template v-slot:after>
+                          <HelpText>
+                            {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
+                          </HelpText>
+                        </template>
+                      </MapField>
                     </InputWrap>
 
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.amount`]">
+                    <InputWrap>
+                      <RadioGroup>
+                        <RadioWrapper>
+                          <Radio v-model:checked="item.use_amount" :value="true" />
+                          <CheckboxText>
+                            {{ __('Use an amount') }}
+                          </CheckboxText>
+                        </RadioWrapper>
+                        <RadioWrapper>
+                          <Radio v-model:checked="item.use_amount" :value="false" />
+                          <CheckboxText>
+                            {{ __('Use a percentage') }}
+                          </CheckboxText>
+                        </RadioWrapper>
+                      </RadioGroup>
+                    </InputWrap>
+
+                    <InputWrap v-if="item.use_amount" :error="form.errors[`scholarships.${index}.amount`]">
                       <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
-                      <CurrencyInput v-model="item.amount" :id="`scholarship_amount_${index}`" />
+                      <MapField v-model="item.amount" :headers="headers" :id="`scholarship_amount_${index}`">
+                        <CurrencyInput v-model="item.amount.value" :id="`scholarship_amount_${index}`" />
+                      </MapField>
                     </InputWrap>
 
-                    <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
+                    <InputWrap v-else :error="form.errors[`scholarships.${index}.percentage`]">
                       <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
-                      <Input v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
-                      <HelpText>
-                        {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
-                      </HelpText>
-                    </InputWrap>
-
-                    <InputWrap v-if="!item.sync_with_scholarship && item.percentage && item.amount" :error="form.errors[`scholarships.${index}.resolution_strategy`]">
-                      <Label for="resolution_strategy">{{ __('Resolution strategy') }}</Label>
-                      <Select v-model="item.resolution_strategy" id="resolution_strategy">
-                        <option
-                          v-for="(label, strategy) in strategies"
-                          :key="strategy"
-                          :value="strategy"
-                        >
-                          {{ label }}
-                        </option>
-                      </Select>
-                      <HelpText>
-                        {{ __('This resolves whether to use the percentage or amount for the scholarship when both are provided. Least will use whichever has the least amount of discount. Greatest will use whichever has the greatest discount.') }}
-                      </HelpText>
+                      <MapField v-model="item.percentage" :headers="headers" :id="`scholarship_percentage_${index}`">
+                        <Input v-model="item.percentage.value" :id="`scholarship_percentage_${index}`" />
+                        <template v-slot:after>
+                          <HelpText>
+                            {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
+                          </HelpText>
+                        </template>
+                      </MapField>
                     </InputWrap>
 
                     <InputWrap v-if="form.items.length > 1">
@@ -312,16 +326,21 @@
                         >
                           <CheckboxWrapper>
                             <Checkbox v-model:checked="item.applies_to" :value="lineItem.id" />
-                            <CheckboxText>{{ lineItem.name }}</CheckboxText>
+                            <CheckboxText>
+                              <span v-if="lineItem.name.isManual">
+                                {{ lineItem.name.value }}
+                              </span>
+                              <span v-else class="flex items-center space-x-1">
+                                <LinkIcon class="w-4 h-4" />
+                                <span>{{ lineItem.name.column }}</span>
+                              </span>
+                            </CheckboxText>
                           </CheckboxWrapper>
                         </div>
                       </div>
                     </InputWrap>
 
-                    <div class="flex justify-between items-center">
-                      <h4 class="font-bold">
-                        {{ __('Discount total: :total', { total: displayCurrency(getItemDiscount(item)) }) }}
-                      </h4>
+                    <div class="flex justify-end">
                       <Button color="red" size="sm" type="button" @click.prevent="form.scholarships.splice(index, 1)">
                         <TrashIcon class="w-4 h-4" />
                         <span class="ml-2">{{ __('Remove scholarship') }}</span>
@@ -490,7 +509,7 @@
 import { computed, inject, ref, watch, watchEffect } from 'vue'
 import { useForm, usePage } from '@inertiajs/inertia-vue3'
 import { PlusSmIcon } from '@heroicons/vue/solid'
-import { TrashIcon } from '@heroicons/vue/outline'
+import { TrashIcon, LinkIcon } from '@heroicons/vue/outline'
 import Fieldset from '@/components/forms/Fieldset'
 import CardHeader from '@/components/CardHeader'
 import HelpText from '@/components/HelpText'
@@ -514,7 +533,7 @@ import DatePicker from '@/components/forms/DatePicker'
 import Alert from '@/components/Alert'
 import displaysDate from '@/composition/displaysDate'
 import invoiceImportItemForm from '@/composition/invoiceImportItemForm'
-import invoiceScholarshipForm from '@/composition/invoiceScholarshipForm'
+import invoiceImportScholarshipForm from '@/composition/invoiceImportScholarshipForm'
 import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
 import CurrencyInput from '@/components/forms/CurrencyInput'
 import CardWrapper from '@/components/CardWrapper'
@@ -525,9 +544,15 @@ import Modal from '@/components/Modal'
 import invoiceImportMapField from '@/composition/invoiceImportMapField'
 import ColumnSelector from '@/components/forms/ColumnSelector'
 import MapField from '@/components/forms/MapField'
+import Radio from '@/components/forms/Radio'
+import RadioGroup from '@/components/forms/RadioGroup'
+import RadioWrapper from '@/components/forms/RadioWrapper'
 
 export default {
   components: {
+    RadioWrapper,
+    Radio,
+    RadioGroup,
     MapField,
     ColumnSelector,
     Modal,
@@ -555,6 +580,7 @@ export default {
     Label,
     PlusSmIcon,
     TrashIcon,
+    LinkIcon,
     DatePicker,
   },
   props: {
@@ -645,8 +671,8 @@ export default {
         })
     })
 
-    watch(form, () => {
-      emit('update:invoiceForm', form)
+    watch(() => form, (state) => {
+      emit('update:invoiceForm', state)
     })
 
     // Invoice line items
@@ -659,11 +685,9 @@ export default {
     // Scholarships
     const {
       scholarships,
-      scholarshipSubtotal,
-      getItemDiscount,
       addScholarship,
       scholarshipSelected
-    } = invoiceScholarshipForm(form)
+    } = invoiceImportScholarshipForm(form)
 
     // Payment schedules
     const {
@@ -690,8 +714,6 @@ export default {
       isDark,
       displayDate,
       timezone,
-      getItemDiscount,
-      scholarshipSubtotal,
       // total,
       // totalDue,
       strategies,
