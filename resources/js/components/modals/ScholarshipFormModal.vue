@@ -109,7 +109,7 @@ export default defineComponent({
       name: props.scholarship.name,
       description: props.scholarship.description,
       amount: props.scholarship.amount,
-      percentage: props.scholarship.percentage,
+      percentage: props.scholarship.percentage_converted,
       resolution_strategy: props.scholarship.resolution_strategy || 'App\\ResolutionStrategies\\Least',
     })
     const submitForm = () => {

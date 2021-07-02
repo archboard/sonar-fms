@@ -24,7 +24,7 @@ export default (form) => {
     if (scholarship) {
       item.name = scholarship.name
       item.amount = scholarship.amount
-      item.percentage = scholarship.percentage
+      item.percentage = scholarship.percentage_converted
       item.resolution_strategy = scholarship.resolution_strategy
     }
   }
