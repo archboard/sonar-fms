@@ -20,7 +20,8 @@ class CreateInvoicePaymentTermsTable extends Migration
             $table->uuid('invoice_payment_schedule_uuid')->index()->nullable();
             $table->foreign('invoice_payment_schedule_uuid')->references('uuid')->on('invoice_payment_schedules')->onDelete('cascade');
             $table->uuid('batch_id')->index()->nullable();
-            $table->unsignedBigInteger('amount');
+            $table->unsignedBigInteger('amount')->nullable();
+            $table->decimal('percentage', 9, 8)->nullable();
             $table->dateTime('due_at')->nullable();
             $table->dateTime('notified_at')->nullable();
             $table->boolean('notify')->default(false);
