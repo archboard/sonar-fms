@@ -26,6 +26,7 @@ class InvoiceFactory extends Factory
             'uuid' => (string) Uuid::uuid4(),
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
+            'invoice_date' => now(),
         ];
     }
 }
