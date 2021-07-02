@@ -38,6 +38,11 @@ class InvoiceScholarship extends Model
         'sync_with_scholarship' => 'boolean',
     ];
 
+    public function getIncrementing()
+    {
+        return false;
+    }
+
     public function scholarship(): BelongsTo
     {
         return $this->belongsTo(Scholarship::class);

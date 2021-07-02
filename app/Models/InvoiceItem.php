@@ -28,6 +28,11 @@ class InvoiceItem extends Model
         'quantity',
     ];
 
+    public function getIncrementing()
+    {
+        return false;
+    }
+
     public function fee(): BelongsTo
     {
         return $this->belongsTo(Fee::class);
