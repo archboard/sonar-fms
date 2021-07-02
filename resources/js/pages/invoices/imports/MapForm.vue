@@ -623,18 +623,8 @@ export default {
 
     const school = computed(() => page.props.value.school)
 
-    const { timezone, displayDate, getDate } = displaysDate()
+    const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
-    // const total = computed(() => {
-    //   let total = subtotal.value - scholarshipSubtotal.value
-    //
-    //   if (total < 0) {
-    //     total = 0
-    //   }
-    //
-    //   return total
-    // })
-    // const totalDue = computed(() => displayCurrency(total.value))
 
     const saveInvoice = close => {
       let route = $route('selection.invoices.create')
@@ -673,7 +663,7 @@ export default {
 
     watch(() => form, (state) => {
       emit('update:invoiceForm', state)
-    })
+    }, { deep: true })
 
     // Invoice line items
     const {

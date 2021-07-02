@@ -7,13 +7,11 @@
     </template>
 
     <MapForm :headers="headers" v-model:invoice-form="form" />
-
-    <pre>{{ form }}</pre>
   </Authenticated>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import Button from '@/components/Button'
 import MapForm from '@/pages/invoices/imports/MapForm'
@@ -31,7 +29,7 @@ export default defineComponent({
   },
 
   setup (props) {
-    const form = {}
+    const form = ref({})
 
     return {
       form
