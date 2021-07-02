@@ -223,7 +223,7 @@
                           :key="scholarship.id"
                           :value="scholarship.id"
                         >
-                          {{ scholarship.name }} - {{ scholarship.description }}
+                          {{ scholarship.name }} {{ scholarship.description ? `- ${scholarship.description}` : '' }}
                         </option>
                       </Select>
                       <HelpText>
