@@ -7,6 +7,7 @@
     </template>
 
     <MapForm :headers="headers" v-model:invoice-form="form" />
+    <pre>{{ form }}</pre>
   </Authenticated>
 </template>
 

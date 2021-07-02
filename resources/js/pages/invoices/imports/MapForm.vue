@@ -304,7 +304,7 @@
                     </InputWrap>
 
                     <InputWrap v-else :error="form.errors[`scholarships.${index}.percentage`]">
-                      <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
+                      <Label :for="`scholarship_percentage_${index}`" :required="true">{{ __('Percentage') }}</Label>
                       <MapField v-model="item.percentage" :headers="headers" :id="`scholarship_percentage_${index}`">
                         <Input v-model="item.percentage.value" :id="`scholarship_percentage_${index}`" />
                         <template v-slot:after>
@@ -402,14 +402,42 @@
                   >
                     <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                       <Fieldset>
-                        <InputWrap :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.amount`]">
+                        <InputWrap>
+                          <RadioGroup>
+                            <RadioWrapper>
+                              <Radio v-model:checked="term.use_amount" :value="true" />
+                              <CheckboxText>
+                                {{ __('Use an amount') }}
+                              </CheckboxText>
+                            </RadioWrapper>
+                            <RadioWrapper>
+                              <Radio v-model:checked="term.use_amount" :value="false" />
+                              <CheckboxText>
+                                {{ __('Use a percentage') }}
+                              </CheckboxText>
+                            </RadioWrapper>
+                          </RadioGroup>
+                        </InputWrap>
+
+                        <InputWrap v-if="term.use_amount" :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.amount`]">
                           <Label :required="true" :for="`schedule_${index}_${termIndex}_amount`">{{ __('Amount') }}</Label>
-                          <CurrencyInput v-model="term.amount" :id="`schedule_${index}_${termIndex}_amount`" />
+                          <MapField v-model="term.amount" :headers="headers" :id="`schedule_${index}_${termIndex}_amount`">
+                            <CurrencyInput v-model="term.amount.value" :id="`schedule_${index}_${termIndex}_amount`" />
+                          </MapField>
+                        </InputWrap>
+
+                        <InputWrap v-else :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.percentage`]">
+                          <Label :for="`scholarship_percentage_${index}`" :required="true">{{ __('Percentage') }}</Label>
+                          <MapField v-model="term.percentage" :headers="headers" :id="`schedule_${index}_${termIndex}_percentage`">
+                            <Input v-model="term.percentage.value" :id="`schedule_${index}_${termIndex}_percentage`" />
+                          </MapField>
                         </InputWrap>
 
                         <InputWrap :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.due_at`]">
                           <Label :for="`schedule_${index}_${termIndex}_due_at`">{{ __('Due date') }}</Label>
-                          <DatePicker :id="`schedule_${index}_${termIndex}_due_at`" v-model="term.due_at" />
+                          <MapField v-model="term.due_at" :headers="headers" :id="`schedule_${index}_${termIndex}_due_at`">
+                            <DatePicker :id="`schedule_${index}_${termIndex}_due_at`" v-model="term.due_at.value" />
+                          </MapField>
                         </InputWrap>
 
                         <div class="flex justify-end">
@@ -424,15 +452,35 @@
                 </TransitionGroup>
 
                 <!-- Mock term that just has the button -->
-                <li class="px-2 w-full md:w-1/2 lg:w-1/3 relative">
+                <li class="px-2 w-full sm:w-1/2 md:w-full lg:w-1/2 xl:w-1/3 relative">
                   <div class="opacity-50 rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
                     <Fieldset>
+                      <InputWrap>
+                        <RadioGroup>
+                          <Mocker>
+                            <RadioWrapper>
+                              <Radio />
+                              <CheckboxText>&nbsp;</CheckboxText>
+                            </RadioWrapper>
+                          </Mocker>
+                          <Mocker>
+                            <RadioWrapper>
+                              <Radio />
+                              <CheckboxText>&nbsp;</CheckboxText>
+                            </RadioWrapper>
+                          </Mocker>
+                        </RadioGroup>
+                      </InputWrap>
+
                       <InputWrap>
                         <Mocker :inline="true">
                           <Label>&nbsp;</Label>
                         </Mocker>
                         <Mocker>
                           <CurrencyInput />
+                        </Mocker>
+                        <Mocker>
+                          <div class="text-sm mt-1">&nbsp;</div>
                         </Mocker>
                       </InputWrap>
 
@@ -442,6 +490,9 @@
                         </Mocker>
                         <Mocker>
                           <Input />
+                        </Mocker>
+                        <Mocker>
+                          <div class="text-sm mt-1">&nbsp;</div>
                         </Mocker>
                       </InputWrap>
 
@@ -464,10 +515,7 @@
                 </li>
               </ul>
 
-              <div class="flex justify-between items-center pt-6">
-                <h4 class="font-bold">
-                  {{ __('Total with schedule: :total', { total: displayCurrency(getScheduleTotal(item)) }) }}
-                </h4>
+              <div class="flex justify-end pt-6">
                 <Button color="red" size="sm" type="button" @click.prevent="form.payment_schedules.splice(index, 1)">
                   <TrashIcon class="w-4 h-4" />
                   <span class="ml-2">{{ __('Remove schedule') }}</span>
@@ -547,6 +595,7 @@ import MapField from '@/components/forms/MapField'
 import Radio from '@/components/forms/Radio'
 import RadioGroup from '@/components/forms/RadioGroup'
 import RadioWrapper from '@/components/forms/RadioWrapper'
+import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm'
 
 export default {
   components: {
@@ -626,19 +675,8 @@ export default {
     const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
 
-    const saveInvoice = close => {
-      let route = $route('selection.invoices.create')
-
-      if (props.student.id) {
-        route = props.invoice.id
-          ? $route('students.invoices.update', [props.student, props.invoice])
-          : $route('students.invoices.store', [props.student])
-      }
-      const method = props.invoice.id
-        ? 'put'
-        : 'post'
-
-      form[method](route, {
+    const saveImport = close => {
+      form.put($route('invoices.imports.update'), {
         onSuccess () {
           if (typeof close === 'function') {
             close()
@@ -681,11 +719,12 @@ export default {
 
     // Payment schedules
     const {
-      addPaymentSchedule,
-      addPaymentTerm,
-      getScheduleTotal,
       removePaymentTerm,
     } = invoicePaymentScheduleForm(form, 0)
+    const {
+      addPaymentTerm,
+      addPaymentSchedule
+    } = invoiceImportPaymentScheduleForm(form)
 
     // Add an initial line item
     addInvoiceLineItem()
@@ -696,23 +735,19 @@ export default {
       terms,
       fees,
       form,
-      // subtotal,
-      saveInvoice,
+      saveImport,
       addInvoiceLineItem,
       displayCurrency,
       feeSelected,
       isDark,
       displayDate,
       timezone,
-      // total,
-      // totalDue,
       strategies,
       scholarships,
       addScholarship,
       scholarshipSelected,
       addPaymentSchedule,
       addPaymentTerm,
-      getScheduleTotal,
       removePaymentTerm,
     }
   },
