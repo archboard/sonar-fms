@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
+use App\Traits\HasPercentageAttribute;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,7 @@ use Ramsey\Uuid\Uuid;
 class InvoiceScholarship extends Model
 {
     use BelongsToInvoice;
+    use HasPercentageAttribute;
 
     protected $fillable = [
         'uuid',
@@ -53,19 +55,9 @@ class InvoiceScholarship extends Model
         );
     }
 
-    public function getPercentageFormattedAttribute()
-    {
-        return $this->percentage . '%';
-    }
-
     public function getAmountAttribute($value)
     {
         return $value ?? 0;
-    }
-
-    public function getPercentageAttribute($value)
-    {
-        return (float) $value ?? 0;
     }
 
     public function getPercentageDecimalAttribute()
@@ -115,7 +107,7 @@ class InvoiceScholarship extends Model
     {
         $subtotal = $this->getApplicableSubtotal();
         $discount = $this->amount;
-        $percentageDiscount = (int) round($subtotal * ($this->percentage / 100));
+        $percentageDiscount = (int) round($subtotal * $this->percentage);
 
         if ($discount > 0 && $percentageDiscount > 0) {
             $strategy = $this->resolution_strategy;

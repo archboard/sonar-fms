@@ -49,7 +49,11 @@ class ScholarshipTest extends TestCase
 
         $data['tenant_id'] = $this->tenant->id;
         $data['school_id'] = $this->school->id;
+        unset($data['percentage']);
         $this->assertDatabaseHas('scholarships', $data);
+
+        $scholarship = Scholarship::first();
+        $this->assertEquals(.7099, $scholarship->percentage);
 
         $this->assertEquals(1, $this->school->scholarships()->count());
     }
@@ -131,6 +135,7 @@ class ScholarshipTest extends TestCase
 
         $data['tenant_id'] = $this->tenant->id;
         $data['school_id'] = $this->school->id;
+        unset($data['percentage']);
         $this->assertDatabaseHas('scholarships', $data);
         $this->assertEquals(1, $this->school->scholarships()->count());
     }

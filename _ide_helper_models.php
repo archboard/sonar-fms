@@ -282,7 +282,6 @@ namespace App\Models{
  * App\Models\InvoiceItem
  *
  * @mixin IdeHelperInvoiceItem
- * @property int $id
  * @property string $uuid
  * @property string $invoice_uuid
  * @property string|null $batch_id
@@ -307,7 +306,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereFeeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQuantity($value)
@@ -322,7 +320,6 @@ namespace App\Models{
  * App\Models\InvoicePaymentSchedule
  *
  * @mixin IdeHelperInvoicePaymentSchedule
- * @property int $id
  * @property string $uuid
  * @property string|null $invoice_uuid
  * @property string|null $batch_id
@@ -338,7 +335,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule whereUuid($value)
@@ -351,12 +347,12 @@ namespace App\Models{
  * App\Models\InvoicePaymentTerm
  *
  * @mixin IdeHelperInvoicePaymentTerm
- * @property int $id
  * @property string $uuid
  * @property string|null $invoice_uuid
  * @property string|null $invoice_payment_schedule_uuid
  * @property string|null $batch_id
- * @property int $amount
+ * @property int|null $amount
+ * @property string|null $percentage
  * @property \Illuminate\Support\Carbon|null $due_at
  * @property string|null $notified_at
  * @property bool $notify
@@ -371,11 +367,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereDueAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereInvoicePaymentScheduleUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotify($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm wherePercentage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUuid($value)
  */
@@ -387,7 +383,6 @@ namespace App\Models{
  * App\Models\InvoiceScholarship
  *
  * @mixin IdeHelperInvoiceScholarship
- * @property int $id
  * @property string $uuid
  * @property string $invoice_uuid
  * @property string|null $batch_id
@@ -403,6 +398,7 @@ namespace App\Models{
  * @property-read int|null $applies_to_count
  * @property-read mixed $amount_formatted
  * @property-read mixed $calculated_amount_formatted
+ * @property-read mixed $percentage_converted
  * @property-read mixed $percentage_decimal
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\Invoice $invoice
@@ -414,7 +410,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCalculatedAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship wherePercentage($value)
@@ -470,6 +465,7 @@ namespace App\Models{
  * @property string|null $resolution_strategy
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $percentage_converted
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant

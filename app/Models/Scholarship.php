@@ -6,6 +6,7 @@ use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasPercentageAttribute;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class Scholarship extends Model
     use HasResource;
     use BelongsToTenant;
     use BelongsToSchool;
+    use HasPercentageAttribute;
 
     protected $guarded = [];
 
@@ -41,11 +43,6 @@ class Scholarship extends Model
 
         $builder->orderBy($orderBy, $orderDir);
         $builder->orderBy('scholarships.name', $orderDir);
-    }
-
-    public function getPercentageFormattedAttribute()
-    {
-        return $this->percentage . '%';
     }
 
     public static function getResolutionStrategies(): array

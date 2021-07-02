@@ -20,6 +20,7 @@ class ScholarshipResource extends JsonResource
             'description' => $this->description,
             'amount' => $this->amount,
             'percentage' => $this->percentage,
+            'percentage_converted' => $this->percentage_converted,
             'percentage_formatted' => $this->percentage_formatted,
             'resolution_strategy' => $this->resolution_strategy,
             'created_at' => $this->created_at,

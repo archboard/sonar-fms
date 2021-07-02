@@ -4,6 +4,7 @@ namespace App\Factories;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Student;
+use App\Utilities\NumberUtility;
 use Illuminate\Support\Collection;
 
 class InvoiceFromRequestFactory extends InvoiceFactory
@@ -130,6 +131,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             function (array $items, array $item) {
                 // Cache the total line item
                 // Need to know which line items this applies to
+                $item['percentage'] = NumberUtility::convertPercentageFromUser($item['percentage']);
                 $item['calculated_amount'] = $this->calculateScholarshipAmount($item);
                 $item['batch_id'] = $this->batchId;
                 $item['created_at'] = $this->now;
@@ -184,7 +186,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
         $discount = (int) $item['amount'] ?: 0;
         $percentageDiscount = $item['percentage']
-            ? (int) round($subtotal * ((float) $item['percentage'] / 100))
+            ? (int) round($subtotal * ((float) $item['percentage']))
             : 0;
 
         if ($discount > 0 && $percentageDiscount > 0) {

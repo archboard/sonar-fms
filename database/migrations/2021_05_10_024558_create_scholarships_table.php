@@ -19,7 +19,7 @@ class CreateScholarshipsTable extends Migration
             $table->foreignId('school_id')->index()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('percentage', 8, 4)->nullable();
+            $table->decimal('percentage', 9, 8)->nullable();
             $table->unsignedBigInteger('amount')->nullable();
             $table->string('resolution_strategy')->nullable();
             $table->timestamps();

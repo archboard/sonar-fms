@@ -12,6 +12,7 @@ use App\Models\InvoiceScholarship;
 use App\Models\Term;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
+use App\Utilities\NumberUtility;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
@@ -398,6 +399,7 @@ class CreateInvoiceTest extends TestCase
         foreach ($invoiceData['scholarships'] as $scholarship) {
             $row = Arr::except($scholarship, 'id');
             $row['invoice_uuid'] = $invoice->uuid;
+            $row['percentage'] = NumberUtility::convertPercentageFromUser($row['percentage']);
 
             $this->assertDatabaseHas('invoice_scholarships', $row);
         }
@@ -464,6 +466,7 @@ class CreateInvoiceTest extends TestCase
         foreach ($invoiceData['scholarships'] as $scholarship) {
             $row = Arr::except($scholarship, 'id');
             $row['invoice_uuid'] = $invoice->uuid;
+            $row['percentage'] = NumberUtility::convertPercentageFromUser($row['percentage']);
 
             $this->assertDatabaseHas('invoice_scholarships', $row);
         }
