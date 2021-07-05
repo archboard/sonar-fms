@@ -31,6 +31,11 @@ class InvoiceImportTest extends TestCase
         ];
     }
 
+    protected function getUploadedFile(string $fileName = 'sonar-import.xlsx'): UploadedFile
+    {
+        return new UploadedFile(base_path("tests/{$fileName}"), $fileName, null, null, true);
+    }
+
     public function test_cannot_access_imports_without_permission()
     {
         $this->get(route('invoices.imports.index'))
@@ -53,7 +58,7 @@ class InvoiceImportTest extends TestCase
 
         $data = [
             'files' => [[
-                'file' => UploadedFile::fake()->create('import.xls', 2, 'application/vnd.ms-excel')
+                'file' => $this->getUploadedFile('sonar-import.xls'),
             ]],
             'heading_row' => 1,
             'starting_row' => 2,
@@ -70,6 +75,10 @@ class InvoiceImportTest extends TestCase
         $import = $this->user->invoiceImports()->first();
         Storage::assertExists($import->file_path);
         $this->assertEquals(1, $import->heading_row);
+        $this->assertEquals(2, $import->starting_row);
+        $this->assertEquals(3, $import->total_records);
+        $this->assertEquals(0, $import->imported_records);
+        $this->assertEquals(0, $import->failed_records);
     }
 
     public function test_can_view_edit_import_page()
@@ -90,7 +99,7 @@ class InvoiceImportTest extends TestCase
         $this->assignPermission('update', InvoiceImport::class);
         Storage::fake();
 
-        $originalPath = InvoiceImport::storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
+        $originalPath = InvoiceImport::storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
         $import = InvoiceImport::create([
             'user_id' => $this->user->id,
             'school_id' => $this->school->id,
@@ -99,7 +108,7 @@ class InvoiceImportTest extends TestCase
 
         $data = [
             'files' => [[
-                'file' => UploadedFile::fake()->create('new-file.csv', 2)
+                'file' => $this->getUploadedFile(),
             ]],
             'heading_row' => 2,
             'starting_row' => 3,
@@ -110,9 +119,10 @@ class InvoiceImportTest extends TestCase
             ->assertSessionHas('success');
 
         $import->refresh();
-        $this->assertEquals('new-file.csv', $import->file_name);
+        $this->assertEquals('sonar-import.xlsx', $import->file_name);
         $this->assertEquals(2, $import->heading_row);
         $this->assertEquals(3, $import->starting_row);
+        $this->assertEquals(3, $import->total_records);
         Storage::assertExists($import->file_path);
         Storage::assertMissing($originalPath);
         Storage::assertMissing(dirname($originalPath));
@@ -157,7 +167,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
 
         $originalPath = InvoiceImport::storeFile(
-            new UploadedFile(base_path('tests/sonar-import.xlsx'), 'sonar-import.xlsx', null, null, true),
+            $this->getUploadedFile(),
             $this->school
         );
         $import = InvoiceImport::create([
@@ -195,11 +205,12 @@ class InvoiceImportTest extends TestCase
             'payment_schedules' => [],
         ];
 
-        $response = $this->putJson(route('invoices.imports.map', $import), $data)
+        $this->putJson(route('invoices.imports.map', $import), $data)
             ->assertSessionHas('success')
             ->assertRedirect();
 
         $import->refresh();
         $this->assertEquals($data, $import->mapping);
+        $this->assertTrue($import->mapping_valid);
     }
 }

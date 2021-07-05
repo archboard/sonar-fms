@@ -18,10 +18,25 @@ class MapInvoiceImportController extends Controller
     {
         $this->authorize('create', InvoiceImport::class);
         $title = __('Map Import');
+        $breadcrumbs = [
+            [
+                'label' => __('Invoice imports'),
+                'route' => route('invoices.imports.index'),
+            ],
+            [
+                'label' => $import->file_name,
+                'route' => route('invoices.imports.show', $import),
+            ],
+            [
+                'label' => __('Column mapping'),
+                'route' => route('invoices.imports.map', $import),
+            ],
+        ];
         $import->load('user');
 
         return inertia('invoices/imports/Map', [
             'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
             'invoiceImport' => $import->toResource(),
             'headers' => $import->headers,
         ])->withViewData(compact('title'));
@@ -31,9 +46,10 @@ class MapInvoiceImportController extends Controller
     {
         $this->authorize('update', InvoiceImport::class);
 
-        $import->update([
-            'mapping' => $request->all(),
-        ]);
+        $import->mapping = $request->all();
+        // Cache this value so we don't have to read the file each time
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->save();
 
         session()->flash('success', __('Invoice import mapping saved successfully.'));
 

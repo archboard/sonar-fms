@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\InvoiceImportMap;
+use App\Imports\InvoiceImport as ExcelInvoiceImport;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -67,19 +69,39 @@ class InvoiceImport extends Model
         return Arr::first($sheets);
     }
 
-    public static function storeFile(UploadedFile $file, School $school): string
+    public function getImportedRecordsAttribute($value)
     {
-        $now = now()->format('U') . '-' . Str::random(8);
+        return $value ?? 0;
+    }
 
-        return $file->storeAs(
-            "imports/{$school->id}/{$now}",
-            $file->getClientOriginalName()
-        );
+    public function getFailedRecordsAttribute($value)
+    {
+        return $value ?? 0;
+    }
+
+    public function getImportContents(): Collection
+    {
+        $sheets = (new ExcelInvoiceImport($this))
+            ->toCollection($this->absolute_path);
+
+        // Don't support multiple sheets,
+        // just grab the first sheet
+        return $sheets->first();
+    }
+
+    public function setTotalRecords(): static
+    {
+        $this->total_records = $this->getImportContents()
+            ->count();
+
+        return $this;
     }
 
     public function getMappingValidator(): \Illuminate\Validation\Validator
     {
-        return Validator::make($this->mapping, [
+        $mapping = $this->mapping ?? [];
+
+        return Validator::make($mapping, [
             'title' => new InvoiceImportMap('required', true),
             'description' => new InvoiceImportMap('nullable'),
             'due_at' => new InvoiceImportMap('nullable'),
@@ -107,12 +129,12 @@ class InvoiceImport extends Model
             // required_without:scholarships.*.percentage
             'scholarships.*.amount' => [
                 new InvoiceImportMap('nullable|integer'),
-                new InvoiceImportAmountOrPercentage($this->mapping, 'percentage'),
+                new InvoiceImportAmountOrPercentage($mapping, 'percentage'),
             ],
             // required_without:scholarships.*.amount
             'scholarships.*.percentage' => [
                 new InvoiceImportMap('nullable|numeric|max:100'),
-                new InvoiceImportAmountOrPercentage($this->mapping, 'amount'),
+                new InvoiceImportAmountOrPercentage($mapping, 'amount'),
             ],
             // I don't think this is needed here, we can set it manually
             'scholarships.*.resolution_strategy' => new InvoiceImportMap([
@@ -127,20 +149,30 @@ class InvoiceImport extends Model
             // required_without:payment_schedules.*.terms.*.percentage
             'payment_schedules.*.terms.*.amount' => [
                 new InvoiceImportMap('nullable|integer'),
-                new InvoiceImportAmountOrPercentage($this->mapping, 'percentage'),
+                new InvoiceImportAmountOrPercentage($mapping, 'percentage'),
             ],
             // required_without:payment_schedules.*.terms.*.amount
             'payment_schedules.*.terms.*.percentage' => [
                 new InvoiceImportMap('nullable|numeric|max:100'),
-                new InvoiceImportAmountOrPercentage($this->mapping, 'amount'),
+                new InvoiceImportAmountOrPercentage($mapping, 'amount'),
             ],
             'payment_schedules.*.terms.*.due_at' => new InvoiceImportMap('nullable|date'),
         ]);
     }
 
-    public function hasValidMapping()
+    public function hasValidMapping(): bool
     {
         return $this->getMappingValidator()
             ->passes();
+    }
+
+    public static function storeFile(UploadedFile $file, School $school): string
+    {
+        $now = now()->format('U') . '-' . Str::random(8);
+
+        return $file->storeAs(
+            "imports/{$school->id}/{$now}",
+            $file->getClientOriginalName()
+        );
     }
 }

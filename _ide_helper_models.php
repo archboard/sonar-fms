@@ -245,9 +245,10 @@ namespace App\Models{
  * @property int $heading_row
  * @property int $starting_row
  * @property array|null $mapping
+ * @property bool $mapping_valid
  * @property int|null $total_records
- * @property int|null $imported_records
- * @property int|null $failed_records
+ * @property int $imported_records
+ * @property int $failed_records
  * @property \Illuminate\Support\Carbon|null $imported_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -268,6 +269,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereImportedAt($value)
  * @method static Builder|InvoiceImport whereImportedRecords($value)
  * @method static Builder|InvoiceImport whereMapping($value)
+ * @method static Builder|InvoiceImport whereMappingValid($value)
  * @method static Builder|InvoiceImport whereSchoolId($value)
  * @method static Builder|InvoiceImport whereStartingRow($value)
  * @method static Builder|InvoiceImport whereTotalRecords($value)

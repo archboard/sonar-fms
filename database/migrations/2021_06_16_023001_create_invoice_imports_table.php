@@ -21,6 +21,7 @@ class CreateInvoiceImportsTable extends Migration
             $table->integer('heading_row')->default(1);
             $table->integer('starting_row')->default(2);
             $table->json('mapping')->nullable();
+            $table->boolean('mapping_valid')->default(false);
             $table->integer('total_records')->nullable();
             $table->integer('imported_records')->default(0);
             $table->integer('failed_records')->default(0);

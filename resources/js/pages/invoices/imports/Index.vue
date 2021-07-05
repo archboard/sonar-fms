@@ -25,38 +25,38 @@
       <Thead>
         <tr>
           <th class="w-8 text-left pl-6">
-            <Checkbox v-model:checked="selectAll" />
+<!--            <Checkbox v-model:checked="selectAll" />-->
           </th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('last_name')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('file_name')">
               <span>
                 {{ __('Name') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'file_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'file_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('student_number')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('total_records')">
               <span>
-                {{ __('Student Number') }}
+                {{ __('Total records') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'total_records' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'total_records' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('grade_level')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('import_records')">
               <span>
-                {{ __('Grade') }}
+                {{ __('Imported/Failed') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'import_records' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'import_records' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -77,11 +77,12 @@
 <!--            />-->
           </td>
           <Td :lighter="false">
-            <label :for="`student_${invoiceImport.id}`" class="cursor-pointer">{{ invoiceImport.full_name }}</label>
+            <label :for="`student_${invoiceImport.id}`" class="cursor-pointer">{{ invoiceImport.file_name }}</label>
           </Td>
-          <Td>{{ invoiceImport.student_number }}</Td>
-          <Td>{{ invoiceImport.grade_level_short_formatted }}</Td>
-          <Td class="text-right">
+          <Td>{{ invoiceImport.total_records }}</Td>
+          <Td>{{ invoiceImport.imported_records }}/{{ invoiceImport.failed_records }}</Td>
+          <Td class="text-right space-x-2">
+            <Link is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">{{ __('Edit') }}</Link>
             <Link is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
           </Td>
         </tr>

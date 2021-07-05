@@ -24,6 +24,10 @@ class InvoiceImportResource extends JsonResource
             'imported_at' => $this->imported_at,
             'heading_row' => $this->heading_row,
             'starting_row' => $this->starting_row,
+            'mapping_valid' => $this->mapping_valid,
+            'file_name' => $this->file_name,
+            // This is purely for the edit form,
+            // as this is the structure it expects
             'files' => [
                 [
                     'id' => $this->id,

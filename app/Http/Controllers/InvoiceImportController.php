@@ -68,11 +68,15 @@ class InvoiceImportController extends Controller
 
         /** @var InvoiceImport $import */
         $import = $school->invoiceImports()
-            ->create([
+            ->make([
                 'user_id' => $request->user()->id,
                 'file_path' => InvoiceImport::storeFile($uploadedFile, $school),
                 'heading_row' => $data['heading_row'],
+                'starting_row' => $data['starting_row'],
             ]);
+
+        $import->setTotalRecords()
+            ->save();
 
         session()->flash('success', __('Invoice import created successfully.'));
 
@@ -119,6 +123,7 @@ class InvoiceImportController extends Controller
         ]);
 
         $fileData = Arr::first($data['files']);
+        $import->fill(Arr::except($data, 'files'));
 
         // This key only exists if the file hasn't been changed
         if (!isset($fileData['existing'])) {
@@ -134,9 +139,9 @@ class InvoiceImportController extends Controller
             Storage::delete($import->file_path);
             Storage::deleteDirectory(dirname($import->file_path));
             $import->file_path = InvoiceImport::storeFile($file, $request->school());
+            $import->setTotalRecords();
         }
 
-        $import->fill(Arr::except($data, 'files'));
         $import->save();
 
         session()->flash('success', __('Import updated successfully.'));

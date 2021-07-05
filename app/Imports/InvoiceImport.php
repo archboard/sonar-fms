@@ -26,7 +26,7 @@ class InvoiceImport implements ToCollection, WithHeadingRow, WithStartRow, WithC
     */
     public function collection(Collection $collection)
     {
-        //
+        ray($collection);
     }
 
     public function headingRow(): int
