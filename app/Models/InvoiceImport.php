@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Rules\InvoiceImportAmountOrPercentage;
+use App\Rules\InvoiceImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -10,7 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\HeadingRowImport;
 
 /**
@@ -71,5 +75,72 @@ class InvoiceImport extends Model
             "imports/{$school->id}/{$now}",
             $file->getClientOriginalName()
         );
+    }
+
+    public function getMappingValidator(): \Illuminate\Validation\Validator
+    {
+        return Validator::make($this->mapping, [
+            'title' => new InvoiceImportMap('required', true),
+            'description' => new InvoiceImportMap('nullable'),
+            'due_at' => new InvoiceImportMap('nullable'),
+            'available_at' => new InvoiceImportMap('nullable'),
+            'term_id' => new InvoiceImportMap([
+                'nullable',
+                Rule::in($this->school->terms->pluck('id')),
+            ]),
+            'notify' => 'boolean',
+            'items' => 'required|array|min:1',
+            'items.*.fee_id' => new InvoiceImportMap([
+                'nullable',
+                Rule::in($this->school->fees->pluck('id')),
+            ]),
+            'items.*.name' => new InvoiceImportMap('required', true),
+            'items.*.amount_per_unit' => new InvoiceImportMap('required|integer', true),
+            'items.*.quantity' => new InvoiceImportMap('required|integer', true),
+            'scholarships' => 'array',
+            'scholarships.*.scholarship_id' => new InvoiceImportMap([
+                'nullable',
+                Rule::in($this->school->scholarships->pluck('id')),
+            ]),
+            'scholarships.*.name' => new InvoiceImportMap('required', true),
+            'scholarships.*.use_amount' => 'required|boolean',
+            // required_without:scholarships.*.percentage
+            'scholarships.*.amount' => [
+                new InvoiceImportMap('nullable|integer'),
+                new InvoiceImportAmountOrPercentage($this->mapping, 'percentage'),
+            ],
+            // required_without:scholarships.*.amount
+            'scholarships.*.percentage' => [
+                new InvoiceImportMap('nullable|numeric|max:100'),
+                new InvoiceImportAmountOrPercentage($this->mapping, 'amount'),
+            ],
+            // I don't think this is needed here, we can set it manually
+            'scholarships.*.resolution_strategy' => new InvoiceImportMap([
+                'nullable',
+                'required_with:scholarships.*.amount,scholarships.*.percentage',
+                Rule::in(array_keys(Scholarship::getResolutionStrategies())),
+            ]),
+            'scholarships.*.applies_to' => 'array',
+            'payment_schedules' => 'array',
+            'payment_schedules.*.terms' => 'array',
+            'payment_schedules.*.terms.*.use_amount' => 'required|boolean',
+            // required_without:payment_schedules.*.terms.*.percentage
+            'payment_schedules.*.terms.*.amount' => [
+                new InvoiceImportMap('nullable|integer'),
+                new InvoiceImportAmountOrPercentage($this->mapping, 'percentage'),
+            ],
+            // required_without:payment_schedules.*.terms.*.amount
+            'payment_schedules.*.terms.*.percentage' => [
+                new InvoiceImportMap('nullable|numeric|max:100'),
+                new InvoiceImportAmountOrPercentage($this->mapping, 'amount'),
+            ],
+            'payment_schedules.*.terms.*.due_at' => new InvoiceImportMap('nullable|date'),
+        ]);
+    }
+
+    public function hasValidMapping()
+    {
+        return $this->getMappingValidator()
+            ->passes();
     }
 }

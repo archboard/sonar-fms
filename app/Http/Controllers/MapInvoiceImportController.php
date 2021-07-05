@@ -10,10 +10,11 @@ class MapInvoiceImportController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param InvoiceImport $import
      * @return \Inertia\Response|\Inertia\ResponseFactory
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function __invoke(Request $request, InvoiceImport $import)
+    public function index(InvoiceImport $import)
     {
         $this->authorize('create', InvoiceImport::class);
         $title = __('Map Import');
@@ -24,5 +25,18 @@ class MapInvoiceImportController extends Controller
             'invoiceImport' => $import->toResource(),
             'headers' => $import->headers,
         ])->withViewData(compact('title'));
+    }
+
+    public function update(Request $request, InvoiceImport $import)
+    {
+        $this->authorize('update', InvoiceImport::class);
+
+        $import->update([
+            'mapping' => $request->all(),
+        ]);
+
+        session()->flash('success', __('Invoice import mapping saved successfully.'));
+
+        return redirect()->route('invoices.imports.index');
     }
 }

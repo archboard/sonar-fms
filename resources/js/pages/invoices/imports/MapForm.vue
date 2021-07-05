@@ -84,17 +84,13 @@
           </InputWrap>
 
           <InputWrap>
-            <MapField v-model="form.notify" :headers="headers">
-              <CheckboxWrapper>
-                <Checkbox v-model:checked="form.notify" />
-                <CheckboxText>{{ __('Send notification') }}</CheckboxText>
-              </CheckboxWrapper>
-              <template v-slot:after>
-                <HelpText>
-                  {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
-                </HelpText>
-              </template>
-            </MapField>
+            <CheckboxWrapper>
+              <Checkbox v-model:checked="form.notify" />
+              <CheckboxText>{{ __('Queue notification') }}</CheckboxText>
+            </CheckboxWrapper>
+            <HelpText>
+              {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
+            </HelpText>
           </InputWrap>
         </Fieldset>
       </div>
@@ -533,24 +529,14 @@
         </div>
       </div>
     </FormMultipartWrapper>
+
+    <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
+      <Button type="submit" size="lg" >
+        {{ __('Save mapping') }}
+      </Button>
+    </div>
   </form>
 
-  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
-    <Button type="button" size="lg" @click.prevent="reviewing = true">
-      {{ __('Review and save') }}
-    </Button>
-  </div>
-
-<!--  <Modal-->
-<!--    v-if="reviewing"-->
-<!--    @close="reviewing = false"-->
-<!--    @action="saveInvoice"-->
-<!--    :action-loading="form.processing"-->
-<!--    size="xl"-->
-<!--    :auto-close="false"-->
-<!--  >-->
-<!--    <InvoiceSummary :invoice="form" />-->
-<!--  </Modal>-->
 </template>
 
 <script>
@@ -675,17 +661,8 @@ export default {
     const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
 
-    const saveImport = close => {
-      form.put($route('invoices.imports.update'), {
-        onSuccess () {
-          if (typeof close === 'function') {
-            close()
-          }
-        },
-        onFinish () {
-          form.processing = false
-        }
-      })
+    const saveImport = () => {
+      form.put($route('invoices.imports.map'))
     }
 
     // Watch for changes to apply a template

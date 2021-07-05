@@ -6,6 +6,7 @@ use App\Models\InvoiceImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JetBrains\PhpStorm\ArrayShape;
 use Tests\TestCase;
 
 class InvoiceImportTest extends TestCase
@@ -17,6 +18,17 @@ class InvoiceImportTest extends TestCase
         parent::setUp();
 
         $this->signIn();
+    }
+
+    #[ArrayShape(['id' => "string", 'column' => "null|string", 'value' => "null|string", 'isManual' => "bool"])]
+    protected function makeMapField(string $column = null, string $value = null, bool $isManual = false): array
+    {
+        return [
+            'id' => $this->uuid(),
+            'column' => $column,
+            'value' => $value,
+            'isManual' => $isManual,
+        ];
     }
 
     public function test_cannot_access_imports_without_permission()
@@ -137,5 +149,57 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(2, $import->heading_row);
         $this->assertEquals(3, $import->starting_row);
         Storage::assertExists($import->file_path);
+    }
+
+    public function test_can_save_import_mapping_passing_validation()
+    {
+        $this->assignPermission('update', InvoiceImport::class);
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            new UploadedFile(base_path('tests/sonar-import.xlsx'), 'sonar-import.xlsx', null, null, true),
+            $this->school
+        );
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 2,
+            'starting_row' => 3,
+        ]);
+
+        $data = [
+            'title' => $this->makeMapField(null, 'Invoice title', true),
+            'description' => $this->makeMapField(),
+            'due_at' => $this->makeMapField('due date'),
+            'available_at' => $this->makeMapField('available date'),
+            'term_id' => $this->makeMapField(),
+            'notify' => false,
+            'items' => [
+                [
+                    'fee_id' => $this->makeMapField(),
+                    'name' => $this->makeMapField('invoice name'),
+                    'amount_per_unit' => $this->makeMapField('invoice amount'),
+                    'quantity' => $this->makeMapField(null, 1, true),
+                ],
+            ],
+            'scholarships' => [
+                [
+                    'name' => $this->makeMapField(null, 'Assistance', true),
+                    'use_amount' => false,
+                    'amount' => $this->makeMapField(),
+                    'percentage' => $this->makeMapField('discount'),
+                    'applies_to' => [],
+                ]
+            ],
+            'payment_schedules' => [],
+        ];
+
+        $response = $this->putJson(route('invoices.imports.map', $import), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $import->refresh();
+        $this->assertEquals($data, $import->mapping);
     }
 }

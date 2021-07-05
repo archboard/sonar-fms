@@ -67,7 +67,7 @@
           <InputWrap>
             <CheckboxWrapper>
               <Checkbox v-model:checked="form.notify" />
-              <CheckboxText>{{ __('Send notification') }}</CheckboxText>
+              <CheckboxText>{{ __('Queue notification') }}</CheckboxText>
             </CheckboxWrapper>
             <HelpText>
               {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
