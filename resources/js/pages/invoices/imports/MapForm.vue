@@ -1,5 +1,5 @@
 <template>
-  <form class="xl:col-span-3" @submit.prevent="reviewing = true">
+  <form class="xl:col-span-3" @submit.prevent="saveImport">
     <Alert v-if="form.hasErrors" level="error" class="mb-8">
       {{ __('Please correct the errors below and try again.') }}
     </Alert>
@@ -574,7 +574,7 @@
     </FormMultipartWrapper>
 
     <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
-      <Button type="submit" size="lg" >
+      <Button type="submit" size="lg" :loading="form.processing">
         {{ __('Save mapping') }}
       </Button>
     </div>
@@ -690,18 +690,18 @@ export default {
     const page = usePage()
     const isDark = computed(() => window.isDark)
     const form = useForm({
-      student_attribute: null,
-      student_column: null,
-      create_new_students: false,
-      title: addMapFieldValue(),
-      description: addMapFieldValue(),
-      term_id: addMapFieldValue(),
-      available_at: addMapFieldValue(),
-      due_at: addMapFieldValue(),
-      notify: addMapFieldValue(false),
-      items: [],
-      scholarships: [],
-      payment_schedules: [],
+      student_attribute: props.invoiceImport.mapping?.student_attribute || null,
+      student_column: props.invoiceImport.mapping?.student_column || null,
+      create_new_students: props.invoiceImport.mapping?.create_new_students || false,
+      title: props.invoiceImport.mapping?.title || addMapFieldValue(),
+      description: props.invoiceImport.mapping?.description || addMapFieldValue(),
+      term_id: props.invoiceImport.mapping?.term_id || addMapFieldValue(),
+      available_at: props.invoiceImport.mapping?.available_at || addMapFieldValue(),
+      due_at: props.invoiceImport.mapping?.due_at || addMapFieldValue(),
+      notify: props.invoiceImport.mapping?.notify || addMapFieldValue(false),
+      items: props.invoiceImport.mapping?.items || [],
+      scholarships: props.invoiceImport.mapping?.scholarships || [],
+      payment_schedules: props.invoiceImport.mapping?.payment_schedules || [],
     })
     // Emit the initial value
     emit('update:invoiceForm', form)
@@ -754,7 +754,9 @@ export default {
     } = invoiceImportPaymentScheduleForm(form)
 
     // Add an initial line item
-    addInvoiceLineItem()
+    if (form.items.length === 0) {
+      addInvoiceLineItem()
+    }
 
     return {
       reviewing,
