@@ -79,9 +79,14 @@ class InvoiceImport extends Model
         return $value ?? 0;
     }
 
+    public function getExcelImport(): ExcelInvoiceImport
+    {
+        return new ExcelInvoiceImport($this);
+    }
+
     public function getImportContents(): Collection
     {
-        $sheets = (new ExcelInvoiceImport($this))
+        $sheets = $this->getExcelImport()
             ->toCollection($this->absolute_path);
 
         // Don't support multiple sheets,

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ProcessInvoiceImport;
 use App\Models\InvoiceImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
 use Tests\TestCase;
@@ -214,5 +216,69 @@ class InvoiceImportTest extends TestCase
         $import->refresh();
         $this->assertEquals($data, $import->mapping);
         $this->assertTrue($import->mapping_valid);
+    }
+
+    public function test_can_import_xls()
+    {
+        $this->assignPermission('create', InvoiceImport::class);
+        Storage::fake();
+        Queue::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('sonar-import.xls'),
+            $this->school
+        );
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(),
+                'notify' => false,
+                'items' => [
+                    [
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('invoice name'),
+                        'amount_per_unit' => $this->makeMapField('invoice amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'name' => $this->makeMapField(value: 'Assistance', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+
+        // Check that the import validity is checked
+        $this->post(route('invoices.imports.start', $import))
+            ->assertSessionHas('error')
+            ->assertRedirect();
+
+        // Check for valid mapping
+        $import->mapping_valid = $import->hasValidMapping();
+        $this->assertTrue($import->mapping_valid);
+        $import->save();
+
+        // Check that the import validity is checked
+        $this->post(route('invoices.imports.start', $import))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        Queue::assertPushed(ProcessInvoiceImport::class);
     }
 }
