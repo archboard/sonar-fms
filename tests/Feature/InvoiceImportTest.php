@@ -181,7 +181,7 @@ class InvoiceImportTest extends TestCase
         $data = [
             'student_attribute' => 'student_number',
             'student_column' => 'student number',
-            'title' => $this->makeMapField(null, 'Invoice title', true),
+            'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
             'description' => $this->makeMapField(),
             'due_at' => $this->makeMapField('due date'),
             'available_at' => $this->makeMapField('available date'),
@@ -192,12 +192,12 @@ class InvoiceImportTest extends TestCase
                     'fee_id' => $this->makeMapField(),
                     'name' => $this->makeMapField('invoice name'),
                     'amount_per_unit' => $this->makeMapField('invoice amount'),
-                    'quantity' => $this->makeMapField(null, 1, true),
+                    'quantity' => $this->makeMapField(value: 1, isManual: true),
                 ],
             ],
             'scholarships' => [
                 [
-                    'name' => $this->makeMapField(null, 'Assistance', true),
+                    'name' => $this->makeMapField(value: 'Assistance', isManual: true),
                     'use_amount' => false,
                     'amount' => $this->makeMapField(),
                     'percentage' => $this->makeMapField('discount'),
