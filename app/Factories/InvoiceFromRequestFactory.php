@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 
 class InvoiceFromRequestFactory extends InvoiceFactory
 {
-    public string $batchId;
     protected ?CreateInvoiceRequest $request = null;
     protected array $validatedData = [];
     protected Collection $students;
@@ -24,15 +23,6 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected array $invoicePaymentTermAttributes = [];
 
     protected int $subtotal = 0;
-
-    public function __construct()
-    {
-        ray()->newScreen('Invoice factory');
-
-        parent::__construct();
-
-        $this->batchId = $this->uuid();
-    }
 
     public static function make(CreateInvoiceRequest $request = null, Student|Collection $students = null): static
     {

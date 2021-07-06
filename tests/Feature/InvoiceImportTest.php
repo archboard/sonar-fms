@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Jobs\ProcessInvoiceImport;
 use App\Models\InvoiceImport;
+use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
@@ -280,5 +282,68 @@ class InvoiceImportTest extends TestCase
             ->assertRedirect();
 
         Queue::assertPushed(ProcessInvoiceImport::class);
+    }
+
+    public function test_can_import_xls()
+    {
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('sonar-import.xls'),
+            $this->school
+        );
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(),
+                'notify' => false,
+                'items' => [
+                    [
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('invoice name'),
+                        'amount_per_unit' => $this->makeMapField('invoice amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'name' => $this->makeMapField(value: 'Assistance', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $students->get($index)->update(['student_number' => $row->get('student number')]);
+            });
+
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+
+        $students->each(function (Student $student) {
+            $this->assertEquals(1, $student->invoices()->count());
+        });
     }
 }

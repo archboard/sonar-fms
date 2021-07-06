@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Factories\InvoiceFromImportFactory;
 use App\Models\InvoiceImport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,6 +33,10 @@ class ProcessInvoiceImport implements ShouldQueue
      */
     public function handle()
     {
-        ray("Handle this!");
+        $this->import->update([
+            'mapping_valid' => $this->import->hasValidMapping(),
+        ]);
+
+        $factory = InvoiceFromImportFactory::make($this->import);
     }
 }

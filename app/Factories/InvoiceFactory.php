@@ -17,6 +17,7 @@ use Ramsey\Uuid\Uuid;
 
 abstract class InvoiceFactory
 {
+    public string $batchId;
     public ?School $school = null;
 
     // These are the collections that store the attributes
@@ -38,6 +39,9 @@ abstract class InvoiceFactory
 
     public function __construct()
     {
+        ray()->newScreen('Invoice factory');
+
+        $this->batchId = $this->uuid();
         $this->invoices = collect();
         $this->invoiceItems = collect();
         $this->invoiceScholarships = collect();
