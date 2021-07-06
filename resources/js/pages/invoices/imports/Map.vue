@@ -14,7 +14,7 @@
       </CardPadding>
     </CardWrapper>
 
-    <MapForm :headers="headers" v-model:invoice-form="form" />
+    <MapForm :headers="headers" v-model:invoice-form="form" :invoice-import="invoiceImport" />
   </Authenticated>
 </template>
 

@@ -673,7 +673,11 @@ export default {
     headers: {
       type: Array,
       required: true,
-    }
+    },
+    invoiceImport: {
+      type: Object,
+      default: () => ({})
+    },
   },
   emits: ['update:invoiceForm'],
 
