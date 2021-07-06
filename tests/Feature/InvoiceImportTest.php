@@ -179,6 +179,8 @@ class InvoiceImportTest extends TestCase
         ]);
 
         $data = [
+            'student_attribute' => 'student_number',
+            'student_column' => 'student number',
             'title' => $this->makeMapField(null, 'Invoice title', true),
             'description' => $this->makeMapField(),
             'due_at' => $this->makeMapField('due date'),
