@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid'
 import fetchesFees from './fetchesFees'
-// import { computed } from 'vue'
 import invoiceImportMapField from '@/composition/invoiceImportMapField'
 
 export default (form) => {
@@ -27,19 +26,9 @@ export default (form) => {
   const feeSelected = item => {
     syncItemWithFee(item)
   }
-  // const getItemTotal = item => Number(item.amount_per_unit) * Number(item.quantity)
-  // const getItemsTotal = items => {
-  //   return items.reduce((total, item) => {
-  //     return total + getItemTotal(item)
-  //   }, 0)
-  // }
-  // const subtotal = computed(() => getItemsTotal(form.items))
 
   return {
     fees,
-    // subtotal,
-    // getItemsTotal,
-    // getItemTotal,
     addInvoiceLineItem,
     syncItemWithFee,
     feeSelected,
