@@ -218,7 +218,7 @@ class InvoiceImportTest extends TestCase
         $this->assertTrue($import->mapping_valid);
     }
 
-    public function test_can_import_xls()
+    public function test_can_queue_import()
     {
         $this->assignPermission('create', InvoiceImport::class);
         Storage::fake();
