@@ -102,6 +102,8 @@ class InvoiceImport extends Model
         $mapping = $this->mapping ?? [];
 
         return Validator::make($mapping, [
+            'student_attribute' => ['required', Rule::in(['sis_id', 'student_number', 'email'])],
+            'student_column' => 'required',
             'title' => new InvoiceImportMap('required', true),
             'description' => new InvoiceImportMap('nullable'),
             'due_at' => new InvoiceImportMap('nullable'),

@@ -5,8 +5,51 @@
     </Alert>
 
     <FormMultipartWrapper>
-      <!-- Invoice details -->
+      <!-- Student mapping settings -->
       <div>
+        <div class="mb-6">
+          <CardSectionHeader>{{ __('Student identity settings') }}</CardSectionHeader>
+          <HelpText>
+            {{ __('Configure how students are found and student import behavior.') }}
+          </HelpText>
+        </div>
+        <Fieldset>
+          <InputWrap :error="form.errors.student_attribute">
+            <Label for="title" :required="true">{{ __('Student identity field') }}</Label>
+            <Select v-model="form.student_attribute" id="student_attribute">
+              <option :value="null" disabled selected>{{ __('Select a student field') }}</option>
+              <option value="sis_id">{{ __('SIS ID (DCID)') }}</option>
+              <option value="student_number">{{ __('Student number') }}</option>
+              <option value="email">{{ __('Email') }}</option>
+            </Select>
+            <HelpText>
+              {{ __('Select the field by which a student can be uniquely identified.') }}
+            </HelpText>
+          </InputWrap>
+
+          <InputWrap :error="form.errors.student_column">
+            <Label for="title" :required="true">{{ __('Student reference column') }}</Label>
+            <ColumnSelector v-model="form.student_column" id="student_column" :headers="headers" />
+            <HelpText>
+              {{ __('Select the column that holds student identifying data.') }}
+            </HelpText>
+          </InputWrap>
+
+          <!-- Not sure if we want this behavior -->
+<!--          <InputWrap>-->
+<!--            <CheckboxWrapper>-->
+<!--              <Checkbox v-model:checked="form.create_new_students" />-->
+<!--              <CheckboxText>{{ __('Create new students has blank identifying value') }}</CheckboxText>-->
+<!--            </CheckboxWrapper>-->
+<!--            <HelpText>-->
+<!--              {{ __("Enabling this option will attempt to create a new student record if a row's value is empty for the student reference column.") }}-->
+<!--            </HelpText>-->
+<!--          </InputWrap>-->
+        </Fieldset>
+      </div>
+
+      <!-- Invoice details -->
+      <div class="pt-8">
         <div class="mb-6">
           <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
           <HelpText>
@@ -643,6 +686,9 @@ export default {
     const page = usePage()
     const isDark = computed(() => window.isDark)
     const form = useForm({
+      student_attribute: null,
+      student_column: null,
+      create_new_students: false,
       title: addMapFieldValue(),
       description: addMapFieldValue(),
       term_id: addMapFieldValue(),
