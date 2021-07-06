@@ -82,8 +82,9 @@
           <Td>{{ invoiceImport.total_records }}</Td>
           <Td>{{ invoiceImport.imported_records }}/{{ invoiceImport.failed_records }}</Td>
           <Td class="text-right space-x-2">
-            <Link is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">{{ __('Edit') }}</Link>
-            <Link is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
+            <Link :href="$route('invoices.imports.edit', invoiceImport)">{{ __('Edit') }}</Link>
+            <Link :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
+            <Link v-if="invoiceImport.mapping_valid" :href="$route('invoices.imports.start', invoiceImport)" method="post">{{ __('Import') }}</Link>
           </Td>
         </tr>
 
