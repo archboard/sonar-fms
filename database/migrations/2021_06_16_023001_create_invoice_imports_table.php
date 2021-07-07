@@ -26,6 +26,7 @@ class CreateInvoiceImportsTable extends Migration
             $table->integer('imported_records')->default(0);
             $table->integer('failed_records')->default(0);
             $table->dateTime('imported_at')->nullable();
+            $table->json('results')->nullable();
             $table->timestamps();
         });
     }

@@ -32,6 +32,7 @@ class InvoiceImport extends Model
 
     protected $casts = [
         'mapping' => 'json',
+        'results' => 'json',
         'total_records' => 'int',
         'imported_records' => 'int',
         'failed_records' => 'int',
