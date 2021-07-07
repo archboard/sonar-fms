@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\BelongsToUser;
 use App\Traits\UsesUuid;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -28,6 +29,7 @@ class Invoice extends Model
 {
     use BelongsToTenant;
     use BelongsToSchool;
+    use BelongsToUser;
     use UsesUuid;
     use HasFactory;
     use HasResource;
