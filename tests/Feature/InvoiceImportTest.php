@@ -336,7 +336,11 @@ class InvoiceImportTest extends TestCase
 
         $import->getImportContents()
             ->each(function (Collection $row, $index) use ($students) {
-                $students->get($index)->update(['student_number' => $row->get('student number')]);
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
             });
 
         $job = new ProcessInvoiceImport($import);
