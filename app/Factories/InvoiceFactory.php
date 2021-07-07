@@ -9,6 +9,7 @@ use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\School;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -19,6 +20,8 @@ abstract class InvoiceFactory
 {
     public string $batchId;
     public ?School $school = null;
+    protected Collection $students;
+    protected User $user;
 
     // These are the collections that store the attributes
     // that need to be stored in the db
@@ -36,6 +39,7 @@ abstract class InvoiceFactory
     protected array $fillablePaymentTermAttributes;
 
     protected string $now;
+    protected string $notifyAt;
 
     public function __construct()
     {
@@ -56,6 +60,7 @@ abstract class InvoiceFactory
         $this->fillablePaymentTermAttributes = (new InvoicePaymentTerm)->getFillable();
 
         $this->now = now()->toDateTimeString();
+        $this->notifyAt = now()->addMinutes(15)->toIso8601String();
     }
 
     protected function uuid(): string
