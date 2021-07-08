@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\InvoiceImportFinished;
 use App\Factories\InvoiceFromImportFactory;
 use App\Models\InvoiceImport;
 use Illuminate\Bus\Queueable;
@@ -40,6 +41,6 @@ class ProcessInvoiceImport implements ShouldQueue
         InvoiceFromImportFactory::make($this->import)
             ->build();
 
-        // Fire an event...
+        event(new InvoiceImportFinished($this->import));
     }
 }

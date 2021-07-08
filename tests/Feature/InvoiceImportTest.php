@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\InvoiceImportFinished;
 use App\Jobs\ProcessInvoiceImport;
 use App\Models\Currency;
 use App\Models\Invoice;
@@ -12,6 +13,7 @@ use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
@@ -292,6 +294,7 @@ class InvoiceImportTest extends TestCase
     {
         $this->withoutExceptionHandling();
         Storage::fake();
+        Event::fake();
 
         $originalPath = InvoiceImport::storeFile(
             $this->getUploadedFile('sonar-import.xls'),
@@ -399,6 +402,7 @@ class InvoiceImportTest extends TestCase
 
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
-        $this->assertEquals(4, count($import->results));
+        $this->assertCount(4, $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
     }
 }
