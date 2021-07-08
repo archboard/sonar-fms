@@ -66,6 +66,8 @@ class Invoice extends Model
         'available_at' => 'datetime',
     ];
 
+    protected $keyType = 'string';
+
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {

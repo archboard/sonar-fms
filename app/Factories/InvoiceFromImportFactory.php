@@ -4,8 +4,8 @@ namespace App\Factories;
 
 use App\Exceptions\InvalidImportMapValue;
 use App\Models\InvoiceImport;
-use App\Models\Student;
 use App\Utilities\NumberUtility;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -18,6 +18,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected array $results = [];
     protected Collection $currentRow;
     protected int $currentRowNumber = 0;
+    protected int $failedRecords = 0;
+    protected int $importedRecords = 0;
 
     protected Collection $terms;
     protected Collection $fees;
@@ -59,6 +61,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     protected function addResult(string $result, bool $successful = true)
     {
+        $property = $successful ? 'importedRecords' : 'failedRecords';
+        $this->{$property}++;
+
         $this->results[] = [
             'row' => $this->currentRowNumber,
             'successful' => $successful,
@@ -76,9 +81,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * Carbon instance and returns the date/time string
      *
      * @param $value
-     * @return string
+     * @return string|null
      */
-    protected function convertDate($value): string
+    protected function convertDate($value): ?string
     {
         if (is_numeric($value)) {
             $date = Carbon::create(1900, 1, 1, 0, 0, 0, $this->user->timezone);
@@ -90,8 +95,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 ->toDateTimeString();
         }
 
-        return Carbon::parse($value, $this->user->timezone)
-            ->toDateTimeString();
+        try {
+            return Carbon::parse($value, $this->user->timezone)
+                ->toDateTimeString();
+        } catch (InvalidFormatException $exception) {
+            return null;
+        }
     }
 
     protected function convertCurrency($value): int
@@ -114,6 +123,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected function getMapValue(string $key, string $conversion = null)
     {
         $mapField = $this->getMapField($key);
+
+        if (!is_array($mapField)) {
+            return $mapField;
+        }
 
         if ($mapField['isManual']) {
             return $mapField['value'];
@@ -195,7 +208,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * @return Collection
      * @throws InvalidImportMapValue
      */
-    public function buildInvoiceItems(string $invoiceUuid): Collection
+    protected function buildInvoiceItems(string $invoiceUuid): Collection
     {
         return collect($this->getMapField('items'))
             ->reduce(function (Collection $items, array $item, int $index) use ($invoiceUuid) {
@@ -203,11 +216,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $quantity = $this->getMapValue("items.{$index}.quantity", 'int');
 
                 if (!is_int($perUnit)) {
+                    ray('invalid value', $perUnit)->red();
                     // __('Invalid line item amount')
                     throw new InvalidImportMapValue('Invalid line item amount');
                 }
 
-                if (!is_int($quantity)) {
+                if (!is_int((int) $quantity)) {
+                    ray('invalid value', $quantity)->red();
                     // __('Invalid line item quantity')
                     throw new InvalidImportMapValue('Invalid line item quantity');
                 }
@@ -220,6 +235,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 }
 
                 $items->put($item['id'], [
+                    'batch_id' => $this->batchId,
                     'invoice_uuid' => $invoiceUuid,
                     'uuid' => $this->uuid(),
                     'fee_id' => $fee,
@@ -249,8 +265,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * @return int
      * @throws InvalidImportMapValue
      */
-    public function buildInvoiceScholarships(string $invoiceUuid, int $subtotal, Collection $invoiceItems): int
+    protected function buildInvoiceScholarships(string $invoiceUuid, int $subtotal, Collection $invoiceItems): int
     {
+        ray($invoiceUuid, $subtotal)->purple();
         return collect($this->getMapField('scholarships'))
             ->reduce(function (int $total, array $item, int $index) use ($invoiceUuid, $subtotal, $invoiceItems) {
                 $scholarship = $this->getMapValue("scholarships.{$index}.scholarship_id");
@@ -260,7 +277,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     throw new InvalidImportMapValue('Invalid scholarship ID, scholarship does not exist');
                 }
 
-                $amount = $this->getMapValue("scholarships.{$index}.amount");
+                $amount = $this->getMapValue("scholarships.{$index}.amount", 'currency');
                 $percentage = $this->getMapValue("scholarships.{$index}.percentage", 'percentage');
 
                 // Don't process if there isn't an amount
@@ -269,28 +286,31 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     return $total;
                 }
 
-                if ($item['use_amount'] && !$amount) {
+                if ($item['use_amount'] && empty($amount)) {
                     // __('Missing amount value for scholarship')
                     throw new InvalidImportMapValue('Missing amount value for scholarship');
                 }
 
-                if (!$item['use_amount'] && !$percentage) {
+                if (!$item['use_amount'] && empty($percentage)) {
                     // __('Missing percentage value for scholarship')
                     throw new InvalidImportMapValue('Missing percentage value for scholarship');
                 }
 
                 $attributes = [
+                    'batch_id' => $this->batchId,
                     'invoice_uuid' => $invoiceUuid,
                     'uuid' => $this->uuid(),
                     'scholarship_id' => $scholarship,
                     'name' => $this->getMapValue("scholarships.{$index}.name"),
                     'amount' => $item['use_amount'] ? $amount : null,
                     'percentage' => $item['use_amount'] ? null : $percentage,
+                    'created_at' => $this->now,
+                    'updated_at' => $this->now,
                 ];
                 $applicableSubtotal = $subtotal;
 
                 if (
-                    !empty($item['applies_to']) ||
+                    !empty($item['applies_to']) &&
                     count($item['applies_to']) !== $invoiceItems->count()
                 ) {
                     // This is probably "bad practice" since the reduce
@@ -316,6 +336,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 // based on the appropriate subtotal
                 if (!$item['use_amount']) {
                     $discount = $applicableSubtotal * $attributes['percentage'];
+                    ray($applicableSubtotal, $attributes['percentage'], $discount)->purple();
                 }
 
                 // Don't let the discount exceed the subtotal
@@ -328,6 +349,76 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 return $total + $discount;
             }, 0);
+    }
+
+    /**
+     * Payment schedules are also optional, like scholarships
+     * If a row doesn't have any schedule values, skip creating
+     * them for this row. Don't throw an exception and import the
+     * rest of the invoice normally.
+     *
+     * @param string $invoiceUuid
+     * @param int $amountDue
+     * @return Collection
+     */
+    protected function buildPaymentSchedules(string $invoiceUuid, int $amountDue): Collection
+    {
+        return collect($this->getMapField('payment_schedules'))
+            ->each(function (array $item, int $scheduleIndex) use ($invoiceUuid, $amountDue) {
+                $scheduleUuid = $this->uuid();
+                $scheduleAttributes = [
+                    'uuid' => $scheduleUuid,
+                    'batch_id' => $this->batchId,
+                    'invoice_uuid' => $invoiceUuid,
+                    'created_at' => $this->now,
+                    'updated_at' => $this->now,
+                ];
+
+                $scheduleAmount = collect($item)
+                    ->reduce(function (
+                        int $total,
+                        array $term,
+                        int $termIndex
+                    ) use ($invoiceUuid, $scheduleUuid, $amountDue, $scheduleIndex) {
+                        $amount = $this->getMapValue(
+                            "payment_schedules.{$scheduleIndex}.terms.{$termIndex}.amount",
+                            'currency'
+                        );
+                        $percentage = $this->getMapValue(
+                            "payment_schedules.{$scheduleIndex}.terms.{$termIndex}.percentage",
+                            'currency'
+                        );
+
+                        if (
+                            ($term['use_amount'] && empty($amount)) ||
+                            (!$term['use_amount'] && empty($percentage))
+                        ) {
+                            return $total;
+                        }
+
+                        $this->invoicePaymentTerms->push([
+                            'uuid' => $this->uuid(),
+                            'batch_id' => $this->batchId,
+                            'invoice_uuid' => $invoiceUuid,
+                            'invoice_payment_schedule_uuid' => $scheduleUuid,
+                            'amount' => $amount,
+                            'percentage' => $percentage,
+                            'created_at' => $this->now,
+                            'updated_at' => $this->now,
+                        ]);
+
+                        if ($term['use_amount']) {
+                            return $total + $amount;
+                        }
+
+                        return $total + ($amountDue * $percentage);
+                    }, 0);
+
+                // If the amount is zero, it means no valid terms exist
+                if ($scheduleAmount > 0) {
+                    $this->invoicePaymentSchedules->push($scheduleAttributes);
+                }
+            });
     }
 
     public function build(): Collection
@@ -365,6 +456,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $invoiceAttributes['remaining_balance'] = $amountDue;
 
                 // Build the payment schedules
+                $this->buildPaymentSchedules($invoiceUuid, $amountDue);
 
                 // After everything has been calculated add the invoice to the collection
                 $this->invoices->push($invoiceAttributes);
@@ -379,9 +471,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $storeResults = $this->store();
 
         $this->import->update([
+            'imported_records' => $this->importedRecords,
+            'failed_records' => $this->failedRecords,
             'imported_at' => now(),
             'results' => $this->results,
         ]);
+
+        ray($this->import);
 
         return $storeResults;
     }

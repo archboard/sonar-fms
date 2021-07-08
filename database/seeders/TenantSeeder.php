@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 
 class TenantSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class TenantSeeder extends Seeder
         /** @var Tenant $tenant */
         $tenant = Tenant::factory()->testing()->create();
 
+        /** @var Collection $schools */
         $schools = $tenant->schools()
             ->saveMany(School::factory()->count(3)->make());
 

@@ -37,6 +37,9 @@ class ProcessInvoiceImport implements ShouldQueue
             'mapping_valid' => $this->import->hasValidMapping(),
         ]);
 
-        $factory = InvoiceFromImportFactory::make($this->import);
+        InvoiceFromImportFactory::make($this->import)
+            ->build();
+
+        // Fire an event...
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Currency;
 use App\Models\School;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -28,6 +29,7 @@ class SchoolFactory extends Factory
             'high_grade' => 12,
             'low_grade' => $this->faker->numberBetween(-2, 0),
             'active' => true,
+            'currency_id' => Currency::firstWhere('code', 'CNY')->id,
         ];
     }
 }

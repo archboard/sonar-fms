@@ -13,10 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(CurrencySeeder::class);
+
         if (app()->environment('testing')) {
             $this->call(TenantSeeder::class);
         }
-
-        $this->call(CurrencySeeder::class);
     }
 }

@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Jobs\ProcessInvoiceImport;
+use App\Models\Currency;
+use App\Models\Invoice;
 use App\Models\InvoiceImport;
+use App\Models\InvoiceItem;
+use App\Models\InvoiceScholarship;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -284,8 +288,9 @@ class InvoiceImportTest extends TestCase
         Queue::assertPushed(ProcessInvoiceImport::class);
     }
 
-    public function test_can_import_xls()
+    public function test_can_import_simple_xls()
     {
+        $this->withoutExceptionHandling();
         Storage::fake();
 
         $originalPath = InvoiceImport::storeFile(
@@ -309,6 +314,7 @@ class InvoiceImportTest extends TestCase
                 'notify' => false,
                 'items' => [
                     [
+                        'id' => $this->uuid(),
                         'fee_id' => $this->makeMapField(),
                         'name' => $this->makeMapField('invoice name'),
                         'amount_per_unit' => $this->makeMapField('invoice amount'),
@@ -317,6 +323,7 @@ class InvoiceImportTest extends TestCase
                 ],
                 'scholarships' => [
                     [
+                        'id' => $this->uuid(),
                         'name' => $this->makeMapField(value: 'Assistance', isManual: true),
                         'use_amount' => false,
                         'amount' => $this->makeMapField(),
@@ -346,8 +353,52 @@ class InvoiceImportTest extends TestCase
         $job = new ProcessInvoiceImport($import);
         $job->handle();
 
-        $students->each(function (Student $student) {
-            $this->assertEquals(1, $student->invoices()->count());
+        $import->refresh();
+        $contents = $import->getImportContents();
+        $contentsByStudentNumber = $contents->keyBy('student number');
+
+        $values = $contents
+            ->pluck('student number')
+            ->filter(fn ($value) => !is_null($value));
+
+        $students = $import->school->students()
+            ->whereIn('student_number', $values)
+            ->get();
+
+        $students->each(function (Student $student) use ($contentsByStudentNumber) {
+            $this->assertEquals(1, $student->invoices->count());
+            /** @var Invoice $invoice */
+            $invoice = $student->invoices->first();
+            $this->assertEquals(1, $invoice->invoiceItems->count());
+            $row = $contentsByStudentNumber->get($student->student_number);
+            $total = $row['invoice amount'] * 100;
+            $discount = 0;
+
+            if (!empty($row['discount'])) {
+                $this->assertEquals(1, $invoice->invoiceScholarships->count());
+                /** @var InvoiceScholarship $scholarship */
+                $scholarship = $invoice->invoiceScholarships->first();
+                $discount = $scholarship->calculated_amount;
+                $this->assertEquals(0, $scholarship->amount);
+                $this->assertEquals($row['discount'], $scholarship->percentage);
+                $this->assertEquals($total * $row['discount'], $scholarship->calculated_amount);
+            }
+
+            /** @var InvoiceItem $item */
+            $item = $invoice->invoiceItems->first();
+            $this->assertEquals($total, $item->amount);
+            $this->assertEquals($total, $item->amount_per_unit);
+
+            $due = $total - $discount;
+            if ($due < 0) {
+                $due = 0;
+            }
+            $this->assertEquals($due, $invoice->amount_due);
+            $this->assertEquals($due, $invoice->remaining_balance);
         });
+
+        $this->assertEquals(3, $import->imported_records);
+        $this->assertEquals(1, $import->failed_records);
+        $this->assertEquals(4, count($import->results));
     }
 }
