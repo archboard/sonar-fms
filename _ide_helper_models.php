@@ -161,13 +161,14 @@ namespace App\Models{
  * App\Models\Invoice
  *
  * @mixin IdeHelperInvoice
- * @property int $id
+ * @property string $id
  * @property string $uuid
  * @property string|null $batch_id
  * @property string|null $import_id
  * @property int $tenant_id
  * @property int $school_id
  * @property int $student_id
+ * @property int $user_id
  * @property int|null $term_id
  * @property string $title
  * @property string|null $description
@@ -202,6 +203,7 @@ namespace App\Models{
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\Term|null $term
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static Builder|Invoice filter(array $filters)
  * @method static Builder|Invoice newModelQuery()
@@ -227,6 +229,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereTermId($value)
  * @method static Builder|Invoice whereTitle($value)
  * @method static Builder|Invoice whereUpdatedAt($value)
+ * @method static Builder|Invoice whereUserId($value)
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
  */
@@ -250,6 +253,7 @@ namespace App\Models{
  * @property int $imported_records
  * @property int $failed_records
  * @property \Illuminate\Support\Carbon|null $imported_at
+ * @property array|null $results
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string $absolute_path
@@ -270,6 +274,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereImportedRecords($value)
  * @method static Builder|InvoiceImport whereMapping($value)
  * @method static Builder|InvoiceImport whereMappingValid($value)
+ * @method static Builder|InvoiceImport whereResults($value)
  * @method static Builder|InvoiceImport whereSchoolId($value)
  * @method static Builder|InvoiceImport whereStartingRow($value)
  * @method static Builder|InvoiceImport whereTotalRecords($value)
