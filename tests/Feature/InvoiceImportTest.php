@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Events\InvoiceImportFinished;
 use App\Jobs\ProcessInvoiceImport;
 use App\Models\Currency;
+use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;
+use App\Models\Scholarship;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -412,6 +414,191 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
+    public function test_can_import_complex_xlsx()
+    {
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('complex.xlsx'),
+            $this->school
+        );
+
+        // Seed a fee to make sure it gets referenced
+        $this->school->fees()->save(
+            Fee::factory()->make([
+                'id' => 1,
+                'tenant_id' => $this->tenant->id
+            ])
+        );
+
+        // Seed a scholarship for reference sake
+        $this->school->scholarships()
+            ->save(
+                Scholarship::factory()->make([
+                    'id' => 1,
+                    'tenant_id' => $this->tenant->id
+                ])
+            );
+
+        $firstItem = $this->uuid();
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 2,
+            'starting_row' => 3,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $firstItem,
+                        'fee_id' => $this->makeMapField('item 1 fee'),
+                        'name' => $this->makeMapField('item 1 name'),
+                        'amount_per_unit' => $this->makeMapField('item 1 amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('item 2 name'),
+                        'amount_per_unit' => $this->makeMapField('item 2 amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'scholarship_id' => $this->makeMapField('discount 1 scholarship'),
+                        'name' => $this->makeMapField('discount 1 name'),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount 1 percentage'),
+                        'applies_to' => [$firstItem],
+                    ],
+                    [
+                        'id' => $this->uuid(),
+                        'scholarship_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('discount 2 name'),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField('discount 2 amount'),
+                        'percentage' => $this->makeMapField(),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [
+                    [
+                        'id' => $this->uuid(),
+                        'terms' => [
+                            [
+                                'id' => $this->uuid(),
+                                'use_amount' => false,
+                                'amount' => $this->makeMapField(),
+                                'percentage' => $this->makeMapField('payment 1 percentage'),
+                                'due_at' => $this->makeMapField('payment 1 due'),
+                            ],
+                            [
+                                'id' => $this->uuid(),
+                                'use_amount' => false,
+                                'amount' => $this->makeMapField('payment 2 amount'),
+                                'percentage' => $this->makeMapField(),
+                                'due_at' => $this->makeMapField('payment 2 due'),
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $students->get($index)->update(['student_number' => $row->get('student number')]);
+            });
+
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+
+        $import->refresh();
+        $contents = $import->getImportContents()->keyBy('student number');
+
+        // Loop over dynamic where it makes sense
+        $students->each(function (Student $student, int $index) use ($contents) {
+            $row = $contents->get($student->student_number);
+            $this->assertEquals(1, $student->invoices->count());
+
+            /** @var Invoice $invoice */
+            $invoice = $student->invoices->first();
+            $this->assertEquals($row['invoice name'], $invoice->title);
+            $this->assertTrue(
+                Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->due_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->available_at)
+            );
+
+            if (empty($row['item 1 fee'])) {
+                $this->assertTrue($invoice->invoiceItems->every(fn ($item) => is_null($item->fee_id)));
+            } else {
+                $this->assertNotNull($invoice->invoiceItems->firstWhere('fee_id', $row['item 1 fee']));
+            }
+
+            if (!empty($row['item 1 amount'])) {
+                $this->assertNotNull($invoice->invoiceItems->firstWhere('amount', $row['item 1 amount'] * 100));
+                $this->assertNotNull($invoice->invoiceItems->firstWhere('name', $row['item 1 name']));
+            }
+
+            if (!empty($row['item 2 amount'])) {
+                $this->assertNotNull($invoice->invoiceItems->firstWhere('amount', $row['item 2 amount'] * 100));
+                $this->assertNotNull($invoice->invoiceItems->firstWhere('name', $row['item 2 name']));
+            }
+
+            if (!empty($row['discount 1 percentage'])) {
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('percentage', $row['discount 1 percentage']));
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('name', $row['discount 1 name']));
+            }
+
+            if (!empty($row['discount 1 scholarship'])) {
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('scholarship_id', $row['discount 1 scholarship']));
+            }
+
+            if (!empty($row['discount 2 amount'])) {
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('amount', $row['discount 2 amount']));
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('name', $row['discount 2 name']));
+            }
+        });
+
+        // Assert individual student's invoice since they're so different
+        // If complex.xlsx changes, these assertions need updated too
+
+        // Student 1
+        /** @var Student $student1 */
+        $student1 = $students->firstWhere('student_number', 1);
+        /** @var Invoice $invoice1 */
+        $invoice1 = $student1->invoices->first();
+        $this->assertEquals(1, $invoice1->invoiceItems->count());
+        $this->assertEquals(120000, $invoice1->amount_due);
+        $this->assertEquals(120000, $invoice1->remaining_balance);
+
+        $this->assertEquals(3, $import->imported_records);
+        $this->assertEquals(0, $import->failed_records);
+        $this->assertCount(3, $import->results);
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 }

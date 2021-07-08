@@ -25,10 +25,20 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected Collection $fees;
     protected Collection $scholarships;
 
+    // These are the collections that store the attributes
+    // that need to be stored in the db
+    protected Collection $localInvoices;
+    protected Collection $localInvoiceItems;
+    protected Collection $localInvoiceScholarships;
+    protected Collection $localItemScholarshipPivot;
+    protected Collection $localInvoicePaymentSchedules;
+    protected Collection $localInvoicePaymentTerms;
+
     public static function make(InvoiceImport $import = null): static
     {
         return (new static)
             ->setInvoiceImport($import)
+            ->resetLocalStores()
             ->setStudents();
     }
 
@@ -55,6 +65,18 @@ class InvoiceFromImportFactory extends InvoiceFactory
             ->whereIn($this->getMapField('student_attribute'), $values)
             ->get()
             ->keyBy($this->getMapField('student_attribute'));
+
+        return $this;
+    }
+
+    protected function resetLocalStores(): static
+    {
+        $this->localInvoices = collect();
+        $this->localInvoiceItems = collect();
+        $this->localInvoiceScholarships = collect();
+        $this->localItemScholarshipPivot = collect();
+        $this->localInvoicePaymentSchedules = collect();
+        $this->localInvoicePaymentTerms = collect();
 
         return $this;
     }
@@ -212,8 +234,14 @@ class InvoiceFromImportFactory extends InvoiceFactory
      */
     protected function buildInvoiceItems(string $invoiceUuid): Collection
     {
-        return collect($this->getMapField('items'))
+        /** @var Collection $items */
+        $items = collect($this->getMapField('items'))
             ->reduce(function (Collection $items, array $item, int $index) use ($invoiceUuid) {
+                // If there isn't an amount value configured, do not add this item
+                if (blank($this->getMapValue("items.{$index}.amount_per_unit"))) {
+                    return $items;
+                }
+
                 $perUnit = $this->getMapValue("items.{$index}.amount_per_unit", 'currency');
                 $quantity = $this->getMapValue("items.{$index}.quantity", 'int');
 
@@ -251,6 +279,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 return $items;
             }, collect());
+
+        if ($items->isEmpty()) {
+            // __('No invoice items exist')
+            throw new InvalidImportMapValue('No invoice items exist');
+        }
+
+        return $items;
     }
 
     /**
@@ -269,7 +304,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
      */
     protected function buildInvoiceScholarships(string $invoiceUuid, int $subtotal, Collection $invoiceItems): int
     {
-        ray($invoiceUuid, $subtotal)->purple();
         return collect($this->getMapField('scholarships'))
             ->reduce(function (int $total, array $item, int $index) use ($invoiceUuid, $subtotal, $invoiceItems) {
                 $scholarship = $this->getMapValue("scholarships.{$index}.scholarship_id");
@@ -322,7 +356,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                         ->reduce(function (int $total, string $id) use ($attributes, $invoiceItems) {
                             $invoiceItem = $invoiceItems->get($id);
 
-                            $this->itemScholarshipPivot->push([
+                            $this->localItemScholarshipPivot->push([
                                 'invoice_item_uuid' => $invoiceItem['uuid'],
                                 'invoice_scholarship_uuid' => $attributes['uuid'],
                             ]);
@@ -338,7 +372,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 // based on the appropriate subtotal
                 if (!$item['use_amount']) {
                     $discount = $applicableSubtotal * $attributes['percentage'];
-                    ray($applicableSubtotal, $attributes['percentage'], $discount)->purple();
                 }
 
                 // Don't let the discount exceed the subtotal
@@ -347,7 +380,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 }
 
                 $attributes['calculated_amount'] = $discount;
-                $this->invoiceScholarships->push($attributes);
+                $this->localInvoiceScholarships->push($attributes);
 
                 return $total + $discount;
             }, 0);
@@ -376,7 +409,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     'updated_at' => $this->now,
                 ];
 
-                $scheduleAmount = collect($item)
+                $scheduleAmount = collect($item['terms'])
                     ->reduce(function (
                         int $total,
                         array $term,
@@ -398,7 +431,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                             return $total;
                         }
 
-                        $this->invoicePaymentTerms->push([
+                        $this->localInvoicePaymentTerms->push([
                             'uuid' => $this->uuid(),
                             'batch_id' => $this->batchId,
                             'invoice_uuid' => $invoiceUuid,
@@ -418,7 +451,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 // If the amount is zero, it means no valid terms exist
                 if ($scheduleAmount > 0) {
-                    $this->invoicePaymentSchedules->push($scheduleAttributes);
+                    $this->localInvoicePaymentSchedules->push($scheduleAttributes);
                 }
             });
     }
@@ -443,7 +476,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 // Build the items
                 $items = $this->buildInvoiceItems($invoiceUuid);
                 $subtotal = $items->reduce(fn ($total, $item) => $total + $item['amount']);
-                $this->invoiceItems = $this->invoiceItems->merge($items->values());
+                $this->localInvoiceItems = $this->localInvoiceItems->merge($items->values());
 
                 // Build the scholarships
                 $discount = $this->buildInvoiceScholarships($invoiceUuid, $subtotal, $items);
@@ -461,12 +494,17 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $this->buildPaymentSchedules($invoiceUuid, $amountDue);
 
                 // After everything has been calculated add the invoice to the collection
-                $this->invoices->push($invoiceAttributes);
+                $this->localInvoices->push($invoiceAttributes);
 
                 // Add the successful result
                 $this->addResult($invoiceUuid);
+
+                // Merge the local table data with the parent collections
+                $this->commit();
             } catch (InvalidImportMapValue $exception) {
+                ray($exception->getMessage())->red();
                 $this->addResult($exception->getMessage(), false);
+                $this->resetLocalStores();
             }
         });
 
@@ -482,5 +520,16 @@ class InvoiceFromImportFactory extends InvoiceFactory
         ray($this->import);
 
         return $storeResults;
+    }
+
+    protected function commit()
+    {
+        $this->invoices = $this->invoices->merge($this->localInvoices);
+        $this->invoiceItems = $this->invoiceItems->merge($this->localInvoiceItems);
+        $this->invoiceScholarships = $this->invoiceScholarships->merge($this->localInvoiceScholarships);
+        $this->itemScholarshipPivot = $this->itemScholarshipPivot->merge($this->localItemScholarshipPivot);
+        $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge($this->localInvoicePaymentSchedules);
+        $this->invoicePaymentTerms = $this->invoicePaymentTerms->merge($this->localInvoicePaymentTerms);
+        $this->resetLocalStores();
     }
 }
