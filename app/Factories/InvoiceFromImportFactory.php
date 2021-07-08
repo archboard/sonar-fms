@@ -92,11 +92,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $minutes = $hours * 60;
             return $date->addMinutes($minutes)
                 ->roundUnit('minute', 15)
+                ->setTimezone(config('app.timezone'))
                 ->toDateTimeString();
         }
 
         try {
             return Carbon::parse($value, $this->user->timezone)
+                ->setTimezone(config('app.timezone'))
                 ->toDateTimeString();
         } catch (InvalidFormatException $exception) {
             return null;

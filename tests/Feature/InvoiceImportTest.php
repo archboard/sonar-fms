@@ -12,6 +12,7 @@ use App\Models\InvoiceScholarship;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -368,7 +369,7 @@ class InvoiceImportTest extends TestCase
             ->whereIn('student_number', $values)
             ->get();
 
-        $students->each(function (Student $student) use ($contentsByStudentNumber) {
+        $students->each(function (Student $student, int $index) use ($contentsByStudentNumber) {
             $this->assertEquals(1, $student->invoices->count());
             /** @var Invoice $invoice */
             $invoice = $student->invoices->first();
@@ -398,6 +399,14 @@ class InvoiceImportTest extends TestCase
             }
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);
+            $this->assertTrue(
+                Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->due_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->available_at)
+            );
         });
 
         $this->assertEquals(3, $import->imported_records);
