@@ -114,6 +114,11 @@ class Invoice extends Model
         return $this->hasMany(InvoicePaymentTerm::class, 'invoice_uuid', 'uuid');
     }
 
+    public function invoiceImport(): BelongsTo
+    {
+        return $this->belongsTo(InvoiceImport::class, 'import_id');
+    }
+
     public function getAmountDueFormattedAttribute()
     {
         if (

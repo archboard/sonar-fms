@@ -83,7 +83,7 @@ class InvoiceImport extends Model
 
     public function invoices(): HasMany
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasMany(Invoice::class, 'import_id');
     }
 
     public function getExcelImport(): ExcelInvoiceImport

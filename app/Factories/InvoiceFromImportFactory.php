@@ -321,18 +321,20 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     throw new InvalidImportMapValue('Invalid line item quantity');
                 }
 
-                $items->put($item['id'], [
-                    'batch_id' => $this->batchId,
-                    'invoice_uuid' => $invoiceUuid,
-                    'uuid' => $this->uuid(),
-                    'fee_id' => $this->getMapValue("items.{$index}.fee_id", 'fee'),
-                    'name' => $this->getMapValue("items.{$index}.name") ?? 'Line item',
-                    'amount_per_unit' => $perUnit,
-                    'quantity' => $quantity,
-                    'amount' => $perUnit * $quantity,
-                    'created_at' => $this->now,
-                    'updated_at' => $this->now,
-                ]);
+                if ($perUnit > 0 && $quantity > 0) {
+                    $items->put($item['id'], [
+                        'batch_id' => $this->batchId,
+                        'invoice_uuid' => $invoiceUuid,
+                        'uuid' => $this->uuid(),
+                        'fee_id' => $this->getMapValue("items.{$index}.fee_id", 'fee'),
+                        'name' => $this->getMapValue("items.{$index}.name") ?? 'Line item',
+                        'amount_per_unit' => $perUnit,
+                        'quantity' => $quantity,
+                        'amount' => $perUnit * $quantity,
+                        'created_at' => $this->now,
+                        'updated_at' => $this->now,
+                    ]);
+                }
 
                 return $items;
             }, collect());

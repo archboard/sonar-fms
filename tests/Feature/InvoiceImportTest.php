@@ -409,6 +409,7 @@ class InvoiceImportTest extends TestCase
             $this->assertEquals($term->id, $invoice->term_id);
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);
+            $this->assertNotNull($invoice->invoiceImport);
             $this->assertTrue(
                 Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->due_at)
@@ -422,6 +423,69 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
+    public function test_can_import_simple_csv_and_get_no_successful_results()
+    {
+        ray()->showApp();
+        Storage::fake();
+        Event::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('fail.csv'),
+            $this->school
+        );
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField('name'),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField('term'),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'Line item', isManual: true),
+                        'amount_per_unit' => $this->makeMapField('amount'),
+                        'quantity' => $this->makeMapField('quantity'),
+                    ],
+                ],
+                'scholarships' => [],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $this->school->students->random(3)
+            ->each(function (Student $student, int $index) {
+                $student->update(['student_number' => $index + 1]);
+            });
+
+        ray()->measure();
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+        ray()->measure();
+
+        $import->refresh();
+
+        $this->assertEquals(0, $import->invoices()->count());
+        $this->assertEquals(0, $import->imported_records);
+        $this->assertEquals(4, $import->failed_records);
+        $this->assertCount(4, $import->results);
+        $this->assertTrue(collect($import->results)->every(fn ($r) => !$r['successful']));
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 

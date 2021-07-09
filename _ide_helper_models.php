@@ -191,6 +191,7 @@ namespace App\Models{
  * @property-read mixed $remaining_balance_formatted
  * @property-read mixed $status_color
  * @property-read mixed $status_label
+ * @property-read \App\Models\InvoiceImport|null $invoiceImport
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentSchedule[] $invoicePaymentSchedules
@@ -259,6 +260,8 @@ namespace App\Models{
  * @property-read string $absolute_path
  * @property-read string $file_name
  * @property-read array $headers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\User $user
  * @method static Builder|InvoiceImport filter(array $filters)

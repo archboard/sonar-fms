@@ -1,0 +1,5 @@
+﻿student number,name,term,amount,quantity,due date,available date
+1,Import fee xlsx,,,1.00,10/1/21,9/1/21
+2,Import fee xlsx,,"¥1,350.00",x,10/2/21,9/1/21
+3,Import fee xlsx,1,"¥1,450.00",1.00,10/3/21,9/1/21
+9999999,Import fee xlsx,,"¥1,000.00",1.00,10/3/21,9/1/21
