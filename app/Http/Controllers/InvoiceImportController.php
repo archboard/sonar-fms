@@ -85,7 +85,26 @@ class InvoiceImportController extends Controller
 
     public function show(InvoiceImport $import)
     {
-        //
+        $import->load('user');
+        $title = __('Import details for :filename', [
+            'filename' => $import->file_name,
+        ]);
+        $breadcrumbs = [
+            [
+                'label' => __('Invoice imports'),
+                'route' => route('invoices.imports.index'),
+            ],
+            [
+                'label' => $import->file_name,
+                'route' => route('invoices.imports.show', $import),
+            ],
+        ];
+
+        return inertia('invoices/imports/Show', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'invoiceImport' => $import->toResource(),
+        ])->withViewData(compact('title'));
     }
 
     public function edit(InvoiceImport $import)
