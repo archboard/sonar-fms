@@ -148,6 +148,21 @@ class InvoiceFromImportFactory extends InvoiceFactory
         return NumberUtility::convertPercentageFromUser($value);
     }
 
+    protected function convertTerm($value)
+    {
+        // If they provided the sis assigned id of the term
+        // Look up in the dictionary and return the local id
+        if ($this->terms->has($value)) {
+            return $this->terms->get($value)->id;
+        }
+
+        // If this term id does indeed exist
+        // just return the original value, otherwise leave null
+        $term = $this->terms->firstWhere('id', $value);
+
+        return $term ? $value : null;
+    }
+
     protected function getMapValue(string $key, string $conversion = null)
     {
         $mapField = $this->getMapField($key);
@@ -191,13 +206,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
             throw new InvalidImportMapValue('Could not find student');
         }
 
-        $termId = $this->getMapValue('term_id', 'term');
-
-        if ($termId && !$this->terms->has($termId)) {
-            // __('Invalid term')
-            throw new InvalidImportMapValue('Invalid term');
-        }
-
         $attributes = [
             'batch_id' => $this->batchId,
             'tenant_id' => $this->school->tenant_id,
@@ -212,7 +220,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'available_at' => $this->getMapValue('available_at', 'date'),
             // TODO implement setting this via an import column
             'invoice_date' => $this->now,
-            'term_id' => $termId,
+            'term_id' => $this->getMapValue('term_id', 'term'),
             'notify' => $this->getMapValue('notify'),
             'created_at' => $this->now,
             'updated_at' => $this->now,

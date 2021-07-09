@@ -13,6 +13,7 @@ use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\Scholarship;
 use App\Models\Student;
+use App\Models\Term;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -304,6 +305,11 @@ class InvoiceImportTest extends TestCase
             $this->getUploadedFile('sonar-import.xls'),
             $this->school
         );
+        /** @var Term $term */
+        $term = $this->school->terms()
+            ->save(
+                Term::factory()->make()
+            );
         $import = InvoiceImport::make([
             'user_id' => $this->user->id,
             'school_id' => $this->school->id,
@@ -317,7 +323,7 @@ class InvoiceImportTest extends TestCase
                 'description' => $this->makeMapField(),
                 'due_at' => $this->makeMapField('due date'),
                 'available_at' => $this->makeMapField('available date'),
-                'term_id' => $this->makeMapField(),
+                'term_id' => $this->makeMapField(null, $term->id, true),
                 'notify' => false,
                 'items' => [
                     [
@@ -372,7 +378,7 @@ class InvoiceImportTest extends TestCase
             ->whereIn('student_number', $values)
             ->get();
 
-        $students->each(function (Student $student, int $index) use ($contentsByStudentNumber) {
+        $students->each(function (Student $student, int $index) use ($contentsByStudentNumber, $term) {
             $this->assertEquals(1, $student->invoices->count());
             /** @var Invoice $invoice */
             $invoice = $student->invoices->first();
@@ -400,6 +406,7 @@ class InvoiceImportTest extends TestCase
             if ($due < 0) {
                 $due = 0;
             }
+            $this->assertEquals($term->id, $invoice->term_id);
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);
             $this->assertTrue(
