@@ -16,6 +16,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected ?InvoiceImport $import;
     protected Collection $contents;
     protected array $results = [];
+    protected array $warnings = [];
     protected Collection $currentRow;
     protected int $currentRowNumber = 0;
     protected int $failedRecords = 0;
@@ -90,7 +91,15 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'row' => $this->currentRowNumber,
             'successful' => $successful,
             'result' => $result,
+            'warnings' => $this->warnings,
         ];
+
+        $this->warnings = [];
+    }
+
+    protected function addWarning(string $message)
+    {
+        $this->warnings[] = $message;
     }
 
     protected function getMapField(string $key)
@@ -150,6 +159,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     protected function convertTerm($value)
     {
+        if (empty($value)) {
+            return null;
+        }
+
         // If they provided the sis assigned id of the term
         // Look up in the dictionary and return the local id
         if ($this->terms->has($value)) {
@@ -158,9 +171,48 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
         // If this term id does indeed exist
         // just return the original value, otherwise leave null
-        $term = $this->terms->firstWhere('id', $value);
+        if ($this->terms->firstWhere('id', $value)) {
+            return $value;
+        }
 
-        return $term ? $value : null;
+        // __('Could not find term, leaving blank')
+        $this->addWarning('Could not find term, leaving blank');
+
+        return null;
+    }
+
+    protected function convertFee($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        $fee = $this->fees->get($value);
+
+        if (!$fee) {
+            // __('Invalid fee ID, fee does not exist')
+            $this->addWarning('Invalid fee ID, fee does not exist');
+            return null;
+        }
+
+        return $fee->id;
+    }
+
+    protected function convertScholarship($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        $scholarship = $this->scholarships->get($value);
+
+        if (!$scholarship) {
+            // __('Invalid scholarship ID, scholarship does not exist')
+            $this->addWarning('Invalid scholarship ID, scholarship does not exist');
+            return null;
+        }
+
+        return $scholarship->id;
     }
 
     protected function getMapValue(string $key, string $conversion = null)
@@ -269,18 +321,11 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     throw new InvalidImportMapValue('Invalid line item quantity');
                 }
 
-                $fee = $this->getMapValue("items.{$index}.fee_id");
-
-                if ($fee && !$this->fees->has($fee)) {
-                    // __('Invalid fee ID, fee does not exist')
-                    throw new InvalidImportMapValue('Invalid fee ID, fee does not exist');
-                }
-
                 $items->put($item['id'], [
                     'batch_id' => $this->batchId,
                     'invoice_uuid' => $invoiceUuid,
                     'uuid' => $this->uuid(),
-                    'fee_id' => $fee,
+                    'fee_id' => $this->getMapValue("items.{$index}.fee_id", 'fee'),
                     'name' => $this->getMapValue("items.{$index}.name") ?? 'Line item',
                     'amount_per_unit' => $perUnit,
                     'quantity' => $quantity,
@@ -312,19 +357,11 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * @param int $subtotal
      * @param Collection $invoiceItems
      * @return int
-     * @throws InvalidImportMapValue
      */
     protected function buildInvoiceScholarships(string $invoiceUuid, int $subtotal, Collection $invoiceItems): int
     {
         return collect($this->getMapField('scholarships'))
             ->reduce(function (int $total, array $item, int $index) use ($invoiceUuid, $subtotal, $invoiceItems) {
-                $scholarship = $this->getMapValue("scholarships.{$index}.scholarship_id");
-
-                if ($scholarship && !$this->scholarships->has($scholarship)) {
-                    // __('Invalid scholarship ID, scholarship does not exist')
-                    throw new InvalidImportMapValue('Invalid scholarship ID, scholarship does not exist');
-                }
-
                 $amount = $this->getMapValue("scholarships.{$index}.amount", 'currency');
                 $percentage = $this->getMapValue("scholarships.{$index}.percentage", 'percentage');
 
@@ -341,7 +378,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     'batch_id' => $this->batchId,
                     'invoice_uuid' => $invoiceUuid,
                     'uuid' => $this->uuid(),
-                    'scholarship_id' => $scholarship,
+                    'scholarship_id' => $this->getMapValue("scholarships.{$index}.scholarship_id", 'scholarship'),
                     'name' => $this->getMapValue("scholarships.{$index}.name"),
                     'amount' => $item['use_amount'] ? $amount : null,
                     'percentage' => $item['use_amount'] ? null : $percentage,
