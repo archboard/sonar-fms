@@ -318,18 +318,11 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 // Don't process if there isn't an amount
                 // or percentage since scholarships are optional
-                if (empty($amount) && empty($percentage)) {
+                if (
+                    ($item['use_amount'] && empty($amount)) ||
+                    (!$item['use_amount'] && empty($percentage))
+                ) {
                     return $total;
-                }
-
-                if ($item['use_amount'] && empty($amount)) {
-                    // __('Missing amount value for scholarship')
-                    throw new InvalidImportMapValue('Missing amount value for scholarship');
-                }
-
-                if (!$item['use_amount'] && empty($percentage)) {
-                    // __('Missing percentage value for scholarship')
-                    throw new InvalidImportMapValue('Missing percentage value for scholarship');
                 }
 
                 $attributes = [

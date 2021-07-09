@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Events\InvoiceImportFinished;
 use App\Jobs\ProcessInvoiceImport;
-use App\Models\Currency;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
@@ -91,7 +90,7 @@ class InvoiceImportTest extends TestCase
         Storage::assertExists($import->file_path);
         $this->assertEquals(1, $import->heading_row);
         $this->assertEquals(2, $import->starting_row);
-        $this->assertEquals(3, $import->total_records);
+        $this->assertEquals(4, $import->total_records);
         $this->assertEquals(0, $import->imported_records);
         $this->assertEquals(0, $import->failed_records);
     }
