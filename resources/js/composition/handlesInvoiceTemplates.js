@@ -1,12 +1,16 @@
 import { inject, ref } from 'vue'
 
-export default () => {
+export default (forImport) => {
   const $http = inject('$http')
   const $route = inject('$route')
   const templates = ref([])
 
   const fetchTemplates = () => {
-    $http.get($route('templates.index')).then(({ data }) => {
+    const params = forImport
+      ? { for_import: 1 }
+      : {}
+
+    $http.get($route('templates.index', params)).then(({ data }) => {
       templates.value = data
     })
   }

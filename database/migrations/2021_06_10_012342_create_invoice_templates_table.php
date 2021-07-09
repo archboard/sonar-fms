@@ -20,6 +20,7 @@ class CreateInvoiceTemplatesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->string('name');
             $table->json('template');
+            $table->boolean('for_import')->default(false);
             $table->timestamps();
         });
     }

@@ -50,6 +50,16 @@ class InvoiceTemplateFactory extends Factory
                 'scholarships' => [],
                 'payment_schedules' => [],
             ],
+            'for_import' => false,
         ];
+    }
+
+    public function forImport()
+    {
+        return $this->state(function ($attributes) {
+            return [
+                'for_import' => true,
+            ];
+        });
     }
 }

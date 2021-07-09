@@ -19,9 +19,10 @@ class InvoiceTemplateController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(School $school)
+    public function index(Request $request, School $school)
     {
         $templates = $school->invoiceTemplates()
+            ->where('for_import', $request->has('for_import'))
             ->with('user')
             ->orderBy('name')
             ->get();
@@ -40,6 +41,7 @@ class InvoiceTemplateController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'template' => 'required|array',
+            'for_import' => 'required|boolean',
         ]);
 
         $data['user_id'] = $request->user()->id;

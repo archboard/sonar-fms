@@ -22,5 +22,6 @@ class InvoiceTemplate extends Model
 
     protected $casts = [
         'template' => 'json',
+        'for_import' => 'boolean',
     ];
 }

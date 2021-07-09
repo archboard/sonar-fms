@@ -69,6 +69,10 @@ export default defineComponent({
 
   props: {
     invoice: Object,
+    forImport: {
+      type: Boolean,
+      default: false
+    },
   },
   emits: ['use'],
 
@@ -77,9 +81,10 @@ export default defineComponent({
     const templateForm = useForm({
       id: null,
       name: '',
-      template: {}
+      template: {},
+      for_import: props.forImport,
     })
-    const { templates, saveTemplate, deleteTemplate } = handlesInvoiceTemplates()
+    const { templates, saveTemplate, deleteTemplate } = handlesInvoiceTemplates(props.forImport)
     const editTemplate = template => {
       templateForm.id = template.id
       templateForm.name = template.name

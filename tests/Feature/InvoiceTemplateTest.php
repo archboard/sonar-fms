@@ -51,6 +51,7 @@ class InvoiceTemplateTest extends TestCase
                 'title' => 'Title',
                 'description' => 'Data'
             ],
+            'for_import' => false,
         ];
 
         $this->post(route('templates.store'), $data)

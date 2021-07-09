@@ -18,6 +18,7 @@ class InvoiceTemplateResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'template' => $this->template,
+            'for_import' => $this->for_import,
             'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
