@@ -14,5 +14,6 @@ class NumberUtilityTest extends TestCase
         $this->assertEquals(.155, NumberUtility::convertPercentageFromUser('15.5'));
         $this->assertEquals(.05, NumberUtility::convertPercentageFromUser('.05'));
         $this->assertEquals(1, NumberUtility::convertPercentageFromUser('1'));
+        $this->assertEquals(.2, NumberUtility::convertPercentageFromUser('20.00%'));
     }
 }
