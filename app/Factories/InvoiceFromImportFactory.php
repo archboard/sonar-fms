@@ -5,6 +5,7 @@ namespace App\Factories;
 use App\Exceptions\InvalidImportMapValue;
 use App\Models\InvoiceImport;
 use App\Utilities\NumberUtility;
+use Brick\Money\Money;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -138,10 +139,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     protected function convertCurrency($value): ?int
     {
-        $multiplier = pow(10, $this->school->currency->digits);
+        $sanitized = NumberUtility::sanitizeNumber($value);
 
         try {
-            return round(floatval($value) * $multiplier);
+            return Money::of($sanitized, $this->school->currency->code)
+                ->getMinorAmount()
+                ->toInt();
         } catch (\Exception $exception) {
             return null;
         }

@@ -13,14 +13,19 @@ class NumberUtility
      */
     public static function convertPercentageFromUser(int|string|float|null $value): float
     {
-        $sanitized = (float) filter_var(
-            $value,
-            FILTER_SANITIZE_NUMBER_FLOAT,
-            FILTER_FLAG_ALLOW_FRACTION
-        );
+        $sanitized = static::sanitizeNumber($value);
 
         return $sanitized > 1
             ? $sanitized / 100
             : $sanitized;
+    }
+
+    public static function sanitizeNumber(int|string|float|null $value): float
+    {
+        return (float) filter_var(
+            $value,
+            FILTER_SANITIZE_NUMBER_FLOAT,
+            FILTER_FLAG_ALLOW_FRACTION
+        );
     }
 }
