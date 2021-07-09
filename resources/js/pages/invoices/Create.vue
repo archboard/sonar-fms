@@ -47,7 +47,6 @@ export default defineComponent({
     const showTemplates = ref(false)
     const invoiceTemplate = ref({})
     const useTemplate = template => {
-      console.log(template.template)
       invoiceTemplate.value = template.template
     }
     const form = ref({})

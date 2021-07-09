@@ -1,9 +1,14 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
-        {{ __('Edit') }}
-      </Button>
+      <div class="space-x-2">
+        <Button size="sm" @click.prevent="showTemplates = true">
+          {{ __('View templates') }}
+        </Button>
+        <Button component="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)" size="sm">
+          {{ __('Edit') }}
+        </Button>
+      </div>
     </template>
 
     <CardWrapper class="mb-8">
@@ -14,8 +19,21 @@
       </CardPadding>
     </CardWrapper>
 
-    <MapForm :headers="headers" v-model:invoice-form="form" :invoice-import="invoiceImport" />
+    <MapForm
+      v-model:invoice-form="form"
+      :headers="headers"
+      :invoice-import="invoiceImport"
+      :invoice-template="invoiceTemplate"
+    />
   </Authenticated>
+
+  <InvoiceTemplatesModal
+    v-if="showTemplates"
+    @use="useTemplate"
+    @close="showTemplates = false"
+    :invoice="form"
+    :for-import="true"
+  />
 </template>
 
 <script>
@@ -25,9 +43,13 @@ import Button from '@/components/Button'
 import MapForm from '@/pages/invoices/imports/MapForm'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
+import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal'
+import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    InvoiceTemplatesModal,
     CardPadding,
     CardWrapper,
     MapForm,
@@ -41,10 +63,18 @@ export default defineComponent({
   },
 
   setup (props) {
+    const showTemplates = ref(false)
+    const invoiceTemplate = ref({})
     const form = ref({})
+    const useTemplate = template => {
+      invoiceTemplate.value = template.template
+    }
 
     return {
-      form
+      showTemplates,
+      invoiceTemplate,
+      useTemplate,
+      form,
     }
   }
 })

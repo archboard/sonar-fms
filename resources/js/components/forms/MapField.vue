@@ -31,6 +31,9 @@ export default defineComponent({
     })
 
     watch(() => ({ ...props.modelValue }), state => {
+      localValue.id = state.id
+      localValue.column = state.column
+      localValue.isManual = state.isManual
       localValue.value = state.value
     })
 

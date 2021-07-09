@@ -128,7 +128,7 @@
 
           <InputWrap>
             <CheckboxWrapper>
-              <Checkbox v-model:checked="form.notify" />
+              <Checkbox v-model:checked="form.notify.value" />
               <CheckboxText>{{ __('Queue notification') }}</CheckboxText>
             </CheckboxWrapper>
             <HelpText>
@@ -716,12 +716,11 @@ export default {
     }
 
     // Watch for changes to apply a template
-    watch(() => props.invoiceTemplate, () => {
-      console.log('watch', props.invoiceTemplate)
+    watch(() => props.invoiceTemplate, (state) => {
       Object.keys(form.data())
         .forEach(field => {
-          if (typeof props.invoiceTemplate[field] !== 'undefined') {
-            form[field] = props.invoiceTemplate[field]
+          if (typeof state[field] !== 'undefined') {
+            form[field] = state[field]
           }
         })
     })
