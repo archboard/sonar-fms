@@ -9,6 +9,8 @@ use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
+use App\Models\InvoicePaymentSchedule;
+use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\Scholarship;
 use App\Models\Student;
@@ -419,7 +421,9 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_import_complex_xlsx()
     {
+        ray()->showApp();
         Storage::fake();
+        Event::fake();
 
         $originalPath = InvoiceImport::storeFile(
             $this->getUploadedFile('complex.xlsx'),
@@ -453,7 +457,7 @@ class InvoiceImportTest extends TestCase
             'mapping' => [
                 'student_attribute' => 'student_number',
                 'student_column' => 'student number',
-                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'title' => $this->makeMapField('invoice name'),
                 'description' => $this->makeMapField(),
                 'due_at' => $this->makeMapField('due date'),
                 'available_at' => $this->makeMapField('available date'),
@@ -489,7 +493,7 @@ class InvoiceImportTest extends TestCase
                         'id' => $this->uuid(),
                         'scholarship_id' => $this->makeMapField(),
                         'name' => $this->makeMapField('discount 2 name'),
-                        'use_amount' => false,
+                        'use_amount' => true,
                         'amount' => $this->makeMapField('discount 2 amount'),
                         'percentage' => $this->makeMapField(),
                         'applies_to' => [],
@@ -508,7 +512,7 @@ class InvoiceImportTest extends TestCase
                             ],
                             [
                                 'id' => $this->uuid(),
-                                'use_amount' => false,
+                                'use_amount' => true,
                                 'amount' => $this->makeMapField('payment 2 amount'),
                                 'percentage' => $this->makeMapField(),
                                 'due_at' => $this->makeMapField('payment 2 due'),
@@ -530,8 +534,10 @@ class InvoiceImportTest extends TestCase
                 $students->get($index)->update(['student_number' => $row->get('student number')]);
             });
 
+        ray()->measure();
         $job = new ProcessInvoiceImport($import);
-        $job->handle();
+        ray()->countQueries(fn () => $job->handle());
+        ray()->measure();
 
         $import->refresh();
         $contents = $import->getImportContents()->keyBy('student number');
@@ -549,7 +555,7 @@ class InvoiceImportTest extends TestCase
                     ->equalTo($invoice->due_at)
             );
             $this->assertTrue(
-                Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
+                Carbon::create(2021, 9, 1, 0, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->available_at)
             );
 
@@ -579,7 +585,7 @@ class InvoiceImportTest extends TestCase
             }
 
             if (!empty($row['discount 2 amount'])) {
-                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('amount', $row['discount 2 amount']));
+                $this->assertNotNull($invoice->invoiceScholarships->firstWhere('amount', $row['discount 2 amount'] * 100));
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('name', $row['discount 2 name']));
             }
         });
@@ -596,9 +602,49 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(120000, $invoice1->amount_due);
         $this->assertEquals(120000, $invoice1->remaining_balance);
 
+        // Student 2
+        /** @var Student $student1 */
+        $student2 = $students->firstWhere('student_number', 2);
+        /** @var Invoice $invoice1 */
+        $invoice2 = $student2->invoices->first();
+        $this->assertEquals(2, $invoice2->invoiceItems->count());
+        $this->assertEquals(1, $invoice2->invoicePaymentTerms->count());
+        $this->assertEquals(1, $invoice2->invoiceScholarships->count());
+        $this->assertEquals(141500, $invoice2->amount_due);
+        $this->assertEquals(141500, $invoice2->remaining_balance);
+
+        // Student 3
+        /** @var Student $student1 */
+        $student3 = $students->firstWhere('student_number', 3);
+        /** @var Invoice $invoice1 */
+        $invoice3 = $student3->invoices->first();
+        $this->assertEquals(1, $invoice3->invoiceItems->count());
+        $this->assertEquals(1, $invoice3->invoicePaymentSchedules->count());
+        /** @var InvoicePaymentSchedule $paymentSchedule3 */
+        $paymentSchedule3 = $invoice3->invoicePaymentSchedules->first();
+        $this->assertEquals(2, $paymentSchedule3->invoicePaymentTerms->count());
+        /** @var InvoicePaymentTerm $firstTerm3 */
+        $firstTerm3 = $paymentSchedule3->invoicePaymentTerms->first();
+        $this->assertEquals(.52, $firstTerm3->percentage);
+        $this->assertTrue(empty($firstTerm3->amount));
+        $this->assertEquals(39000, $firstTerm3->amount_due);
+        $this->assertEquals(39000, $firstTerm3->remaining_balance);
+        /** @var InvoicePaymentTerm $secondTerm3 */
+        $secondTerm3 = $paymentSchedule3->invoicePaymentTerms->last();
+        $this->assertTrue(empty((int) $secondTerm3->percentage));
+        $this->assertEquals(55000, $secondTerm3->amount);
+        $this->assertEquals(55000, $secondTerm3->amount_due);
+        $this->assertEquals(55000, $secondTerm3->remaining_balance);
+
+        $this->assertEquals(2, $invoice3->invoiceScholarships->count());
+        $this->assertEquals(75000, $invoice3->amount_due);
+        $this->assertEquals(75000, $invoice3->remaining_balance);
+
+        // Import results check
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(0, $import->failed_records);
         $this->assertCount(3, $import->results);
+        $this->assertTrue(collect($import->results)->every(fn ($r) => $r['successful']));
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 }

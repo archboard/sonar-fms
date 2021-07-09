@@ -421,15 +421,20 @@ class InvoiceFromImportFactory extends InvoiceFactory
                         );
                         $percentage = $this->getMapValue(
                             "payment_schedules.{$scheduleIndex}.terms.{$termIndex}.percentage",
-                            'currency'
+                            'percentage'
                         );
 
+                        // Don't process if the "use" value is empty
                         if (
                             ($term['use_amount'] && empty($amount)) ||
                             (!$term['use_amount'] && empty($percentage))
                         ) {
                             return $total;
                         }
+
+                        $termAmountDue = $term['use_amount']
+                            ? $amount
+                            : $amountDue * $percentage;
 
                         $this->localInvoicePaymentTerms->push([
                             'uuid' => $this->uuid(),
@@ -438,19 +443,18 @@ class InvoiceFromImportFactory extends InvoiceFactory
                             'invoice_payment_schedule_uuid' => $scheduleUuid,
                             'amount' => $amount,
                             'percentage' => $percentage,
+                            'amount_due' => $termAmountDue,
+                            'remaining_balance' => $termAmountDue,
                             'created_at' => $this->now,
                             'updated_at' => $this->now,
                         ]);
 
-                        if ($term['use_amount']) {
-                            return $total + $amount;
-                        }
-
-                        return $total + ($amountDue * $percentage);
+                        return $total + $termAmountDue;
                     }, 0);
 
                 // If the amount is zero, it means no valid terms exist
                 if ($scheduleAmount > 0) {
+                    $scheduleAttributes['amount'] = $scheduleAmount;
                     $this->localInvoicePaymentSchedules->push($scheduleAttributes);
                 }
             });
