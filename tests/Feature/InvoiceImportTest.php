@@ -489,6 +489,82 @@ class InvoiceImportTest extends TestCase
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 
+    public function test_can_import_huge_csv()
+    {
+        ray()->showApp();
+        Storage::fake();
+        Event::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('huge.csv'),
+            $this->school
+        );
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField('name'),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField('term'),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'Line item', isManual: true),
+                        'amount_per_unit' => $this->makeMapField('amount'),
+                        'quantity' => $this->makeMapField('quantity'),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'scholarship_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'Discount', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+        $contents = $import->getImportContents();
+
+        // Create the students fresh based on the student number
+        $contents->each(function ($row) {
+            Student::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'school_id' => $this->school->id,
+                'student_number' => $row['student number'],
+            ]);
+        });
+
+        ray()->measure();
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+        ray()->measure();
+
+        $import->refresh();
+
+        $this->assertEquals($contents->count(), $import->invoices()->count());
+        $this->assertEquals($contents->count(), $import->imported_records);
+        $this->assertEquals(0, $import->failed_records);
+        $this->assertCount($contents->count(), $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
     public function test_can_import_complex_xlsx()
     {
         ray()->showApp();
