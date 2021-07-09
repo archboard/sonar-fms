@@ -10,6 +10,7 @@ use App\Traits\BelongsToUser;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -78,6 +79,11 @@ class InvoiceImport extends Model
     public function getFailedRecordsAttribute($value)
     {
         return $value ?? 0;
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function getExcelImport(): ExcelInvoiceImport
