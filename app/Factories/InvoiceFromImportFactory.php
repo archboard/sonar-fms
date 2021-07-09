@@ -127,11 +127,15 @@ class InvoiceFromImportFactory extends InvoiceFactory
         }
     }
 
-    protected function convertCurrency($value): int
+    protected function convertCurrency($value): ?int
     {
         $multiplier = pow(10, $this->school->currency->digits);
 
-        return round(floatval($value) * $multiplier);
+        try {
+            return round(floatval($value) * $multiplier);
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 
     protected function convertInt($value): int
