@@ -22,6 +22,8 @@ class CreateInvoicePaymentTermsTable extends Migration
             $table->uuid('batch_id')->index()->nullable();
             $table->unsignedBigInteger('amount')->nullable();
             $table->decimal('percentage', 9, 8)->nullable();
+            $table->unsignedBigInteger('amount_due')->nullable();
+            $table->unsignedBigInteger('remaining_balance')->nullable();
             $table->dateTime('due_at')->nullable();
             $table->dateTime('notified_at')->nullable();
             $table->boolean('notify')->default(false);

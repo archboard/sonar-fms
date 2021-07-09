@@ -360,6 +360,8 @@ namespace App\Models{
  * @property string|null $batch_id
  * @property int|null $amount
  * @property string|null $percentage
+ * @property int|null $amount_due
+ * @property int|null $remaining_balance
  * @property \Illuminate\Support\Carbon|null $due_at
  * @property string|null $notified_at
  * @property bool $notify
@@ -371,6 +373,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm query()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereAmountDue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereDueAt($value)
@@ -379,6 +382,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereNotify($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm wherePercentage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereRemainingBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUuid($value)
  */

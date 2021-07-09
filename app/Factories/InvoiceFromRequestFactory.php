@@ -264,6 +264,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                                 $item['batch_id'] = $this->batchId;
                                 $item['invoice_uuid'] = $invoiceUuid;
                                 $item['invoice_payment_schedule_uuid'] = $scheduleUuid;
+                                $item['amount_due'] = $item['amount'];
+                                $item['remaining_balance'] = $item['amount'];
                                 $item['created_at'] = $this->now;
                                 $item['updated_at'] = $this->now;
 
