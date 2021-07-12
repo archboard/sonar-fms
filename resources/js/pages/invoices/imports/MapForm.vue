@@ -698,7 +698,7 @@ export default {
       term_id: props.invoiceImport.mapping?.term_id || addMapFieldValue(),
       available_at: props.invoiceImport.mapping?.available_at || addMapFieldValue(),
       due_at: props.invoiceImport.mapping?.due_at || addMapFieldValue(),
-      notify: props.invoiceImport.mapping?.notify || addMapFieldValue(false),
+      notify: props.invoiceImport.mapping?.notify || false,
       items: props.invoiceImport.mapping?.items || [],
       scholarships: props.invoiceImport.mapping?.scholarships || [],
       payment_schedules: props.invoiceImport.mapping?.payment_schedules || [],
