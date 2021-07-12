@@ -22,6 +22,7 @@ class InvoiceImportResource extends JsonResource
             'imported_records' => $this->imported_records,
             'failed_records' => $this->failed_records,
             'imported_at' => $this->imported_at,
+            'imported_at_formatted' => optional($this->imported_at)->format('F j, Y'),
             'heading_row' => $this->heading_row,
             'starting_row' => $this->starting_row,
             'mapping_valid' => $this->mapping_valid,
