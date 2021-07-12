@@ -174,6 +174,13 @@ class InvoiceImport extends Model
         ]);
     }
 
+    public function getMappingValidationErrors(): array
+    {
+        return $this->getMappingValidator()
+            ->errors()
+            ->toArray();
+    }
+
     public function hasValidMapping(): bool
     {
         return $this->getMappingValidator()
