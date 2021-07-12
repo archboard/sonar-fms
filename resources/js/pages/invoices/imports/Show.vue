@@ -82,7 +82,7 @@
             </div>
           </Td>
           <Td
-            class="text-right"
+            class="text-right align-top"
             :class="{
               'bg-red-100 dark:bg-red-600': !result.successful,
             }"
