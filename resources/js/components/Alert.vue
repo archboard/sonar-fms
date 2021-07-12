@@ -40,7 +40,7 @@ export default defineComponent({
       success: 'bg-green-50 dark:bg-green-800',
       error: 'bg-red-50 dark:bg-red-800',
       warning: 'bg-yellow-50 dark:bg-yellow-800',
-      neutral: 'bg-gray-100 dark:bg-gray-700',
+      neutral: 'bg-gray-50 dark:bg-gray-700',
     }
     const iconColors = {
       success: 'text-green-400 dark:text-green-200',
