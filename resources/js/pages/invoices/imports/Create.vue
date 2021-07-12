@@ -23,7 +23,10 @@
         </CardPadding>
 
         <CardAction>
-          <Button type="submit" :loading="form.processing">
+          <Button v-if="invoiceImport.mapping_valid" type="submit" :loading="form.processing">
+            {{ __('Save') }}
+          </Button>
+          <Button v-else type="submit" :loading="form.processing">
             {{ __('Start mapping') }}
           </Button>
         </CardAction>
