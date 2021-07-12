@@ -68,7 +68,7 @@
             }"
           >
             <div v-if="result.successful">
-              <ExclamationIcon class="w-4 h-4 mr-2 text-orange-400" v-if="result.warnings.length > 0" />
+              <ExclamationIcon class="w-4 h-4 mr-1 text-orange-400 dark:text-orange-300 inline-block" v-if="result.warnings.length > 0" />
               {{ __('Invoice created for :student_name', { student_name: result.student }) }}
               <div v-if="result.warnings.length > 0">
                 <strong>{{ __('Warnings') }}</strong>
