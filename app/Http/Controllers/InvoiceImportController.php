@@ -158,12 +158,17 @@ class InvoiceImportController extends Controller
             Storage::delete($import->file_path);
             Storage::deleteDirectory(dirname($import->file_path));
             $import->file_path = InvoiceImport::storeFile($file, $request->school());
+            $import->mapping_valid = $import->hasValidMapping();
             $import->setTotalRecords();
         }
 
         $import->save();
 
         session()->flash('success', __('Import updated successfully.'));
+
+        if ($import->mapping_valid) {
+            return redirect()->route('invoices.imports.show', $import);
+        }
 
         return redirect()->route('invoices.imports.map', $import);
     }
