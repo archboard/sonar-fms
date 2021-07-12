@@ -45,10 +45,7 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        $title = __(':invoice_title for :student_name', [
-            'invoice_title' => $invoice->title,
-            'student_name' => $invoice->student->full_name,
-        ]);
+        $title = $invoice->title;
         $invoice->fullLoad();
 
         $breadcrumbs = [
