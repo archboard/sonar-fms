@@ -4,6 +4,7 @@ namespace App\Factories;
 
 use App\Exceptions\InvalidImportMapValue;
 use App\Models\InvoiceImport;
+use App\Models\Student;
 use App\Utilities\NumberUtility;
 use Brick\Money\Money;
 use Carbon\Exceptions\InvalidFormatException;
@@ -92,10 +93,18 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'row' => $this->currentRowNumber,
             'successful' => $successful,
             'result' => $result,
+            'student' => optional($this->getStudentForCurrentRow())->full_name,
             'warnings' => $this->warnings,
         ];
 
         $this->warnings = [];
+    }
+
+    protected function getStudentForCurrentRow(): ?Student
+    {
+        return $this->students->get(
+            $this->currentRow->get($this->getMapField('student_column'))
+        );
     }
 
     protected function addWarning(string $message)
@@ -252,9 +261,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
      */
     protected function getInvoiceAttributes(): array
     {
-        $student = $this->students->get(
-            $this->currentRow->get($this->getMapField('student_column'))
-        );
+        $student = $this->getStudentForCurrentRow();
 
         if (!$student) {
             // __('Could not find student')
