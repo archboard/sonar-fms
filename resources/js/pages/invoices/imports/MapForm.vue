@@ -573,7 +573,7 @@
       </div>
     </FormMultipartWrapper>
 
-    <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
+    <div class="mt-8 p-4 border-t border-gray-400 bg-white dark:bg-gray-700 dark:border-gray-200 rounded-b-md">
       <Button type="submit" size="lg" :loading="form.processing">
         {{ __('Save mapping') }}
       </Button>
