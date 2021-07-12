@@ -53,6 +53,6 @@ class MapInvoiceImportController extends Controller
 
         session()->flash('success', __('Invoice import mapping saved successfully.'));
 
-        return redirect()->route('invoices.imports.index');
+        return redirect()->route('invoices.imports.show', $import);
     }
 }
