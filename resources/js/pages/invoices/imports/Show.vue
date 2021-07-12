@@ -4,11 +4,11 @@
       <Dropdown
         :menu-items="[
           {
-            label: __('Edit'),
+            label: __('Edit import file'),
             route: $route('invoices.imports.edit', invoiceImport),
           },
           {
-            label: __('Map'),
+            label: __('Update mapping'),
             route: $route('invoices.imports.map', invoiceImport),
           },
         ]"
