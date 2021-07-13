@@ -45,14 +45,9 @@ class AppServiceProvider extends ServiceProvider
         };
 
         $currentSchool = function (): School {
-            /** @var User $user */
-            $user = auth()->user();
+            $current = School::current();
 
-            if ($user && $school = $user->school) {
-                return $school;
-            }
-
-            return new School();
+            return $current ?? new School();
         };
 
         if (!$this->app->runningInConsole()) {

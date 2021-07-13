@@ -98,4 +98,16 @@ class School extends Model
     {
         $this->tenant->sisProvider()->fullSchoolSync($this);
     }
+
+    public static function current(): ?static
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user && $school = $user->school) {
+            return $school;
+        }
+
+        return null;
+    }
 }
