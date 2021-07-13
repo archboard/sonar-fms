@@ -445,6 +445,7 @@ namespace App\Models{
  * @property int|null $user_id
  * @property string $name
  * @property array $template
+ * @property bool $for_import
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\School $school
@@ -454,6 +455,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate query()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereForImport($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereSchoolId($value)
