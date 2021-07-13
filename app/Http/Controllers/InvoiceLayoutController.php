@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
 use Illuminate\Http\Request;
 
@@ -22,12 +23,12 @@ class InvoiceLayoutController extends Controller
         $title = __('Invoice layouts');
         $layouts = $request->school()
             ->invoiceLayouts()
-            ->orderBy('name')
-            ->get();
+            ->filter($request->all())
+            ->paginate($request->input('perPage', 15));
 
         return inertia('layouts/Index', [
             'title' => $title,
-            'layouts' => $layouts,
+            'layouts' => InvoiceLayoutResource::collection($layouts),
         ])->withViewData(compact('title'));
     }
 
