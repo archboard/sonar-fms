@@ -521,6 +521,32 @@ class User extends Authenticatable
                         ],
                     ],
                 ],
+                [
+                    'model' => InvoiceLayout::class,
+                    'label' => __('Invoice Layouts'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', InvoiceLayout::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', InvoiceLayout::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', InvoiceLayout::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', InvoiceLayout::class),
+                        ],
+                    ],
+                ],
             ],
         ];
     }

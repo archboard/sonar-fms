@@ -42,6 +42,7 @@ class Invoice extends Model
         'school_id',
         'student_id',
         'term_id',
+        'invoice_layout_id',
         'title',
         'description',
         'amount_due',
@@ -117,6 +118,11 @@ class Invoice extends Model
     public function invoiceImport(): BelongsTo
     {
         return $this->belongsTo(InvoiceImport::class, 'import_id');
+    }
+
+    public function invoiceLayout(): BelongsTo
+    {
+        return $this->belongsTo(InvoiceLayout::class);
     }
 
     public function getAmountDueFormattedAttribute()

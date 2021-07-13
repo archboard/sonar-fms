@@ -136,6 +136,8 @@ Route::middleware('tenant')->group(function () {
         Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
             ->name('terms.index');
 
+        Route::resource('/layouts', \App\Http\Controllers\InvoiceLayoutController::class);
+
         /**
          * User Routes
          */

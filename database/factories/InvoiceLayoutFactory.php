@@ -2,20 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\Invoice;
+use App\Models\InvoiceLayout;
 use App\Models\School;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
-class InvoiceFactory extends Factory
+class InvoiceLayoutFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Invoice::class;
+    protected $model = InvoiceLayout::class;
 
     /**
      * Define the model's default state.
@@ -27,10 +26,12 @@ class InvoiceFactory extends Factory
         return [
             'tenant_id' => Tenant::current()->id,
             'school_id' => School::current()->id,
-            'uuid' => (string) Uuid::uuid4(),
-            'title' => $this->faker->word,
-            'description' => $this->faker->sentence,
-            'invoice_date' => now(),
+            'name' => $this->faker->words(3, true),
+            'data' => [
+                'rows' => [],
+                'primary' => '#fff',
+                'logo' => '',
+            ],
         ];
     }
 }

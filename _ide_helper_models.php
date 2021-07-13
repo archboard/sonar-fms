@@ -327,6 +327,37 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\InvoiceLayout
+ *
+ * @mixin IdeHelperInvoiceLayout
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $name
+ * @property string|null $locale
+ * @property array|null $data
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\InvoiceLayoutFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereLocale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereUpdatedAt($value)
+ */
+	class IdeHelperInvoiceLayout extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\InvoicePaymentSchedule
  *
  * @mixin IdeHelperInvoicePaymentSchedule
@@ -526,9 +557,11 @@ namespace App\Models{
  * @property-read \App\Models\Currency|null $currency
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
- * @property-read mixed $grade_levels
+ * @property-read array $grade_levels
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
  * @property-read int|null $invoice_imports_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceLayout[] $invoiceLayouts
+ * @property-read int|null $invoice_layouts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTemplate[] $invoiceTemplates
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
