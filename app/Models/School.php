@@ -94,30 +94,6 @@ class School extends Model
         return range($this->low_grade, $this->high_grade);
     }
 
-    public static function getFromPowerSchool(array $ids = []): Collection
-    {
-        $psSchools = PowerSchool::endpoint('/ws/v1/district/school')
-            ->get();
-
-        return collect($psSchools->schools->school);
-    }
-
-    public function syncFromPowerSchool(): static
-    {
-        $psSchool = PowerSchool::endpoint("/ws/v1/school/{$this->dcid}")
-            ->get();
-
-        $this->update([
-            'name' => $psSchool->name,
-            'sis_id' => $psSchool->id,
-            'school_number' => $psSchool->school_number,
-            'high_grade' => $psSchool->high_grade,
-            'low_grade' => $psSchool->low_grade,
-        ]);
-
-        return $this;
-    }
-
     public function syncDataFromSis()
     {
         $this->tenant->sisProvider()->fullSchoolSync($this);
