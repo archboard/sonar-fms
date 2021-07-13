@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 require('dotenv').config()
 
-module.exports = {
+const config = {
   output: {
     chunkFilename: 'js/[name].js?id=[chunkhash]'
   },
@@ -11,8 +11,11 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),
     },
-  },
-  devServer: {
+  }
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  config.devServer = {
     public: `${process.env.APP_URL}:${process.env.APP_PORT}/`,
     https: {
       key: fs.readFileSync(process.env.APP_SSL_KEY),
@@ -25,3 +28,5 @@ module.exports = {
     },
   }
 }
+
+module.exports = config
