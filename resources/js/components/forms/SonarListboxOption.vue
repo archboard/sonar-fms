@@ -1,7 +1,7 @@
 <template>
   <li
     :class="[
-      active ? 'text-fuchsia-900 bg-fuchsia-100 dark:text-fuchsia-100 bg-fuchsia-600' : 'text-gray-900 dark:text-white',
+      active ? 'text-fuchsia-900 bg-fuchsia-100 dark:text-fuchsia-100 dark:bg-fuchsia-600' : 'text-gray-900 dark:text-white',
       'cursor-pointer select-none relative py-2 pl-10 pr-4',
     ]"
   >
