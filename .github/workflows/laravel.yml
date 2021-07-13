@@ -44,4 +44,5 @@ jobs:
           space_name: ${{ secrets.SPACE_NAME }}
           space_region: ${{ secrets.SPACE_REGION }}
           source: '${{ steps.vars.outputs.tag }}.zip'
+          out_dir: 'sonar-fms'
           permission: private
