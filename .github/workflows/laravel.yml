@@ -1,0 +1,47 @@
+name: Laravel
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+      - name: Setup Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+          check-latest: true
+      - name: Install NPM dependencies
+        run: npm install --silent
+      - name: Compile assets for production
+        run: npm run production
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: '${{ steps.vars.outputs.tag }}.zip'
+          exclusions: '*.git* .idea/ /*node_modules/* .editorconfig /tests/* package* webpack* .php* server.php php* README.md ideas.md cypress.json _ide_helper* .styleci.yml .nvmrc tailwind* resources/css/ resources/js/'
+      - name: Upload to Spaces
+        uses: BetaHuhn/do-spaces-action@v2
+        with:
+          access_key: ${{ secrets.ACCESS_KEY }}
+          secret_key: ${{ secrets.SECRET_KEY }}
+          space_name: ${{ secrets.SPACE_NAME }}
+          space_region: ${{ secrets.SPACE_REGION }}
+          source: '${{ steps.vars.outputs.tag }}.zip'
+          permission: private
