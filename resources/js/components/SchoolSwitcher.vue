@@ -2,7 +2,7 @@
   <div>
     <Listbox v-model="selectedSchool">
       <div class="relative mt-1">
-        <SonarListboxButton class="text-white bg-primary-800 dark:bg-primary-700">
+        <SonarListboxButton class="text-white bg-primary-800 dark:bg-primary-700 border-0">
           <span class="block truncate">{{ selectedSchool.name }}</span>
 
           <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
