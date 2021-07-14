@@ -73,6 +73,7 @@ import Link from '@/components/Link'
 import HelpText from '@/components/HelpText'
 import ScholarshipFormModal from '@/components/modals/ScholarshipFormModal'
 import PageProps from '@/mixins/PageProps'
+import Pagination from '@/components/tables/Pagination'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -90,6 +91,7 @@ export default defineComponent({
     Checkbox,
     Authenticated,
     Link,
+    Pagination,
   },
   props: {
     layouts: Object,
