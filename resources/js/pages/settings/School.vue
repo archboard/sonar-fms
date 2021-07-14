@@ -1,35 +1,53 @@
 <template>
   <Authenticated>
-    <CardWrapper>
-      <CardPadding>
+    <div class="space-y-10">
+      <CardWrapper>
         <form @submit.prevent="submit" data-cy="form">
-          <FormMultipartWrapper>
-            <div>
-              <div class="mb-6">
-                <CardSectionHeader>
-                  {{ __('Currency Settings') }}
-                </CardSectionHeader>
-                <HelpText class="text-sm">
-                  {{ __('These are the settings that apply to how currency/monetary values are displayed in the system.') }}
-                </HelpText>
-              </div>
+          <CardPadding>
+            <FormMultipartWrapper>
+              <div>
+                <div class="mb-6">
+                  <CardSectionHeader>
+                    {{ __('Currency Settings') }}
+                  </CardSectionHeader>
+                  <HelpText>
+                    {{ __('These are the settings that apply to how currency/monetary values are displayed in the system.') }}
+                  </HelpText>
+                </div>
 
-              <Fieldset>
-                <InputWrap :error="form.errors.currency_id">
-                  <Label for="currency_symbol">{{ __('Currency') }}</Label>
-                  <CurrencySelector v-model="form.currency_id" :currencies="currencies" />
-                </InputWrap>
-              </Fieldset>
-            </div>
-          </FormMultipartWrapper>
-          <CardAction :negative-margin="true">
+                <Fieldset>
+                  <InputWrap :error="form.errors.currency_id">
+                    <Label for="currency_symbol">{{ __('Currency') }}</Label>
+                    <CurrencySelector v-model="form.currency_id" :currencies="currencies" />
+                  </InputWrap>
+                </Fieldset>
+              </div>
+            </FormMultipartWrapper>
+          </CardPadding>
+          <CardAction>
             <Button type="submit" :loading="form.processing">
               {{ __('Save') }}
             </Button>
           </CardAction>
         </form>
-      </CardPadding>
-    </CardWrapper>
+      </CardWrapper>
+
+      <CardWrapper>
+        <CardPadding>
+          <CardSectionHeader>
+            {{ __('Invoice PDF Layouts') }}
+          </CardSectionHeader>
+          <HelpText>
+            {{ __('Manage the layouts for when an invoice is exported as a PDF file.') }}
+          </HelpText>
+        </CardPadding>
+        <CardAction>
+          <Button component="inertia-link" :href="$route('layouts.index')">
+            {{ __('Manage layouts') }}
+          </Button>
+        </CardAction>
+      </CardWrapper>
+    </div>
   </Authenticated>
 </template>
 
