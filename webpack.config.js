@@ -14,7 +14,10 @@ const config = {
   }
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (
+  (process.env.APP_ENV && process.env.APP_ENV !== 'production') ||
+  process.env.NODE_ENV !== 'production'
+) {
   config.devServer = {
     public: `${process.env.APP_URL}:${process.env.APP_PORT}/`,
     https: {
