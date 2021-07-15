@@ -6,6 +6,7 @@ use App\Traits\BelongsToTenant;
 use Carbon\Factory;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ use Silber\Bouncer\Database\HasRolesAndAbilities;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     use HasFactory;
     use Notifiable;
@@ -150,6 +151,11 @@ class User extends Authenticatable
     public function invoiceImports(): HasMany
     {
         return $this->hasMany(InvoiceImport::class);
+    }
+
+    public function preferredLocale(): ?string
+    {
+        return $this->locale;
     }
 
     public function getPermissionsForSchool(School $school = null): array
