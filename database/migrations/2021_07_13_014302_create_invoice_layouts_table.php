@@ -19,7 +19,8 @@ class CreateInvoiceLayoutsTable extends Migration
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('locale')->nullable();
-            $table->json('data')->nullable();
+            $table->string('paper_size')->default('A4');
+            $table->json('layout_data')->nullable();
             $table->timestamps();
         });
 

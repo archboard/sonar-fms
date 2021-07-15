@@ -184,6 +184,7 @@ namespace App\Models{
  * @property Carbon|null $notified_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int|null $invoice_layout_id
  * @property-read mixed $amount_due_formatted
  * @property-read bool $available
  * @property-read mixed $past_due
@@ -194,6 +195,7 @@ namespace App\Models{
  * @property-read \App\Models\InvoiceImport|null $invoiceImport
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
+ * @property-read \App\Models\InvoiceLayout|null $invoiceLayout
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentSchedule[] $invoicePaymentSchedules
  * @property-read int|null $invoice_payment_schedules_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
@@ -219,6 +221,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereId($value)
  * @method static Builder|Invoice whereImportId($value)
  * @method static Builder|Invoice whereInvoiceDate($value)
+ * @method static Builder|Invoice whereInvoiceLayoutId($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -338,20 +341,23 @@ namespace App\Models{
  * @property array|null $data
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\InvoiceLayoutFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout query()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereLocale($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLayout whereUpdatedAt($value)
+ * @method static Builder|InvoiceLayout filter(array $filters)
+ * @method static Builder|InvoiceLayout newModelQuery()
+ * @method static Builder|InvoiceLayout newQuery()
+ * @method static Builder|InvoiceLayout query()
+ * @method static Builder|InvoiceLayout whereCreatedAt($value)
+ * @method static Builder|InvoiceLayout whereData($value)
+ * @method static Builder|InvoiceLayout whereId($value)
+ * @method static Builder|InvoiceLayout whereLocale($value)
+ * @method static Builder|InvoiceLayout whereName($value)
+ * @method static Builder|InvoiceLayout whereSchoolId($value)
+ * @method static Builder|InvoiceLayout whereTenantId($value)
+ * @method static Builder|InvoiceLayout whereUpdatedAt($value)
  */
 	class IdeHelperInvoiceLayout extends \Eloquent {}
 }
@@ -931,6 +937,6 @@ namespace App\Models{
  * @method static Builder|User whereTimezone($value)
  * @method static Builder|User whereUpdatedAt($value)
  */
-	class IdeHelperUser extends \Eloquent {}
+	class IdeHelperUser extends \Eloquent implements \Illuminate\Contracts\Translation\HasLocalePreference {}
 }
 

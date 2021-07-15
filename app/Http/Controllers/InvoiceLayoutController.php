@@ -39,7 +39,7 @@ class InvoiceLayoutController extends Controller
      */
     public function create()
     {
-        $title = __('Create new invoice layout');
+        $title = __('Create a new invoice layout');
 
         return inertia('layouts/Create', [
             'title' => $title,
