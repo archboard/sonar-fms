@@ -1,11 +1,12 @@
 <template>
-  <ckeditor
-    :editor="InlineEditor"
-    v-model="localValue"
-    :config="config"
-    @ready="editorReady"
-    class="w-full"
-  />
+  <div class="w-full">
+    <ckeditor
+      :editor="InlineEditor"
+      v-model="localValue"
+      :config="config"
+      @ready="editorReady"
+    />
+  </div>
 </template>
 
 <script>
@@ -39,12 +40,12 @@ export default defineComponent({
           'bold',
           'italic',
           'underline',
-          'strikethrough',
-          '|',
-          'fontColor',
+          // 'strikethrough',
+          // '|',
+          // 'fontColor',
           'fontSize',
-          'fontFamily',
-          'highlight',
+          // 'fontFamily',
+          // 'highlight',
           '|',
           'alignment',
           'bulletedList',
@@ -53,16 +54,14 @@ export default defineComponent({
           '|',
           'outdent',
           'indent',
-          '-',
-          'imageUpload',
-          'imageInsert',
-          'blockQuote',
-          'insertTable',
           '|',
-          'pageBreak',
-          'horizontalLine',
-          'sourceEditing',
-          '|'
+          // '-',
+          'imageInsert',
+          // 'insertTable',
+          // '|',
+          // 'pageBreak',
+          // 'horizontalLine',
+          // 'sourceEditing',
         ],
         shouldNotGroupWhenFull: true
       },
@@ -84,7 +83,7 @@ export default defineComponent({
       },
     }
     const editorReady = e => {
-      console.log(e)
+      console.log('wysiwyg editor')
     }
 
     return {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InvoiceLayoutController extends Controller
 {
@@ -57,7 +58,8 @@ class InvoiceLayoutController extends Controller
         $data = $request->validate([
             'name' => 'required|max:255',
             'locale' => 'nullable',
-            'data' => 'required|array',
+            'paper_size' => Rule::in(['A4', 'Letter']),
+            'layout_data' => 'required|array',
         ]);
 
         $school = $request->school();
@@ -110,7 +112,8 @@ class InvoiceLayoutController extends Controller
         $data = $request->validate([
             'name' => 'required|max:255',
             'locale' => 'nullable',
-            'data' => 'required|array',
+            'paper_size' => Rule::in(['A4', 'Letter']),
+            'layout_data' => 'required|array',
         ]);
 
         $layout->update($data);

@@ -338,7 +338,8 @@ namespace App\Models{
  * @property int $school_id
  * @property string $name
  * @property string|null $locale
- * @property array|null $data
+ * @property string $paper_size
+ * @property array|null $layout_data
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
@@ -351,10 +352,11 @@ namespace App\Models{
  * @method static Builder|InvoiceLayout newQuery()
  * @method static Builder|InvoiceLayout query()
  * @method static Builder|InvoiceLayout whereCreatedAt($value)
- * @method static Builder|InvoiceLayout whereData($value)
  * @method static Builder|InvoiceLayout whereId($value)
+ * @method static Builder|InvoiceLayout whereLayoutData($value)
  * @method static Builder|InvoiceLayout whereLocale($value)
  * @method static Builder|InvoiceLayout whereName($value)
+ * @method static Builder|InvoiceLayout wherePaperSize($value)
  * @method static Builder|InvoiceLayout whereSchoolId($value)
  * @method static Builder|InvoiceLayout whereTenantId($value)
  * @method static Builder|InvoiceLayout whereUpdatedAt($value)

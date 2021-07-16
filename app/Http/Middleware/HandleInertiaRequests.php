@@ -66,7 +66,13 @@ class HandleInertiaRequests extends Middleware
             'locale' => fn () => app()->getLocale(),
             'flash' => [
                 'success' => session('success'),
-                'error' => session('error'),
+                'error' => function () use ($request) {
+                    if ($request->session()->has('errors')) {
+                        return __('Please correct the invalid form fields and try again.');
+                    }
+
+                    return session('error');
+                },
             ],
             'mainNav' => function () use ($request) {
                 /** @var User $user */

@@ -23,7 +23,7 @@ class InvoiceLayout extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'data' => 'json',
+        'layout_data' => 'json',
     ];
 
     public function scopeFilter(Builder $builder, array $filters)

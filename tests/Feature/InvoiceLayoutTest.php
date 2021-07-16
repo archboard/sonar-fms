@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\InvoiceLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 
@@ -48,7 +47,8 @@ class InvoiceLayoutTest extends TestCase
         $data = [
             'name' => 'My invoice layout',
             'locale' => null,
-            'data' => [
+            'paper_size' => 'A4',
+            'layout_data' => [
                 'rows' => [],
                 'primary' => '#fff',
                 'logo' => '',
@@ -61,10 +61,10 @@ class InvoiceLayoutTest extends TestCase
 
         $data['tenant_id'] = $this->tenant->id;
         $data['school_id'] = $this->school->id;
-        $this->assertDatabaseHas('invoice_layouts', Arr::except($data, 'data'));
+        $this->assertDatabaseHas('invoice_layouts', Arr::except($data, 'layout_data'));
 
         $layout = InvoiceLayout::first();
-        $this->assertEquals($data['data'], $layout->data);
+        $this->assertEquals($data['layout_data'], $layout->layout_data);
     }
 
     public function test_can_get_to_edit_page()
@@ -87,7 +87,8 @@ class InvoiceLayoutTest extends TestCase
         $data = [
             'name' => 'My invoice layout',
             'locale' => 'en',
-            'data' => [
+            'paper_size' => 'Letter',
+            'layout_data' => [
                 'rows' => [],
                 'primary' => '#00aabb',
                 'logo' => 'my logo path that does not exist',
@@ -99,7 +100,7 @@ class InvoiceLayoutTest extends TestCase
             ->assertRedirect();
 
         $layout->refresh();
-        $this->assertEquals($data['data'], $layout->data);
+        $this->assertEquals($data['layout_data'], $layout->layout_data);
         $this->assertEquals($data['name'], $layout->name);
         $this->assertEquals($data['locale'], $layout->locale);
     }

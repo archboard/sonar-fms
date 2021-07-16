@@ -27,7 +27,8 @@ class InvoiceLayoutFactory extends Factory
             'tenant_id' => Tenant::current()->id,
             'school_id' => School::current()->id,
             'name' => $this->faker->words(3, true),
-            'data' => [
+            'paper_size' => $this->faker->randomElement(['A4', 'Letter']),
+            'layout_data' => [
                 'rows' => [],
                 'primary' => '#fff',
                 'logo' => '',

@@ -13,10 +13,13 @@
               :key="column"
               class="group relative flex-grow border-4 border-gray-400 border-dashed flex items-center justify-center"
             >
-              <div v-if="row.isInvoiceTable">
+              <div v-if="row.isInvoiceTable" class="p-4">
                 This is an invoice table.
               </div>
-              <Wysiwyg v-model="column.content" />
+<!--                <Button size="sm" @click.prevent="launchModal(rowIndex, columnIndex)">-->
+<!--                  {{ __('Edit') }}-->
+<!--                </Button>-->
+              <Wysiwyg v-else v-model="column.content" />
 
               <button
                 v-if="row.columns.length > 1"
@@ -54,8 +57,6 @@
       </Button>
     </div>
   </div>
-
-  <pre>{{ localData }}</pre>
 </template>
 
 <script>
@@ -65,9 +66,11 @@ import { nanoid } from 'nanoid'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/outline'
 import Wysiwyg from '@/components/forms/Wysiwyg'
+import WysiwygModal from '@/components/modals/WysiwygModal'
 
 export default defineComponent({
   components: {
+    WysiwygModal,
     Wysiwyg,
     FadeInGroup,
     Button,
@@ -88,12 +91,9 @@ export default defineComponent({
     const hasInvoiceTable = computed(() => {
       return localData.value.rows.some(r => r.isInvoiceTable)
     })
-
-    watch(() => ({ ...props.modelValue }), state => {
-      Object.keys(state).forEach(prop => {
-        localData.value[prop] = state[prop]
-      })
-    })
+    watch(() => localData, state => {
+      emit('update:modelValue', state)
+    }, { deep: true })
 
     const addColumn = (row) => {
       row.columns.push({
@@ -122,6 +122,15 @@ export default defineComponent({
       localData.value.rows.splice(rowIndex, 1)
     }
 
+    const showModal = ref(false)
+    const launchModal = (rowIndex, columnIndex) => {
+      console.log(rowIndex, columnIndex)
+      showModal.value = true
+    }
+    const saveContent = content => {
+      console.log(content)
+    }
+
     return {
       localData,
       addRow,
@@ -129,6 +138,9 @@ export default defineComponent({
       addColumn,
       hasInvoiceTable,
       removeColumn,
+      showModal,
+      launchModal,
+      saveContent,
     }
   }
 })
