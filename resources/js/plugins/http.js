@@ -6,13 +6,32 @@ const flashMessage = response => {
   const flash = get(response, 'data.props.flash')
   const level = get(response, 'data.level')
   const message = get(response, 'data.message')
+  const style = {
+    base: [
+      "color: #fff",
+      "background-color: #444",
+      "padding: 2px 4px",
+      "border-radius: 2px"
+    ],
+    error: [
+      "background-color: red"
+    ],
+    success: [
+      "background-color: green"
+    ]
+  }
+  const log = (text, extra = []) => {
+    let styles = style.base.join(';') + ';'
+    styles += extra.join(';')
+    console.log(`%c${text}`, styles)
+  }
 
   if (flash) {
     Object.keys(flash).forEach(level => {
       const text = flash[level]
 
       if (text) {
-        console.log(`Flashing ${level}: ${flash[level]}`)
+        log(`Flashing ${level}: ${flash[level]}`, style[level])
         store.addNotification({ level, text })
       }
     })
