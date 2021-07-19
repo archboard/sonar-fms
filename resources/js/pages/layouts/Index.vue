@@ -44,17 +44,21 @@
           :key="layout.id"
         >
           <Td :lighter="false">
-            {{ layout.name }}
+            <div class="flex items-center">
+              {{ layout.name }}
+              <SolidBadge v-if="layout.is_default" color="primary" class="ml-2">{{ __('Default') }}</SolidBadge>
+            </div>
           </Td>
           <Td>
             {{ layout.paper_size }}
           </Td>
-          <Td class="text-right space-x-2">
+          <Td class="text-right space-x-3">
+            <Link v-if="!layout.is_default" :href="$route('layouts.default', layout)" method="post" as="button">{{ __('Make default') }}</Link>
             <Link :href="$route('layouts.edit', layout)">{{ __('Edit') }}</Link>
           </Td>
         </tr>
         <tr v-if="layouts.meta.total === 0">
-          <Td class="text-center" colspan="2">
+          <Td class="text-center" colspan="3">
             {{ __('No invoice layouts exist.') }} <Link :href="$route('layouts.create')">{{ __('Add one') }}</Link>.
           </Td>
         </tr>
@@ -80,10 +84,12 @@ import HelpText from '@/components/HelpText'
 import ScholarshipFormModal from '@/components/modals/ScholarshipFormModal'
 import PageProps from '@/mixins/PageProps'
 import Pagination from '@/components/tables/Pagination'
+import SolidBadge from '@/components/SolidBadge'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    SolidBadge,
     ScholarshipFormModal,
     ...TableComponents,
     Button,

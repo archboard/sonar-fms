@@ -73,6 +73,7 @@ class InvoiceLayoutTest extends TestCase
 
         $data['tenant_id'] = $this->tenant->id;
         $data['school_id'] = $this->school->id;
+        $data['is_default'] = true;
         $this->assertDatabaseHas('invoice_layouts', Arr::except($data, 'layout_data'));
 
         $layout = InvoiceLayout::first();
@@ -168,5 +169,24 @@ class InvoiceLayoutTest extends TestCase
         $this->postJson(route('layouts.store'), $data)
             ->assertJsonValidationErrors(['layout_data'])
             ->assertStatus(422);
+    }
+
+    public function test_can_switch_default_layout()
+    {
+        $this->assignPermission('update', InvoiceLayout::class);
+
+        $default = InvoiceLayout::factory()->create(['is_default' => true]);
+        $this->assertTrue($default->is_default);
+        $other = InvoiceLayout::factory()->create(['is_default' => false]);
+        $this->assertFalse($other->is_default);
+
+        $this->post(route('layouts.default', $other))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $default->refresh();
+        $this->assertFalse($default->is_default);
+        $other->refresh();
+        $this->assertTrue($other->is_default);
     }
 }

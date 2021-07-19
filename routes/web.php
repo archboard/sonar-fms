@@ -126,6 +126,8 @@ Route::middleware('tenant')->group(function () {
         Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
             ->name('invoices.show');
 
+//        Route::get('/invoices/{invoice}/preview')
+
         Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
             ->except('create', 'edit');
 
@@ -137,6 +139,9 @@ Route::middleware('tenant')->group(function () {
             ->name('terms.index');
 
         Route::resource('/layouts', \App\Http\Controllers\InvoiceLayoutController::class);
+
+        Route::post('/layouts/{layout}/default', \App\Http\Controllers\MakeInvoiceLayoutDefault::class)
+            ->name('layouts.default');
 
         /**
          * User Routes

@@ -20,6 +20,7 @@ class InvoiceLayoutResource extends JsonResource
             'layout_data' => $this->layout_data,
             'locale' => $this->locale,
             'paper_size' => $this->paper_size,
+            'is_default' => $this->is_default,
         ];
     }
 }

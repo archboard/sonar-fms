@@ -31,6 +31,17 @@ class InvoiceLayout extends Model
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where('name', 'ilike', "%{$search}%");
         });
+
+        $orderBy = $filters['orderBy'] ?? 'name';
+        $orderDir = $filters['orderDir'] ?? 'asc';
+
+        $builder->orderBy($orderBy, $orderDir);
+        $builder->orderBy('name', $orderDir);
+    }
+
+    public function scopeDefault(Builder $builder, bool $status = true)
+    {
+        $builder->where('is_default', $status);
     }
 
     public function invoices(): HasMany

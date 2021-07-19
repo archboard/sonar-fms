@@ -21,6 +21,7 @@ class CreateInvoiceLayoutsTable extends Migration
             $table->string('locale')->nullable();
             $table->string('paper_size')->default('A4');
             $table->json('layout_data')->nullable();
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
 

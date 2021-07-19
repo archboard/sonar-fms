@@ -340,12 +340,14 @@ namespace App\Models{
  * @property string|null $locale
  * @property string $paper_size
  * @property array|null $layout_data
+ * @property bool $is_default
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
+ * @method static Builder|InvoiceLayout default(bool $status = true)
  * @method static \Database\Factories\InvoiceLayoutFactory factory(...$parameters)
  * @method static Builder|InvoiceLayout filter(array $filters)
  * @method static Builder|InvoiceLayout newModelQuery()
@@ -353,6 +355,7 @@ namespace App\Models{
  * @method static Builder|InvoiceLayout query()
  * @method static Builder|InvoiceLayout whereCreatedAt($value)
  * @method static Builder|InvoiceLayout whereId($value)
+ * @method static Builder|InvoiceLayout whereIsDefault($value)
  * @method static Builder|InvoiceLayout whereLayoutData($value)
  * @method static Builder|InvoiceLayout whereLocale($value)
  * @method static Builder|InvoiceLayout whereName($value)

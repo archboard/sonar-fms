@@ -67,6 +67,10 @@ class InvoiceLayoutController extends Controller
         $school = $request->school();
 
         $data['tenant_id'] = $school->tenant_id;
+        // If a default layout doesn't exist, set it to be this one
+        $data['is_default'] = $school->invoiceLayouts()
+            ->default()
+            ->doesntExist();
         $school->invoiceLayouts()
             ->create($data);
 
