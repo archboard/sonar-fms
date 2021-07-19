@@ -32,6 +32,9 @@
               </span>
             </div>
           </Th>
+          <Th>
+            {{ __('Paper size') }}
+          </Th>
           <th></th>
         </tr>
       </Thead>
@@ -42,6 +45,9 @@
         >
           <Td :lighter="false">
             {{ layout.name }}
+          </Td>
+          <Td>
+            {{ layout.paper_size }}
           </Td>
           <Td class="text-right space-x-2">
             <Link :href="$route('layouts.edit', layout)">{{ __('Edit') }}</Link>

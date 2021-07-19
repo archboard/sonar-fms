@@ -65,16 +65,29 @@ export default defineComponent({
     Authenticated,
     Label,
   },
+  props: {
+    layout: {
+      type: Object,
+      default: () => ({})
+    }
+  },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const form = useForm({
-      name: '',
-      paper_size: 'A4',
-      layout_data: {},
+      name: props.layout.name || '',
+      paper_size: props.layout.paper_size || 'A4',
+      layout_data: props.layout.layout_data || {},
     })
     const save = () => {
-      form.post($route('layouts.store'), {
+      const method = props.layout.id
+        ? 'put'
+        : 'post'
+      const route = props.layout.id
+        ? $route('layouts.update', props.layout.id)
+        : $route('layouts.store')
+
+      form[method](route, {
         onFinish: () => {
           form.processing = false
         }

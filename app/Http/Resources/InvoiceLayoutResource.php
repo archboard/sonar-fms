@@ -17,8 +17,9 @@ class InvoiceLayoutResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'data' => $this->data,
+            'layout_data' => $this->layout_data,
             'locale' => $this->locale,
+            'paper_size' => $this->paper_size,
         ];
     }
 }
