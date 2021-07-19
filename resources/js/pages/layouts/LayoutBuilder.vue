@@ -16,9 +16,6 @@
               <div v-if="row.isInvoiceTable" class="p-4">
                 This is an invoice table.
               </div>
-<!--                <Button size="sm" @click.prevent="launchModal(rowIndex, columnIndex)">-->
-<!--                  {{ __('Edit') }}-->
-<!--                </Button>-->
               <Wysiwyg v-else v-model="column.content" />
 
               <button

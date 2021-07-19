@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
+use App\Rules\InvoiceLayoutData;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -59,7 +60,8 @@ class InvoiceLayoutController extends Controller
             'name' => 'required|max:255',
             'locale' => 'nullable',
             'paper_size' => Rule::in(['A4', 'Letter']),
-            'layout_data' => 'required|array',
+            'layout_data' => ['required', new InvoiceLayoutData],
+            'layout_data.rows' => ['required', 'array'],
         ]);
 
         $school = $request->school();
@@ -77,11 +79,11 @@ class InvoiceLayoutController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\InvoiceLayout  $layout
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(InvoiceLayout $layout)
     {
-        //
+        return $layout->toResource();
     }
 
     /**
@@ -113,7 +115,8 @@ class InvoiceLayoutController extends Controller
             'name' => 'required|max:255',
             'locale' => 'nullable',
             'paper_size' => Rule::in(['A4', 'Letter']),
-            'layout_data' => 'required|array',
+            'layout_data' => ['required', new InvoiceLayoutData],
+            'layout_data.rows' => ['required', 'array'],
         ]);
 
         $layout->update($data);

@@ -30,6 +30,9 @@
       </CardPadding>
     </CardWrapper>
 
+    <Alert v-if="form.errors.layout_data" level="error" class="mb-4">
+      {{ form.errors.layout_data }}
+    </Alert>
     <LayoutBuilder v-model="form.layout_data" />
   </Authenticated>
 </template>
@@ -49,10 +52,12 @@ import HelpText from '@/components/HelpText'
 import LayoutBuilder from '@/pages/layouts/LayoutBuilder'
 import TwoColumnWrapper from '@/components/TwoColumnWrapper'
 import Select from '@/components/forms/Select'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    Alert,
     Select,
     TwoColumnWrapper,
     LayoutBuilder,

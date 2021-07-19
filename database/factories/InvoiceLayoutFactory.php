@@ -29,9 +29,21 @@ class InvoiceLayoutFactory extends Factory
             'name' => $this->faker->words(3, true),
             'paper_size' => $this->faker->randomElement(['A4', 'Letter']),
             'layout_data' => [
-                'rows' => [],
+                'rows' => [
+                    [
+                        'isInvoiceTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isInvoiceTable' => true,
+                        'columns' => [],
+                    ],
+                ],
                 'primary' => '#fff',
-                'logo' => '',
             ],
         ];
     }

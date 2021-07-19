@@ -49,9 +49,21 @@ class InvoiceLayoutTest extends TestCase
             'locale' => null,
             'paper_size' => 'A4',
             'layout_data' => [
-                'rows' => [],
+                'rows' => [
+                    [
+                        'isInvoiceTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isInvoiceTable' => true,
+                        'columns' => [],
+                    ],
+                ],
                 'primary' => '#fff',
-                'logo' => '',
             ],
         ];
 
@@ -89,9 +101,21 @@ class InvoiceLayoutTest extends TestCase
             'locale' => 'en',
             'paper_size' => 'Letter',
             'layout_data' => [
-                'rows' => [],
-                'primary' => '#00aabb',
-                'logo' => 'my logo path that does not exist',
+                'rows' => [
+                    [
+                        'isInvoiceTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isInvoiceTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+                'primary' => '#fff',
             ],
         ];
 
@@ -116,5 +140,33 @@ class InvoiceLayoutTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseMissing('invoice_layouts', ['id' => $layout->id]);
+    }
+
+    public function test_layout_needs_invoice_table_row()
+    {
+        $this->assignPermission('create', InvoiceLayout::class);
+
+        $data = [
+            'name' => 'My invoice layout',
+            'locale' => 'en',
+            'paper_size' => 'Letter',
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isInvoiceTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                ],
+                'primary' => '#fff',
+            ],
+        ];
+
+        $this->postJson(route('layouts.store'), $data)
+            ->assertJsonValidationErrors(['layout_data'])
+            ->assertStatus(422);
     }
 }
