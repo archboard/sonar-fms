@@ -409,6 +409,8 @@ class InvoiceImportTest extends TestCase
             $this->assertEquals($term->id, $invoice->term_id);
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);
+            $this->assertEquals($total, $invoice->subtotal);
+            $this->assertEquals($discount, $invoice->discount_total);
             $this->assertNotNull($invoice->invoiceImport);
             $this->assertTrue(
                 Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)

@@ -22,6 +22,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected array $invoicePaymentTermAttributes = [];
 
     protected int $subtotal = 0;
+    protected int $discountTotal = 0;
 
     public static function make(CreateInvoiceRequest $request = null, Student|Collection $students = null): static
     {
@@ -39,8 +40,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
         ray('Validated data', $this->validatedData);
 
-        return $this->setSubtotal()
-            ->setInvoiceItemAttributes()
+        return $this->setInvoiceItemAttributes()
             ->setScholarshipAttributes()
             ->setPaymentScheduleAttributes()
             ->setInvoiceAttributes();
@@ -52,21 +52,18 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             $students = collect([$students]);
         }
 
-        $this->students = $students;
+        $this->students = $students ?? collect();
 
         return $this;
     }
 
-    protected function setSubtotal(): static
-    {
-        $this->subtotal = array_reduce(
-            $this->validatedData['items'],
-            fn ($total, $item) => $total + (int) $item['amount_per_unit'] * (int) $item['quantity'], 0
-        );
-
-        return $this;
-    }
-
+    /**
+     * This has to be called after setting invoice items
+     * and scholarship items, as it relies on the calculated
+     * caches of those functions
+     *
+     * @return $this
+     */
     protected function setInvoiceAttributes(): static
     {
         $this->invoiceAttributes = $this->cleanInvoiceAttributes($this->validatedData);
@@ -81,6 +78,10 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
         $this->invoiceAttributes['amount_due'] = $total;
         $this->invoiceAttributes['remaining_balance'] = $total;
+        $this->invoiceAttributes['subtotal'] = $this->subtotal;
+        $this->invoiceAttributes['discount_total'] = $this->discountTotal > $this->subtotal
+            ? $this->subtotal
+            : $this->discountTotal;
         $this->invoiceAttributes['invoice_date'] = $this->invoiceAttributes['invoice_date']
             ?? now()->format('Y-m-d');
 
@@ -99,12 +100,15 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             $this->validatedData['items'] ?? [],
             function (array $items, array $item) {
                 // Cache the total line item
-                $item['amount'] = (int) $item['amount_per_unit'] * (int) $item['quantity'];
+                $amount = (int) $item['amount_per_unit'] * (int) $item['quantity'];
+                $item['amount'] = $amount;
                 $item['batch_id'] = $this->batchId;
                 $item['created_at'] = $this->now;
                 $item['updated_at'] = $this->now;
 
                 $items[$item['id']] = $this->cleanInvoiceItemAttributes($item);
+
+                $this->subtotal += $amount;
 
                 return $items;
             }, []
@@ -132,10 +136,10 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 // to have access to `applies_to` later
                 $items[] = $item;
 
+                $this->discountTotal += $item['calculated_amount'];
+
                 return $items;
-            },
-            []
-        );
+            }, []);
 
         ray('Scholarship attributes', $this->invoiceScholarshipAttributes);
 
@@ -194,11 +198,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
     protected function calculateInvoiceTotal(): int
     {
-        $total = $this->subtotal -
-            array_reduce(
-                $this->invoiceScholarshipAttributes,
-                fn ($total, $item) => $total + $item['calculated_amount'], 0
-            );
+        $total = $this->subtotal - $this->discountTotal;
 
         return $total > 0
             ? $total

@@ -232,24 +232,6 @@ class Invoice extends Model
         ]);
     }
 
-    public static function getAttributesFromRequest(CreateInvoiceRequest $request, Student $student = null): array
-    {
-        $school = $request->school();
-        $data = $request->validated();
-        $invoiceAttributes = Arr::except($data, ['items', 'scholarships']);
-
-        $invoiceAttributes['uuid'] = Uuid::uuid4();
-        $invoiceAttributes['tenant_id'] = $school->tenant_id;
-        $invoiceAttributes['school_id'] = $school->id;
-        $invoiceAttributes['student_id'] = optional($student)->id;
-        $total = static::getSubmittedItemsTotal($data['items'], $school->fees->keyBy('id'));
-
-        $invoiceAttributes['amount_due'] = $total;
-        $invoiceAttributes['remaining_balance'] = $total;
-
-        return $invoiceAttributes;
-    }
-
     public static function calculateSubtotalFromItems(Collection $items)
     {
         return $items
@@ -263,7 +245,7 @@ class Invoice extends Model
         return static::calculateSubtotalFromItems($this->invoiceItems);
     }
 
-    public function calculateScholarshipSubtotal()
+    public function calculateScholarshipSubtotal(): int
     {
         return $this->invoiceScholarships
             ->reduce(function (int $total, InvoiceScholarship $scholarship) {
@@ -297,6 +279,8 @@ class Invoice extends Model
         $this->forceFill([
             'amount_due' => $amountDue,
             'remaining_balance' => $remaining,
+            'subtotal' => $subtotal,
+            'discount_total' => $discount,
             'paid_at' => $remaining === 0 ? now() : null,
         ]);
 

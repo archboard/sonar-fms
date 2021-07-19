@@ -547,6 +547,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 $invoiceAttributes['amount_due'] = $amountDue;
                 $invoiceAttributes['remaining_balance'] = $amountDue;
+                $invoiceAttributes['subtotal'] = $subtotal;
+                $invoiceAttributes['discount_total'] = $discount > $subtotal
+                    ? $subtotal
+                    : $discount;
 
                 // Build the payment schedules
                 $this->buildPaymentSchedules($invoiceUuid, $amountDue);

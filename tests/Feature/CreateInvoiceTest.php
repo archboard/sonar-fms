@@ -84,6 +84,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(100, $invoice->amount_due);
         $this->assertEquals(100, $invoice->remaining_balance);
+        $this->assertEquals(100, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
@@ -150,6 +152,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(300, $invoice->amount_due);
         $this->assertEquals(300, $invoice->remaining_balance);
+        $this->assertEquals(300, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals($available, $invoice->available_at);
         $this->assertEquals(2, $invoice->invoiceItems()->count());
@@ -246,6 +250,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(200, $invoice->amount_due);
         $this->assertEquals(200, $invoice->remaining_balance);
+        $this->assertEquals(300, $invoice->subtotal);
+        $this->assertEquals(100, $invoice->discount_total);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals(2, $invoice->invoiceItems()->count());
 
@@ -319,6 +325,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(1100, $invoice->amount_due);
         $this->assertEquals(1100, $invoice->remaining_balance);
+        $this->assertEquals(1200, $invoice->subtotal);
+        $this->assertEquals(100, $invoice->discount_total);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals(2, $invoice->invoiceItems()->count());
 
@@ -393,6 +401,8 @@ class CreateInvoiceTest extends TestCase
         $invoice = $student->invoices()->first();
         $this->assertEquals(800, $invoice->amount_due);
         $this->assertEquals(800, $invoice->remaining_balance);
+        $this->assertEquals(1000, $invoice->subtotal);
+        $this->assertEquals(200, $invoice->discount_total);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
         $this->assertEquals(2, $invoice->invoiceScholarships()->count());
 
@@ -460,6 +470,8 @@ class CreateInvoiceTest extends TestCase
         $invoice = $student->invoices()->first();
         $this->assertEquals(150, $invoice->amount_due);
         $this->assertEquals(150, $invoice->remaining_balance);
+        $this->assertEquals(1000, $invoice->subtotal);
+        $this->assertEquals(850, $invoice->discount_total);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
         $this->assertEquals(2, $invoice->invoiceScholarships()->count());
 
@@ -532,6 +544,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(100, $invoice->amount_due);
         $this->assertEquals(100, $invoice->remaining_balance);
+        $this->assertEquals(100, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
@@ -679,6 +693,8 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals($invoiceData['notify'], $invoice->notify);
         $this->assertEquals(11500, $invoice->amount_due);
         $this->assertEquals(11500, $invoice->remaining_balance);
+        $this->assertEquals(25000, $invoice->subtotal);
+        $this->assertEquals(13500, $invoice->discount_total);
         $this->assertEquals(3, $invoice->invoiceItems()->count());
         $this->assertEquals(3, $invoice->invoiceScholarships()->count());
         $this->assertEquals(2, $invoice->invoicePaymentSchedules()->count());
