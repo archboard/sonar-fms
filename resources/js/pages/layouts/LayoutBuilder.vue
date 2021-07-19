@@ -11,7 +11,7 @@
             <div
               v-for="(column, columnIndex) in row.columns"
               :key="column"
-              class="group relative flex-grow border-4 border-gray-400 border-dashed flex items-center justify-center"
+              class="group relative flex-0 w-full border-4 border-gray-400 border-dashed flex items-center justify-center"
             >
               <div v-if="row.isInvoiceTable" class="p-4">
                 This is an invoice table.

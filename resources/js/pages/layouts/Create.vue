@@ -33,12 +33,16 @@
     <Alert v-if="form.errors.layout_data" level="error" class="mb-4">
       {{ form.errors.layout_data }}
     </Alert>
-    <LayoutBuilder v-model="form.layout_data" />
+    <div class="overflow-x-scroll">
+      <div class="mx-auto" :style="pageWidth">
+        <LayoutBuilder v-model="form.layout_data" />
+      </div>
+    </div>
   </Authenticated>
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, inject, computed } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import PageProps from '@/mixins/PageProps'
 import Button from '@/components/Button'
@@ -98,10 +102,21 @@ export default defineComponent({
         }
       })
     }
+    const pageWidth = computed(() => {
+      const widths = {
+        A4: '8.27in',
+        Letter: '8.5in',
+      }
+
+      return {
+        width: widths[form.paper_size]
+      }
+    })
 
     return {
       form,
       save,
+      pageWidth,
     }
   }
 })

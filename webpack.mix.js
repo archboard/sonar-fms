@@ -25,6 +25,11 @@ mix.js('resources/js/app.js', 'public/js')
     require('tailwindcss'),
     require('postcss-nested'),
   ])
+  .postCss('resources/css/ckeditor.css', 'public/css', [
+    require('postcss-import'),
+    require('tailwindcss'),
+    require('postcss-nested'),
+  ])
   .babelConfig({
     plugins: ['@babel/plugin-syntax-dynamic-import'],
   })

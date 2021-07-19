@@ -99,6 +99,13 @@ class School extends Model
         return range($this->low_grade, $this->high_grade);
     }
 
+    public function getDefaultInvoiceLayout(): ?InvoiceLayout
+    {
+        return $this->invoiceLayouts()
+            ->default()
+            ->first();
+    }
+
     public function syncDataFromSis()
     {
         $this->tenant->sisProvider()->fullSchoolSync($this);

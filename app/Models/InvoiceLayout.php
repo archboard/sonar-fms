@@ -48,4 +48,14 @@ class InvoiceLayout extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function getMaxWidthAttribute(): string
+    {
+        $pages = [
+            'Letter' => '8.5in',
+            'A4' => '8.27in',
+        ];
+
+        return $pages[$this->paper_size];
+    }
 }

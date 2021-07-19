@@ -189,4 +189,14 @@ class InvoiceLayoutTest extends TestCase
         $other->refresh();
         $this->assertTrue($other->is_default);
     }
+
+    public function test_can_retrieve_default_layout_for_school()
+    {
+        $this->assignPermission('update', InvoiceLayout::class);
+
+        $others = InvoiceLayout::factory()->count(3)->create(['is_default' => false]);
+        $default = InvoiceLayout::factory()->create(['is_default' => true]);
+
+        $this->assertEquals($default->id, $this->school->getDefaultInvoiceLayout()->id);
+    }
 }
