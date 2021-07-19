@@ -31,6 +31,8 @@ class CreateInvoicesTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('amount_due')->nullable();
             $table->unsignedBigInteger('remaining_balance')->nullable();
+            $table->unsignedBigInteger('subtotal')->nullable();
+            $table->unsignedBigInteger('discount_total')->nullable();
             $table->date('invoice_date');
             $table->dateTime('available_at')->nullable();
             $table->dateTime('due_at')->nullable();

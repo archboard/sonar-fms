@@ -185,6 +185,8 @@ namespace App\Models{
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $invoice_layout_id
+ * @property int|null $subtotal
+ * @property int|null $discount_total
  * @property-read mixed $amount_due_formatted
  * @property-read bool $available
  * @property-read mixed $past_due
@@ -217,6 +219,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereBatchId($value)
  * @method static Builder|Invoice whereCreatedAt($value)
  * @method static Builder|Invoice whereDescription($value)
+ * @method static Builder|Invoice whereDiscountTotal($value)
  * @method static Builder|Invoice whereDueAt($value)
  * @method static Builder|Invoice whereId($value)
  * @method static Builder|Invoice whereImportId($value)
@@ -229,6 +232,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
  * @method static Builder|Invoice whereStudentId($value)
+ * @method static Builder|Invoice whereSubtotal($value)
  * @method static Builder|Invoice whereTenantId($value)
  * @method static Builder|Invoice whereTermId($value)
  * @method static Builder|Invoice whereTitle($value)
@@ -343,6 +347,7 @@ namespace App\Models{
  * @property bool $is_default
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $max_width
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
