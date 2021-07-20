@@ -21,6 +21,8 @@ class InvoicePaymentTerm extends Model
         'invoice_payment_schedule_uuid',
         'batch_id',
         'amount',
+        'amount_due',
+        'remaining_balance',
         'due_at',
         'notified_at',
         'notify',
