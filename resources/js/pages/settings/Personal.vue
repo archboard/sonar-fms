@@ -16,6 +16,10 @@
               <Label for="email">{{ __('Email') }}</Label>
               <Input v-model="form.email" type="email" id="email" data-cy="email" required />
             </InputWrap>
+            <InputWrap :error="form.errors.timezone">
+              <Label for="timezone">{{ __('Timezone') }}</Label>
+              <Timezone v-model="form.timezone" id="timezone" data-cy="timezone" required />
+            </InputWrap>
             <InputWrap :error="form.errors.password">
               <Label for="password">{{ __('Password') }}</Label>
               <Input v-model="form.password" type="password" id="password" data-cy="password" />
@@ -51,9 +55,11 @@ import CardWrapper from '../../components/CardWrapper'
 import CardPadding from '../../components/CardPadding'
 import HelpText from '../../components/HelpText'
 import CardAction from '../../components/CardAction'
+import Timezone from '@/components/forms/Timezone'
 
 export default defineComponent({
   components: {
+    Timezone,
     CardAction,
     HelpText,
     CardPadding,
@@ -73,7 +79,7 @@ export default defineComponent({
   setup ({ user }) {
     const $route = inject('$route')
     const form = useForm({
-      ...pick(user, ['first_name', 'last_name', 'email']),
+      ...pick(user, ['first_name', 'last_name', 'email', 'timezone']),
       password: '',
       password_confirmation: '',
     })

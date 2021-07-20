@@ -37,6 +37,7 @@ class PersonalSettingsController extends Controller
             'last_name' => 'required',
             'email' => 'required|email',
             'password' => 'nullable|string|confirmed|min:8',
+            'timezone' => 'required',
         ]);
 
         /** @var User $user */

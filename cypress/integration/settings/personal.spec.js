@@ -17,6 +17,7 @@ context('Personal Settings', () => {
       first_name: 'Jimmy',
       last_name: 'Johnson',
       email: 'jimmy@nascar.com',
+      timezone: 'Asia/Shanghai',
       password: '',
       password_confirmation: '',
     }
@@ -25,6 +26,7 @@ context('Personal Settings', () => {
     cy.getCy('first_name').invoke('val').should('not.be.empty')
     cy.getCy('last_name').invoke('val').should('not.be.empty')
     cy.getCy('email').invoke('val').should('not.be.empty')
+    cy.getCy('timezone').invoke('val').should('not.be.empty')
     cy.getCy('password').invoke('val').should('be.empty')
     cy.getCy('password_confirmation').invoke('val').should('be.empty')
 
