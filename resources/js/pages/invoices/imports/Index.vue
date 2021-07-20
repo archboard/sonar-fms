@@ -2,7 +2,7 @@
   <Authenticated>
     <template v-slot:actions>
       <Button component="inertia-link" :href="$route('invoices.imports.create')">
-        {{ __('Import') }}
+        {{ __('New import') }}
       </Button>
     </template>
 
