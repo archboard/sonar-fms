@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -27,5 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::before(fn (User $user, $ability) => $user->manages_tenancy ? true : null);
+
+        Gate::define('view invoice', function (User $user, Invoice $invoice) {
+            return $user->can('viewAny', Invoice::class);
+        });
     }
 }

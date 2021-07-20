@@ -17,8 +17,8 @@
 
                 <Fieldset>
                   <InputWrap :error="form.errors.currency_id">
-                    <Label for="currency_symbol">{{ __('Currency') }}</Label>
-                    <CurrencySelector v-model="form.currency_id" :currencies="currencies" />
+                    <Label for="currency_id" :required="true">{{ __('Currency') }}</Label>
+                    <CurrencySelector v-model="form.currency_id" :currencies="currencies" id="currency_id" />
                   </InputWrap>
                 </Fieldset>
               </div>
@@ -34,7 +34,7 @@
 
                 <Fieldset>
                   <InputWrap :error="form.errors.timezone">
-                    <Label for="timezone">{{ __('Currency') }}</Label>
+                    <Label for="timezone" :required="true">{{ __('Timezone') }}</Label>
                     <Timezone v-model="form.timezone" id="timezone" />
                   </InputWrap>
                 </Fieldset>

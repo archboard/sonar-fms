@@ -132,6 +132,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/invoices/{invoice}/preview', \App\Http\Controllers\PreviewInvoiceController::class)
             ->name('invoices.preview');
 
+        Route::get('/invoices/{invoice}/pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
+            ->name('invoices.download');
+
         Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
             ->except('create', 'edit');
 

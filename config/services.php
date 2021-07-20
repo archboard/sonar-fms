@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'node' => [
+        'binary' => env('NODE_BINARY', '/usr/local/bin/node'),
+        'npm' => env('NPM_BINARY', '/usr/local/bin/npm'),
+    ],
+
 ];
