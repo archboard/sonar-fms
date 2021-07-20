@@ -13,8 +13,8 @@
               :key="column"
               class="group relative flex-0 w-full border-4 border-gray-400 border-dashed flex items-center justify-center"
             >
-              <div v-if="row.isInvoiceTable" class="p-4">
-                This is an invoice table.
+              <div v-if="row.isInvoiceTable" class="p-4 bg-gray-300 w-full text-center">
+                Invoice table will appear here.
               </div>
               <Wysiwyg v-else v-model="column.content" />
 

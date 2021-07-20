@@ -104,8 +104,8 @@ export default defineComponent({
     }
     const pageWidth = computed(() => {
       const widths = {
-        A4: '8.27in',
-        Letter: '8.5in',
+        A4: `${8.27 * 1.333333}in`,
+        Letter: `${8.5 * 1.33333}in`,
       }
 
       return {
