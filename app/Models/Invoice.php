@@ -212,16 +212,9 @@ class Invoice extends Model
     public function fullLoad(): static
     {
         return $this->load([
-            'school',
-            'school.currency',
-            'invoiceItems',
-            'invoiceItems.invoice',
-            'invoiceItems.invoice.school',
-            'invoiceItems.invoice.school.currency',
-            'invoiceScholarships',
-            'invoiceScholarships.invoice',
-            'invoiceScholarships.invoice.school',
-            'invoiceScholarships.invoice.school.currency',
+            'currency',
+            'invoiceItems.invoice.currency',
+            'invoiceScholarships.invoice.currency',
         ]);
     }
 

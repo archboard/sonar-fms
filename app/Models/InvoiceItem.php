@@ -40,30 +40,20 @@ class InvoiceItem extends Model
 
     public function getAmountFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('school') ||
-            !$this->invoice->school->relationLoaded('currency')
-        ) {
+        if (!$this->invoice->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->amount, $this->invoice->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->amount, $this->invoice->currency);
     }
 
     public function getAmountPerUnitFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('school') ||
-            !$this->invoice->school->relationLoaded('currency')
-        ) {
+        if (!$this->invoice->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->amount_per_unit, $this->invoice->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->amount_per_unit, $this->invoice->currency);
     }
 
     public function calculateTotal(): int

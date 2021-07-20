@@ -72,30 +72,20 @@ class InvoiceScholarship extends Model
 
     public function getAmountFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('school') ||
-            !$this->invoice->school->relationLoaded('currency')
-        ) {
+        if (!$this->invoice->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->amount, $this->invoice->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->amount, $this->invoice->currency);
     }
 
     public function getCalculatedAmountFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('school') ||
-            !$this->invoice->school->relationLoaded('currency')
-        ) {
+        if (!$this->invoice->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->calculated_amount, $this->invoice->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->calculated_amount, $this->invoice->currency);
     }
 
     public function getApplicableSubtotal(): int

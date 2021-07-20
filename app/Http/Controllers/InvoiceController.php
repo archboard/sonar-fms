@@ -26,7 +26,7 @@ class InvoiceController extends Controller
             ->with([
                 'student',
                 'school',
-                'school.currency',
+                'currency',
             ])
             ->filter($request->all())
             ->paginate($request->input('perPage', 25));
