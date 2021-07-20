@@ -16,7 +16,7 @@ class PreviewInvoiceController extends Controller
     public function __invoke(Request $request, Invoice $invoice)
     {
         $invoice->load([
-            'invoicePaymentSchedules',
+            'invoiceScholarships.appliesTo',
             'invoicePaymentSchedules.invoicePaymentTerms',
         ]);
         $layout = $request->school()->getDefaultInvoiceLayout();

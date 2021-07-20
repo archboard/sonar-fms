@@ -88,7 +88,7 @@
           <tr>
             <td class="font-bold text-left px-4 py-2">
               @if($invoice->due_at)
-                {{ __('Amount due by :date', ['date' => $invoice->due_at->format('F j, Y H:i')]) }}
+                {{ __('Amount due by :date', ['date' => $invoice->due_at->setTimezone($invoice->school->timezone)->format('F j, Y H:i')]) }}
               @else
                 {{ __('Amount due') }}
               @endif
@@ -101,17 +101,29 @@
       </table>
 
       @if($invoice->invoicePaymentSchedules->isNotEmpty())
+        <div class="my-6 relative">
+          <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">
+              {{ __('Or use a payment schedule') }}
+            </span>
+          </div>
+        </div>
+
         <div class="mt-6">
-          <h2 class="font-bold text-lg mb-4">{{ __('Available payment schedules') }}</h2>
+{{--          <h2 class="font-bold text-lg mb-4">{{ __('Available payment schedules') }}</h2>--}}
           <div class="space-y-4">
             @foreach($invoice->invoicePaymentSchedules as $paymentSchedule)
               <div>
-                <h3 class="font-medium mb-2">{{ __(':number payments', ['number' => $paymentSchedule->invoicePaymentTerms->count()]) }}</h3>
-                <div class="grid grid-cols-4 gap-4">
+                <h3 class="font-medium mb-2">{{ __(':number payments (:total_price)', ['number' => $paymentSchedule->invoicePaymentTerms->count(), 'total_price' => displayCurrency($paymentSchedule->amount, $currency)]) }}</h3>
+{{--                <div class="grid grid-cols-4 gap-4">--}}
+                <div class="flex items-start space-x-4">
                   @foreach($paymentSchedule->invoicePaymentTerms as $term)
-                    <div class="border p-4">
+                    <div class="flex-0 w-full border p-4">
                       @if($term->due_at)
-                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->format('F j, Y H:i')]) }}
+                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->setTimezone($invoice->school->timezone)->format('F j, Y H:i')]) }}
                       @else
                         {{ displayCurrency($term->amount_due, $currency) }}
                       @endif
