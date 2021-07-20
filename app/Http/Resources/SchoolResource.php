@@ -19,6 +19,7 @@ class SchoolResource extends JsonResource
             'name' => $this->name,
             'sis_id' => $this->sis_id,
             'active' => $this->active,
+            'timezone' => $this->timezone,
             'low_grade' => $this->low_grade,
             'high_grade' => $this->high_grade,
             'currency_id' => $this->currency_id,

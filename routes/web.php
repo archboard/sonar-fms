@@ -47,6 +47,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/csrf-token', \App\Http\Controllers\RefreshCsrfTokenController::class)
             ->name('csrf-token');
 
+        Route::get('/timezones', \App\Http\Controllers\GetTimezonesController::class)
+            ->name('timezones');
+
         Route::get('/home', \App\Http\Controllers\HomeController::class)
             ->name('home');
 

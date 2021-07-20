@@ -22,6 +22,23 @@
                   </InputWrap>
                 </Fieldset>
               </div>
+              <div class="pt-8">
+                <div class="mb-6">
+                  <CardSectionHeader>
+                    {{ __('Timezone Settings') }}
+                  </CardSectionHeader>
+                  <HelpText>
+                    {{ __('Set the timezone for your school. This is the timezone used for setting due date and availability.') }}
+                  </HelpText>
+                </div>
+
+                <Fieldset>
+                  <InputWrap :error="form.errors.timezone">
+                    <Label for="timezone">{{ __('Currency') }}</Label>
+                    <Timezone v-model="form.timezone" id="timezone" />
+                  </InputWrap>
+                </Fieldset>
+              </div>
             </FormMultipartWrapper>
           </CardPadding>
           <CardAction>
@@ -70,9 +87,11 @@ import CardSectionHeader from '../../components/CardSectionHeader'
 import Checkbox from '../../components/forms/Checkbox'
 import CheckboxText from '../../components/forms/CheckboxText'
 import CurrencySelector from '../../components/forms/CurrencySelector'
+import Timezone from '@/components/forms/Timezone'
 
 export default defineComponent({
   components: {
+    Timezone,
     CurrencySelector,
     CheckboxText,
     Checkbox,
@@ -98,7 +117,7 @@ export default defineComponent({
   setup ({ school }) {
     const $route = inject('$route')
     const form = useForm({
-      ...pick(school, ['currency_id']),
+      ...pick(school, ['currency_id', 'timezone']),
     })
     const submit = () => {
       form.post($route('settings.school'))

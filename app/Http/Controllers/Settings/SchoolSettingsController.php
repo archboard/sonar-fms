@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CurrencyResource;
 use App\Models\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SchoolSettingsController extends Controller
 {
@@ -37,6 +38,10 @@ class SchoolSettingsController extends Controller
     {
         $data = $request->validate([
             'currency_id' => 'required|exists:currencies,id',
+            'timezone' => [
+                'required',
+                Rule::in(timezones()->keys())
+            ]
         ]);
 
         $request->school()
