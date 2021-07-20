@@ -187,6 +187,7 @@ namespace App\Models{
  * @property int|null $invoice_layout_id
  * @property int|null $subtotal
  * @property int|null $discount_total
+ * @property-read \App\Models\Currency|null $currency
  * @property-read mixed $amount_due_formatted
  * @property-read bool $available
  * @property-read mixed $past_due
@@ -264,6 +265,7 @@ namespace App\Models{
  * @property array|null $results
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
  * @property-read string $absolute_path
  * @property-read string $file_name
  * @property-read array $headers
@@ -347,6 +349,7 @@ namespace App\Models{
  * @property bool $is_default
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
  * @property-read string $max_width
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
@@ -495,6 +498,7 @@ namespace App\Models{
  * @property bool $for_import
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
  * @property-read \App\Models\School $school
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\InvoiceTemplateFactory factory(...$parameters)
@@ -528,6 +532,7 @@ namespace App\Models{
  * @property string|null $resolution_strategy
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
  * @property-read mixed $percentage_converted
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\School $school
@@ -565,9 +570,9 @@ namespace App\Models{
  * @property int|null $low_grade
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $use_thousands_separator
  * @property bool $active
  * @property int|null $currency_id
+ * @property string|null $timezone
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \App\Models\Currency|null $currency
@@ -608,8 +613,8 @@ namespace App\Models{
  * @method static Builder|School whereSchoolNumber($value)
  * @method static Builder|School whereSisId($value)
  * @method static Builder|School whereTenantId($value)
+ * @method static Builder|School whereTimezone($value)
  * @method static Builder|School whereUpdatedAt($value)
- * @method static Builder|School whereUseThousandsSeparator($value)
  */
 	class IdeHelperSchool extends \Eloquent {}
 }
