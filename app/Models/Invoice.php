@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -127,28 +128,20 @@ class Invoice extends Model
 
     public function getAmountDueFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('school') ||
-            !$this->school->relationLoaded('currency')
-        ) {
+        if (!$this->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->amount_due, $this->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->amount_due, $this->currency);
     }
 
     public function getRemainingBalanceFormattedAttribute()
     {
-        if (
-            !$this->relationLoaded('school') ||
-            !$this->school->relationLoaded('currency')
-        ) {
+        if (!$this->relationLoaded('currency')) {
             return null;
         }
 
-        return Money::ofMinor($this->remaining_balance, $this->school->currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        return displayCurrency($this->remaining_balance, $this->currency);
     }
 
     public function getStatusColorAttribute()

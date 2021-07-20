@@ -16,22 +16,18 @@ class PreviewInvoiceController extends Controller
     public function __invoke(Request $request, Invoice $invoice)
     {
         $invoice->load([
-            'student',
-            'school',
-            'school.currency',
-            'invoiceItems',
-            'invoiceItems.invoice',
-            'invoiceItems.invoice.school',
-            'invoiceItems.invoice.school.currency',
+            'invoicePaymentSchedules',
+            'invoicePaymentSchedules.invoicePaymentTerms',
         ]);
         $layout = $request->school()->getDefaultInvoiceLayout();
 
-        $title = __('Invoice :number', ['number' => $invoice->id]);
+        $title = __('Invoice #:number', ['number' => $invoice->id]);
 
         return view('invoice', [
             'layout' => $layout,
             'invoices' => [$invoice],
             'title' => $title,
+            'currency' => $invoice->currency,
         ]);
     }
 }

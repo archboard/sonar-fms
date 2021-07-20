@@ -7,12 +7,17 @@
     <title>{{ $title }}</title>
     <link href="{{ mix('/css/ckeditor.css') }}" rel="stylesheet" />
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
+    <style>
+      html {
+        font-size: 12px;
+      }
+    </style>
   </head>
   <body class="bg-gray-50 text-gray-900">
-    <div class="bg-white mx-auto p-8 space-y-8" style="max-width:{{ $layout->max_width }};">
+    <div class="bg-white min-h-screen mx-auto p-8 space-y-8" style="max-width:{{ $layout->max_width }};">
       @foreach($layout->layout_data['rows'] as $row)
         @if($row['isInvoiceTable'])
-          <x-invoice-table :invoices="$invoices" />
+          <x-invoice-table :invoices="$invoices" :currency="$currency" />
         @else
           <div class="ck-content flex items-start space-x-6">
             @foreach($row['columns'] as $column)
