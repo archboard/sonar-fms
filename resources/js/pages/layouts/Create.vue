@@ -1,6 +1,9 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
+      <Button @click.prevent="saveAndPreview">
+        {{ __('Save and preview') }}
+      </Button>
       <Button @click.prevent="save" :loading="form.processing">
         {{ __('Save') }}
       </Button>
@@ -87,6 +90,7 @@ export default defineComponent({
       name: props.layout.name || '',
       paper_size: props.layout.paper_size || 'A4',
       layout_data: props.layout.layout_data || {},
+      preview: false,
     })
     const save = () => {
       const method = props.layout.id
@@ -98,9 +102,18 @@ export default defineComponent({
 
       form[method](route, {
         onFinish: () => {
+          if (form.preview) {
+            window.open($route('layouts.preview', props.layout), '_blank')
+          }
+
           form.processing = false
+          form.preview = false
         }
       })
+    }
+    const saveAndPreview = () => {
+      form.preview = true
+      save()
     }
     const pageWidth = computed(() => {
       const widths = {
@@ -116,6 +129,7 @@ export default defineComponent({
     return {
       form,
       save,
+      saveAndPreview,
       pageWidth,
     }
   }

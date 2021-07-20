@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
 use App\Rules\InvoiceLayoutData;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -76,7 +77,7 @@ class InvoiceLayoutController extends Controller
 
         session()->flash('success', __('Invoice layout created successfully.'));
 
-        return redirect()->route('layouts.index');
+        return $this->afterSave($request);
     }
 
     /**
@@ -127,7 +128,7 @@ class InvoiceLayoutController extends Controller
 
         session()->flash('success', __('Invoice layout updated successfully.'));
 
-        return redirect()->route('layouts.index');
+        return $this->afterSave($request);
     }
 
     /**
@@ -141,6 +142,15 @@ class InvoiceLayoutController extends Controller
         $layout->delete();
 
         session()->flash('success', __('Invoice layout deleted successfully.'));
+
+        return redirect()->route('layouts.index');
+    }
+
+    protected function afterSave(Request $request): RedirectResponse
+    {
+        if ($request->input('preview')) {
+            return back();
+        }
 
         return redirect()->route('layouts.index');
     }

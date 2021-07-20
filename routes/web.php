@@ -150,6 +150,9 @@ Route::middleware('tenant')->group(function () {
         Route::post('/layouts/{layout}/default', \App\Http\Controllers\MakeInvoiceLayoutDefault::class)
             ->name('layouts.default');
 
+        Route::get('/layouts/{layout}/preview', \App\Http\Controllers\PreviewLayoutController::class)
+            ->name('layouts.preview');
+
         /**
          * User Routes
          */

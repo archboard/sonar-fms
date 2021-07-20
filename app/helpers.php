@@ -14,12 +14,12 @@ if (!function_exists('displayCurrency')) {
      * @return string
      * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
-    function displayCurrency(int $amount, Currency $currency = null): string {
+    function displayCurrency(int $amount = null, Currency $currency = null): string {
         if (is_null($currency)) {
             $currency = request()->school()->currency;
         }
 
-        return Money::ofMinor($amount, $currency->code)
+        return Money::ofMinor($amount ?? 0, $currency->code)
             ->formatTo(optional(auth()->user())->locale ?? 'en');
     }
 }
