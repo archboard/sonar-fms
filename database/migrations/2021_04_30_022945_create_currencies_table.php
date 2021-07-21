@@ -23,7 +23,6 @@ class CreateCurrenciesTable extends Migration
         });
 
         Schema::table('schools', function (Blueprint $table) {
-            $table->dropColumn(['currency_symbol', 'currency_decimals']);
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('set null');
         });
