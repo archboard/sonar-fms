@@ -428,6 +428,100 @@ class InvoiceImportTest extends TestCase
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 
+    public function test_can_import_then_rollback_imported_records()
+    {
+        $this->assignPermission('roll back', InvoiceImport::class);
+        $this->withoutExceptionHandling();
+        Storage::fake();
+        Event::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('sonar-import.xls'),
+            $this->school
+        );
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('invoice name'),
+                        'amount_per_unit' => $this->makeMapField('invoice amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'name' => $this->makeMapField(value: 'Assistance', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
+            });
+
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+
+        $import->refresh();
+        $contents = $import->getImportContents();
+        $values = $contents
+            ->pluck('student number')
+            ->filter(fn ($value) => !is_null($value));
+        $students = $import->school->students()
+            ->whereIn('student_number', $values)
+            ->get();
+
+        $this->assertEquals(3, $import->imported_records);
+        $this->assertEquals(1, $import->failed_records);
+        $this->assertCount(4, $import->results);
+
+        $this->post(route('invoices.imports.rollback', $import))
+            ->assertSessionHas('success')
+            ->assertRedirect(route('invoices.imports.show', $import));
+
+        $import->refresh();
+        $this->assertEquals(0, $import->invoices()->count());
+        $this->assertEquals(0, $import->imported_records);
+        $this->assertEquals(0, $import->failed_records);
+        $this->assertEmpty($import->results);
+
+        $this->assertEquals(0, InvoiceItem::whereNotNull('invoice_uuid')->count());
+        $this->assertEquals(0, InvoiceScholarship::whereNotNull('invoice_uuid')->count());
+    }
+
     public function test_can_import_simple_csv_and_get_no_successful_results()
     {
         ray()->showApp();

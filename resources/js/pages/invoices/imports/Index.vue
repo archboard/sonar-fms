@@ -74,15 +74,38 @@
           :key="invoiceImport.id"
         >
           <Td :lighter="false">
-            <label :for="`student_${invoiceImport.id}`" class="cursor-pointer">{{ invoiceImport.file_name }}</label>
+            <div class="flex items-center">
+              <InertiaLink class="hover:underline" :href="$route('invoices.imports.show', invoiceImport)">{{ invoiceImport.file_name }}</InertiaLink>
+              <SolidBadge v-if="!invoiceImport.mapping_valid" class="ml-2" color="red">{{ __('Fix mapping') }}</SolidBadge>
+              <SolidBadge v-if="invoiceImport.imported_at" class="ml-2" color="green">{{ __('Imported') }}</SolidBadge>
+              <SolidBadge v-if="invoiceImport.rolled_back_at" class="ml-2" color="yellow">{{ __('Rolled back') }}</SolidBadge>
+            </div>
           </Td>
           <Td>{{ invoiceImport.total_records }}</Td>
           <Td>{{ invoiceImport.imported_records }}</Td>
           <Td>{{ invoiceImport.failed_records }}</Td>
-          <Td class="text-right space-x-2">
-            <Link :href="$route('invoices.imports.edit', invoiceImport)">{{ __('Edit') }}</Link>
-            <Link :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
-            <Link v-if="invoiceImport.mapping_valid" :href="$route('invoices.imports.start', invoiceImport)" method="post">{{ __('Import') }}</Link>
+          <Td class="text-right">
+            <VerticalDotMenu>
+              <div class="p-1">
+                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.show', invoiceImport)">
+                  {{ __('View') }}
+                </SonarMenuItem>
+                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
+                  {{ __('Edit import file') }}
+                </SonarMenuItem>
+                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
+                  {{ __('Update mapping') }}
+                </SonarMenuItem>
+              </div>
+              <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
+                <SonarMenuItem is="inertia-link" v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at" :href="$route('invoices.imports.start', invoiceImport)" method="post" as="button">
+                  {{ __('Import') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="invoiceImport.imported_at" @click.prevent="rollingBackImport = invoiceImport">
+                  {{ __('Roll back') }}
+                </SonarMenuItem>
+              </div>
+            </VerticalDotMenu>
           </Td>
         </tr>
 
@@ -96,6 +119,12 @@
 
     <Pagination :meta="imports.meta" :links="imports.links" />
   </Authenticated>
+
+  <ConfirmationModal
+    v-if="rollingBackImport.id"
+    @close="rollingBackImport = {}"
+    @confirmed="rollBack"
+  />
 </template>
 
 <script>
@@ -115,9 +144,20 @@ import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCi
 import StudentTableFiltersModal from '@/components/modals/StudentTableFiltersModal'
 import Link from '@/components/Link'
 import Button from '@/components/Button'
+import SolidBadge from '@/components/SolidBadge'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import { Inertia } from '@inertiajs/inertia'
+import ConfirmationModal from '@/components/modals/ConfirmationModal'
+import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    ConfirmationModal,
+    SonarMenuItem,
+    VerticalDotMenu,
+    SolidBadge,
     Button,
     XCircleIcon,
     StudentTableFiltersModal,
@@ -154,6 +194,16 @@ export default defineComponent({
     const { searchTerm } = searchesItems(filters)
     const selectAll = ref(false)
     const showFilters = ref(false)
+    const rollingBackImport = ref({})
+
+    const rollBack = () => {
+      Inertia.post($route('invoices.imports.rollback', rollingBackImport.value), null, {
+        preserveScroll: true,
+        onFinish () {
+          rollingBackImport.value = {}
+        }
+      })
+    }
 
     return {
       filters,
@@ -163,6 +213,8 @@ export default defineComponent({
       searchTerm,
       selectAll,
       showFilters,
+      rollingBackImport,
+      rollBack,
     }
   }
 })

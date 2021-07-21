@@ -525,6 +525,11 @@ class User extends Authenticatable implements HasLocalePreference
                             'label' => __('Delete'),
                             'can' => $this->can('delete', InvoiceImport::class),
                         ],
+                        [
+                            'permission' => 'roll back',
+                            'label' => __('Roll back'),
+                            'can' => $this->can('roll back', InvoiceImport::class),
+                        ],
                     ],
                 ],
                 [

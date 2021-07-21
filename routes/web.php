@@ -126,6 +126,9 @@ Route::middleware('tenant')->group(function () {
         Route::post('invoices/imports/{import}/start', \App\Http\Controllers\StartInvoiceImport::class)
             ->name('invoices.imports.start');
 
+        Route::post('invoices/imports/{import}/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
+            ->name('invoices.imports.rollback');
+
         Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
             ->name('invoices.show');
 

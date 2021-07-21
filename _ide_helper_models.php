@@ -265,6 +265,7 @@ namespace App\Models{
  * @property array|null $results
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $rolled_back_at
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $absolute_path
  * @property-read string $file_name
@@ -287,6 +288,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereMapping($value)
  * @method static Builder|InvoiceImport whereMappingValid($value)
  * @method static Builder|InvoiceImport whereResults($value)
+ * @method static Builder|InvoiceImport whereRolledBackAt($value)
  * @method static Builder|InvoiceImport whereSchoolId($value)
  * @method static Builder|InvoiceImport whereStartingRow($value)
  * @method static Builder|InvoiceImport whereTotalRecords($value)

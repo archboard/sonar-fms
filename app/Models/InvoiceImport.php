@@ -40,6 +40,7 @@ class InvoiceImport extends Model
         'heading_row' => 'int',
         'starting_row' => 'int',
         'imported_at' => 'datetime',
+        'rolled_back_at' => 'datetime',
     ];
 
     public function scopeFilter(Builder $builder, array $filters)
@@ -195,5 +196,19 @@ class InvoiceImport extends Model
             "imports/{$school->id}/{$now}",
             $file->getClientOriginalName()
         );
+    }
+
+    public function rollBack()
+    {
+        ray('rollback', $this->invoices()->delete());
+
+        // Reset some properties
+        $this->update([
+            'rolled_back_at' => now(),
+            'imported_at' => null,
+            'failed_records' => 0,
+            'imported_records' => 0,
+            'results' => null,
+        ]);
     }
 }
