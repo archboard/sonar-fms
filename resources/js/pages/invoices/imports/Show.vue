@@ -1,19 +1,27 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Dropdown
-        :menu-items="[
-          {
-            label: __('Edit import file'),
-            route: $route('invoices.imports.edit', invoiceImport),
-          },
-          {
-            label: __('Update mapping'),
-            route: $route('invoices.imports.map', invoiceImport),
-          },
-        ]"
-      >
+      <Dropdown>
         {{ __('Actions') }}
+
+        <template v-slot:dropdown>
+          <div class="p-1">
+            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
+              {{ __('Edit import file') }}
+            </SonarMenuItem>
+            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
+              {{ __('Update mapping') }}
+            </SonarMenuItem>
+          </div>
+          <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
+            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
+              {{ __('Import') }}
+            </SonarMenuItem>
+            <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
+              {{ __('Roll back') }}
+            </SonarMenuItem>
+          </div>
+        </template>
       </Dropdown>
     </template>
 
@@ -38,7 +46,7 @@
       {{ __('Invoice imported on :date', { date: invoiceImport.imported_at_formatted }) }}
     </Alert>
     <Alert v-if="invoiceImport.mapping_valid && invoiceImport.imported_records === 0" class="mt-8">
-      {{ __('Mapping is ready for import.') }} <inertia-link :href="$route('invoices.imports.start', invoiceImport)" method="post" class="underline">{{ __('Start import') }}</inertia-link>.
+      {{ __('Mapping is ready for import.') }} <button @click.prevent="importingInvoiceImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>.
     </Alert>
     <Alert v-if="!invoiceImport.mapping_valid" level="warning" class="mt-8">
       {{ __('Mapping is incomplete.') }} <inertia-link :href="$route('invoices.imports.map', invoiceImport)" class="underline">{{ __('Finish mapping') }}</inertia-link>.
@@ -93,6 +101,21 @@
       </Tbody>
     </Table>
   </Authenticated>
+
+  <ConfirmationModal
+    v-if="rollingBackImport.id"
+    @close="rollingBackImport = {}"
+    @confirmed="rollBack"
+  />
+  <ConfirmationModal
+    v-if="importingInvoiceImport.id"
+    @close="importingInvoiceImport = {}"
+    @confirmed="importImport"
+  >
+    <template v-slot:content>
+      {{ __('This will begin importing invoices.') }}
+    </template>
+  </ConfirmationModal>
 </template>
 
 <script>
@@ -109,10 +132,22 @@ import Td from '@/components/tables/Td'
 import { ExclamationIcon } from '@heroicons/vue/solid'
 import Link from '@/components/Link'
 import Alert from '@/components/Alert'
+import { MenuItem } from '@headlessui/vue'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import ScaleIn from '@/components/transitions/ScaleIn'
+import SonarMenuItems from '@/components/dropdown/SonarMenuItems'
+import rollsBackImport from '@/composition/rollsBackImport'
+import ConfirmationModal from '@/components/modals/ConfirmationModal'
+import checksPermissions from '@/composition/checksPermissions'
+import importsInvoiceImport from '@/composition/importsInvoiceImport'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConfirmationModal,
+    SonarMenuItems,
+    ScaleIn,
+    SonarMenuItem,
     Alert,
     Td,
     Tbody,
@@ -124,10 +159,25 @@ export default defineComponent({
     Dropdown,
     ExclamationIcon,
     Link,
+    MenuItem,
   },
   props: {
     invoiceImport: Object,
     results: Array,
+  },
+
+  setup (props) {
+    const { rollingBackImport, rollBack } = rollsBackImport()
+    const { importImport, importingInvoiceImport } = importsInvoiceImport()
+    const { can } = checksPermissions(props.permissions)
+
+    return {
+      rollingBackImport,
+      rollBack,
+      can,
+      importingInvoiceImport,
+      importImport,
+    }
   },
 })
 </script>

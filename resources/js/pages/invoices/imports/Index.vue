@@ -98,7 +98,7 @@
                 </SonarMenuItem>
               </div>
               <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
-                <SonarMenuItem is="inertia-link" v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" :href="$route('invoices.imports.start', invoiceImport)" method="post" as="button">
+                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
                   {{ __('Import') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
@@ -125,6 +125,15 @@
     @close="rollingBackImport = {}"
     @confirmed="rollBack"
   />
+  <ConfirmationModal
+    v-if="importingInvoiceImport.id"
+    @close="importingInvoiceImport = {}"
+    @confirmed="importImport"
+  >
+    <template v-slot:content>
+      {{ __('This will begin importing invoices.') }}
+    </template>
+  </ConfirmationModal>
 </template>
 
 <script>
@@ -147,10 +156,11 @@ import Button from '@/components/Button'
 import SolidBadge from '@/components/SolidBadge'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
-import { Inertia } from '@inertiajs/inertia'
 import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
+import rollsBackImport from '@/composition/rollsBackImport'
+import importsInvoiceImport from '@/composition/importsInvoiceImport'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -195,17 +205,9 @@ export default defineComponent({
     const { searchTerm } = searchesItems(filters)
     const selectAll = ref(false)
     const showFilters = ref(false)
-    const rollingBackImport = ref({})
     const { can } = checksPermissions(props.permissions)
-
-    const rollBack = () => {
-      Inertia.post($route('invoices.imports.rollback', rollingBackImport.value), null, {
-        preserveScroll: true,
-        onFinish () {
-          rollingBackImport.value = {}
-        }
-      })
-    }
+    const { rollBack, rollingBackImport } = rollsBackImport()
+    const { importingInvoiceImport, importImport } = importsInvoiceImport()
 
     return {
       filters,
@@ -218,6 +220,8 @@ export default defineComponent({
       rollingBackImport,
       rollBack,
       can,
+      importingInvoiceImport,
+      importImport,
     }
   }
 })

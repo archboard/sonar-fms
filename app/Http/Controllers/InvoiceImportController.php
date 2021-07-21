@@ -84,7 +84,7 @@ class InvoiceImportController extends Controller
         return redirect()->route('invoices.imports.map', $import);
     }
 
-    public function show(InvoiceImport $import)
+    public function show(Request $request, InvoiceImport $import)
     {
         $import->load('user');
         $title = __('Import details for :filename', [
@@ -107,6 +107,7 @@ class InvoiceImportController extends Controller
             'invoiceImport' => $import->toResource(),
             'results' => $import->results ?? [],
             'errors' => $import->getMappingValidationErrors(),
+            'permissions' => $request->user()->getPermissions(InvoiceImport::class),
         ])->withViewData(compact('title'));
     }
 

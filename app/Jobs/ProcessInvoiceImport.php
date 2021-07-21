@@ -36,6 +36,7 @@ class ProcessInvoiceImport
     {
         $this->import->update([
             'mapping_valid' => $this->import->hasValidMapping(),
+            'rolled_back_at' => null,
         ]);
 
         InvoiceFromImportFactory::make($this->import)
