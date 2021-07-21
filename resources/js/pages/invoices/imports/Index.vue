@@ -13,9 +13,6 @@
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by name, email or student number')" />
       </div>
-<!--      <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">-->
-<!--        <AdjustmentsIcon class="w-6 h-6" />-->
-<!--      </button>-->
       <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
         <XCircleIcon class="w-6 h-6" />
       </button>
@@ -24,9 +21,6 @@
     <Table>
       <Thead>
         <tr>
-          <th class="w-8 text-left pl-6">
-<!--            <Checkbox v-model:checked="selectAll" />-->
-          </th>
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('file_name')">
               <span>
@@ -52,11 +46,22 @@
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('import_records')">
               <span>
-                {{ __('Imported/Failed') }}
+                {{ __('Imported') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
                 <SortAscendingIcon v-if="filters.orderBy === 'import_records' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
                 <SortDescendingIcon v-if="filters.orderBy === 'import_records' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
+          <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('failed_records')">
+              <span>
+                {{ __('Failed') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderBy === 'failed_records' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'failed_records' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -65,22 +70,15 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(invoiceImport, index) in imports.data"
+          v-for="(invoiceImport) in imports.data"
           :key="invoiceImport.id"
         >
-          <td class="pl-6 py-4 text-sm">
-<!--            <Checkbox-->
-<!--              v-model:checked="user.student_selection"-->
-<!--              @change="selectStudent(invoiceImport)"-->
-<!--              :value="invoiceImport.id"-->
-<!--              :id="`student_${invoiceImport.id}`"-->
-<!--            />-->
-          </td>
           <Td :lighter="false">
             <label :for="`student_${invoiceImport.id}`" class="cursor-pointer">{{ invoiceImport.file_name }}</label>
           </Td>
           <Td>{{ invoiceImport.total_records }}</Td>
-          <Td>{{ invoiceImport.imported_records }}/{{ invoiceImport.failed_records }}</Td>
+          <Td>{{ invoiceImport.imported_records }}</Td>
+          <Td>{{ invoiceImport.failed_records }}</Td>
           <Td class="text-right space-x-2">
             <Link :href="$route('invoices.imports.edit', invoiceImport)">{{ __('Edit') }}</Link>
             <Link :href="$route('invoices.imports.map', invoiceImport)">{{ __('Map') }}</Link>
