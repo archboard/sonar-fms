@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" :href="$route('invoices.imports.create')">
+      <Button v-if="can('create')" component="inertia-link" :href="$route('invoices.imports.create')">
         {{ __('New import') }}
       </Button>
     </template>
@@ -87,21 +87,21 @@
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.show', invoiceImport)">
+                <SonarMenuItem v-if="can('viewAny')" is="inertia-link" :href="$route('invoices.imports.show', invoiceImport)">
                   {{ __('View') }}
                 </SonarMenuItem>
-                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
+                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
                   {{ __('Edit import file') }}
                 </SonarMenuItem>
-                <SonarMenuItem is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
+                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
                   {{ __('Update mapping') }}
                 </SonarMenuItem>
               </div>
               <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
-                <SonarMenuItem is="inertia-link" v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at" :href="$route('invoices.imports.start', invoiceImport)" method="post" as="button">
+                <SonarMenuItem is="inertia-link" v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" :href="$route('invoices.imports.start', invoiceImport)" method="post" as="button">
                   {{ __('Import') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="invoiceImport.imported_at" @click.prevent="rollingBackImport = invoiceImport">
+                <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
                   {{ __('Roll back') }}
                 </SonarMenuItem>
               </div>
@@ -150,6 +150,7 @@ import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import { Inertia } from '@inertiajs/inertia'
 import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import PageProps from '@/mixins/PageProps'
+import checksPermissions from '@/composition/checksPermissions'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -181,7 +182,7 @@ export default defineComponent({
     imports: Object,
   },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
@@ -195,6 +196,7 @@ export default defineComponent({
     const selectAll = ref(false)
     const showFilters = ref(false)
     const rollingBackImport = ref({})
+    const { can } = checksPermissions(props.permissions)
 
     const rollBack = () => {
       Inertia.post($route('invoices.imports.rollback', rollingBackImport.value), null, {
@@ -215,6 +217,7 @@ export default defineComponent({
       showFilters,
       rollingBackImport,
       rollBack,
+      can,
     }
   }
 })

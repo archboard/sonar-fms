@@ -29,6 +29,7 @@ class InvoiceImportController extends Controller
         return inertia('invoices/imports/Index', [
             'title' => $title,
             'imports' => InvoiceImportResource::collection($imports),
+            'permissions' => $request->user()->getPermissions(InvoiceImport::class),
         ])->withViewData(compact('title'));
     }
 
