@@ -119,23 +119,17 @@ abstract class InvoiceFactory
             DB::table('invoice_items')
                 ->insert($this->invoiceItems->toArray());
 
-            if ($this->invoiceScholarships->isNotEmpty()) {
-                DB::table('invoice_scholarships')
-                    ->insert($this->invoiceScholarships->toArray());
-            }
+            DB::table('invoice_scholarships')
+                ->insert($this->invoiceScholarships->toArray());
 
-            if ($this->itemScholarshipPivot->isNotEmpty()) {
-                DB::table('invoice_item_invoice_scholarship')
-                    ->insert($this->itemScholarshipPivot->toArray());
-            }
+            DB::table('invoice_item_invoice_scholarship')
+                ->insert($this->itemScholarshipPivot->toArray());
 
-            if ($this->invoicePaymentSchedules->isNotEmpty()) {
-                DB::table('invoice_payment_schedules')
-                    ->insert($this->invoicePaymentSchedules->toArray());
+            DB::table('invoice_payment_schedules')
+                ->insert($this->invoicePaymentSchedules->toArray());
 
-                DB::table('invoice_payment_terms')
-                    ->insert($this->invoicePaymentTerms->toArray());
-            }
+            DB::table('invoice_payment_terms')
+                ->insert($this->invoicePaymentTerms->toArray());
         });
 
         return $this->invoices->map(function (array $invoice) {

@@ -72,7 +72,10 @@ class InvoiceScholarship extends Model
 
     public function getAmountFormattedAttribute()
     {
-        if (!$this->invoice->relationLoaded('currency')) {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('currency')
+        ) {
             return null;
         }
 
@@ -81,7 +84,10 @@ class InvoiceScholarship extends Model
 
     public function getCalculatedAmountFormattedAttribute()
     {
-        if (!$this->invoice->relationLoaded('currency')) {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('currency')
+        ) {
             return null;
         }
 

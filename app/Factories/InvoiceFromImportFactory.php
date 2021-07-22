@@ -3,7 +3,12 @@
 namespace App\Factories;
 
 use App\Exceptions\InvalidImportMapValue;
+use App\Models\Invoice;
 use App\Models\InvoiceImport;
+use App\Models\InvoiceItem;
+use App\Models\InvoicePaymentSchedule;
+use App\Models\InvoicePaymentTerm;
+use App\Models\InvoiceScholarship;
 use App\Models\Student;
 use App\Utilities\NumberUtility;
 use Brick\Money\Money;
@@ -23,10 +28,14 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected int $currentRowNumber = 0;
     protected int $failedRecords = 0;
     protected int $importedRecords = 0;
+    protected bool $attributesBuilt = false;
+    protected bool $asModels = false;
 
     protected Collection $terms;
     protected Collection $fees;
     protected Collection $scholarships;
+
+    protected Collection $models;
 
     // These are the collections that store the attributes
     // that need to be stored in the db
@@ -68,6 +77,14 @@ class InvoiceFromImportFactory extends InvoiceFactory
             ->whereIn($this->getMapField('student_attribute'), $values)
             ->get()
             ->keyBy($this->getMapField('student_attribute'));
+
+        return $this;
+    }
+
+    public function asModels(): static
+    {
+        $this->asModels = true;
+        $this->models = collect();
 
         return $this;
     }
@@ -514,7 +531,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             });
     }
 
-    public function build(): Collection
+    public function buildAttributes()
     {
         $this->contents->each(function (Collection $row, int $rowIndex) {
             $this->currentRow = $row;
@@ -570,9 +587,16 @@ class InvoiceFromImportFactory extends InvoiceFactory
             }
         });
 
-        $storeResults = $this->store();
+        $this->attributesBuilt = true;
+    }
 
-        $this->import->update([
+    public function build(): Collection
+    {
+        if (!$this->attributesBuilt) {
+            $this->buildAttributes();
+        }
+
+        $this->import->forceFill([
             'imported_records' => $this->importedRecords,
             'failed_records' => $this->failedRecords,
             'imported_at' => now(),
@@ -581,17 +605,67 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
         ray($this->import);
 
+        // If we're just building models, only return the import
+        // and the models collection instead of storing the results
+        if ($this->asModels) {
+            return collect()->put('invoiceImport', $this->import)
+                ->put('models', $this->models);
+        }
+
+        $storeResults = $this->store();
+        $this->import->save();
+
         return $storeResults;
     }
 
     protected function commit()
     {
-        $this->invoices = $this->invoices->merge($this->localInvoices);
-        $this->invoiceItems = $this->invoiceItems->merge($this->localInvoiceItems);
-        $this->invoiceScholarships = $this->invoiceScholarships->merge($this->localInvoiceScholarships);
-        $this->itemScholarshipPivot = $this->itemScholarshipPivot->merge($this->localItemScholarshipPivot);
-        $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge($this->localInvoicePaymentSchedules);
-        $this->invoicePaymentTerms = $this->invoicePaymentTerms->merge($this->localInvoicePaymentTerms);
+        if ($this->asModels) {
+            $invoice = new Invoice($this->localInvoices->first());
+            $invoice->setRelation('student', $this->getStudentForCurrentRow());
+            $invoice->setRelation(
+                'invoiceItems',
+                $this->localInvoiceItems->map(fn ($item) => new InvoiceItem($item))
+            );
+            $invoice->setRelation(
+                'invoiceScholarships',
+                $this->localInvoiceScholarships->map(function ($item) {
+                    $scholarship = new InvoiceScholarship($item);
+                    $scholarship->setRelation(
+                        'appliesTo',
+                        $this->localInvoiceItems->filter(
+                            fn ($i) => $this->localItemScholarshipPivot->contains('invoice_item_uuid', $i['uuid'])
+                        )->map(fn ($i) => new InvoiceItem($i))
+                    );
+
+                    return $scholarship;
+                })
+            );
+            $invoice->setRelation(
+                'invoicePaymentSchedules',
+                $this->localInvoicePaymentSchedules->map(function ($item) {
+                    $schedule = new InvoicePaymentSchedule($item);
+                    $schedule->setRelation(
+                        'invoicePaymentTerms',
+                        $this->localInvoicePaymentTerms->filter(
+                            fn ($t) => $t['invoice_payment_schedule_uuid'] === $item['uuid']
+                        )->map(fn ($t) => new InvoicePaymentTerm($t))
+                    );
+
+                    return $schedule;
+                })
+            );
+
+            $this->models->push($invoice);
+        } else {
+            $this->invoices = $this->invoices->merge($this->localInvoices);
+            $this->invoiceItems = $this->invoiceItems->merge($this->localInvoiceItems);
+            $this->invoiceScholarships = $this->invoiceScholarships->merge($this->localInvoiceScholarships);
+            $this->itemScholarshipPivot = $this->itemScholarshipPivot->merge($this->localItemScholarshipPivot);
+            $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge($this->localInvoicePaymentSchedules);
+            $this->invoicePaymentTerms = $this->invoicePaymentTerms->merge($this->localInvoicePaymentTerms);
+        }
+
         $this->resetLocalStores();
     }
 }

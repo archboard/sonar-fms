@@ -40,7 +40,10 @@ class InvoiceItem extends Model
 
     public function getAmountFormattedAttribute()
     {
-        if (!$this->invoice->relationLoaded('currency')) {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('currency')
+        ) {
             return null;
         }
 
@@ -49,7 +52,10 @@ class InvoiceItem extends Model
 
     public function getAmountPerUnitFormattedAttribute()
     {
-        if (!$this->invoice->relationLoaded('currency')) {
+        if (
+            !$this->relationLoaded('invoice') ||
+            !$this->invoice->relationLoaded('currency')
+        ) {
             return null;
         }
 

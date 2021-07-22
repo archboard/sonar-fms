@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Events\InvoiceImportFinished;
+use App\Http\Resources\InvoiceResource;
 use App\Jobs\ProcessInvoiceImport;
 use App\Models\Fee;
 use App\Models\Invoice;
@@ -233,9 +234,10 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_queue_import()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('create', InvoiceImport::class);
         Storage::fake();
-        Queue::fake();
+        Event::fake();
 
         $originalPath = InvoiceImport::storeFile(
             $this->getUploadedFile('sonar-import.xls'),
@@ -292,7 +294,7 @@ class InvoiceImportTest extends TestCase
             ->assertSessionHas('success')
             ->assertRedirect();
 
-        Queue::assertPushed(ProcessInvoiceImport::class);
+        Event::assertDispatched(InvoiceImportFinished::class);
     }
 
     public function test_can_import_simple_xls()
@@ -426,6 +428,83 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
         Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
+    public function test_can_get_simple_xls_as_models()
+    {
+        ray()->showApp();
+        $this->withoutExceptionHandling();
+        Storage::fake();
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('sonar-import.xls'),
+            $this->school
+        );
+        /** @var Term $term */
+        $term = $this->school->terms()
+            ->save(
+                Term::factory()->make()
+            );
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(null, $term->id, true),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('invoice name'),
+                        'amount_per_unit' => $this->makeMapField('invoice amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'name' => $this->makeMapField(value: 'Assistance', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
+            });
+
+        $models = $import->importAsModels();
+        $resources = InvoiceResource::collection($models->get('models'))
+            ->response()
+            ->getData(true);
+
+        ray('API Resources', $resources);
+        $this->assertCount(3, $resources);
     }
 
     public function test_can_import_then_rollback_imported_records()
@@ -577,10 +656,11 @@ class InvoiceImportTest extends TestCase
 
         $import->refresh();
 
+        ray($import->invoices()->get());
         $this->assertEquals(0, $import->invoices()->count());
         $this->assertEquals(0, $import->imported_records);
-        $this->assertEquals(4, $import->failed_records);
-        $this->assertCount(4, $import->results);
+        $this->assertEquals(3, $import->failed_records);
+        $this->assertCount(3, $import->results);
         $this->assertTrue(collect($import->results)->every(fn ($r) => !$r['successful']));
         Event::assertDispatched(InvoiceImportFinished::class);
     }

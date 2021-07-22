@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Factories\InvoiceFromImportFactory;
 use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\InvoiceImportMap;
 use App\Imports\InvoiceImport as ExcelInvoiceImport;
@@ -210,5 +211,12 @@ class InvoiceImport extends Model
             'imported_records' => 0,
             'results' => null,
         ]);
+    }
+
+    public function importAsModels(): Collection
+    {
+        return InvoiceFromImportFactory::make($this)
+            ->asModels()
+            ->build();
     }
 }
