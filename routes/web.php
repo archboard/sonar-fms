@@ -123,6 +123,9 @@ Route::middleware('tenant')->group(function () {
             ->name('invoices.imports.map');
         Route::put('invoices/imports/{import}/map', [\App\Http\Controllers\MapInvoiceImportController::class, 'update']);
 
+        Route::get('invoices/imports/{import}/preview', \App\Http\Controllers\PreviewInvoiceImportController::class)
+            ->name('invoices.imports.preview');
+
         Route::post('invoices/imports/{import}/start', \App\Http\Controllers\StartInvoiceImport::class)
             ->name('invoices.imports.start');
 

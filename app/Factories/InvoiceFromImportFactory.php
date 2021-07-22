@@ -599,7 +599,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $this->import->forceFill([
             'imported_records' => $this->importedRecords,
             'failed_records' => $this->failedRecords,
-            'imported_at' => now(),
+            'imported_at' => $this->asModels ? null : now(),
             'results' => $this->results,
         ]);
 
@@ -609,7 +609,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         // and the models collection instead of storing the results
         if ($this->asModels) {
             return collect()->put('invoiceImport', $this->import)
-                ->put('models', $this->models);
+                ->put('models', $this->models->keyBy('uuid'));
         }
 
         $storeResults = $this->store();

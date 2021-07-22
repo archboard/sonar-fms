@@ -98,6 +98,9 @@
                 </SonarMenuItem>
               </div>
               <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
+                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
+                  {{ __('Preview import') }}
+                </SonarMenuItem>
                 <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
                   {{ __('Import') }}
                 </SonarMenuItem>

@@ -14,6 +14,9 @@
             </SonarMenuItem>
           </div>
           <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
+            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create') && !isPreview" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
+              {{ __('Preview import') }}
+            </SonarMenuItem>
             <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
               {{ __('Import') }}
             </SonarMenuItem>
@@ -51,13 +54,20 @@
     <Alert v-if="!invoiceImport.mapping_valid" level="warning" class="mt-8">
       {{ __('Mapping is incomplete.') }} <inertia-link :href="$route('invoices.imports.map', invoiceImport)" class="underline">{{ __('Finish mapping') }}</inertia-link>.
     </Alert>
+    <Alert v-if="isPreview" class="mt-8">
+      {{ __('This is a preview of what would be imported.') }}  <button @click.prevent="importingInvoiceImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>
+    </Alert>
 
     <Table v-if="results.length > 0" class="mt-8">
       <Thead>
         <tr>
           <Th>{{ __('Row') }}</Th>
           <Th>{{ __('Result') }}</Th>
-          <Th></Th>
+          <Th class="text-right">
+            <span v-if="isPreview">
+              {{ __('Amount due') }}
+            </span>
+          </Th>
         </tr>
       </Thead>
       <Tbody>
@@ -95,7 +105,10 @@
               'bg-red-100 dark:bg-red-600': !result.successful,
             }"
           >
-            <Link v-if="result.successful" :href="$route('invoices.show', result.result)">{{ __('View invoice') }}</Link>
+            <Link v-if="!isPreview && result.successful" :href="$route('invoices.show', result.result)">{{ __('View invoice') }}</Link>
+            <span v-else-if="isPreview && result.successful" class="font-medium">
+              {{ displayCurrency(previewResults[result.result].amount_due) }}
+            </span>
           </Td>
         </tr>
       </Tbody>
@@ -140,6 +153,7 @@ import rollsBackImport from '@/composition/rollsBackImport'
 import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import checksPermissions from '@/composition/checksPermissions'
 import importsInvoiceImport from '@/composition/importsInvoiceImport'
+import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -163,13 +177,25 @@ export default defineComponent({
   },
   props: {
     invoiceImport: Object,
-    results: Array,
+    results: {
+      type: Array,
+      default: () => ([])
+    },
+    isPreview: {
+      type: Boolean,
+      default: false,
+    },
+    previewResults: {
+      type: Object,
+      default: () => ({})
+    },
   },
 
   setup (props) {
     const { rollingBackImport, rollBack } = rollsBackImport()
     const { importImport, importingInvoiceImport } = importsInvoiceImport()
     const { can } = checksPermissions(props.permissions)
+    const { displayCurrency } = displaysCurrency()
 
     return {
       rollingBackImport,
@@ -177,6 +203,7 @@ export default defineComponent({
       can,
       importingInvoiceImport,
       importImport,
+      displayCurrency,
     }
   },
 })
