@@ -58,10 +58,17 @@ class Invoice extends Model
         'notify',
         'notify_at',
         'notified_at',
+        'apply_tax',
+        'use_school_tax_defaults',
+        'tax_rate',
+        'tax_label',
+        'tax_due',
+        'pre_tax_subtotal',
     ];
 
     protected $casts = [
         'notify_now' => 'boolean',
+        'apply_tax' => 'boolean',
         'use_school_tax_defaults' => 'boolean',
         'tax_rate' => 'float',
         'due_at' => 'datetime',

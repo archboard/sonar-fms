@@ -20,6 +20,7 @@ class AddTaxColumnsToSchools extends Migration
         });
 
         Schema::table('invoices', function (Blueprint $table) {
+            $table->boolean('apply_tax')->default(false);
             $table->boolean('use_school_tax_defaults')->default(true);
             $table->decimal('tax_rate', 9, 8)->nullable();
             $table->string('tax_label')->nullable();
@@ -37,6 +38,7 @@ class AddTaxColumnsToSchools extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->dropColumn([
+                'apply_tax',
                 'use_school_tax_defaults',
                 'tax_rate',
                 'tax_label',

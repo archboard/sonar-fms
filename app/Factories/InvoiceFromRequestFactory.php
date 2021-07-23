@@ -21,6 +21,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected array $invoicePaymentScheduleAttributes = [];
     protected array $invoicePaymentTermAttributes = [];
 
+    protected int $preTaxTotal = 0;
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
 
@@ -71,24 +72,19 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
         $this->invoiceAttributes['user_id'] = $this->user->id;
+        $this->invoiceAttributes['invoice_date'] = $this->invoiceAttributes['invoice_date']
+            ?? now()->format('Y-m-d');
         $this->invoiceAttributes['created_at'] = $this->now;
         $this->invoiceAttributes['updated_at'] = $this->now;
 
-        $total = $this->calculateInvoiceTotal();
-
-        $this->invoiceAttributes['amount_due'] = $total;
-        $this->invoiceAttributes['remaining_balance'] = $total;
-        $this->invoiceAttributes['subtotal'] = $this->subtotal;
-        $this->invoiceAttributes['discount_total'] = $this->discountTotal > $this->subtotal
-            ? $this->subtotal
-            : $this->discountTotal;
-        $this->invoiceAttributes['invoice_date'] = $this->invoiceAttributes['invoice_date']
-            ?? now()->format('Y-m-d');
+        $this->preTaxTotal = $this->calculateInvoicePreTaxTotal();
 
         if ($this->invoiceAttributes['notify']) {
             $this->invoiceAttributes['notified_at'] = null;
             $this->invoiceAttributes['notify_at'] = $this->notifyAt;
         }
+
+        $this->setInvoiceTotalsAttributes();
 
         ray('Invoice attributes', $this->invoiceAttributes);
         return $this;
@@ -196,13 +192,59 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             : $percentageDiscount;
     }
 
-    protected function calculateInvoiceTotal(): int
+    protected function calculateInvoicePreTaxTotal(): int
     {
         $total = $this->subtotal - $this->discountTotal;
 
         return $total > 0
             ? $total
             : 0;
+    }
+
+    protected function setInvoiceTotalsAttributes(): static
+    {
+        $this->setTaxAttributes();
+
+        $this->invoiceAttributes['subtotal'] = $this->subtotal;
+        $this->invoiceAttributes['discount_total'] = $this->discountTotal > $this->subtotal
+            ? $this->subtotal
+            : $this->discountTotal;
+        $this->invoiceAttributes['pre_tax_subtotal'] = $this->preTaxTotal;
+        $this->invoiceAttributes['tax_due'] = round($this->preTaxTotal * $this->invoiceAttributes['tax_rate']);
+
+        $totalDue = $this->preTaxTotal + $this->invoiceAttributes['tax_due'];
+        $this->invoiceAttributes['amount_due'] = $totalDue;
+        $this->invoiceAttributes['remaining_balance'] = $totalDue;
+
+        return $this;
+    }
+
+    protected function setTaxAttributes(): static
+    {
+        if (
+            !$this->school->collect_tax ||
+            !$this->invoiceAttributes['apply_tax']
+        ) {
+            $this->invoiceAttributes['tax_rate'] = 0;
+            $this->invoiceAttributes['tax_label'] = null;
+
+            return $this;
+        }
+
+        if ($this->invoiceAttributes['use_school_tax_defaults']) {
+            $this->invoiceAttributes['tax_rate'] = $this->school->tax_rate;
+            $this->invoiceAttributes['tax_label'] = $this->school->tax_label;
+
+            return $this;
+        }
+
+        // Convert the percentage value from the user,
+        // since they will enter as an integer
+        $this->invoiceAttributes['tax_rate'] = NumberUtility::convertPercentageFromUser(
+            $this->invoiceAttributes['tax_rate']
+        );
+
+        return $this;
     }
 
     public function build(): Collection

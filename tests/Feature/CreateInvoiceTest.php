@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Fee;
 use App\Models\Invoice;
@@ -15,8 +16,10 @@ use App\ResolutionStrategies\Least;
 use App\Utilities\NumberUtility;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class CreateInvoiceTest extends TestCase
@@ -29,6 +32,16 @@ class CreateInvoiceTest extends TestCase
         parent::setUp();
 
         $this->signIn();
+    }
+
+    protected function getTestRequest($data = []): CreateInvoiceRequest
+    {
+        $request = new CreateInvoiceRequest([], $data);
+        $request->setMethod('post');
+        $request->setUserResolver(fn () => $this->user);
+
+        return $request->setContainer($this->app)
+            ->setRedirector($this->app->make(Redirector::class));
     }
 
     public function test_cannot_create_without_permission()
@@ -734,5 +747,272 @@ class CreateInvoiceTest extends TestCase
         });
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
+    }
+
+    public function test_full_field_validation()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+
+        $item1 = $this->uuid();
+        $item2 = $this->uuid();
+        $item3 = $this->uuid();
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $item1,
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item2,
+                    'fee_id' => null,
+                    'name' => 'Line item 2',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item3,
+                    'fee_id' => null,
+                    'name' => 'Line item 3',
+                    'amount_per_unit' => 5000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance A',
+                    'amount' => null,
+                    'percentage' => 10,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance B',
+                    'amount' => 1000,
+                    'percentage' => null,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance C',
+                    'amount' => 100,
+                    'percentage' => 50,
+                    'resolution_strategy' => Greatest::class,
+                    'applies_to' => [$item1, $item2],
+                ],
+            ],
+            'payment_schedules' => [
+                [
+
+                    'id' => $this->uuid(),
+                    'terms' => [
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 6000,
+                            'due_at' => now()->addMonths()->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 6000,
+                            'due_at' => now()->addMonths(2)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                    ],
+                ],
+                [
+
+                    'id' => $this->uuid(),
+                    'terms' => [
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths()->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths(2)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                        [
+                            'id' => $this->uuid(),
+                            'amount' => 5000,
+                            'due_at' => now()->addMonths(3)->format('Y-m-d\TH:i:s.v\Z'),
+                        ],
+                    ],
+                ],
+            ],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => false,
+            'tax_rate' => 0.1,
+            'tax_label' => 'VAT',
+        ];
+
+        $request = $this->getTestRequest($invoiceData);
+        $request->validateResolved();
+
+        $this->assertIsArray($request->validated());
+    }
+
+    public function test_tax_field_validation()
+    {
+        $this->expectException(ValidationException::class);
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => null,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => null,
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => false,
+            'tax_rate' => null,
+            'tax_label' => 'VAT',
+        ];
+
+        $this->getTestRequest($invoiceData)
+            ->validateResolved();
+    }
+
+    public function test_can_create_invoice_with_taxes()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+        $this->user->school->refresh();
+
+        $student = $this->school->students->random();
+
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => true,
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+        ray($this->school);
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+
+        $this->assertEquals('Taxes', $invoice->tax_label);
+        $this->assertEquals(.05, $invoice->tax_rate);
+        $this->assertEquals(500, $invoice->tax_due);
+        $this->assertEquals(10000, $invoice->pre_tax_subtotal);
+        $this->assertEquals(10500, $invoice->amount_due);
+        $this->assertEquals(10500, $invoice->remaining_balance);
+        $this->assertEquals(10000, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
+    }
+
+    public function test_can_create_invoice_with_taxes_overriding_defaults()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+        $this->user->school->refresh();
+
+        $student = $this->school->students->random();
+
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => false,
+            'tax_rate' => .01,
+            'tax_label' => 'VAT',
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+        ray($this->school);
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+
+        $this->assertEquals('VAT', $invoice->tax_label);
+        $this->assertEquals(.01, $invoice->tax_rate);
+        $this->assertEquals(100, $invoice->tax_due);
+        $this->assertEquals(10000, $invoice->pre_tax_subtotal);
+        $this->assertEquals(10100, $invoice->amount_due);
+        $this->assertEquals(10100, $invoice->remaining_balance);
+        $this->assertEquals(10000, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
     }
 }

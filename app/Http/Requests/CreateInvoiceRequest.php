@@ -68,6 +68,21 @@ class CreateInvoiceRequest extends FormRequest
             'payment_schedules.*.terms' => 'array',
             'payment_schedules.*.terms.*.amount' => 'required|integer',
             'payment_schedules.*.terms.*.due_at' => 'nullable|date',
+            'apply_tax' => [
+                Rule::requiredIf(fn () => $school->collect_tax),
+                'boolean',
+            ],
+            'use_school_tax_defaults' => [
+                Rule::requiredIf(fn () => $school->collect_tax),
+                'boolean',
+            ],
+            'tax_rate' => [
+                Rule::requiredIf(fn () => $school->collect_tax && !$this->boolean('use_school_tax_defaults')),
+                'numeric',
+            ],
+            'tax_label' => [
+                Rule::requiredIf(fn () => $school->collect_tax && !$this->boolean('use_school_tax_defaults')),
+            ],
         ];
     }
 
