@@ -39,6 +39,40 @@
                   </InputWrap>
                 </Fieldset>
               </div>
+              <div class="pt-8">
+                <div class="mb-6">
+                  <CardSectionHeader>
+                    {{ __('Tax Settings') }}
+                  </CardSectionHeader>
+                  <HelpText>
+                    {{ __('Enable tax options for invoices and configure default tax settings') }}
+                  </HelpText>
+                </div>
+
+                <Fieldset>
+                  <InputWrap :error="form.errors.collect_tax">
+                    <CheckboxWrapper>
+                      <Checkbox v-model:checked="form.collect_tax" />
+                      <CheckboxText>{{ __('Collect taxes for invoices') }}</CheckboxText>
+                    </CheckboxWrapper>
+                  </InputWrap>
+
+                  <FadeInGroup>
+                    <InputWrap v-if="form.collect_tax" :error="form.errors.tax_rate">
+                      <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
+                      <Input v-model="form.tax_rate" id="tax_rate" />
+                      <HelpText>
+                        {{ __('This is the tax rate collected on invoices. The amount due will reflect this tax rate.') }}
+                      </HelpText>
+                    </InputWrap>
+
+                    <InputWrap v-if="form.collect_tax" :error="form.errors.tax_label">
+                      <Label for="tax_label" :required="true">{{ __('Tax label') }}</Label>
+                      <Input v-model="form.tax_label" id="tax_label" placeholder="VAT" />
+                    </InputWrap>
+                  </FadeInGroup>
+                </Fieldset>
+              </div>
             </FormMultipartWrapper>
           </CardPadding>
           <CardAction>
@@ -69,28 +103,33 @@
 </template>
 
 <script>
-import { defineComponent, ref, inject } from 'vue'
+import { defineComponent, inject } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Authenticated from '../../layouts/Authenticated'
-import pick from 'lodash/pick'
-import Fieldset from '../../components/forms/Fieldset'
-import InputWrap from '../../components/forms/InputWrap'
-import Label from '../../components/forms/Label'
-import Input from '../../components/forms/Input'
-import Button from '../../components/Button'
-import CardWrapper from '../../components/CardWrapper'
-import CardPadding from '../../components/CardPadding'
-import HelpText from '../../components/HelpText'
-import CardAction from '../../components/CardAction'
-import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
-import CardSectionHeader from '../../components/CardSectionHeader'
-import Checkbox from '../../components/forms/Checkbox'
-import CheckboxText from '../../components/forms/CheckboxText'
-import CurrencySelector from '../../components/forms/CurrencySelector'
+import Authenticated from '@/layouts/Authenticated'
+import Fieldset from '@/components/forms/Fieldset'
+import InputWrap from '@/components/forms/InputWrap'
+import Label from '@/components/forms/Label'
+import Input from '@/components/forms/Input'
+import Button from '@/components/Button'
+import CardWrapper from '@/components/CardWrapper'
+import CardPadding from '@/components/CardPadding'
+import HelpText from '@/components/HelpText'
+import CardAction from '@/components/CardAction'
+import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper'
+import CardSectionHeader from '@/components/CardSectionHeader'
+import Checkbox from '@/components/forms/Checkbox'
+import CheckboxText from '@/components/forms/CheckboxText'
+import CurrencySelector from '@/components/forms/CurrencySelector'
 import Timezone from '@/components/forms/Timezone'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
+import PageProps from '@/mixins/PageProps'
+import FadeInGroup from '@/components/transitions/FadeInGroup'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    FadeInGroup,
+    CheckboxWrapper,
     Timezone,
     CurrencySelector,
     CheckboxText,
@@ -117,7 +156,11 @@ export default defineComponent({
   setup ({ school }) {
     const $route = inject('$route')
     const form = useForm({
-      ...pick(school, ['currency_id', 'timezone']),
+      currency_id: school.currency_id,
+      timezone: school.timezone,
+      collect_tax: school.collect_tax,
+      tax_rate: school.tax_rate_converted,
+      tax_label: school.tax_label,
     })
     const submit = () => {
       form.post($route('settings.school'))
