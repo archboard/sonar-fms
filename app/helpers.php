@@ -9,18 +9,21 @@ if (!function_exists('displayCurrency')) {
      * Displays an integer as a formatted currency
      * based on the given currency and user's locale
      *
-     * @param int $amount
+     * @param int|null $amount
      * @param Currency|null $currency
      * @return string
-     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     function displayCurrency(int $amount = null, Currency $currency = null): string {
         if (is_null($currency)) {
             $currency = request()->school()->currency;
         }
 
-        return Money::ofMinor($amount ?? 0, $currency->code)
-            ->formatTo(optional(auth()->user())->locale ?? 'en');
+        try {
+            return Money::ofMinor($amount ?? 0, $currency->code)
+                ->formatTo(optional(auth()->user())->locale ?? 'en');
+        } catch (\Brick\Money\Exception\UnknownCurrencyException $exception) {
+            return (string) $amount;
+        }
     }
 }
 
