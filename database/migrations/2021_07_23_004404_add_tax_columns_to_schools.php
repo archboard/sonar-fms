@@ -24,6 +24,7 @@ class AddTaxColumnsToSchools extends Migration
             $table->decimal('tax_rate', 9, 8)->nullable();
             $table->string('tax_label')->nullable();
             $table->unsignedBigInteger('tax_due')->default(0);
+            $table->unsignedBigInteger('pre_tax_subtotal')->nullable();
         });
     }
 
@@ -40,6 +41,7 @@ class AddTaxColumnsToSchools extends Migration
                 'tax_rate',
                 'tax_label',
                 'tax_due',
+                'pre_tax_subtotal',
             ]);
         });
 
