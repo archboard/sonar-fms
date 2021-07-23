@@ -26,6 +26,8 @@ class School extends Model
 
     protected $casts = [
         'active_at' => 'datetime',
+        'collect_tax' => 'boolean',
+        'tax_rate' => 'float',
     ];
 
     public function scopeActive(Builder $builder)

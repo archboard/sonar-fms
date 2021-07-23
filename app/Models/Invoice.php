@@ -60,6 +60,8 @@ class Invoice extends Model
 
     protected $casts = [
         'notify_now' => 'boolean',
+        'use_school_tax_defaults' => 'boolean',
+        'tax_rate' => 'float',
         'due_at' => 'datetime',
         'voided_at' => 'datetime',
         'paid_at' => 'datetime',

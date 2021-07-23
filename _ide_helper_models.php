@@ -187,6 +187,10 @@ namespace App\Models{
  * @property int|null $invoice_layout_id
  * @property int|null $subtotal
  * @property int|null $discount_total
+ * @property bool $use_school_tax_defaults
+ * @property string|null $tax_rate
+ * @property string|null $tax_label
+ * @property int $tax_due
  * @property-read \App\Models\Currency|null $currency
  * @property-read mixed $amount_due_formatted
  * @property-read bool $available
@@ -234,10 +238,14 @@ namespace App\Models{
  * @method static Builder|Invoice whereSchoolId($value)
  * @method static Builder|Invoice whereStudentId($value)
  * @method static Builder|Invoice whereSubtotal($value)
+ * @method static Builder|Invoice whereTaxDue($value)
+ * @method static Builder|Invoice whereTaxLabel($value)
+ * @method static Builder|Invoice whereTaxRate($value)
  * @method static Builder|Invoice whereTenantId($value)
  * @method static Builder|Invoice whereTermId($value)
  * @method static Builder|Invoice whereTitle($value)
  * @method static Builder|Invoice whereUpdatedAt($value)
+ * @method static Builder|Invoice whereUseSchoolTaxDefaults($value)
  * @method static Builder|Invoice whereUserId($value)
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
@@ -575,6 +583,9 @@ namespace App\Models{
  * @property bool $active
  * @property int|null $currency_id
  * @property string|null $timezone
+ * @property bool $collect_tax
+ * @property string|null $tax_rate
+ * @property string|null $tax_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \App\Models\Currency|null $currency
@@ -606,6 +617,7 @@ namespace App\Models{
  * @method static Builder|School newQuery()
  * @method static Builder|School query()
  * @method static Builder|School whereActive($value)
+ * @method static Builder|School whereCollectTax($value)
  * @method static Builder|School whereCreatedAt($value)
  * @method static Builder|School whereCurrencyId($value)
  * @method static Builder|School whereHighGrade($value)
@@ -614,6 +626,8 @@ namespace App\Models{
  * @method static Builder|School whereName($value)
  * @method static Builder|School whereSchoolNumber($value)
  * @method static Builder|School whereSisId($value)
+ * @method static Builder|School whereTaxLabel($value)
+ * @method static Builder|School whereTaxRate($value)
  * @method static Builder|School whereTenantId($value)
  * @method static Builder|School whereTimezone($value)
  * @method static Builder|School whereUpdatedAt($value)
