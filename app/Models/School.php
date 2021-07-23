@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use App\Traits\HasTaxRateAttribute;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,7 @@ class School extends Model
     use HasFactory;
     use BelongsToTenant;
     use HasResource;
+    use HasTaxRateAttribute;
 
     protected $guarded = [];
 

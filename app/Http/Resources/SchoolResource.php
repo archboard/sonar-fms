@@ -28,6 +28,8 @@ class SchoolResource extends JsonResource
             'currency_id' => $this->currency_id,
             'grade_levels' => $this->grade_levels,
             'school_number' => $this->school_number,
+            'tax_rate_formatted' => $this->tax_rate_formatted,
+            'tax_rate_converted' => $this->tax_rate_converted,
             'currency' => new CurrencyResource($this->whenLoaded('currency')),
         ];
     }

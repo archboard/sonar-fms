@@ -188,17 +188,23 @@ namespace App\Models{
  * @property int|null $subtotal
  * @property int|null $discount_total
  * @property bool $use_school_tax_defaults
- * @property string|null $tax_rate
+ * @property float|null $tax_rate
  * @property string|null $tax_label
  * @property int $tax_due
+ * @property int|null $pre_tax_subtotal
  * @property-read \App\Models\Currency|null $currency
- * @property-read mixed $amount_due_formatted
+ * @property-read string|null $amount_due_formatted
  * @property-read bool $available
+ * @property-read string|null $discount_total_formatted
  * @property-read mixed $past_due
  * @property-read mixed $payment_made
- * @property-read mixed $remaining_balance_formatted
- * @property-read mixed $status_color
+ * @property-read string|null $remaining_balance_formatted
+ * @property-read string $status_color
  * @property-read mixed $status_label
+ * @property-read string|null $subtotal_formatted
+ * @property-read string|null $tax_due_formatted
+ * @property-read mixed $tax_rate_converted
+ * @property-read mixed $tax_rate_formatted
  * @property-read \App\Models\InvoiceImport|null $invoiceImport
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
@@ -234,6 +240,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
  * @method static Builder|Invoice wherePaidAt($value)
+ * @method static Builder|Invoice wherePreTaxSubtotal($value)
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
  * @method static Builder|Invoice whereStudentId($value)
@@ -584,7 +591,7 @@ namespace App\Models{
  * @property int|null $currency_id
  * @property string|null $timezone
  * @property bool $collect_tax
- * @property string|null $tax_rate
+ * @property float|null $tax_rate
  * @property string|null $tax_label
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
@@ -592,6 +599,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read array $grade_levels
+ * @property-read mixed $tax_rate_converted
+ * @property-read mixed $tax_rate_formatted
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceLayout[] $invoiceLayouts
