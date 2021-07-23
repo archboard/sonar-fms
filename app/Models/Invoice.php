@@ -130,7 +130,7 @@ class Invoice extends Model
         return $this->belongsTo(InvoiceLayout::class);
     }
 
-    public function getAmountDueFormattedAttribute()
+    public function getAmountDueFormattedAttribute(): ?string
     {
         if (!$this->relationLoaded('currency')) {
             return null;
@@ -139,7 +139,34 @@ class Invoice extends Model
         return displayCurrency($this->amount_due, $this->currency);
     }
 
-    public function getRemainingBalanceFormattedAttribute()
+    public function getTaxDueFormattedAttribute(): ?string
+    {
+        if (!$this->relationLoaded('currency')) {
+            return null;
+        }
+
+        return displayCurrency($this->tax_due, $this->currency);
+    }
+
+    public function getSubtotalFormattedAttribute(): ?string
+    {
+        if (!$this->relationLoaded('currency')) {
+            return null;
+        }
+
+        return displayCurrency($this->subtotal, $this->currency);
+    }
+
+    public function getDiscountTotalFormattedAttribute(): ?string
+    {
+        if (!$this->relationLoaded('currency')) {
+            return null;
+        }
+
+        return displayCurrency($this->discount_total, $this->currency);
+    }
+
+    public function getRemainingBalanceFormattedAttribute(): ?string
     {
         if (!$this->relationLoaded('currency')) {
             return null;
@@ -148,7 +175,7 @@ class Invoice extends Model
         return displayCurrency($this->remaining_balance, $this->currency);
     }
 
-    public function getStatusColorAttribute()
+    public function getStatusColorAttribute(): string
     {
         if ($this->paid_at) {
             return 'green';
