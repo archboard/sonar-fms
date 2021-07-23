@@ -4,7 +4,7 @@
     <option
       v-for="currency in currencies"
       :key="currency.id"
-      :value="currency"
+      :value="currency.id"
     >
       {{ currency.currency }} ({{ currency.code }})
     </option>
@@ -29,10 +29,10 @@ export default defineComponent({
 
   setup (props, { emit }) {
     const findCurrency = id => props.currencies.find(c => c.id === id)
-    const localValue = ref(findCurrency(props.modelValue))
+    const localValue = ref(findCurrency(props.modelValue).id)
 
     watch(localValue, (newVal) => {
-      emit('update:modelValue', newVal.id)
+      emit('update:modelValue', newVal)
     })
 
     return {
