@@ -73,15 +73,23 @@ class CreateInvoiceRequest extends FormRequest
                 'boolean',
             ],
             'use_school_tax_defaults' => [
-                Rule::requiredIf(fn () => $school->collect_tax),
+                Rule::requiredIf(fn () => $school->collect_tax && $this->boolean('apply_tax')),
                 'boolean',
             ],
             'tax_rate' => [
-                Rule::requiredIf(fn () => $school->collect_tax && !$this->boolean('use_school_tax_defaults')),
+                Rule::requiredIf(fn () =>
+                    $school->collect_tax &&
+                    $this->boolean('apply_tax') &&
+                    !$this->boolean('use_school_tax_defaults')
+                ),
                 'numeric',
             ],
             'tax_label' => [
-                Rule::requiredIf(fn () => $school->collect_tax && !$this->boolean('use_school_tax_defaults')),
+                Rule::requiredIf(fn () =>
+                    $school->collect_tax &&
+                    $this->boolean('apply_tax') &&
+                    !$this->boolean('use_school_tax_defaults')
+                ),
             ],
         ];
     }

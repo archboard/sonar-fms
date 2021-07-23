@@ -758,6 +758,7 @@ class CreateInvoiceTest extends TestCase
             'tax_rate' => 0.05,
             'tax_label' => 'Taxes',
         ]);
+        $this->user->school->refresh();
 
         $item1 = $this->uuid();
         $item2 = $this->uuid();
@@ -879,6 +880,7 @@ class CreateInvoiceTest extends TestCase
             'tax_rate' => 0.05,
             'tax_label' => 'Taxes',
         ]);
+        $this->user->school->refresh();
 
         $invoiceData = [
             'title' => 'Test invoice 2021',
@@ -946,7 +948,6 @@ class CreateInvoiceTest extends TestCase
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
-        ray($this->school);
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
@@ -957,6 +958,56 @@ class CreateInvoiceTest extends TestCase
         $this->assertEquals(10000, $invoice->pre_tax_subtotal);
         $this->assertEquals(10500, $invoice->amount_due);
         $this->assertEquals(10500, $invoice->remaining_balance);
+        $this->assertEquals(10000, $invoice->subtotal);
+        $this->assertEquals(0, $invoice->discount_total);
+    }
+
+    public function test_can_create_invoice_ignoring_taxes()
+    {
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+        $this->user->school->refresh();
+
+        $student = $this->school->students->random();
+
+        $invoiceData = [
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+            'apply_tax' => false,
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+
+        $this->assertNull($invoice->tax_label);
+        $this->assertEquals(0, $invoice->tax_rate);
+        $this->assertEquals(0, $invoice->tax_due);
+        $this->assertEquals(10000, $invoice->pre_tax_subtotal);
+        $this->assertEquals(10000, $invoice->amount_due);
+        $this->assertEquals(10000, $invoice->remaining_balance);
         $this->assertEquals(10000, $invoice->subtotal);
         $this->assertEquals(0, $invoice->discount_total);
     }

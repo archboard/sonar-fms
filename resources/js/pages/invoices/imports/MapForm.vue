@@ -154,14 +154,7 @@
         </Error>
 
         <ul class="space-y-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
+          <FadeInGroup>
             <li
               v-for="(item, index) in form.items"
               :key="item.id"
@@ -229,23 +222,8 @@
                 </CardPadding>
               </CardWrapper>
             </li>
-          </TransitionGroup>
+          </FadeInGroup>
         </ul>
-
-<!--        <FadeIn>-->
-<!--          <CardWrapper v-if="form.items.length > 0" class="my-4">-->
-<!--            <CardPadding>-->
-<!--              <div class="flex justify-between">-->
-<!--                <h4 class="font-bold">-->
-<!--                  {{ __('Invoice subtotal') }}-->
-<!--                </h4>-->
-<!--                <div class="font-bold">-->
-<!--                  {{ displayCurrency(subtotal) }}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </CardPadding>-->
-<!--          </CardWrapper>-->
-<!--        </FadeIn>-->
 
         <div class="relative flex justify-center mt-6">
           <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
@@ -267,14 +245,7 @@
         </div>
 
         <ul class="space-y-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
+          <FadeInGroup>
             <li
               v-for="(item, index) in form.scholarships"
               :key="item.id"
@@ -389,7 +360,7 @@
                 </CardPadding>
               </CardWrapper>
             </li>
-          </TransitionGroup>
+          </FadeInGroup>
         </ul>
 
         <div class="relative flex justify-center mt-6">
@@ -412,28 +383,14 @@
         </div>
 
         <ul class="space-y-3">
-          <TransitionGroup
-            enter-active-class="transition duration-150 ease-in-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-150 ease-in-out"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
+          <FadeInGroup>
             <li
               v-for="(item, index) in form.payment_schedules"
               :key="item.id"
               class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md p-6"
             >
               <ul class="flex flex-wrap -mx-2">
-                <TransitionGroup
-                  enter-active-class="transition duration-150 ease-in-out"
-                  enter-from-class="opacity-0"
-                  enter-to-class="opacity-100"
-                  leave-active-class="transition duration-150 ease-in-out"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
-                >
+                <FadeInGroup>
                   <li
                     v-for="(term, termIndex) in item.terms"
                     :key="term.id"
@@ -488,7 +445,7 @@
                       </Fieldset>
                     </div>
                   </li>
-                </TransitionGroup>
+                </FadeInGroup>
 
                 <!-- Mock term that just has the button -->
                 <li class="px-2 w-full sm:w-1/2 md:w-full lg:w-1/2 xl:w-1/3 relative">
@@ -561,7 +518,7 @@
                 </Button>
               </div>
             </li>
-          </TransitionGroup>
+          </FadeInGroup>
         </ul>
 
         <div class="relative flex justify-center mt-6">
@@ -570,6 +527,59 @@
             <span>{{ __('Add payment schedule') }}</span>
           </button>
         </div>
+      </div>
+
+      <!-- Tax -->
+      <div class="pt-8" v-if="school.collect_tax">
+        <div class="mb-6">
+          <CardSectionHeader>
+            {{ __('Taxes') }}
+          </CardSectionHeader>
+          <HelpText class="text-sm mt-1">
+            {{ __('Add tax details for this invoice.') }}
+          </HelpText>
+        </div>
+
+        <Fieldset>
+          <InputWrap :error="form.errors.apply_tax">
+            <CheckboxWrapper>
+              <Checkbox v-model:checked="form.apply_tax" />
+              <CheckboxText>{{ __('Apply tax rate to this invoice.') }}</CheckboxText>
+            </CheckboxWrapper>
+            <HelpText>{{ __('When this option is enabled, a tax is added to the amount due.') }}</HelpText>
+          </InputWrap>
+
+          <FadeIn>
+            <InputWrap v-if="form.apply_tax" :error="form.errors.use_school_tax_defaults">
+              <CheckboxWrapper>
+                <Checkbox v-model:checked="form.use_school_tax_defaults" />
+                <CheckboxText>{{ __('Use school default tax rate and label - :label (:rate).', { label: school.tax_label, rate: school.tax_rate_formatted }) }}</CheckboxText>
+              </CheckboxWrapper>
+            </InputWrap>
+          </FadeIn>
+
+          <FadeInGroup>
+            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_rate">
+              <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
+              <MapField v-model="form.tax_rate" :headers="headers" id="tax_rate">
+                <Input v-model="form.tax_rate.value" id="tax_rate" />
+                <template v-slot:after>
+                  <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
+                </template>
+              </MapField>
+            </InputWrap>
+
+            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_label">
+              <Label for="tax_label" :required="true">{{ __('Tax label') }}</Label>
+              <MapField v-model="form.tax_label" :headers="headers" id="tax_label">
+                <Input v-model="form.tax_label.value" id="tax_label" placeholder="VAT" />
+                <template v-slot:after>
+                  <HelpText>{{ __('This is the label that will be displayed for the name/type of tax.') }}</HelpText>
+                </template>
+              </MapField>
+            </InputWrap>
+          </FadeInGroup>
+        </Fieldset>
       </div>
     </FormMultipartWrapper>
 
@@ -625,9 +635,11 @@ import Radio from '@/components/forms/Radio'
 import RadioGroup from '@/components/forms/RadioGroup'
 import RadioWrapper from '@/components/forms/RadioWrapper'
 import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm'
+import FadeInGroup from '@/components/transitions/FadeInGroup'
 
 export default {
   components: {
+    FadeInGroup,
     RadioWrapper,
     Radio,
     RadioGroup,
@@ -688,7 +700,6 @@ export default {
     const { strategies } = fetchesResolutionStrategies()
     const { addMapFieldValue } = invoiceImportMapField()
     const page = usePage()
-    const isDark = computed(() => window.isDark)
     const form = useForm({
       student_attribute: props.invoiceImport.mapping?.student_attribute || null,
       student_column: props.invoiceImport.mapping?.student_column || null,
@@ -702,6 +713,10 @@ export default {
       items: props.invoiceImport.mapping?.items || [],
       scholarships: props.invoiceImport.mapping?.scholarships || [],
       payment_schedules: props.invoiceImport.mapping?.payment_schedules || [],
+      apply_tax: props.invoiceImport.mapping?.apply_tax || true,
+      use_school_tax_defaults: props.invoiceImport.mapping?.use_school_tax_defaults || true,
+      tax_rate: props.invoiceImport.mapping?.tax_rate || addMapFieldValue(),
+      tax_label: props.invoiceImport.mapping?.tax_label || addMapFieldValue(),
     })
     // Emit the initial value
     emit('update:invoiceForm', form)
@@ -767,7 +782,6 @@ export default {
       addInvoiceLineItem,
       displayCurrency,
       feeSelected,
-      isDark,
       displayDate,
       timezone,
       strategies,
