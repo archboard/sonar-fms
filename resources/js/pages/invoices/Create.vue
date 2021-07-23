@@ -27,8 +27,10 @@ import Authenticated from '../../layouts/Authenticated'
 import InvoiceForm from './Form'
 import InvoiceTemplatesModal from '../../components/modals/InvoiceTemplatesModal'
 import Button from '../../components/Button'
+import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
     Button,
     InvoiceTemplatesModal,

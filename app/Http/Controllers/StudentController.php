@@ -6,6 +6,7 @@ use App\Http\Resources\StudentResource;
 use App\Models\Invoice;
 use App\Models\School;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -26,6 +27,8 @@ class StudentController extends Controller
     {
         $title = __('Students');
         $request->user()->load('studentSelections');
+        /** @var User $user */
+        $user = $request->user();
 
         $students = $school->students()
             ->filter($request->all())
@@ -37,6 +40,12 @@ class StudentController extends Controller
         return inertia('students/Index', [
             'title' => $title,
             'students' => StudentResource::collection($students),
+            'permissions' => [
+                'invoices' => [
+                    'create' => $user->can('create', Invoice::class),
+                ],
+                'students' => $user->getPermissions(Student::class),
+            ],
         ])->withViewData(compact('title'));
     }
 

@@ -84,7 +84,16 @@
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
           <Td class="text-right">
-            <Link is="inertia-link" :href="$route('students.show', student)">{{ __('View') }}</Link>
+            <VerticalDotMenu>
+              <div class="p-1">
+                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', student)">
+                  {{ __('View') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', student)">
+                  {{ __('New invoice') }}
+                </SonarMenuItem>
+              </div>
+            </VerticalDotMenu>
           </Td>
         </tr>
       </Tbody>
@@ -105,23 +114,30 @@
 <script>
 import { defineComponent, inject, nextTick, ref, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import handlesFilters from '../../composition/handlesFilters'
-import searchesItems from '../../composition/searchesItems'
-import Authenticated from '../../layouts/Authenticated'
-import Table from '../../components/tables/Table'
-import Thead from '../../components/tables/Thead'
-import Th from '../../components/tables/Th'
-import Tbody from '../../components/tables/Tbody'
-import Td from '../../components/tables/Td'
-import Checkbox from '../../components/forms/Checkbox'
-import Pagination from '../../components/tables/Pagination'
-import Input from '../../components/forms/Input'
+import handlesFilters from '@/composition/handlesFilters'
+import searchesItems from '@/composition/searchesItems'
+import Authenticated from '@/layouts/Authenticated'
+import Table from '@/components/tables/Table'
+import Thead from '@/components/tables/Thead'
+import Th from '@/components/tables/Th'
+import Tbody from '@/components/tables/Tbody'
+import Td from '@/components/tables/Td'
+import Checkbox from '@/components/forms/Checkbox'
+import Pagination from '@/components/tables/Pagination'
+import Input from '@/components/forms/Input'
 import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCircleIcon } from '@heroicons/vue/outline'
-import StudentTableFiltersModal from '../../components/modals/StudentTableFiltersModal'
+import StudentTableFiltersModal from '@/components/modals/StudentTableFiltersModal'
 import Link from '@/components/Link'
+import checksPermissions from '@/composition/checksPermissions'
+import PageProps from '@/mixins/PageProps'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    SonarMenuItem,
+    VerticalDotMenu,
     XCircleIcon,
     StudentTableFiltersModal,
     AdjustmentsIcon,
@@ -151,6 +167,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
+    const { can } = checksPermissions(props.permissions)
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 25,
@@ -191,6 +208,7 @@ export default defineComponent({
       resetFilters,
       selectAll,
       searchTerm,
+      can,
     }
   }
 })
