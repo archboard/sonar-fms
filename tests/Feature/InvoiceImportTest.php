@@ -181,6 +181,11 @@ class InvoiceImportTest extends TestCase
     {
         $this->assignPermission('update', InvoiceImport::class);
         Storage::fake();
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
 
         $originalPath = InvoiceImport::storeFile(
             $this->getUploadedFile(),
@@ -221,6 +226,10 @@ class InvoiceImportTest extends TestCase
                 ]
             ],
             'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => false,
+            'tax_rate' => $this->makeMapField(value: 0.07, isManual: true),
+            'tax_label' => $this->makeMapField(value: 'VAT', isManual: true),
         ];
 
         $this->putJson(route('invoices.imports.map', $import), $data)
@@ -968,5 +977,77 @@ class InvoiceImportTest extends TestCase
         $this->assertCount(3, $import->results);
         $this->assertTrue(collect($import->results)->every(fn ($r) => $r['successful']));
         Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
+    public function test_can_tax_mapping_validation()
+    {
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile(),
+            $this->school
+        );
+        $mapping = [
+            'student_attribute' => 'student_number',
+            'student_column' => 'student number',
+            'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+            'description' => $this->makeMapField(),
+            'due_at' => $this->makeMapField('due date'),
+            'available_at' => $this->makeMapField('available date'),
+            'term_id' => $this->makeMapField(),
+            'notify' => false,
+            'items' => [
+                [
+                    'fee_id' => $this->makeMapField(),
+                    'name' => $this->makeMapField('invoice name'),
+                    'amount_per_unit' => $this->makeMapField('invoice amount'),
+                    'quantity' => $this->makeMapField(value: 1, isManual: true),
+                ],
+            ],
+            'scholarships' => [
+                [
+                    'name' => $this->makeMapField(value: 'Assistance', isManual: true),
+                    'use_amount' => false,
+                    'amount' => $this->makeMapField(),
+                    'percentage' => $this->makeMapField('discount'),
+                    'applies_to' => [],
+                ]
+            ],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => false,
+            'tax_rate' => $this->makeMapField(),
+            'tax_label' => $this->makeMapField(),
+        ];
+        $import = InvoiceImport::create([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 2,
+            'starting_row' => 3,
+            'mapping' => $mapping,
+        ]);
+
+        $errors = $import->getMappingValidationErrors();
+        $this->assertCount(2, $errors);
+        $this->assertFalse($import->hasValidMapping());
+        $this->assertTrue(in_array('tax_rate', array_keys($errors)));
+        $this->assertTrue(in_array('tax_label', array_keys($errors)));
+
+        $mapping = $import->mapping;
+        unset($mapping['apply_tax']);
+        $import->mapping = $mapping;
+        $errors = $import->getMappingValidationErrors();
+        $this->assertCount(1, $errors);
+        $this->assertTrue(in_array('apply_tax', array_keys($errors)));
+
+        $mapping['apply_tax'] = false;
+        $import->mapping = $mapping;
+        $this->assertTrue($import->hasValidMapping());
+        $this->assertEmpty($import->getMappingValidationErrors());
     }
 }

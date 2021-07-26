@@ -173,6 +173,32 @@ class InvoiceImport extends Model
                 new InvoiceImportAmountOrPercentage($mapping, 'amount'),
             ],
             'payment_schedules.*.terms.*.due_at' => new InvoiceImportMap('nullable|date'),
+            'apply_tax' => [
+                Rule::requiredIf(fn () => $this->school->collect_tax),
+                'boolean',
+            ],
+            'use_school_tax_defaults' => [
+                Rule::requiredIf(fn () => $this->school->collect_tax && ($mapping['apply_tax'] ?? false)),
+                'boolean',
+            ],
+            'tax_rate' => new InvoiceImportMap([
+                Rule::requiredIf(fn () =>
+                    $this->school->collect_tax &&
+                    ($mapping['apply_tax'] ?? false) &&
+                    !($mapping['use_school_tax_defaults'] ?? false)
+                ),
+                'nullable',
+                'numeric',
+            ]),
+            'tax_label' => new InvoiceImportMap([
+                Rule::requiredIf(fn () =>
+                    $this->school->collect_tax &&
+                    ($mapping['apply_tax'] ?? false) &&
+                    !($mapping['use_school_tax_defaults'] ?? false)
+                ),
+                'nullable',
+                'min:1',
+            ]),
         ]);
     }
 
