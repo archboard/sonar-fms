@@ -28,7 +28,7 @@
             <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
             <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
             <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
-            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Total') }}</th>
+            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -55,8 +55,7 @@
         <table class="w-full mt-4">
           <thead>
             <tr>
-              <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Scholarship') }}</th>
-              <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
+              <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border" colspan="2">{{ __('Scholarship') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -81,6 +80,23 @@
             </tr>
           </tbody>
         </table>
+      @endif
+
+      @if($invoice->school->collect_tax && $invoice->apply_tax)
+        <div class="mt-4">
+          <table class="w-full mt-4">
+            <tbody>
+              <tr>
+                <td class="font-bold text-left px-4 py-2 text-sm border-t">
+                  {{ $invoice->tax_label }} <span class="font-normal text-gray-500">({{ $invoice->tax_rate_formatted }})</span>
+                </td>
+                <td class="font-bold text-right px-4 py-2 text-sm border-t">
+                  {{ displayCurrency($invoice->tax_due, $currency) }}
+                </td>
+              </tr>
+            </tbody>
+        </table>
+        </div>
       @endif
 
       <table class="w-full mt-4 border-2 border-gray-500">
