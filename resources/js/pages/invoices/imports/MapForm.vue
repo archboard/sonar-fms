@@ -727,7 +727,7 @@ export default {
     const { displayCurrency } = displaysCurrency()
 
     const saveImport = () => {
-      form.put($route('invoices.imports.map'))
+      form.put($route('invoices.imports.map', props.invoiceImport))
     }
 
     // Watch for changes to apply a template
