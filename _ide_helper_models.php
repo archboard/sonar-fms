@@ -187,6 +187,7 @@ namespace App\Models{
  * @property int|null $invoice_layout_id
  * @property int|null $subtotal
  * @property int|null $discount_total
+ * @property bool $apply_tax
  * @property bool $use_school_tax_defaults
  * @property float|null $tax_rate
  * @property string|null $tax_label
@@ -226,6 +227,7 @@ namespace App\Models{
  * @method static Builder|Invoice newQuery()
  * @method static Builder|Invoice query()
  * @method static Builder|Invoice whereAmountDue($value)
+ * @method static Builder|Invoice whereApplyTax($value)
  * @method static Builder|Invoice whereAvailableAt($value)
  * @method static Builder|Invoice whereBatchId($value)
  * @method static Builder|Invoice whereCreatedAt($value)
