@@ -2,6 +2,7 @@
   <Authenticated>
     <template v-slot:actions>
       <Dropdown
+        size="sm"
         :menu-items="[
           {
             label: __('By hand'),
@@ -13,7 +14,7 @@
           },
         ]"
       >
-        {{ __('Create invoice') }}
+        {{ __('New invoice') }}
       </Dropdown>
     </template>
 
@@ -94,7 +95,9 @@
             </div>
           </Td>
           <Td :lighter="false">
-            {{ invoice.title }}
+            <InertiaLink :href="$route('invoices.show', invoice)" class="hover:underline">
+              {{ invoice.title }}
+            </InertiaLink>
           </Td>
           <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
           <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
@@ -112,8 +115,8 @@
                 </SonarMenuItem>
               </div>
               <div class="p-1">
-                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="$route('invoices.download', invoice)">
-                  {{ __('Export as PDF') }}
+                <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
+                  {{ __('View PDF') }}
                 </SonarMenuItem>
               </div>
             </VerticalDotMenu>

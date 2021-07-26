@@ -2,7 +2,7 @@
   <Menu as="div" class="relative inline-block text-left z-10">
     <div>
       <MenuButton class="focus:outline-none">
-        <Button>
+        <Button :size="size">
           <slot />
           <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
         </Button>
@@ -48,6 +48,10 @@ export default {
 
   props: {
     menuItems: Array,
+    size: {
+      type: String,
+      default: 'base',
+    }
   }
 }
 </script>
