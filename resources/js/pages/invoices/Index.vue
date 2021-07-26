@@ -99,8 +99,24 @@
           <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
           <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
           <Td class="text-right space-x-2">
-            <Link is="inertia-link" :href="$route('invoices.show', [invoice])">{{ __('View') }}</Link>
-            <Link is="button" @click.prevent="editInvoice(invoice)">{{ __('Edit') }}</Link>
+            <VerticalDotMenu>
+              <div class="p-1">
+                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="$route('invoices.show', invoice)">
+                  {{ __('View') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="$route('invoices.edit', invoice)">
+                  {{ __('Edit') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student.full_name)">
+                  {{ __('View student') }}
+                </SonarMenuItem>
+              </div>
+              <div class="p-1">
+                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="$route('invoices.download', invoice)">
+                  {{ __('Export as PDF') }}
+                </SonarMenuItem>
+              </div>
+            </VerticalDotMenu>
           </Td>
         </tr>
       </Tbody>
@@ -108,34 +124,40 @@
 
     <Pagination :meta="invoices.meta" :links="invoices.links" />
 
-
   </Authenticated>
 </template>
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import handlesFilters from '../../composition/handlesFilters'
-import searchesItems from '../../composition/searchesItems'
-import Authenticated from '../../layouts/Authenticated'
-import Table from '../../components/tables/Table'
-import Thead from '../../components/tables/Thead'
-import Th from '../../components/tables/Th'
-import Tbody from '../../components/tables/Tbody'
-import Td from '../../components/tables/Td'
-import Checkbox from '../../components/forms/Checkbox'
-import Pagination from '../../components/tables/Pagination'
-import Input from '../../components/forms/Input'
+import handlesFilters from '@/composition/handlesFilters'
+import searchesItems from '@/composition/searchesItems'
+import Authenticated from '@/layouts/Authenticated'
+import Table from '@/components/tables/Table'
+import Thead from '@/components/tables/Thead'
+import Th from '@/components/tables/Th'
+import Tbody from '@/components/tables/Tbody'
+import Td from '@/components/tables/Td'
+import Checkbox from '@/components/forms/Checkbox'
+import Pagination from '@/components/tables/Pagination'
+import Input from '@/components/forms/Input'
 import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCircleIcon } from '@heroicons/vue/outline'
 import Link from '@/components/Link'
-import HelpText from '../../components/HelpText'
-import Button from '../../components/Button'
-import FeeFormModal from '../../components/modals/FeeFormModal'
-import displaysCurrency from '../../composition/displaysCurrency'
-import InvoiceStatusBadge from '../../components/InvoiceStatusBadge'
-import Dropdown from '../../components/forms/Dropdown'
+import HelpText from '@/components/HelpText'
+import Button from '@/components/Button'
+import FeeFormModal from '@/components/modals/FeeFormModal'
+import displaysCurrency from '@/composition/displaysCurrency'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import Dropdown from '@/components/forms/Dropdown'
+import PageProps from '@/mixins/PageProps'
+import checksPermissions from '@/composition/checksPermissions'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    SonarMenuItem,
+    VerticalDotMenu,
     Dropdown,
     InvoiceStatusBadge,
     FeeFormModal,
@@ -164,11 +186,12 @@ export default defineComponent({
     school: Object,
   },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const showFilters = ref(false)
     const editing = ref(false)
     const selectedInvoice = ref({})
+    const { can } = checksPermissions(props.permissions)
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 25,
@@ -195,6 +218,7 @@ export default defineComponent({
       editing,
       displayCurrency,
       editInvoice,
+      can,
     }
   }
 })

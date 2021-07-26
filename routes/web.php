@@ -134,6 +134,8 @@ Route::middleware('tenant')->group(function () {
 
         Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
             ->name('invoices.show');
+        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
+            ->name('invoices.edit');
 
         Route::get('/invoices/{invoice}/preview', \App\Http\Controllers\PreviewInvoiceController::class)
             ->name('invoices.preview');

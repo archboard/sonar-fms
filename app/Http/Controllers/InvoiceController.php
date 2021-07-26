@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -31,9 +33,16 @@ class InvoiceController extends Controller
             ->filter($request->all())
             ->paginate($request->input('perPage', 25));
 
+        /** @var User $user */
+        $user = $request->user();
+
         return inertia('invoices/Index', [
             'title' => $title,
             'invoices' => InvoiceResource::collection($invoices),
+            'permissions' => [
+                'invoices' => $user->getPermissions(Invoice::class),
+                'students' => $user->getPermissions(Student::class),
+            ],
         ])->withViewData(compact('title'));
     }
 
