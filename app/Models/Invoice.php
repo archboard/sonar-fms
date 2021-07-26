@@ -264,17 +264,71 @@ class Invoice extends Model
             }, 0);
     }
 
-    public function calculateSubtotal(): int
+    public function setSubtotal(): static
     {
-        return static::calculateSubtotalFromItems($this->invoiceItems);
+        $this->subtotal = static::calculateSubtotalFromItems($this->invoiceItems);
+
+        return $this;
     }
 
-    public function calculateScholarshipSubtotal(): int
+    public function setDiscountTotal(): static
     {
-        return $this->invoiceScholarships
+        $discount = $this->invoiceScholarships
             ->reduce(function (int $total, InvoiceScholarship $scholarship) {
                 return $total + $scholarship->calculateAmount();
             }, 0);
+
+        $this->discount_total = $discount > $this->subtotal
+            ? $this->subtotal
+            : $discount;
+
+        return $this;
+    }
+
+    public function setPreTaxSubtotal(): static
+    {
+        $subtotal = $this->subtotal - $this->discount_total;
+
+        $this->pre_tax_subtotal = $subtotal < 0
+            ? 0
+            : $subtotal;
+
+        return $this;
+    }
+
+    public function setTaxDue(): static
+    {
+        $this->tax_due = 0;
+
+        if (
+            $this->school->collect_tax &&
+            $this->apply_tax
+        ) {
+            $this->tax_due = round($this->pre_tax_subtotal * $this->tax_rate);
+        }
+
+        return $this;
+    }
+
+    public function setAmountDue(): static
+    {
+        $this->amount_due = $this->pre_tax_subtotal + $this->tax_due;
+
+        return $this;
+    }
+
+    public function setRemainingBalance(): static
+    {
+        // Calculate how much has already been paid in
+        // and set the remaining_balance value based on that
+        $paid = 0;
+
+        $this->remaining_balance = $this->amount_due - $paid;
+        $this->paid_at = $this->remaining_balance < 0
+            ? now()
+            : null;
+
+        return $this;
     }
 
     /**
@@ -283,30 +337,18 @@ class Invoice extends Model
      *
      * @return $this
      */
-    public function setAmountDue(): static
+    public function setCalculatedAttributes(bool $save = false): static
     {
-        $subtotal = $this->calculateSubtotal();
-        $discount = $this->calculateScholarshipSubtotal();
+        $this->setSubtotal()
+            ->setDiscountTotal()
+            ->setPreTaxSubtotal()
+            ->setTaxDue()
+            ->setAmountDue()
+            ->setRemainingBalance();
 
-        $amountDue = $subtotal - $discount;
-
-        if ($amountDue < 0) {
-            $amountDue = 0;
+        if ($save) {
+            $this->save();
         }
-
-        // Calculate how much has already been paid in
-        // and set the remaining_balance value based on that
-        $paid = 0;
-
-        $remaining = $amountDue - $paid;
-
-        $this->forceFill([
-            'amount_due' => $amountDue,
-            'remaining_balance' => $remaining,
-            'subtotal' => $subtotal,
-            'discount_total' => $discount,
-            'paid_at' => $remaining === 0 ? now() : null,
-        ]);
 
         return $this;
     }
@@ -330,7 +372,7 @@ class Invoice extends Model
             ]);
         });
 
-        $this->setAmountDue()->save();
+        $this->setCalculatedAttributes()->save();
     }
 
     public function queueNotification(Carbon $notifyAt): static
@@ -453,7 +495,7 @@ class Invoice extends Model
             }
 
             $this->unsetRelations();
-            $this->setAmountDue()
+            $this->setCalculatedAttributes()
                 ->forceFill(Arr::except($data, ['items', 'scholarships']))
                 ->save();
         });
