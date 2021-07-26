@@ -636,6 +636,7 @@ import RadioGroup from '@/components/forms/RadioGroup'
 import RadioWrapper from '@/components/forms/RadioWrapper'
 import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
+import isUndefined from 'lodash/isUndefined'
 
 export default {
   components: {
@@ -690,6 +691,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    errors: {
+      type: Object,
+      default: () => ({})
+    }
   },
   emits: ['update:invoiceForm'],
 
@@ -713,11 +718,12 @@ export default {
       items: props.invoiceImport.mapping?.items || [],
       scholarships: props.invoiceImport.mapping?.scholarships || [],
       payment_schedules: props.invoiceImport.mapping?.payment_schedules || [],
-      apply_tax: props.invoiceImport.mapping?.apply_tax || true,
-      use_school_tax_defaults: props.invoiceImport.mapping?.use_school_tax_defaults || true,
+      apply_tax: isUndefined(props.invoiceImport.mapping.apply_tax) ? true : props.invoiceImport.mapping.apply_tax,
+      use_school_tax_defaults: isUndefined(props.invoiceImport.mapping.use_school_tax_defaults) ? true : props.invoiceImport.mapping.use_school_tax_defaults,
       tax_rate: props.invoiceImport.mapping?.tax_rate || addMapFieldValue(),
       tax_label: props.invoiceImport.mapping?.tax_label || addMapFieldValue(),
     })
+    form.errors = props.errors
     // Emit the initial value
     emit('update:invoiceForm', form)
 

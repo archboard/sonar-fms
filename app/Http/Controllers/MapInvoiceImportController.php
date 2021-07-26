@@ -39,6 +39,7 @@ class MapInvoiceImportController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'invoiceImport' => $import->toResource(),
             'headers' => $import->headers,
+            'errors' => $import->getMappingValidationErrors(),
         ])->withViewData(compact('title'));
     }
 

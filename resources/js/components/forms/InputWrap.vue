@@ -1,11 +1,12 @@
 <template>
   <div>
     <slot />
-    <Error v-if="error">{{ error }}</Error>
+    <Error v-if="message">{{ message }}</Error>
   </div>
 </template>
 <script>
 import Error from '@/components/forms/Error'
+import { computed } from 'vue'
 
 export default {
   components: {
@@ -13,7 +14,21 @@ export default {
   },
 
   props: {
-    error: String,
-  }
+    error: [String, Array],
+  },
+
+  setup (props) {
+    const message = computed(() => {
+      if (Array.isArray(props.error)) {
+        return props.error[0]
+      }
+
+      return props.error
+    })
+
+    return {
+      message,
+    }
+  },
 }
 </script>

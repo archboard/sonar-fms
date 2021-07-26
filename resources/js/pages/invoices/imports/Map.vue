@@ -24,6 +24,7 @@
       :headers="headers"
       :invoice-import="invoiceImport"
       :invoice-template="invoiceTemplate"
+      :errors="errors"
     />
   </Authenticated>
 

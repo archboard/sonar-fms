@@ -106,7 +106,6 @@ class InvoiceImportController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'invoiceImport' => $import->toResource(),
             'results' => $import->results ?? [],
-            'errors' => $import->getMappingValidationErrors(),
             'permissions' => $request->user()->getPermissions(InvoiceImport::class),
         ])->withViewData(compact('title'));
     }
