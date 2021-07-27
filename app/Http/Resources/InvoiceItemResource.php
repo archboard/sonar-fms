@@ -15,7 +15,8 @@ class InvoiceItemResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'id' => $this->uuid,
+            'uuid' => $this->uuid,
             'fee_id' => $this->fee_id,
             'sync_with_fee' => $this->sync_with_fee,
             'name' => $this->name,

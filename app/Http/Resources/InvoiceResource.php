@@ -46,6 +46,7 @@ class InvoiceResource extends JsonResource
             'school' => new SchoolResource($this->whenLoaded('school')),
             'items' => InvoiceItemResource::collection($this->whenLoaded('invoiceItems')),
             'scholarships' => InvoiceScholarshipResource::collection($this->whenLoaded('invoiceScholarships')),
+            'payment_schedules' => InvoicePaymentScheduleResource::collection($this->whenLoaded('invoicePaymentSchedules')),
         ];
     }
 }
