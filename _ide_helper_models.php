@@ -197,11 +197,12 @@ namespace App\Models{
  * @property-read string|null $amount_due_formatted
  * @property-read bool $available
  * @property-read string|null $discount_total_formatted
- * @property-read mixed $past_due
- * @property-read mixed $payment_made
+ * @property-read string $number_formatted
+ * @property-read bool $past_due
+ * @property-read bool $payment_made
  * @property-read string|null $remaining_balance_formatted
  * @property-read string $status_color
- * @property-read mixed $status_label
+ * @property-read string $status_label
  * @property-read string|null $subtotal_formatted
  * @property-read string|null $tax_due_formatted
  * @property-read mixed $tax_rate_converted

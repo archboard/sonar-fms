@@ -14,6 +14,9 @@
 
         <template #dropdown>
           <div class="p-1">
+            <SonarMenuItem v-if="can('invoices.update')" @click.prevent="editStatus = true">
+              {{ __('Change status') }}
+            </SonarMenuItem>
             <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', student)">
               {{ __('View student') }}
             </SonarMenuItem>
@@ -135,6 +138,12 @@
       </div>
     </div>
   </Authenticated>
+
+  <InvoiceStatusModal
+    v-if="can('invoices.update') && editStatus"
+    @close="editStatus = false"
+    :invoice="invoice"
+  />
 </template>
 
 <script>
@@ -152,10 +161,12 @@ import Link from '@/components/Link'
 import PageProps from '@/mixins/PageProps'
 import Dropdown from '@/components/forms/Dropdown'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceStatusModal,
     Dropdown,
     HelpText,
     SidebarHeader,
@@ -178,13 +189,13 @@ export default defineComponent({
     const { displayCurrency } = displaysCurrency()
     const { displayDate } = displaysDate()
     const { can, canAny } = checksPermissions(props.permissions)
-    const editing = ref(false)
+    const editStatus = ref(false)
 
     return {
       displayCurrency,
       can,
       canAny,
-      editing,
+      editStatus,
       displayDate,
     }
   }

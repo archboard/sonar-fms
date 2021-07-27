@@ -182,6 +182,11 @@ class Invoice extends Model
         return displayCurrency($this->remaining_balance, $this->currency);
     }
 
+    public function getNumberFormattedAttribute(): string
+    {
+        return '#' . $this->id;
+    }
+
     public function getStatusColorAttribute(): string
     {
         if ($this->paid_at) {
@@ -255,6 +260,8 @@ class Invoice extends Model
             'currency',
             'invoiceItems.invoice.currency',
             'invoiceScholarships.invoice.currency',
+            'invoicePaymentSchedules',
+            'invoicePaymentSchedules.invoicePaymentTerms',
         ]);
     }
 
@@ -514,5 +521,40 @@ class Invoice extends Model
 
             return $total + ($item['amount_per_unit'] * $item['quantity']);
         }, 0);
+    }
+
+    /**
+     * Takes the invoice and prunes all the fields
+     * that aren't required to create an invoice
+     *
+     * @return array
+     */
+    public function asInvoiceTemplate(): array
+    {
+        $this->load(
+            'invoicePaymentSchedules',
+            'invoicePaymentSchedules.invoicePaymentTerms'
+        );
+
+        $resource = $this->toResource()
+            ->response()
+            ->getData(true);
+        $data = Arr::only($resource, [
+            'title',
+            'description',
+            'term_id',
+            'available_at',
+            'due_at',
+            'notify',
+            'items',
+            'scholarships',
+            'payment_schedules',
+            'apply_tax',
+            'use_school_tax_defaults',
+            'tax_rate',
+            'tax_label',
+        ]);
+
+
     }
 }
