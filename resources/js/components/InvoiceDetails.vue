@@ -39,6 +39,14 @@
             {{ scholarship.calculated_amount_formatted }}
           </Td>
         </tr>
+        <tr v-if="invoice.school.collect_tax && invoice.apply_tax">
+          <Td :lighter="false">
+            {{ invoice.tax_label }} ({{ invoice.tax_rate_formatted }})
+          </Td>
+          <Td class="text-right">
+            {{ invoice.tax_due_formatted }}
+          </Td>
+        </tr>
         <tr>
           <Td class="text-base font-bold" :lighter="false">
             {{ __('Total due') }}

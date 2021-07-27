@@ -203,7 +203,7 @@ class Invoice extends Model
         return 'gray';
     }
 
-    public function getStatusLabelAttribute()
+    public function getStatusLabelAttribute(): string
     {
         if ($this->paid_at) {
             return __('Paid');
@@ -228,12 +228,12 @@ class Invoice extends Model
         return __('Unpaid');
     }
 
-    public function getPaymentMadeAttribute()
+    public function getPaymentMadeAttribute(): bool
     {
         return $this->amount_due !== $this->remaining_balance;
     }
 
-    public function getPastDueAttribute()
+    public function getPastDueAttribute(): bool
     {
         return $this->due_at && now() > $this->due_at;
     }
@@ -250,6 +250,8 @@ class Invoice extends Model
     public function fullLoad(): static
     {
         return $this->load([
+            'student',
+            'school',
             'currency',
             'invoiceItems.invoice.currency',
             'invoiceScholarships.invoice.currency',

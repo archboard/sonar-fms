@@ -34,6 +34,7 @@ class InvoiceResource extends JsonResource
             'past_due' => $this->past_due,
             'payment_made' => $this->payment_made,
             'student_id' => $this->student_id,
+            'apply_tax' => $this->apply_tax,
             'use_school_tax_defaults' => $this->use_school_tax_defaults,
             'tax_due' => $this->tax_due,
             'tax_due_formatted' => $this->tax_due_formatted,
@@ -42,6 +43,7 @@ class InvoiceResource extends JsonResource
             'tax_rate_formatted' => $this->tax_rate_formatted,
             'tax_rate_converted' => $this->tax_rate_converted,
             'student' => new StudentResource($this->whenLoaded('student')),
+            'school' => new SchoolResource($this->whenLoaded('school')),
             'items' => InvoiceItemResource::collection($this->whenLoaded('invoiceItems')),
             'scholarships' => InvoiceScholarshipResource::collection($this->whenLoaded('invoiceScholarships')),
         ];

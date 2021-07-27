@@ -9,21 +9,21 @@
       </MenuButton>
     </div>
 
-      <ScaleIn>
-        <SonarMenuItems>
-          <slot name="dropdown">
-            <div class="p-1">
-              <SonarMenuItem
-                v-for="item in menuItems"
-                is="inertia-link"
-                :href="item.route"
-              >
-                {{ item.label }}
-              </SonarMenuItem>
-            </div>
-          </slot>
-        </SonarMenuItems>
-      </ScaleIn>
+    <ScaleIn>
+      <SonarMenuItems>
+        <slot name="dropdown">
+          <div class="p-1">
+            <SonarMenuItem
+              v-for="item in menuItems"
+              is="inertia-link"
+              :href="item.route"
+            >
+              {{ item.label }}
+            </SonarMenuItem>
+          </div>
+        </slot>
+      </SonarMenuItems>
+    </ScaleIn>
   </Menu>
 </template>
 

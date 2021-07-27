@@ -1,26 +1,44 @@
 <template>
   <Authenticated>
+    <template #inTitle>
+      <InvoiceStatusBadge class="ml-3" :invoice="invoice" size="lg" />
+    </template>
+
     <template #afterTitle>
       <HelpText>{{ __('Invoice #:invoice_number', { invoice_number: invoice.id }) }}</HelpText>
     </template>
 
     <template #actions>
-      <Button @click.prevent="editing = true">
-        {{ __('Edit') }}
-      </Button>
+      <Dropdown size="sm">
+        {{ __('Actions') }}
+
+        <template #dropdown>
+          <div class="p-1">
+            <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', student)">
+              {{ __('View student') }}
+            </SonarMenuItem>
+          </div>
+          <div class="p-1">
+            <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
+              {{ __('View PDF') }}
+            </SonarMenuItem>
+          </div>
+        </template>
+      </Dropdown>
     </template>
 
-    <!-- Sidebar for desktop -->
+    <!-- Details for smaller screens -->
     <div class="xl:hidden grid grid-cols-4 gap-5 pb-6 mb-8 border-b border-gray-300 dark:border-gray-600">
       <div>
         <SidebarHeader>
-          {{ __('Status') }}
+          {{ __('Student') }}
         </SidebarHeader>
-        <ul class="mt-2 leading-8 space-x-1">
-          <li class="inline">
-            <InvoiceStatusBadge :invoice="invoice" size="lg" />
-          </li>
-        </ul>
+        <div class="mt-2 leading-8">
+          <Link :href="$route('students.show', student)">
+            {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
+          </Link>
+          <HelpText class="mt-0">{{ student.grade_level_formatted }}</HelpText>
+        </div>
       </div>
       <div>
         <SidebarHeader>
@@ -81,13 +99,14 @@
       <div class="hidden xl:block pl-8 space-y-6 divide-y divide-gray-300 dark:divide-gray-600">
         <div>
           <SidebarHeader>
-            {{ __('Status') }}
+            {{ __('Student') }}
           </SidebarHeader>
-          <ul class="mt-2 leading-8 space-x-1">
-            <li class="inline">
-              <InvoiceStatusBadge :invoice="invoice" size="lg" />
-            </li>
-          </ul>
+          <div class="mt-2 leading-8">
+            <Link :href="$route('students.show', student)">
+              {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
+            </Link>
+            <HelpText class="mt-0">{{ student.grade_level_formatted }}</HelpText>
+          </div>
         </div>
         <div class="pt-6">
           <SidebarHeader>
@@ -115,33 +134,38 @@
         </div>
       </div>
     </div>
-
-    <StudentInvoiceSlideout
-      v-if="editing"
-      :invoice="invoice"
-      :student="student"
-      @close="editing = false"
-    />
   </Authenticated>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '../../layouts/Authenticated'
-import displaysCurrency from '../../composition/displaysCurrency'
-import InvoiceStatusBadge from '../../components/InvoiceStatusBadge'
-import InvoiceDetails from '../../components/InvoiceDetails'
-import Button from '../../components/Button'
-import checksPermissions from '../../composition/checksPermissions'
-import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
-import SidebarHeader from '../../components/SidebarHeader'
-import displaysDate from '../../composition/displaysDate'
-import HelpText from '../../components/HelpText'
+import Authenticated from '@/layouts/Authenticated'
+import displaysCurrency from '@/composition/displaysCurrency'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import InvoiceDetails from '@/components/InvoiceDetails'
+import Button from '@/components/Button'
+import checksPermissions from '@/composition/checksPermissions'
+import SidebarHeader from '@/components/SidebarHeader'
+import displaysDate from '@/composition/displaysDate'
+import HelpText from '@/components/HelpText'
+import Link from '@/components/Link'
+import PageProps from '@/mixins/PageProps'
+import Dropdown from '@/components/forms/Dropdown'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
+    Dropdown,
     HelpText,
-    SidebarHeader, StudentInvoiceSlideout, Button, InvoiceDetails, InvoiceStatusBadge, Authenticated},
+    SidebarHeader,
+    Button,
+    InvoiceDetails,
+    InvoiceStatusBadge,
+    Authenticated,
+    Link,
+    SonarMenuItem,
+  },
   props: {
     user: Object,
     student: Object,

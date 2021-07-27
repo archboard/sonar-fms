@@ -52,7 +52,7 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function show(Invoice $invoice)
+    public function show(Request $request, Invoice $invoice)
     {
         $title = $invoice->title;
         $invoice->fullLoad();
@@ -70,34 +70,18 @@ class InvoiceController extends Controller
             ]
         ];
 
+        /** @var User $user */
+        $user = $request->user();
+
         return inertia('invoices/Show', [
             'title' => $title,
             'invoice' => $invoice->toResource(),
             'student' => $invoice->student->toResource(),
             'breadcrumbs' => $breadcrumbs,
+            'permissions' => [
+                'invoices' => $user->getPermissions(Invoice::class),
+                'students' => $user->getPermissions(Student::class),
+            ],
         ])->withViewData(compact('title'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Invoice $invoice)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Invoice $invoice)
-    {
-        //
     }
 }

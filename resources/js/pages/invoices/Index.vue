@@ -110,7 +110,7 @@
                 <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="$route('invoices.edit', invoice)">
                   {{ __('Edit') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student.full_name)">
+                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student)">
                   {{ __('View student') }}
                 </SonarMenuItem>
               </div>
