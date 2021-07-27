@@ -42,12 +42,16 @@ export default defineComponent({
     student: {
       type: Object,
       default: () => ({})
-    }
+    },
+    defaultTemplate: {
+      type: Object,
+      default: () => ({})
+    },
   },
 
   setup (props) {
     const showTemplates = ref(false)
-    const invoiceTemplate = ref({})
+    const invoiceTemplate = ref({ ...props.defaultTemplate })
     const useTemplate = template => {
       invoiceTemplate.value = template.template
     }
