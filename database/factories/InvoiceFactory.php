@@ -24,13 +24,19 @@ class InvoiceFactory extends Factory
      */
     public function definition()
     {
+        $school = School::current();
+
         return [
             'tenant_id' => Tenant::current()->id,
-            'school_id' => School::current()->id,
+            'school_id' => $school->id,
             'uuid' => (string) Uuid::uuid4(),
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
             'invoice_date' => now(),
+            'student_id' => $school->students()
+                ->inRandomOrder()
+                ->first()
+                ->id,
         ];
     }
 }
