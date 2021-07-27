@@ -6,7 +6,7 @@
     <MenuButton
       as="template"
       v-slot="{ open }"
-      ref="buttonRef"
+      ref="trigger"
     >
       <button
         type="button"
@@ -20,7 +20,7 @@
     </MenuButton>
 
     <teleport to="body">
-      <div ref="contentRef">
+      <div ref="container" class="w-56 z-10">
         <transition
           enter-active-class="transition duration-100 ease-out"
           enter-from-class="transform scale-95 opacity-0"
@@ -28,10 +28,9 @@
           leave-active-class="transition duration-75 ease-in"
           leave-from-class="transform scale-100 opacity-100"
           leave-to-class="transform scale-95 opacity-0"
-          @after-leave="destroyPop"
         >
           <MenuItems
-            class="z-10 w-56 bg-white dark:bg-gray-600 divide-y divide-gray-100 dark:divide-gray-400 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="w-full bg-white dark:bg-gray-600 divide-y divide-gray-100 dark:divide-gray-400 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             ref="menuItemsRef"
           >
             <slot/>
@@ -43,10 +42,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, watchEffect } from 'vue'
+import { defineComponent } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import { DotsVerticalIcon, PencilIcon } from '@heroicons/vue/outline'
-import usesPopper from '@/composition/usesPopper'
+import usePopper from '@/composition/usePopper'
 
 export default defineComponent({
   components: {
@@ -59,23 +58,15 @@ export default defineComponent({
   },
 
   setup () {
-    const buttonRef = ref(null)
-    const contentRef = ref(null)
-    const menuRef = ref(null)
-    const menuItemsRef = ref(null)
-    const { popPop, destroyPop } = usesPopper()
-    watchEffect(() => {
-      if (menuItemsRef.value && menuItemsRef.value.visible) {
-        popPop(buttonRef.value.el, contentRef.value)
-      }
+    const { trigger, container } = usePopper({
+      placement: 'bottom-end',
+      strategy: 'fixed',
+      modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
     })
 
     return {
-      buttonRef,
-      contentRef,
-      menuRef,
-      menuItemsRef,
-      destroyPop,
+      trigger,
+      container,
     }
   },
 })
