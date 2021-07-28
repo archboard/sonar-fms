@@ -11,7 +11,7 @@
     "php": "^8.0",
     "ext-intl": "*",
     "brick/money": "^0.5.2",
-    "facade/ignition": "^2.5",
+    "facade/ignition": "^2.11",
     "fideloper/proxy": "^4.4",
     "fruitcake/laravel-cors": "^2.0",
     "grantholle/api-resource-detection": "^1.0",

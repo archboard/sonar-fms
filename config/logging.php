@@ -41,6 +41,16 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'flare-stack' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'flare'],
+            'ignore_exceptions' => false,
+        ],
+
+        'flare' => [
+            'driver' => 'flare',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
