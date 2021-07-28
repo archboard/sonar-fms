@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceScholarship;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -90,7 +91,7 @@ class StudentInvoiceController extends Controller
      * @param Invoice $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function show(Student $student, Invoice $invoice)
+    public function show(Request $request, Student $student, Invoice $invoice)
     {
         $title = $invoice->title;
         $invoice->fullLoad();
@@ -111,12 +112,18 @@ class StudentInvoiceController extends Controller
             ],
         ];
 
+        /** @var User $user */
+        $user = $request->user();
+
         return inertia('invoices/Show', [
             'title' => $title,
             'invoice' => $invoice->toResource(),
             'student' => $student->toResource(),
             'breadcrumbs' => $breadcrumbs,
-            'permissions' => auth()->user()->getPermissions(Invoice::class),
+            'permissions' => [
+                'invoices' => $user->getPermissions(Invoice::class),
+                'students' => $user->getPermissions(Student::class),
+            ],
         ])->withViewData(compact('title'));
     }
 
