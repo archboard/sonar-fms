@@ -6,17 +6,12 @@ use App\Http\Resources\InvoiceTemplateResource;
 use App\Models\InvoiceTemplate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class InvoiceTemplateTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_permissions_are_working()
     {

@@ -12,18 +12,13 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
+use Tests\Traits\SignsIn;
 
 class InvoiceDuplicationTest extends TestCase
 {
     use RefreshDatabase;
     use CreatesInvoice;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     /**
      * A basic feature test example.

@@ -21,18 +21,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class CreateInvoiceTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     protected function getTestRequest($data = []): CreateInvoiceRequest
     {

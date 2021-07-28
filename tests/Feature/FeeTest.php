@@ -9,16 +9,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\ResponseTrait;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class FeeTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_permissions_work_for_index_page()
     {

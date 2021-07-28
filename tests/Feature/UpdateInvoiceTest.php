@@ -14,11 +14,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
+use Tests\Traits\CreatesInvoice;
 
 class UpdateInvoiceTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
+    use CreatesInvoice;
 
     protected Student $student;
     protected Invoice $invoice;
@@ -32,70 +34,10 @@ class UpdateInvoiceTest extends TestCase
         $this->invoice = $this->createInvoice();
     }
 
-    protected function createInvoice(): Invoice
-    {
-        /** @var Invoice $invoice */
-        $invoice = Invoice::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'school_id' => $this->school->id,
-            'student_id' => $this->student->id,
-        ]);
-
-        $items = [
-            [
-                'invoice_uuid' => $invoice->uuid,
-                'uuid' => $this->uuid(),
-                'fee_id' => null,
-                'sync_with_fee' => false,
-                'name' => $this->faker->word,
-                'amount_per_unit' => 1000,
-                'quantity' => 1,
-                'amount' => 1000,
-            ],
-            [
-                'invoice_uuid' => $invoice->uuid,
-                'uuid' => $this->uuid(),
-                'fee_id' => null,
-                'sync_with_fee' => false,
-                'name' => $this->faker->word,
-                'amount_per_unit' => 1000,
-                'quantity' => 1,
-                'amount' => 1000,
-            ],
-        ];
-
-        $scholarships = [
-            [
-                'uuid' => $this->uuid(),
-                'scholarship_id' => null,
-                'name' => 'Tuition Assistance A',
-                'sync_with_scholarship' => false,
-                'amount' => 500,
-                'percentage' => 10,
-                'resolution_strategy' => Least::class,
-            ],
-            [
-                'uuid' => $this->uuid(),
-                'scholarship_id' => null,
-                'name' => 'Tuition Assistance B',
-                'sync_with_scholarship' => false,
-                'amount' => 500,
-                'percentage' => 10,
-                'resolution_strategy' => Greatest::class,
-            ],
-        ];
-
-        $invoice->invoiceItems()
-            ->createMany($items);
-        $invoice->invoiceScholarships()
-            ->createMany($scholarships);
-
-        return $invoice;
-    }
-
     public function test_can_update_all_areas_of_existing_invoice()
     {
-        return;
+        $this->markTestIncomplete('Skipping update invoice test');
+
         ray()->clearScreen();
 
         $this->withoutExceptionHandling();

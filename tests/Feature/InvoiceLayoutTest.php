@@ -6,17 +6,12 @@ use App\Models\InvoiceLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class InvoiceLayoutTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_need_permission_to_get_to_layouts_page()
     {

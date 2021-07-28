@@ -16,18 +16,13 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class StudentSelectionInvoiceCreationTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     protected function makeSelection($count = 3)
     {

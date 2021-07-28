@@ -6,17 +6,12 @@ use App\Models\Scholarship;
 use App\ResolutionStrategies\Least;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class ScholarshipTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_cant_scholarships_without_permission()
     {

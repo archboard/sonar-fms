@@ -5,17 +5,12 @@ namespace Tests\Feature;
 use App\Models\Department;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class DepartmentTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_cannot_get_all_departments_without_permission()
     {

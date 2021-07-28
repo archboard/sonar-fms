@@ -6,18 +6,13 @@ use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
+use Tests\Traits\SignsIn;
 
 class ChangeInvoiceStatusTest extends TestCase
 {
     use CreatesInvoice;
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_status_change_request_is_authorized()
     {

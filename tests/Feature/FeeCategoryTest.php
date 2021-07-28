@@ -6,17 +6,12 @@ use App\Http\Resources\FeeCategoryResource;
 use App\Models\FeeCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class FeeCategoryTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     public function test_cannot_get_categories_without_permission()
     {

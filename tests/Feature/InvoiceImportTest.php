@@ -24,17 +24,12 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
 use Tests\TestCase;
+use Tests\Traits\SignsIn;
 
 class InvoiceImportTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->signIn();
-    }
+    use SignsIn;
 
     #[ArrayShape(['id' => "string", 'column' => "null|string", 'value' => "null|string", 'isManual' => "bool"])]
     protected function makeMapField(string $column = null, string $value = null, bool $isManual = false): array
@@ -441,7 +436,6 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_get_simple_xls_as_models()
     {
-        ray()->showApp();
         $this->withoutExceptionHandling();
         Storage::fake();
 
@@ -612,7 +606,6 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_import_simple_csv_and_get_no_successful_results()
     {
-        ray()->showApp();
         Storage::fake();
         Event::fake();
 
@@ -676,7 +669,6 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_import_huge_csv()
     {
-        ray()->showApp();
         Storage::fake();
         Event::fake();
 
@@ -752,7 +744,6 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_import_complex_xlsx()
     {
-        ray()->showApp();
         Storage::fake();
         Event::fake();
 
