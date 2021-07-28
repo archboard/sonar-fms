@@ -5,9 +5,11 @@ namespace Tests\Feature;
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\CreatesInvoice;
 
 class ChangeInvoiceStatusTest extends TestCase
 {
+    use CreatesInvoice;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -15,17 +17,6 @@ class ChangeInvoiceStatusTest extends TestCase
         parent::setUp();
 
         $this->signIn();
-    }
-
-    protected function createInvoice(): Invoice
-    {
-        /** @var Invoice $invoice */
-        $invoice = Invoice::factory()->create([
-            'user_id' => $this->user->id,
-            'batch_id' => $this->uuid(),
-        ]);
-
-        return $invoice;
     }
 
     public function test_status_change_request_is_authorized()
@@ -59,6 +50,38 @@ class ChangeInvoiceStatusTest extends TestCase
     public function test_can_void_and_duplicate()
     {
         $this->assignPermission('update', Invoice::class);
+
         $invoice = $this->createInvoice();
+
+        $data = [
+            'status' => 'voided_at',
+            'duplicate' => true,
+        ];
+
+        $this->post(route('invoices.status', $invoice), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('invoices.duplicate', $invoice));
+
+        $invoice->refresh();
+        $this->assertNotNull($invoice->voided_at);
+    }
+
+    public function test_can_void_and_not_duplicate()
+    {
+        $this->assignPermission('update', Invoice::class);
+
+        $invoice = $this->createInvoice();
+
+        $data = [
+            'status' => 'voided_at',
+            'duplicate' => false,
+        ];
+
+        $this->post(route('invoices.status', $invoice), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(back()->getTargetUrl());
+
+        $invoice->refresh();
+        $this->assertNotNull($invoice->voided_at);
     }
 }
