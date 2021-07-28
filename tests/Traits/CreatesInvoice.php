@@ -52,6 +52,7 @@ trait CreatesInvoice
                 $terms->each(fn ($term) => $term->save());
             });
 
-        return $invoice->setCalculatedAttributes(true);
+        return $invoice->setCalculatedAttributes(true)
+            ->refresh();
     }
 }

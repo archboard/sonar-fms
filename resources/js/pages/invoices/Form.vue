@@ -482,7 +482,7 @@
 
 <script>
 import { computed, inject, ref, watch, watchEffect } from 'vue'
-import { useForm, usePage } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/inertia-vue3'
 import { PlusSmIcon } from '@heroicons/vue/solid'
 import { TrashIcon } from '@heroicons/vue/outline'
 import Fieldset from '@/components/forms/Fieldset'
@@ -518,6 +518,7 @@ import InvoiceSummary from '@/components/InvoiceSummary'
 import Mocker from '@/components/Mocker'
 import Modal from '@/components/Modal'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
+import useSchool from '@/composition/useSchool'
 
 export default {
   components: {
@@ -575,8 +576,7 @@ export default {
     const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
     const isNew = computed(() => !props.invoice.id)
-    const page = usePage()
-    const school = computed(() => page.props.value.school)
+    const { school } = useSchool()
     const form = useForm({
       title: props.invoice.title || null,
       description: props.invoice.description || null,
@@ -596,6 +596,15 @@ export default {
       tax_rate: school.value.tax_rate_converted || null,
       tax_label: school.value.tax_label || null,
     })
+    const applyTemplate = template => {
+      Object.keys(form.data())
+        .forEach(field => {
+          if (typeof template[field] !== 'undefined') {
+            form[field] = template[field]
+          }
+        })
+    }
+
     // Emit the initial value
     emit('update:invoiceForm', form)
 
@@ -638,14 +647,8 @@ export default {
     }
 
     // Watch for changes to apply a template
-    watch(() => props.invoiceTemplate, () => {
-      console.log('watch', props.invoiceTemplate)
-      Object.keys(form.data())
-        .forEach(field => {
-          if (typeof props.invoiceTemplate[field] !== 'undefined') {
-            form[field] = props.invoiceTemplate[field]
-          }
-        })
+    watchEffect(() => {
+      applyTemplate(props.invoiceTemplate)
     })
 
     watch(form, () => {

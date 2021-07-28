@@ -6,6 +6,10 @@
       </Button>
     </template>
 
+    <Alert v-if="duplicating" class="mb-6" level="warning">
+      {{ __('This will create a new invoice.') }}
+    </Alert>
+
     <InvoiceForm
       :student="student"
       :invoice-template="invoiceTemplate"
@@ -28,10 +32,12 @@ import InvoiceForm from './Form'
 import InvoiceTemplatesModal from '../../components/modals/InvoiceTemplatesModal'
 import Button from '../../components/Button'
 import PageProps from '@/mixins/PageProps'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    Alert,
     Button,
     InvoiceTemplatesModal,
     Authenticated,
@@ -47,6 +53,10 @@ export default defineComponent({
       type: Object,
       default: () => ({})
     },
+    duplicating: {
+      type: Boolean,
+      default: false,
+    }
   },
 
   setup (props) {

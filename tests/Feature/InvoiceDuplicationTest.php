@@ -9,6 +9,7 @@ use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 
@@ -62,5 +63,19 @@ class InvoiceDuplicationTest extends TestCase
                 }
             }
         }
+    }
+
+    public function test_can_get_to_invoice_duplication_page()
+    {
+        $this->assignPermission('create', Invoice::class);
+
+        $invoice = $this->createInvoice();
+
+        $this->get(route('invoices.duplicate', $invoice))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('invoices/Create')
+                ->where('duplicating', true)
+                ->where('defaultTemplate', $invoice->asInvoiceTemplate())
+            );
     }
 }

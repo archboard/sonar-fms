@@ -43,6 +43,7 @@ class DuplicateInvoiceController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'student' => $invoice->student->toResource(),
             'defaultTemplate' => $invoice->asInvoiceTemplate(),
+            'duplicating' => true,
         ])->withViewData(compact('title'));
     }
 }
