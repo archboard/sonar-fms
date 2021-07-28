@@ -583,4 +583,15 @@ class Invoice extends Model
 
         return $data;
     }
+
+    public function convertToInvoiceTemplate(array $data): InvoiceTemplate
+    {
+        return InvoiceTemplate::create([
+            'school_id' => $this->school_id,
+            'user_id' => auth()->id(),
+            'name' => $data['name'] ?? "Created from invoice {$this->number_formatted}",
+            'template' => $this->asInvoiceTemplate(),
+            'for_import' => false,
+        ]);
+    }
 }

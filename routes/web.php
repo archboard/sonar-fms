@@ -134,20 +134,31 @@ Route::middleware('tenant')->group(function () {
          */
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
             ->name('invoices.index');
-        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
-            ->name('invoices.show');
-        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
-            ->name('invoices.edit');
-        Route::post('/invoices/{invoice}/status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
-            ->name('invoices.status');
-        Route::get('/invoices/{invoice}/duplicate', \App\Http\Controllers\DuplicateInvoiceController::class)
-            ->name('invoices.duplicate');
 
-        Route::get('/invoices/{invoice}/preview', \App\Http\Controllers\PreviewInvoiceController::class)
-            ->name('invoices.preview');
+        Route::prefix('/invoices/{invoice}')
+            ->name('invoices.')
+            ->group(function () {
+                Route::get('/', [\App\Http\Controllers\InvoiceController::class, 'show'])
+                    ->name('show');
 
-        Route::get('/invoices/{invoice}/pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
-            ->name('invoices.download');
+                Route::get('edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
+                    ->name('edit');
+
+                Route::post('status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
+                    ->name('status');
+
+                Route::get('duplicate', \App\Http\Controllers\DuplicateInvoiceController::class)
+                    ->name('duplicate');
+
+                Route::post('convert', \App\Http\Controllers\ConvertInvoiceToTemplateController::class)
+                    ->name('convert');
+
+                Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
+                    ->name('preview');
+
+                Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
+                    ->name('download');
+            });
 
         Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
             ->except('create', 'edit');

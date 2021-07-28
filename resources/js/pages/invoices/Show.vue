@@ -25,6 +25,9 @@
             <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
               {{ __('View PDF') }}
             </SonarMenuItem>
+            <SonarMenuItem @click.prevent="convert = true">
+              {{ __('Convert to template') }}
+            </SonarMenuItem>
           </div>
         </template>
       </Dropdown>
@@ -144,6 +147,12 @@
     @close="editStatus = false"
     :invoice="invoice"
   />
+  <ConvertInvoiceModal
+    v-if="convert"
+    @close="convert = false"
+    :invoice="invoice"
+    :endpoint="$route('invoices.convert', invoice)"
+  />
 </template>
 
 <script>
@@ -162,10 +171,12 @@ import PageProps from '@/mixins/PageProps'
 import Dropdown from '@/components/forms/Dropdown'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertInvoiceModal,
     InvoiceStatusModal,
     Dropdown,
     HelpText,
@@ -190,6 +201,7 @@ export default defineComponent({
     const { displayDate } = displaysDate()
     const { can, canAny } = checksPermissions(props.permissions)
     const editStatus = ref(false)
+    const convert = ref(false)
 
     return {
       displayCurrency,
@@ -197,6 +209,7 @@ export default defineComponent({
       canAny,
       editStatus,
       displayDate,
+      convert,
     }
   }
 })

@@ -46,15 +46,15 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Modal from '../Modal'
+import Modal from '@/components/Modal'
 import { useForm } from '@inertiajs/inertia-vue3'
-import handlesInvoiceTemplates from '../../composition/handlesInvoiceTemplates'
-import Fieldset from '../forms/Fieldset'
-import Label from '../forms/Label'
-import InputWrap from '../forms/InputWrap'
-import Input from '../forms/Input'
+import handlesInvoiceTemplates from '@/composition/handlesInvoiceTemplates'
+import Fieldset from '@/components/forms/Fieldset'
+import Label from '@/components/forms/Label'
+import InputWrap from '@/components/forms/InputWrap'
+import Input from '@/components/forms/Input'
 import ModalHeadline from './ModalHeadline'
-import Link from '../Link'
+import Link from '@/components/Link'
 
 export default defineComponent({
   components: {
@@ -74,7 +74,7 @@ export default defineComponent({
       default: false
     },
   },
-  emits: ['use'],
+  emits: ['use', 'close'],
 
   setup (props, { emit }) {
     const modal = ref()
