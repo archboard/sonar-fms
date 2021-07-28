@@ -33,7 +33,11 @@ class DuplicateInvoiceController extends Controller
                 'route' => route('students.show', $invoice->student),
             ],
             [
-                'label' => __('Duplicate invoice :invoice_number', ['invoice_number' => $invoice->number_formatted]),
+                'label' => $invoice->title,
+                'route' => route('students.invoices.show', [$invoice->student, $invoice]),
+            ],
+            [
+                'label' => __('Duplicate'),
                 'route' => route('invoices.duplicate', $invoice),
             ],
         ];
