@@ -56,4 +56,18 @@ class PowerSchoolOpenIdLoginController extends Controller
             DB::table('student_user')->insert($students->toArray());
         }
     }
+
+    /**
+     * Gets the default attributes to be added for this user
+     *
+     * @param Request $request
+     * @param Collection $data
+     * @return array
+     */
+    protected function getDefaultAttributes(Request $request, Collection $data): array
+    {
+        return [
+            'tenant_id' => $request->tenant()->id,
+        ];
+    }
 }
