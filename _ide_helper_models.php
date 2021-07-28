@@ -336,6 +336,7 @@ namespace App\Models{
  * @property-read mixed $amount_formatted
  * @property-read mixed $amount_per_unit_formatted
  * @property-read \App\Models\Invoice $invoice
+ * @method static \Database\Factories\InvoiceItemFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem query()
@@ -409,6 +410,7 @@ namespace App\Models{
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
  * @property-read int|null $invoice_payment_terms_count
+ * @method static \Database\Factories\InvoicePaymentScheduleFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentSchedule query()
@@ -442,6 +444,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
+ * @method static \Database\Factories\InvoicePaymentTermFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm query()
@@ -473,20 +476,21 @@ namespace App\Models{
  * @property int|null $scholarship_id
  * @property string $name
  * @property string|null $percentage
- * @property int|null $amount
+ * @property int $amount
  * @property string|null $resolution_strategy
  * @property int|null $calculated_amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $appliesTo
  * @property-read int|null $applies_to_count
- * @property-read mixed $amount_formatted
- * @property-read mixed $calculated_amount_formatted
+ * @property-read string|null $amount_formatted
+ * @property-read string|null $calculated_amount_formatted
  * @property-read mixed $percentage_converted
- * @property-read mixed $percentage_decimal
+ * @property-read float $percentage_decimal
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\Invoice $invoice
  * @property-read \App\Models\Scholarship|null $scholarship
+ * @method static \Database\Factories\InvoiceScholarshipFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship query()
