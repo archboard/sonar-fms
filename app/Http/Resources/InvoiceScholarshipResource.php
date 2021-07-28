@@ -15,7 +15,8 @@ class InvoiceScholarshipResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'id' => $this->uuid,
+            'uuid' => $this->uuid,
             'scholarship_id' => $this->scholarship_id,
             'name' => $this->name,
             'sync_with_scholarship' => $this->sync_with_scholarship,
@@ -26,6 +27,11 @@ class InvoiceScholarshipResource extends JsonResource
             'percentage' => $this->percentage,
             'percentage_formatted' => $this->percentage_formatted,
             'resolution_strategy' => $this->resolution_strategy,
+            'applies_to' => $this->whenLoaded(
+                'appliesTo',
+                fn () => $this->appliesTo->pluck('uuid'),
+                []
+            ),
         ];
     }
 }

@@ -26,6 +26,13 @@ class InvoicePaymentSchedule extends Model
         'amount' => 'int',
     ];
 
+    // These are the attributes/properties that are
+    // used on the invoice form based on the API Resource
+    public static array $formAttributes = [
+        'id',
+        'terms',
+    ];
+
     public function getIncrementing(): bool
     {
         return false;

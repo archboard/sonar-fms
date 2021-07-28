@@ -43,6 +43,7 @@ trait CreatesInvoice
                     ->count($this->faker->numberBetween(1, 5))
                     ->make([
                         'invoice_uuid' => $schedule->invoice_uuid,
+                        'invoice_payment_schedule_uuid' => $schedule['uuid'],
                     ]);
 
                 $schedule->setRelation('invoicePaymentTerms', $terms);

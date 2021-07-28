@@ -18,7 +18,6 @@ class InvoiceItemResource extends JsonResource
             'id' => $this->uuid,
             'uuid' => $this->uuid,
             'fee_id' => $this->fee_id,
-            'sync_with_fee' => $this->sync_with_fee,
             'name' => $this->name,
             'amount_per_unit' => $this->amount_per_unit,
             'amount_per_unit_formatted' => $this->amount_per_unit_formatted,

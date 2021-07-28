@@ -30,6 +30,16 @@ class InvoiceItem extends Model
         'quantity',
     ];
 
+    // These are the attributes/properties that are
+    // used on the invoice form based on the API Resource
+    public static array $formAttributes = [
+        'id',
+        'fee_id',
+        'name',
+        'amount_per_unit',
+        'quantity',
+    ];
+
     public function getIncrementing(): bool
     {
         return false;

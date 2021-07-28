@@ -18,6 +18,8 @@ class InvoiceResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'title' => $this->title,
+            'term_id' => $this->term_id,
+            'notify' => $this->notify,
             'description' => $this->description,
             'amount_due' => $this->amount_due,
             'amount_due_formatted' => $this->amount_due_formatted,

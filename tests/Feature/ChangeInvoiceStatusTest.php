@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ChangeInvoiceStatusTest extends TestCase
@@ -55,5 +54,11 @@ class ChangeInvoiceStatusTest extends TestCase
 
         $this->post(route('invoices.status', $invoice), $data)
             ->assertSessionHasErrors(['status']);
+    }
+
+    public function test_can_void_and_duplicate()
+    {
+        $this->assignPermission('update', Invoice::class);
+        $invoice = $this->createInvoice();
     }
 }

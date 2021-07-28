@@ -37,6 +37,15 @@ class InvoicePaymentTerm extends Model
         'notify' => 'boolean',
     ];
 
+    // These are the attributes/properties that are
+    // used on the invoice form based on the API Resource
+    public static array $formAttributes = [
+        'id',
+        'amount',
+        'percentage',
+        'due_at',
+    ];
+
     public function getIncrementing(): bool
     {
         return false;

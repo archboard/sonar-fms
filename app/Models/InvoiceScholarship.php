@@ -40,6 +40,18 @@ class InvoiceScholarship extends Model
         'sync_with_scholarship' => 'boolean',
     ];
 
+    // These are the attributes/properties that are
+    // used on the invoice form based on the API Resource
+    public static array $formAttributes = [
+        'id',
+        'scholarship_id',
+        'name',
+        'amount',
+        'percentage',
+        'resolution_strategy',
+        'applies_to',
+    ];
+
     public function getIncrementing()
     {
         return false;

@@ -81,6 +81,24 @@ class Invoice extends Model
 
     protected $keyType = 'string';
 
+    // These are the attributes/properties that are
+    // used on the invoice form based on the API Resource
+    public static array $formAttributes = [
+        'title',
+        'description',
+        'term_id',
+        'available_at',
+        'due_at',
+        'notify',
+        'items',
+        'scholarships',
+        'payment_schedules',
+        'apply_tax',
+        'use_school_tax_defaults',
+        'tax_rate',
+        'tax_label',
+    ];
+
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
@@ -528,6 +546,9 @@ class Invoice extends Model
     public function asInvoiceTemplate(): array
     {
         $this->load(
+            'invoiceItems',
+            'invoiceScholarships',
+            'invoiceScholarships.appliesTo',
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms'
         );
@@ -535,22 +556,31 @@ class Invoice extends Model
         $resource = $this->toResource()
             ->response()
             ->getData(true);
-        $data = Arr::only($resource, [
-            'title',
-            'description',
-            'term_id',
-            'available_at',
-            'due_at',
-            'notify',
-            'items',
-            'scholarships',
-            'payment_schedules',
-            'apply_tax',
-            'use_school_tax_defaults',
-            'tax_rate',
-            'tax_label',
-        ]);
 
+        $data = Arr::only($resource, static::$formAttributes);
 
+        $data['items'] = array_map(
+            fn ($item) => Arr::only($item, InvoiceItem::$formAttributes),
+            $data['items'],
+        );
+
+        $data['scholarships'] = array_map(
+            fn ($item) => Arr::only($item, InvoiceScholarship::$formAttributes),
+            $data['scholarships']
+        );
+
+        $data['payment_schedules'] = array_map(
+            function ($schedule) {
+                $schedule['terms'] = array_map(
+                    fn ($term) => Arr::only($term, InvoicePaymentTerm::$formAttributes),
+                    $schedule['terms']
+                );
+
+                return Arr::only($schedule, InvoicePaymentSchedule::$formAttributes);
+            },
+            $data['payment_schedules']
+        );
+
+        return $data;
     }
 }
