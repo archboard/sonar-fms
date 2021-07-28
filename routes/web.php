@@ -111,19 +111,8 @@ Route::middleware('tenant')->group(function () {
             ->except('create', 'edit');
 
         /**
-         * Invoices
+         * Invoice imports
          */
-        Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
-            ->name('invoices.index');
-        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
-            ->name('invoices.show');
-        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
-            ->name('invoices.edit');
-        Route::post('/invoices/{invoice}/status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
-            ->name('invoices.status');
-        Route::get('/invoices/{invoice}/duplicate', \App\Http\Controllers\DuplicateInvoiceController::class)
-            ->name('invoices.duplicate');
-
         Route::name('invoices')
             ->resource('/invoices/imports', \App\Http\Controllers\InvoiceImportController::class);
 
@@ -139,6 +128,20 @@ Route::middleware('tenant')->group(function () {
 
         Route::post('invoices/imports/{import}/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
             ->name('invoices.imports.rollback');
+
+        /**
+         * Invoices
+         */
+        Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
+            ->name('invoices.index');
+        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])
+            ->name('invoices.show');
+        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
+            ->name('invoices.edit');
+        Route::post('/invoices/{invoice}/status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
+            ->name('invoices.status');
+        Route::get('/invoices/{invoice}/duplicate', \App\Http\Controllers\DuplicateInvoiceController::class)
+            ->name('invoices.duplicate');
 
         Route::get('/invoices/{invoice}/preview', \App\Http\Controllers\PreviewInvoiceController::class)
             ->name('invoices.preview');
