@@ -37,6 +37,10 @@ class InvoiceFactory extends Factory
                 ->inRandomOrder()
                 ->first()
                 ->id,
+            'apply_tax' => $this->faker->boolean,
+            'use_school_tax_defaults' => $this->faker->boolean,
+            'tax_rate' => $this->faker->randomFloat(5, 0.001, 0.1),
+            'tax_label' => $this->faker->word,
         ];
     }
 }

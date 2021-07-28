@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InvoicePaymentTerm extends Model
 {
+    use HasFactory;
     use BelongsToInvoice;
     use HasResource;
 
@@ -34,6 +36,11 @@ class InvoicePaymentTerm extends Model
         'amount' => 'int',
         'notify' => 'boolean',
     ];
+
+    public function getIncrementing(): bool
+    {
+        return false;
+    }
 
     public function invoicePaymentSchedule(): BelongsTo
     {

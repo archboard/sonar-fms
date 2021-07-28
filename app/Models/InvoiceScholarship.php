@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongsToInvoice;
 use App\Traits\HasPercentageAttribute;
 use Brick\Money\Money;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,7 @@ use Ramsey\Uuid\Uuid;
  */
 class InvoiceScholarship extends Model
 {
+    use HasFactory;
     use BelongsToInvoice;
     use HasPercentageAttribute;
 
@@ -60,17 +62,17 @@ class InvoiceScholarship extends Model
         );
     }
 
-    public function getAmountAttribute($value)
+    public function getAmountAttribute($value): int
     {
         return $value ?? 0;
     }
 
-    public function getPercentageDecimalAttribute()
+    public function getPercentageDecimalAttribute(): float
     {
         return $this->percentage / 100;
     }
 
-    public function getAmountFormattedAttribute()
+    public function getAmountFormattedAttribute(): ?string
     {
         if (
             !$this->relationLoaded('invoice') ||
@@ -82,7 +84,7 @@ class InvoiceScholarship extends Model
         return displayCurrency($this->amount, $this->invoice->currency);
     }
 
-    public function getCalculatedAmountFormattedAttribute()
+    public function getCalculatedAmountFormattedAttribute(): ?string
     {
         if (
             !$this->relationLoaded('invoice') ||
@@ -96,12 +98,18 @@ class InvoiceScholarship extends Model
 
     public function getApplicableSubtotal(): int
     {
-        // When it's not applied to the
-        if ($this->appliesTo->isEmpty()) {
-            return $this->invoice->calculateSubtotal();
-        }
+        $items = $this->appliesTo->isEmpty()
+            ? $this->invoice->invoiceItems
+            : $this->appliesTo;
 
-        return Invoice::calculateSubtotalFromItems($this->appliesTo);
+        return Invoice::calculateSubtotalFromItems($items);
+    }
+
+    public function setAmount(): self
+    {
+        $this->amount = $this->calculateAmount();
+
+        return $this;
     }
 
     public function calculateAmount(): int
@@ -120,27 +128,5 @@ class InvoiceScholarship extends Model
         return $discount > 0
             ? $discount
             : $percentageDiscount;
-    }
-
-    public static function generateAttributesForInsert(string $invoiceUuid, array $item, Collection $scholarships): array
-    {
-        $item['uuid'] = Uuid::uuid4();
-        $item['invoice_uuid'] = $invoiceUuid;
-
-        if (
-            $item['sync_with_scholarship'] &&
-            $scholarship = $scholarships->get($item['scholarship_id'])
-        ) {
-            $item['name'] = $scholarship->name;
-            $item['amount'] = $scholarship->amount;
-            $item['percentage'] = $scholarship->percentage;
-            $item['resolution_strategy'] = $scholarship->resolution_strategy;
-        }
-
-        // Cache the total line item
-        // Need to know which line items this applies to
-        $item['calculated_amount'] = (new static($item))->calculateAmount();
-
-        return Arr::only($item, (new static)->fillable);
     }
 }

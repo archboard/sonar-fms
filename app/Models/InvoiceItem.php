@@ -30,7 +30,7 @@ class InvoiceItem extends Model
         'quantity',
     ];
 
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return false;
     }

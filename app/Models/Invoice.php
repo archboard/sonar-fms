@@ -366,9 +366,7 @@ class Invoice extends Model
     {
         // Cache all items
         $this->invoiceItems->each(function (InvoiceItem $item) {
-            $item->update([
-                'amount' => $item->calculateTotal(),
-            ]);
+            $item->setAmount()->save();
         });
 
         // Cache all scholarship calculations
@@ -376,9 +374,7 @@ class Invoice extends Model
             ->with('invoice', 'invoice.invoiceItems')
             ->get();
         $scholarships->each(function (InvoiceScholarship $scholarship) {
-            $scholarship->update([
-                'calculated_amount' => $scholarship->calculateAmount(),
-            ]);
+            $scholarship->setAmount()->save();
         });
 
         $this->setCalculatedAttributes()->save();
