@@ -29,6 +29,16 @@ class Tenant extends TenantBase
         'allow_oidc_login' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        if (app()->environment('testing')) {
+            static::created(function (Tenant $tenant) {
+                $tenant->schools()
+                    ->saveMany(School::factory()->count(3)->make());
+            });
+        }
+    }
+
     public function schools(): HasMany
     {
         return $this->hasMany(School::class);

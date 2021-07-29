@@ -20,11 +20,7 @@ class TenantSeeder extends Seeder
         /** @var Tenant $tenant */
         $tenant = Tenant::factory()->testing()->create();
 
-        /** @var Collection $schools */
-        $schools = $tenant->schools()
-            ->saveMany(School::factory()->count(3)->make());
-
-        $schools->each(function (School $school) use ($tenant) {
+        $tenant->schools->each(function (School $school) use ($tenant) {
             // Create students for the school
             $school->students()->saveMany(
                 Student::factory()->count(5)->make(['tenant_id' => $tenant->id])
