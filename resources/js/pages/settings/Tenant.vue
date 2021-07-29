@@ -175,7 +175,7 @@
             </div>
           </div>
 
-          <form @submit.prevent="saveSyncEmails">
+          <form @submit.prevent="saveSyncEmails" class="mt-4">
             <Fieldset>
               <InputWrap :error="syncEmailsForm.errors.sync_notification_emails">
                 <Label for="sync_notification_emails">{{ __('Notify these emails after a sync completes') }}</Label>
