@@ -117,6 +117,13 @@ class Tenant extends TenantBase
         return $school;
     }
 
+    public function hasBeenInstalled(): bool
+    {
+        return $this->id &&
+            $this->schools()->exists() &&
+            $this->users()->exists();
+    }
+
     /**
      * This syncs all the schools' basic info
      * Then syncs only the active schools' SIS data

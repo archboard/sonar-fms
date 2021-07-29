@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ShowInstallationPageController extends Controller
@@ -16,8 +17,23 @@ class ShowInstallationPageController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $title = __('Install FMS');
+        /** @var User $user */
+        $user = $request->user();
         $tenant = Tenant::firstOrNew(['domain' => $request->getHost()]);
+
+        // Authorize if there is a user and don't have permission
+        // This permission doesn't exist anywhere, so only someone
+        // who manages the tenancy will pass this gate
+        if ($user) {
+            $this->authorize('install tenant');
+        }
+
+        // Or there isn't a user and the tenant has users
+        if ($tenant->hasBeenInstalled()) {
+            abort(404);
+        }
+
+        $title = __('Install Sonar FMS');
 
         return inertia('Install', [
             'title' => $title,
