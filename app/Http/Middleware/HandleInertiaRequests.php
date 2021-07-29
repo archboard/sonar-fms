@@ -47,10 +47,6 @@ class HandleInertiaRequests extends Middleware
                 if ($user = $request->user()) {
                     $user->load('schools');
 
-                    if (!$user->schools->contains('id', $user->school_id)) {
-                        $user->update(['school_id' => $user->schools->first()->id]);
-                    }
-
                     return $user->toResource();
                 }
 

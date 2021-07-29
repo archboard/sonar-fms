@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\School;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,6 +38,19 @@ class SyncSchools implements ShouldQueue
      */
     public function handle()
     {
-        $this->tenant->sisProvider()->syncSchools();
+        if (!app()->environment('testing')) {
+            $this->tenant->sisProvider()->syncSchools();
+        }
+
+        $schools = $this->tenant->schools->pluck('id');
+
+        // Sync super admins with these schools
+        $this->tenant
+            ->users()
+            ->where('manages_tenancy', true)
+            ->get()
+            ->each(function (User $user) use ($schools) {
+                $user->schools()->sync($schools);
+            });
     }
 }

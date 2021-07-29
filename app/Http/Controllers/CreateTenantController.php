@@ -42,19 +42,18 @@ class CreateTenantController extends Controller
         $data['sync_notification_emails'] = $data['email'];
         $tenant->forceFill(Arr::except($data, 'email'));
         $tenant->save();
-
-        // Kick off job to sync schools
-        SyncSchools::dispatchSync($tenant);
+        $tenant->makeCurrent();
 
         // Save the user and give them full privileges
         /** @var User $user */
         $user = $tenant->users()->updateOrCreate(Arr::only($data, 'email'), [
             'manages_tenancy' => true,
         ]);
-        $user->schools()->sync($tenant->schools->pluck('id'));
+
+        // Kick off job to sync schools
+        SyncSchools::dispatchSync($tenant);
 
         auth()->login($user);
-
         session()->flash('success', __('Information saved successfully. Update tenant settings to finish installation.'));
 
         return redirect()->route('settings.tenant');

@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\AllowsOidcLogins;
 use App\Http\Middleware\AllowsPasswordLogins;
+use App\Http\Middleware\CanInstall;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
 use App\Http\Middleware\ManagesTenancy;
@@ -85,5 +86,6 @@ class Kernel extends HttpKernel
         'allows_pw_auth' => AllowsPasswordLogins::class,
         'allows_oidc_auth' => AllowsOidcLogins::class,
         'manages_tenancy' => ManagesTenancy::class,
+        'can_install' => CanInstall::class,
     ];
 }

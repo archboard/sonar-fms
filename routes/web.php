@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Self-hosted only routes
  */
-Route::middleware('self_hosted')->group(function () {
+Route::middleware(['self_hosted', 'can_install'])->group(function () {
     Route::get('/install', \App\Http\Controllers\ShowInstallationPageController::class);
     Route::post('/install', \App\Http\Controllers\CreateTenantController::class)
         ->name('install');
