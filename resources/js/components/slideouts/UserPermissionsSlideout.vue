@@ -24,12 +24,21 @@
         </CheckboxWrapper>
         <HelpText>{{ __('When checked, this user can manage your entire tenancy. This means the user has full admin access to the entire application. If your tenancy has multiple schools, it does not automatically add them to all of the schools. You will still need to add them to schools manually.') }}</HelpText>
       </InputWrap>
+
+      <InputWrap v-if="(currentUser.manages_tenancy || authUserManagesSchool) && !managesTenancy">
+        <CheckboxWrapper>
+          <Checkbox v-model:checked="managesSchool" />
+          <CheckboxText>{{ __('Manages school') }}</CheckboxText>
+        </CheckboxWrapper>
+        <HelpText>{{ __('When checked, this user has full permission for :school, but not special tenancy permissions.') }}</HelpText>
+      </InputWrap>
     </Fieldset>
 
-    <div class="space-y-6 mt-8">
+    <div class="space-y-4 divide-y mt-8">
       <div
         v-for="permission in permissions.models"
         :key="permission.model"
+        class="pt-3"
       >
         <h4>{{ permission.label }}</h4>
 
@@ -77,6 +86,7 @@ export default {
   },
   props: {
     user: Object,
+    authUserManagesSchool: Boolean,
   },
   emits: ['close'],
 
@@ -89,12 +99,14 @@ export default {
     const permissions = ref([])
     const currentUser = computed(() => page.props.value.user)
     const managesTenancy = ref(props.user.manages_tenancy)
+    const managesSchool = ref(false)
     const saving = ref(false)
 
     const getPermissions = () => {
       $http.get($route('users.permissions', props.user)).then(({ data }) => {
         permissions.value = data
         managesTenancy.value = data.manages_tenancy
+        managesSchool.value = data.manages_school
       })
     }
     const savePermissions = (close) => {
@@ -110,6 +122,11 @@ export default {
       props.user.manages_tenancy = newVal
       $http.put($route('users.tenancy_manager', props.user)).then(getPermissions)
     })
+    watch(managesSchool, () => {
+      console.log('manages school change')
+      $http.put($route('users.school-admin', props.user)).then(getPermissions)
+    })
+
     onMounted(() => {
       getPermissions()
     })
@@ -120,6 +137,7 @@ export default {
       permissions,
       currentUser,
       managesTenancy,
+      managesSchool,
       saving,
     }
   },

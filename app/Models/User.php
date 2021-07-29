@@ -108,6 +108,11 @@ class User extends Authenticatable implements HasLocalePreference
         return collect();
     }
 
+    public function getIsSchoolAdminAttribute(): bool
+    {
+        return $this->isSchoolAdmin();
+    }
+
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
@@ -313,10 +318,16 @@ class User extends Authenticatable implements HasLocalePreference
             ->toArray();
     }
 
+    public function isSchoolAdmin(): bool
+    {
+        return $this->isA('school admin');
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [
             'manages_tenancy' => $this->manages_tenancy,
+            'manages_school' => $this->isSchoolAdmin(),
             'roles' => [],
             'models' => [
                 [

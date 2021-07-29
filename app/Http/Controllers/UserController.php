@@ -33,6 +33,7 @@ class UserController extends Controller
             'users' => UserResource::collection($users),
             'title' => $title,
             'permissions' => $user->getPermissions(User::class),
+            'isSchoolAdmin' => $user->isSchoolAdmin(),
         ])->withViewData(compact('title'));
     }
 

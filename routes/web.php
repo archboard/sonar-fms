@@ -188,6 +188,9 @@ Route::middleware('tenant')->group(function () {
             ->name('users.permissions');
         Route::put('/users/{user}/permissions', \App\Http\Controllers\Settings\UpdateUserPermissions::class);
 
+        Route::put('/users/{user}/school-admin', \App\Http\Controllers\ToggleSchoolAdminController::class)
+            ->name('users.school-admin');
+
         /**
          * Settings-based routes
          */

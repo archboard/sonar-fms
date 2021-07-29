@@ -106,6 +106,7 @@
     <UserPermissionsSlideout
       v-if="permissionsUser.id"
       :user="permissionsUser"
+      :auth-user-manages-school="isSchoolAdmin"
       @close="closePermissions"
     />
   </Authenticated>
@@ -169,6 +170,7 @@ export default defineComponent({
     user: Object,
     school: Object,
     permissions: Object,
+    isSchoolAdmin: Boolean,
   },
 
   setup (props) {

@@ -28,8 +28,9 @@ abstract class TestCase extends BaseTestCase
         $this->tenant->makeCurrent();
 
         $this->school = $this->tenant->schools->random();
-        \Bouncer::scope()->to($this->school->id);
 
+        \Bouncer::scope()->to($this->school->id);
+        \Bouncer::allow('school admin')->everything();
         \Bouncer::refresh();
 
         $this->app->bind(School::class, fn () => $this->school);
@@ -75,15 +76,15 @@ abstract class TestCase extends BaseTestCase
         return $this->user->givePermissionForSchool($this->user->school, $permission, $model);
     }
 
+    public function manageTenancy(): User
+    {
+        $this->user->update(['manages_tenancy' => true]);
+
+        return $this->user;
+    }
+
     public function addUser(): User
     {
-        /** @var User $user */
-        $user = User::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'school_id' => $this->school->id,
-        ]);
-        $user->schools()->attach($user->id);
-
-        return $user;
+        return $this->createUser();
     }
 }
