@@ -298,7 +298,9 @@ export default defineComponent({
       ...props.tenant
     })
     const submit = () => {
-      form.post($route('settings.tenant'))
+      form.post($route('settings.tenant'), {
+        preserveScroll: true,
+      })
     }
 
     // Active schools
