@@ -224,6 +224,9 @@ Route::middleware('tenant')->group(function () {
 
                 Route::put('users/{user}/manager', \App\Http\Controllers\Settings\UpdateTenancyManagerStatusController::class)
                     ->name('users.tenancy_manager');
+
+                Route::post('test', \App\Http\Controllers\SendTestMailController::class)
+                    ->name('smtp.test');
             });
         });
     });

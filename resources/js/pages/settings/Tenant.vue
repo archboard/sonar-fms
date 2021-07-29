@@ -44,12 +44,19 @@
 
               <div class="pt-8">
                 <div class="mb-6">
-                  <CardSectionHeader>
-                    {{ __('SMTP Settings') }}
-                  </CardSectionHeader>
-                  <HelpText class="text-sm mt-1">
-                    {{ __('These are the SMTP settings so that mail can be sent from the system.') }}
-                  </HelpText>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <CardSectionHeader>
+                        {{ __('SMTP Settings') }}
+                      </CardSectionHeader>
+                      <HelpText class="text-sm mt-1">
+                        {{ __('These are the SMTP settings so that mail can be sent from the system.') }}
+                      </HelpText>
+                    </div>
+                    <Button v-if="tenant.smtp_host" @click.prevent="sendTest" size="sm">
+                      {{ __('Test') }}
+                    </Button>
+                  </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
@@ -302,6 +309,9 @@ export default defineComponent({
         preserveScroll: true,
       })
     }
+    const sendTest = () => {
+      $http.post($route('smtp.test'))
+    }
 
     // Active schools
     const schoolsForm = useForm({
@@ -409,6 +419,7 @@ export default defineComponent({
       currentTime,
       sisSyncing,
       batch,
+      sendTest,
     }
   },
 })
