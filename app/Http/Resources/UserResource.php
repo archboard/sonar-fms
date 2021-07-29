@@ -25,8 +25,8 @@ class UserResource extends JsonResource
             'school_id' => $this->school_id,
             'locale' => $this->locale,
             'manages_tenancy' => $this->manages_tenancy,
-            'schools' => SchoolResource::collection($this->whenLoaded('schools')),
-            'school' => new SchoolResource($this->whenLoaded('schoool')),
+            'schools' => SchoolResource::collection($this->whenLoaded('activeSchools')),
+            'school' => new SchoolResource($this->whenLoaded('school')),
         ];
     }
 }

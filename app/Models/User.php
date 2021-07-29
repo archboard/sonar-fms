@@ -124,8 +124,13 @@ class User extends Authenticatable implements HasLocalePreference
     public function schools(): BelongsToMany
     {
         return $this->belongsToMany(School::class)
-            ->where('active', true)
             ->withPivot(['staff_id']);
+    }
+
+    public function activeSchools(): BelongsToMany
+    {
+        return $this->schools()
+            ->where('active', true);
     }
 
     public function school(): BelongsTo
