@@ -940,8 +940,11 @@ namespace App\Models{
  * @property string $locale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
  * @property-read int|null $abilities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $activeSchools
+ * @property-read int|null $active_schools_count
  * @property-read mixed $date_factory
  * @property-read string $full_name
+ * @property-read bool $is_school_admin
  * @property-read array $school_permissions
  * @property-read mixed $student_selection
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
