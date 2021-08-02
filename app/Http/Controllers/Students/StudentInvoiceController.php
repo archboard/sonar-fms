@@ -31,8 +31,8 @@ class StudentInvoiceController extends Controller
     {
         $invoices = $student->invoices()
             ->with([
-                'invoiceItems',
-                'invoiceScholarships',
+                'currency',
+                'student',
             ])
             ->orderBy('created_at', 'desc')
             ->paginate(10);

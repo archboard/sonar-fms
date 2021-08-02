@@ -67,7 +67,6 @@ class StudentController extends Controller
             ->sum('remaining_balance');
         $totalAmount = $student->invoices()
             ->sum('amount_due');
-        $permissions = $request->user()->getPermissions(Invoice::class);
         $breadcrumbs = [
             [
                 'label' => __('Students'),
@@ -78,12 +77,17 @@ class StudentController extends Controller
                 'route' => route('students.show', $student),
             ],
         ];
+        /** @var User $user */
+        $user = $request->user();
 
         return inertia('students/Show', [
             'title' => $title,
             'student' => $student->toResource(),
             'unpaidInvoices' => $unpaidInvoices,
-            'permissions' => $permissions,
+            'permissions' => [
+                'invoices' => $user->getPermissions(Invoice::class),
+                'students' => $user->getPermissions(Student::class),
+            ],
             'breadcrumbs' => $breadcrumbs,
             'unpaidAmount' => $unpaidAmount,
             'revenue' => $totalAmount - $unpaidAmount,

@@ -84,34 +84,11 @@
         </tr>
       </Thead>
       <Tbody>
-        <tr
+        <InvoiceTableRow
           v-for="invoice in invoices.data"
           :key="invoice.id"
-        >
-          <Td class="pr-0">
-            <div class="flex items-center">
-              <span class="mr-2">{{ invoice.id }}</span>
-              <InvoiceStatusBadge :invoice="invoice" size="sm" />
-            </div>
-          </Td>
-          <Td :lighter="false">
-            <InertiaLink :href="$route('invoices.show', invoice)" class="hover:underline">
-              {{ invoice.title }}
-            </InertiaLink>
-          </Td>
-          <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
-          <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
-          <Td class="text-right space-x-2">
-            <VerticalDotMenu>
-              <InvoiceActionItems
-                :invoice="invoice"
-                :show-view="true"
-                @edit-status="editInvoice = invoice"
-                @convert-to-template="convertInvoice = invoice"
-              />
-            </VerticalDotMenu>
-          </Td>
-        </tr>
+          :invoice="invoice"
+        />
       </Tbody>
     </Table>
 
@@ -160,10 +137,12 @@ import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
+import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceTableRow,
     ConvertInvoiceModal,
     InvoiceStatusModal,
     InvoiceActionItems,
