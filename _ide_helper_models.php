@@ -216,6 +216,8 @@ namespace App\Models{
  * @property-read int|null $invoice_payment_schedules_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
  * @property-read int|null $invoice_payment_terms_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePayment[] $invoicePayments
+ * @property-read int|null $invoice_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
  * @property-read int|null $invoice_scholarships_count
  * @property-read \App\Models\School $school
@@ -335,7 +337,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Fee|null $fee
- * @property-read mixed $amount_formatted
+ * @property-read string|null $amount_formatted
  * @property-read mixed $amount_per_unit_formatted
  * @property-read \App\Models\Invoice $invoice
  * @method static \Database\Factories\InvoiceItemFactory factory(...$parameters)
@@ -396,6 +398,50 @@ namespace App\Models{
  * @method static Builder|InvoiceLayout whereUpdatedAt($value)
  */
 	class IdeHelperInvoiceLayout extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoicePayment
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $invoice_uuid
+ * @property string|null $invoice_payment_term_uuid
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property int|null $amount
+ * @property int|null $recorded_by
+ * @property int|null $made_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read string|null $amount_formatted
+ * @property-read \App\Models\Invoice $invoice
+ * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
+ * @property-read \App\Models\InvoicePaymentTerm|null $invoicePaymentTerm
+ * @property-read \App\Models\User|null $madeBy
+ * @property-read \App\Models\User|null $recordedBy
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\InvoicePaymentFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereInvoicePaymentTermUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereMadeBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereRecordedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoicePayment extends \Eloquent {}
 }
 
 namespace App\Models{

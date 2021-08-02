@@ -50,7 +50,7 @@ class InvoiceItem extends Model
         return $this->belongsTo(Fee::class);
     }
 
-    public function getAmountFormattedAttribute()
+    public function getAmountFormattedAttribute(): ?string
     {
         if (
             !$this->relationLoaded('invoice') ||
