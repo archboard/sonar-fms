@@ -31,7 +31,7 @@ class InvoiceResource extends JsonResource
             'due_at' => $this->due_at,
             'paid_at' => $this->paid_at,
             'voided_at' => $this->voided_at,
-            'is_void' => !!$this->voided_at,
+            'is_void' => $this->is_void,
             'notified_at' => $this->notified_at,
             'status_color' => $this->status_color,
             'status_label' => $this->status_label,

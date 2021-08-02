@@ -115,6 +115,11 @@ class Invoice extends Model
         $builder->orderBy('invoices.title', $orderDir);
     }
 
+    public function scopeIsNotVoid(Builder $builder)
+    {
+        $builder->whereNull('voided_at');
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
@@ -153,6 +158,11 @@ class Invoice extends Model
     public function invoiceLayout(): BelongsTo
     {
         return $this->belongsTo(InvoiceLayout::class);
+    }
+
+    public function getIsVoidAttribute(): bool
+    {
+        return !!$this->voided_at;
     }
 
     public function getAmountDueFormattedAttribute(): ?string
