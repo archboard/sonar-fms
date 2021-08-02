@@ -59,6 +59,17 @@
             </div>
           </Th>
           <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('student')">
+              <span>
+                {{ __('Student') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderBy === 'student' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'student' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
+          <Th>
             <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('amount_due')">
               <span>
                 {{ __('Total due') }}

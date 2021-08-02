@@ -11,6 +11,11 @@
         {{ invoice.title }}
       </InertiaLink>
     </Td>
+    <Td :lighter="false" v-if="can('students.viewAny') && showStudent">
+      <InertiaLink :href="$route('students.show', invoice.student)" class="hover:underline">
+        {{ invoice.student.full_name }}
+      </InertiaLink>
+    </Td>
     <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
     <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
     <Td class="text-right space-x-2">
@@ -32,6 +37,7 @@ import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import Td from '@/components/tables/Td'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
+import checksPermissions from '@/composition/checksPermissions'
 
 export default defineComponent({
   components: {
@@ -42,6 +48,18 @@ export default defineComponent({
   },
   props: {
     invoice: Object,
+    showStudent: {
+      type: Boolean,
+      default: true,
+    }
+  },
+
+  setup () {
+    const { can } = checksPermissions()
+
+    return {
+      can,
+    }
   },
 })
 </script>

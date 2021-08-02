@@ -17,6 +17,7 @@
             v-for="invoice in invoices.data"
             :key="invoice.id"
             :invoice="invoice"
+            :show-student="false"
           />
           <tr v-if="invoices.data.length === 0">
             <Td colspan="5" class="text-center">
