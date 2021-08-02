@@ -103,22 +103,12 @@
           <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
           <Td class="text-right space-x-2">
             <VerticalDotMenu>
-              <div class="p-1">
-                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="$route('invoices.show', invoice)">
-                  {{ __('View') }}
-                </SonarMenuItem>
-                <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="$route('invoices.edit', invoice)">
-                  {{ __('Edit') }}
-                </SonarMenuItem>
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student)">
-                  {{ __('View student') }}
-                </SonarMenuItem>
-              </div>
-              <div class="p-1">
-                <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
-                  {{ __('View PDF') }}
-                </SonarMenuItem>
-              </div>
+              <InvoiceActionItems
+                :invoice="invoice"
+                :show-view="true"
+                @edit-status="editInvoice = invoice"
+                @convert-to-template="convertInvoice = invoice"
+              />
             </VerticalDotMenu>
           </Td>
         </tr>
@@ -128,6 +118,18 @@
     <Pagination :meta="invoices.meta" :links="invoices.links" />
 
   </Authenticated>
+
+  <InvoiceStatusModal
+    v-if="can('invoices.update') && editInvoice.id"
+    @close="editInvoice = {}"
+    :invoice="editInvoice"
+  />
+  <ConvertInvoiceModal
+    v-if="convertInvoice.id"
+    @close="convertInvoice = {}"
+    :invoice="convertInvoice"
+    :endpoint="$route('invoices.convert', convertInvoice)"
+  />
 </template>
 
 <script>
@@ -155,10 +157,16 @@ import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertInvoiceModal,
+    InvoiceStatusModal,
+    InvoiceActionItems,
     SonarMenuItem,
     VerticalDotMenu,
     Dropdown,
@@ -194,7 +202,7 @@ export default defineComponent({
     const showFilters = ref(false)
     const editing = ref(false)
     const selectedInvoice = ref({})
-    const { can } = checksPermissions(props.permissions)
+    const { can } = checksPermissions()
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 25,
@@ -210,6 +218,9 @@ export default defineComponent({
       editing.value = true
     }
 
+    const statusInvoice = ref({})
+    const convertInvoice = ref({})
+
     return {
       filters,
       sortColumn,
@@ -222,6 +233,8 @@ export default defineComponent({
       displayCurrency,
       editInvoice,
       can,
+      statusInvoice,
+      convertInvoice,
     }
   }
 })

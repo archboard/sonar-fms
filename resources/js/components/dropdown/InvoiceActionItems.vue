@@ -1,5 +1,8 @@
 <template>
   <div class="p-1">
+    <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="$route('invoices.show', invoice)">
+      {{ __('View') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.update') && !invoice.is_void" @click.prevent="$emit('editStatus')">
       {{ __('Change status') }}
     </SonarMenuItem>
@@ -21,7 +24,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import checksPermissions from '@/composition/checksPermissions'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
@@ -35,6 +38,10 @@ export default defineComponent({
   },
   props: {
     invoice: Object,
+    showView: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['editStatus', 'convertToTemplate'],
 
