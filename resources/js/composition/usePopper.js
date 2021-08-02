@@ -1,9 +1,15 @@
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted, watchEffect, nextTick } from 'vue'
 import { createPopper } from '@popperjs/core'
 
 export default (options) => {
-  let trigger = ref(null)
-  let container = ref(null)
+  const trigger = ref(null)
+  const container = ref(null)
+  let updatePopper = null
+  const update = () => {
+    if (typeof updatePopper === 'function') {
+      updatePopper()
+    }
+  }
 
   onMounted(() => {
     watchEffect(onInvalidate => {
@@ -21,7 +27,8 @@ export default (options) => {
         return
       }
 
-      let { destroy } = createPopper(referenceEl, popperEl, options)
+      let { destroy, update } = createPopper(referenceEl, popperEl, options)
+      updatePopper = update
 
       onInvalidate(destroy)
     })
@@ -30,5 +37,6 @@ export default (options) => {
   return {
     trigger,
     container,
+    update,
   }
 }

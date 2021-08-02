@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref, watchEffect } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import { DotsVerticalIcon, PencilIcon } from '@heroicons/vue/outline'
 import usePopper from '@/composition/usePopper'
@@ -58,15 +58,25 @@ export default defineComponent({
   },
 
   setup () {
-    const { trigger, container } = usePopper({
+    const { trigger, container, update } = usePopper({
       placement: 'bottom-end',
       strategy: 'fixed',
       modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
+    })
+    const menuItemsRef = ref(null)
+
+    // When the fonts are loaded, the popper instance needs to be updated
+    // otherwise it shows up off the page
+    watchEffect(() => {
+      if (menuItemsRef.value && menuItemsRef.value.visible) {
+        update()
+      }
     })
 
     return {
       trigger,
       container,
+      menuItemsRef,
     }
   },
 })
