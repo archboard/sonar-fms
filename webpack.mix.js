@@ -25,6 +25,11 @@ mix.js('resources/js/app.js', 'public/js')
     require('tailwindcss'),
     require('postcss-nested'),
   ])
+  .postCss('resources/css/pdf.css', 'public/css', [
+    require('postcss-import'),
+    require('tailwindcss')('./tailwind-pdf.config.js'),
+    require('postcss-nested'),
+  ])
   .postCss('resources/css/ckeditor.css', 'public/css', [
     require('postcss-import'),
     require('tailwindcss'),

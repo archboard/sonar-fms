@@ -6,7 +6,15 @@
 
 <div class="space-y-8">
   @foreach($invoices as $invoice)
-    <div>
+    <div class="relative">
+      @if($invoice->is_void)
+{{--        <div class="absolute z-40 inset-0 backdrop-filter backdrop-blur-[1px] -m-6"></div>--}}
+        <div class="absolute z-50 inset-0 flex items-center justify-center">
+          <div class="border-[1rem] border-red-500 text-red-500 -rotate-6 text-9xl font-bold tracking-wider p-8 rounded-3xl">
+            VOID
+          </div>
+        </div>
+      @endif
       <div class="flex justify-between">
         <div class="">
           <div class="text-lg font-medium">{{ $invoice->title }}</div>

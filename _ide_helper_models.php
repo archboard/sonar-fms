@@ -197,6 +197,7 @@ namespace App\Models{
  * @property-read string|null $amount_due_formatted
  * @property-read bool $available
  * @property-read string|null $discount_total_formatted
+ * @property-read bool $is_void
  * @property-read string $number_formatted
  * @property-read bool $past_due
  * @property-read bool $payment_made
@@ -224,6 +225,7 @@ namespace App\Models{
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static Builder|Invoice filter(array $filters)
+ * @method static Builder|Invoice isNotVoid()
  * @method static Builder|Invoice newModelQuery()
  * @method static Builder|Invoice newQuery()
  * @method static Builder|Invoice query()
