@@ -1,0 +1,50 @@
+<template>
+  <div class="p-1">
+    <SonarMenuItem v-if="can('invoices.update') && !invoice.is_void" @click.prevent="$emit('editStatus')">
+      {{ __('Change status') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student)">
+      {{ __('View student') }}
+    </SonarMenuItem>
+  </div>
+  <div class="p-1">
+    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
+      {{ __('View PDF') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('invoices.duplicate', invoice)">
+      {{ __('Duplicate') }}
+    </SonarMenuItem>
+    <SonarMenuItem @click.prevent="$emit('convertToTemplate')">
+      {{ __('Convert to template') }}
+    </SonarMenuItem>
+  </div>
+</template>
+
+<script>
+import { defineComponent, ref } from 'vue'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import checksPermissions from '@/composition/checksPermissions'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
+
+export default defineComponent({
+  components: {
+    InvoiceStatusModal,
+    ConvertInvoiceModal,
+    SonarMenuItem,
+  },
+  props: {
+    invoice: Object,
+  },
+  emits: ['editStatus', 'convertToTemplate'],
+
+  setup () {
+    const { can, canAny } = checksPermissions()
+
+    return {
+      can,
+      canAny,
+    }
+  }
+})
+</script>

@@ -13,22 +13,11 @@
         {{ __('Actions') }}
 
         <template #dropdown>
-          <div class="p-1">
-            <SonarMenuItem v-if="can('invoices.update')" @click.prevent="editStatus = true">
-              {{ __('Change status') }}
-            </SonarMenuItem>
-            <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', student)">
-              {{ __('View student') }}
-            </SonarMenuItem>
-          </div>
-          <div class="p-1">
-            <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
-              {{ __('View PDF') }}
-            </SonarMenuItem>
-            <SonarMenuItem @click.prevent="convert = true">
-              {{ __('Convert to template') }}
-            </SonarMenuItem>
-          </div>
+          <InvoiceActionItems
+            :invoice="invoice"
+            @edit-status="editStatus = true"
+            @convert-to-template="convert = true"
+          />
         </template>
       </Dropdown>
     </template>
@@ -172,10 +161,12 @@ import Dropdown from '@/components/forms/Dropdown'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
+import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceActionItems,
     ConvertInvoiceModal,
     InvoiceStatusModal,
     Dropdown,
