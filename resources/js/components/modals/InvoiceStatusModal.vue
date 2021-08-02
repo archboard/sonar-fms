@@ -11,15 +11,15 @@
     <Fieldset class="pt-4">
       <InputWrap :error="form.errors.status">
         <RadioGroup>
-          <div>
-            <RadioWrapper>
-              <Radio v-model:checked="form.status" value="paid_at" />
-              <CheckboxText>{{ __('Paid' )}}</CheckboxText>
-            </RadioWrapper>
-            <HelpText class="pl-6">
-              {{ __('Payment was collected outside of Sonar FMS.') }}
-            </HelpText>
-          </div>
+<!--          <div>-->
+<!--            <RadioWrapper>-->
+<!--              <Radio v-model:checked="form.status" value="paid_at" />-->
+<!--              <CheckboxText>{{ __('Paid' )}}</CheckboxText>-->
+<!--            </RadioWrapper>-->
+<!--            <HelpText class="pl-6">-->
+<!--              {{ __('Payment was collected outside of Sonar FMS.') }}-->
+<!--            </HelpText>-->
+<!--          </div>-->
 
           <div>
             <RadioWrapper>
@@ -90,14 +90,14 @@ export default defineComponent({
     invoice: Object,
   },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const form = useForm({
       status: null,
       duplicate: false,
     })
     const save = close => {
-      form.post($route('invoice.status', invoice), {
+      form.post($route('invoices.status', props.invoice), {
         preserveScroll: true,
         onSuccess: () => close(),
       })
