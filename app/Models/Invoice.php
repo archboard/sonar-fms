@@ -565,7 +565,11 @@ class Invoice extends Model
         );
 
         $data['scholarships'] = array_map(
-            fn ($item) => Arr::only($item, InvoiceScholarship::$formAttributes),
+            function ($item) {
+                $item['percentage'] = $item['percentage_converted'];
+
+                return Arr::only($item, InvoiceScholarship::$formAttributes);
+            },
             $data['scholarships']
         );
 
