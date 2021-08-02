@@ -179,6 +179,8 @@ class Student extends Model
                 'guardian_id' => $contactStudents->guardianId,
             ]);
 
+            $user->assign('guardian');
+
             $users[$user->id] = [
                 'relationship' => optional($details)->relationship,
             ];
