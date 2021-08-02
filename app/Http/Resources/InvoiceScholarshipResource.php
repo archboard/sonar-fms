@@ -25,6 +25,7 @@ class InvoiceScholarshipResource extends JsonResource
             'calculated_amount' => $this->calculated_amount,
             'calculated_amount_formatted' => $this->calculated_amount_formatted,
             'percentage' => $this->percentage,
+            'percentage_converted' => $this->percentage_converted,
             'percentage_formatted' => $this->percentage_formatted,
             'resolution_strategy' => $this->resolution_strategy,
             'applies_to' => $this->whenLoaded(
