@@ -128,7 +128,7 @@
 
           <InputWrap>
             <CheckboxWrapper>
-              <Checkbox v-model:checked="form.notify.value" />
+              <Checkbox v-model:checked="form.notify" />
               <CheckboxText>{{ __('Queue notification') }}</CheckboxText>
             </CheckboxWrapper>
             <HelpText>
