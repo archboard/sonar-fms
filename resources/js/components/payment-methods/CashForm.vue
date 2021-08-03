@@ -1,7 +1,7 @@
 <template>
   <InputWrap>
     <Label for="cash-description">{{ __('Instructions') }}</Label>
-    <Wysiwyg v-model="localValue.instructions" />
+    <Wysiwyg v-model="localValue.instructions" class="wysiwyg" />
     <HelpText>
       {{ __('These instructions will be displayed on invoices and viewing the invoice online.') }}
     </HelpText>

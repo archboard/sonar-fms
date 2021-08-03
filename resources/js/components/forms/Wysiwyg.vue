@@ -1,5 +1,5 @@
 <template>
-  <div class="wysiwyg w-full">
+  <div class="w-full">
     <ckeditor
       :editor="InlineEditor"
       v-model="localValue"
