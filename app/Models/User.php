@@ -574,6 +574,27 @@ class User extends Authenticatable implements HasLocalePreference
                         ],
                     ],
                 ],
+                [
+                    'model' => PaymentMethod::class,
+                    'label' => __('Payment Methods'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', PaymentMethod::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', PaymentMethod::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', PaymentMethod::class),
+                        ],
+                    ],
+                ],
             ],
         ];
     }

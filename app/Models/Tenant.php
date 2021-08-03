@@ -34,7 +34,7 @@ class Tenant extends TenantBase
         if (app()->environment('testing')) {
             static::created(function (Tenant $tenant) {
                 $tenant->schools()
-                    ->saveMany(School::factory()->count(3)->make());
+                    ->saveMany(School::factory()->count(3)->make(['active' => true]));
             });
         }
     }

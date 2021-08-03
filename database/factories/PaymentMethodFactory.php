@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\PaymentMethod;
+use App\Models\School;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentMethodFactory extends Factory
@@ -22,7 +24,13 @@ class PaymentMethodFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'tenant_id' => Tenant::current()->id,
+            'school_id' => School::current()->id,
+            'driver' => $this->faker->randomElement(['cash']),
+            'invoice_description' => $this->faker->sentence,
+            'show_on_invoice' => true,
+            'active' => true,
+            'options' => [],
         ];
     }
 }

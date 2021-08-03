@@ -404,11 +404,13 @@ namespace App\Models{
 /**
  * App\Models\InvoicePayment
  *
+ * @mixin IdeHelperInvoicePayment
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
  * @property string $invoice_uuid
  * @property string|null $invoice_payment_term_uuid
+ * @property int|null $payment_method_id
  * @property \Illuminate\Support\Carbon|null $paid_at
  * @property int|null $amount
  * @property int|null $recorded_by
@@ -435,11 +437,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereInvoiceUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereMadeBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment wherePaymentMethodId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereRecordedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereSchoolId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoicePayment extends \Eloquent {}
 }
@@ -591,6 +593,42 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\PaymentMethod
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $driver
+ * @property string|null $invoice_description
+ * @property bool $show_on_invoice
+ * @property bool $active
+ * @property array|null $options
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @method static \Database\Factories\PaymentMethodFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereDriver($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereInvoiceDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereShowOnInvoice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperPaymentMethod extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Scholarship
  *
  * @mixin IdeHelperScholarship
@@ -664,6 +702,8 @@ namespace App\Models{
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentMethod[] $paymentMethods
+ * @property-read int|null $payment_methods_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships
  * @property-read int|null $scholarships_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section[] $sections

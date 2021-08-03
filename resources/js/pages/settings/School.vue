@@ -98,6 +98,22 @@
           </Button>
         </CardAction>
       </CardWrapper>
+
+      <CardWrapper>
+        <CardPadding>
+          <CardSectionHeader>
+            {{ __('Payment Methods') }}
+          </CardSectionHeader>
+          <HelpText>
+            {{ __('Manage the available payment methods for your school.') }}
+          </HelpText>
+        </CardPadding>
+        <CardAction>
+          <Button component="inertia-link" :href="$route('payment-methods.index')">
+            {{ __('Manage payment methods') }}
+          </Button>
+        </CardAction>
+      </CardWrapper>
     </div>
   </Authenticated>
 </template>

@@ -191,6 +191,9 @@ Route::middleware('tenant')->group(function () {
         Route::put('/users/{user}/school-admin', \App\Http\Controllers\ToggleSchoolAdminController::class)
             ->name('users.school-admin');
 
+        Route::resource('/payment-methods', \App\Http\Controllers\PaymentMethodController::class)
+            ->except('destroy');
+
         /**
          * Settings-based routes
          */

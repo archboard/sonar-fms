@@ -5,7 +5,7 @@
       '-mx-4 -mb-5 mt-6 sm:-mx-6': negativeMargin
     }"
   >
-    <CardPadding>
+    <CardPadding class="space-x-2 flex">
       <slot/>
     </CardPadding>
   </div>

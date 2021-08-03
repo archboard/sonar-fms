@@ -2,8 +2,15 @@
 
 namespace App\PaymentMethods;
 
+use Illuminate\Http\Request;
+
 class Cash extends PaymentMethodBase implements PaymentMethodDriver
 {
+    public function key(): string
+    {
+        return 'cash';
+    }
+
     public function label(): string
     {
         return __('Cash/check');
@@ -16,6 +23,13 @@ class Cash extends PaymentMethodBase implements PaymentMethodDriver
 
     public function component(): ?string
     {
-        return null;
+        return 'Cash';
+    }
+
+    public function getValidationRules(): array
+    {
+        return [
+            'instructions' => 'nullable',
+        ];
     }
 }

@@ -7,18 +7,42 @@ use App\PaymentMethods\Cash;
 use App\PaymentMethods\PaymentMethodDriver;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperPaymentMethod
+ */
 class PaymentMethod extends Model
 {
     use HasFactory;
+    use HasResource;
     use BelongsToTenant;
     use BelongsToSchool;
 
+    protected $guarded = [];
+
     protected $casts = [
         'options' => 'json',
+        'active' => 'boolean',
+        'show_on_invoice' => 'boolean',
     ];
+
+    public static function drivers(): array
+    {
+        return [
+            'cash' => Cash::class,
+        ];
+    }
+
+    public static function getAllDrivers(): array
+    {
+        return array_map(
+            fn ($class) => new $class,
+            static::drivers()
+        );
+    }
 
     public static function options(): array
     {
@@ -27,18 +51,22 @@ class PaymentMethod extends Model
         ];
     }
 
-    public function getDriver(): PaymentMethodDriver
+    public static function makeDriver(string $driverName): PaymentMethodDriver
     {
-        $drivers = [
-            'cash' => Cash::class,
-        ];
+        $drivers = static::drivers();
 
-        $driver = $drivers[$this->driver] ?? null;
+        $driver = $drivers[$driverName] ?? null;
 
         if (!$driver || !class_exists($driver)) {
-            throw new PaymentMethodDriverNotFound("The {$this->driver} payment method driver could not be found.");
+            throw new PaymentMethodDriverNotFound("The {$driverName} payment method driver could not be found.");
         }
 
-        return new $driver($this);
+        return new $driver();
+    }
+
+    public function getDriver(): PaymentMethodDriver
+    {
+        return static::makeDriver($this->driver)
+            ->setPaymentMethod($this);
     }
 }

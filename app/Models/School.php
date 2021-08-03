@@ -98,6 +98,11 @@ class School extends Model
         return $this->hasMany(InvoiceLayout::class);
     }
 
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
     public function getGradeLevelsAttribute(): array
     {
         return range($this->low_grade, $this->high_grade);

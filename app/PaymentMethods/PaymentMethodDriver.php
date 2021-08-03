@@ -6,8 +6,12 @@ use App\Models\PaymentMethod;
 
 interface PaymentMethodDriver
 {
-    public function __construct(PaymentMethod $method);
+    public function __construct(?PaymentMethod $method);
+    public function key(): string;
     public function label(): string;
     public function description(): string;
     public function component(): ?string;
+    public function getPaymentMethod(): ?PaymentMethod;
+    public function setPaymentMethod(PaymentMethod $method): PaymentMethodDriver;
+    public function getValidationRules(): array;
 }
