@@ -24,11 +24,6 @@ class CreatePaymentMethodsTable extends Migration
             $table->json('options')->nullable();
             $table->timestamps();
         });
-
-        Schema::table('invoice_payments', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_method_id')->nullable();
-            $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onDelete('set null');
-        });
     }
 
     /**
@@ -38,11 +33,6 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function down()
     {
-        Schema::table('invoice_payments', function (Blueprint $table) {
-            $table->dropForeign(['payment_method_id']);
-            $table->dropColumn('payment_method_id');
-        });
-
         Schema::dropIfExists('payment_methods');
     }
 }

@@ -21,6 +21,8 @@ class CreateInvoicePaymentsTable extends Migration
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
             $table->uuid('invoice_payment_term_uuid')->index()->nullable();
             $table->foreign('invoice_payment_term_uuid')->references('uuid')->on('invoice_payment_terms')->onDelete('set null');
+            $table->unsignedBigInteger('payment_method_id')->nullable();
+            $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onDelete('set null');
             $table->dateTime('paid_at')->nullable();
             $table->unsignedBigInteger('amount')->nullable();
             $table->unsignedBigInteger('recorded_by')->nullable();
