@@ -40,6 +40,13 @@ class StudentInvoiceController extends Controller
         return InvoiceResource::collection($invoices);
     }
 
+    /**
+     * Create a new invoice for a student
+     *
+     * @param Request $request
+     * @param Student $student
+     * @return \Inertia\Response|\Inertia\ResponseFactory
+     */
     public function create(Request $request, Student $student)
     {
         $title = __('Create a new invoice for :student', [
