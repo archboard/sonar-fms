@@ -193,6 +193,9 @@ namespace App\Models{
  * @property string|null $tax_label
  * @property int $tax_due
  * @property int|null $pre_tax_subtotal
+ * @property string|null $parent_uuid
+ * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
+ * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
  * @property-read string|null $amount_due_formatted
  * @property-read bool $available
@@ -220,6 +223,7 @@ namespace App\Models{
  * @property-read int|null $invoice_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
  * @property-read int|null $invoice_scholarships_count
+ * @property-read Invoice|null $parent
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\Tenant $tenant
@@ -247,6 +251,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
  * @method static Builder|Invoice wherePaidAt($value)
+ * @method static Builder|Invoice whereParentUuid($value)
  * @method static Builder|Invoice wherePreTaxSubtotal($value)
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
@@ -595,6 +600,7 @@ namespace App\Models{
 /**
  * App\Models\PaymentMethod
  *
+ * @mixin IdeHelperPaymentMethod
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
@@ -622,7 +628,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereShowOnInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperPaymentMethod extends \Eloquent {}
 }

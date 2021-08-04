@@ -64,6 +64,7 @@ class Invoice extends Model
         'tax_label',
         'tax_due',
         'pre_tax_subtotal',
+        'parent_uuid',
     ];
 
     protected $casts = [
@@ -123,6 +124,16 @@ class Invoice extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(static::class, 'parent_uuid', 'uuid');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(static::class, 'parent_uuid', 'uuid');
     }
 
     public function term(): BelongsTo
