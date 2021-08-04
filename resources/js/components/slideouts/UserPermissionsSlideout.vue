@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import Fieldset from '../forms/Fieldset'
 import Slideout from '../Slideout'
@@ -71,6 +71,7 @@ import Checkbox from '../forms/Checkbox'
 import Label from '../forms/Label'
 import CheckboxText from '../forms/CheckboxText'
 import CheckboxWrapper from '../forms/CheckboxWrapper'
+import useSchool from '@/composition/useSchool'
 
 export default {
   components: {
@@ -91,11 +92,12 @@ export default {
   emits: ['close'],
 
   setup (props) {
+    let firstFetch = true
     const $route = inject('$route')
     const $http = inject('$http')
 
     const page = usePage()
-    const school = computed(() => page.props.value.school)
+    const { school } = useSchool()
     const permissions = ref([])
     const currentUser = computed(() => page.props.value.user)
     const managesTenancy = ref(props.user.manages_tenancy)
@@ -107,6 +109,9 @@ export default {
         permissions.value = data
         managesTenancy.value = data.manages_tenancy
         managesSchool.value = data.manages_school
+        nextTick(() => {
+          firstFetch = false
+        })
       })
     }
     const savePermissions = (close) => {
@@ -122,9 +127,15 @@ export default {
       props.user.manages_tenancy = newVal
       $http.put($route('users.tenancy_manager', props.user)).then(getPermissions)
     })
+
     watch(managesSchool, () => {
-      console.log('manages school change')
-      $http.put($route('users.school-admin', props.user)).then(getPermissions)
+      // Don't change after first fetch, since it's setting the initial value
+      if (
+        !firstFetch &&
+        (currentUser.value.manages_tenancy || props.authUserManagesSchool)
+      ) {
+        $http.put($route('users.school-admin', props.user)).then(getPermissions)
+      }
     })
 
     onMounted(() => {

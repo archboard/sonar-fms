@@ -69,20 +69,20 @@
                     Permissions
                   </SonarMenuItem>
                 </div>
-                <div class="px-1 py-1">
-                  <SonarMenuItem>
-                    Archive
-                  </SonarMenuItem>
-                  <SonarMenuItem>
-                    Move
-                  </SonarMenuItem>
-                </div>
+<!--                <div class="px-1 py-1">-->
+<!--                  <SonarMenuItem>-->
+<!--                    Archive-->
+<!--                  </SonarMenuItem>-->
+<!--                  <SonarMenuItem>-->
+<!--                    Move-->
+<!--                  </SonarMenuItem>-->
+<!--                </div>-->
 
-                <div class="px-1 py-1" v-if="can('delete')">
-                  <SonarMenuItem v-slot="{ active }">
-                    <span :class="[active ? '' : 'text-red-500 dark:text-red-400']">Delete</span>
-                  </SonarMenuItem>
-                </div>
+<!--                <div class="px-1 py-1" v-if="can('delete')">-->
+<!--                  <SonarMenuItem v-slot="{ active }">-->
+<!--                    <span :class="[active ? '' : 'text-red-500 dark:text-red-400']">Delete</span>-->
+<!--                  </SonarMenuItem>-->
+<!--                </div>-->
               </VerticalDotMenu>
             </div>
           </Td>
