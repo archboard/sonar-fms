@@ -23,6 +23,14 @@ class UserSchoolController extends Controller
             ->json($user->getSchoolAccessList());
     }
 
+    /**
+     * Updates a user's school access
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function update(Request $request, User $user)
     {
         $this->authorize('manage tenancy');

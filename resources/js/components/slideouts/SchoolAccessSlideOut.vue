@@ -16,6 +16,10 @@
       </div>
     </template>
 
+    <Alert class="mb-6">
+      {{ __('If a user has access to the given school in :sis, they will be given access when they log in.', { sis: tenant.sis }) }}
+    </Alert>
+
     <Loader v-if="schools.length === 0" />
 
     <Fieldset>
@@ -57,9 +61,12 @@ import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import useSchool from '@/composition/useSchool'
 import Loader from '@/components/Loader'
 import SolidBadge from '@/components/SolidBadge'
+import Alert from '@/components/Alert'
+import useProp from '@/composition/useProp'
 
 export default {
   components: {
+    Alert,
     SolidBadge,
     Loader,
     CheckboxWrapper,
@@ -82,6 +89,7 @@ export default {
     const $http = inject('$http')
 
     const { school } = useSchool()
+    const tenant = useProp('tenant')
     const schools = ref([])
     const saving = ref(false)
 
@@ -115,6 +123,7 @@ export default {
       school,
       schools,
       saving,
+      tenant,
     }
   },
 }
