@@ -66,7 +66,7 @@ class PowerSchoolProvider implements SisProvider
             });
     }
 
-    public function getSchool($sisId)
+    public function getSchool($sisId, bool $force = false)
     {
         if ($sisId instanceof School) {
             $sisId = $sisId->sis_id;
@@ -74,6 +74,7 @@ class PowerSchoolProvider implements SisProvider
 
         if (
             config('app.cloud') &&
+            !$force &&
             !$this->tenant->schools()->where('sis_id', $sisId)->exists()
         ) {
             throw new \Exception("Your license does not support this school. Please update your license and try again.");
@@ -86,9 +87,9 @@ class PowerSchoolProvider implements SisProvider
         return $results->school;
     }
 
-    public function syncSchool($sisId): School
+    public function syncSchool($sisId, bool $force = false): School
     {
-        $sisSchool = $this->getSchool($sisId);
+        $sisSchool = $this->getSchool($sisId, $force);
 
         /** @var School $school */
         $school = $this->tenant
