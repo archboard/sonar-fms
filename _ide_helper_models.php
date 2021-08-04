@@ -725,6 +725,7 @@ namespace App\Models{
  * @property-read int|null $users_count
  * @method static Builder|School active()
  * @method static \Database\Factories\SchoolFactory factory(...$parameters)
+ * @method static Builder|School inactive()
  * @method static Builder|School newModelQuery()
  * @method static Builder|School newQuery()
  * @method static Builder|School query()

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\SchoolResource;
 use App\Traits\BelongsToTenant;
 use Carbon\Factory;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 
@@ -275,6 +277,26 @@ class User extends Authenticatable implements HasLocalePreference
         }
 
         return $this;
+    }
+
+    /**
+     * Gets all the schools of the tenancy and
+     * a flag of whether the user has access
+     *
+     * Used for assigning schools in users
+     *
+     * @return Collection
+     */
+    public function getSchoolAccessList(): Collection
+    {
+        return School::orderBy('name')
+            ->get()
+            ->map(fn (School $school) => [
+                'id' => $school->id,
+                'name' => $school->name,
+                'active' => $school->active,
+                'has_access' => $this->schools->contains('id', $school->id),
+            ]);
     }
 
     /**

@@ -191,6 +191,13 @@ Route::middleware('tenant')->group(function () {
         Route::put('/users/{user}/school-admin', \App\Http\Controllers\ToggleSchoolAdminController::class)
             ->name('users.school-admin');
 
+        Route::get('/users/{user}/schools', [\App\Http\Controllers\UserSchoolController::class, 'index'])
+            ->name('users.schools');
+        Route::put('/users/{user}/schools', [\App\Http\Controllers\UserSchoolController::class, 'update']);
+
+        /**
+         * Payment methods
+         */
         Route::resource('/payment-methods', \App\Http\Controllers\PaymentMethodController::class)
             ->except('destroy');
 

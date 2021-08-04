@@ -138,9 +138,7 @@ export default {
       }
     })
 
-    onMounted(() => {
-      getPermissions()
-    })
+    getPermissions()
 
     return {
       savePermissions,

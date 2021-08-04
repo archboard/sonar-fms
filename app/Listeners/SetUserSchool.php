@@ -18,8 +18,11 @@ class SetUserSchool
         /** @var User $user */
         $user = $event->user;
 
-        if (!$user->school_id) {
-            $school = $user->schools()->first();
+        if (
+            !$user->school_id ||
+            !$user->schools->contains('id', $user->school_id)
+        ) {
+            $school = $user->schools->first();
 
             if (!$school) {
                 throw new \Exception("You do not have any schools configured for your account. Please contact your district admin for help.");

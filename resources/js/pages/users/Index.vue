@@ -51,22 +51,25 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(user, index) in users.data"
-          :key="user.id"
+          v-for="schoolUser in users.data"
+          :key="schoolUser.id"
         >
           <Td :lighter="false">
-            {{ user.full_name }}
+            {{ schoolUser.full_name }}
           </Td>
-          <Td>{{ user.email }}</Td>
+          <Td>{{ schoolUser.email }}</Td>
           <Td class="text-right align-middle">
             <div class="flex items-center justify-end">
               <VerticalDotMenu>
                 <div class="px-1 py-1" v-if="canAny('viewAny', 'edit permissions')">
-                  <SonarMenuItem v-if="can('viewAny')">
-                    Edit
+<!--                  <SonarMenuItem v-if="can('viewAny')">-->
+<!--                    {{ __('Edit') }}-->
+<!--                  </SonarMenuItem>-->
+                  <SonarMenuItem @click="togglePermissions(schoolUser)" v-if="can('edit permissions')">
+                    {{ __('Permissions') }}
                   </SonarMenuItem>
-                  <SonarMenuItem @click="togglePermissions(user)" v-if="can('edit permissions')">
-                    Permissions
+                  <SonarMenuItem @click="schoolsUser = schoolUser" v-if="user.manages_tenancy">
+                    {{ __('School access') }}
                   </SonarMenuItem>
                 </div>
 <!--                <div class="px-1 py-1">-->
@@ -109,6 +112,11 @@
       :auth-user-manages-school="isSchoolAdmin"
       @close="closePermissions"
     />
+    <SchoolAccessSlideOut
+      v-if="schoolsUser.id"
+      :user="schoolsUser"
+      @close="schoolsUser = {}"
+    />
   </Authenticated>
 </template>
 
@@ -137,9 +145,11 @@ import VerticalDotMenu from '../../components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '../../components/forms/SonarMenuItem'
 import UserPermissionsSlideout from '../../components/slideouts/UserPermissionsSlideout'
 import checksPermissions from '../../composition/checksPermissions'
+import SchoolAccessSlideOut from '@/components/slideouts/SchoolAccessSlideOut'
 
 export default defineComponent({
   components: {
+    SchoolAccessSlideOut,
     MenuItem,
     UserPermissionsSlideout,
     SonarMenuItem,
@@ -182,6 +192,7 @@ export default defineComponent({
 
     // Permissions
     const permissionsUser = ref({})
+    const schoolsUser = ref({})
     const togglePermissions = (user) => {
       permissionsUser.value = user
     }
@@ -213,6 +224,7 @@ export default defineComponent({
       closePermissions,
       can,
       canAny,
+      schoolsUser,
     }
   }
 })

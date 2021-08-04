@@ -37,6 +37,11 @@ class School extends Model
         $builder->where('active', true);
     }
 
+    public function scopeInactive(Builder $builder)
+    {
+        $builder->where('active', false);
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)

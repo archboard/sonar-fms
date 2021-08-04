@@ -57,9 +57,9 @@ abstract class TestCase extends BaseTestCase
         return $user;
     }
 
-    public function signIn(): User
+    public function signIn(bool $force = false): User
     {
-        if ($this->user) {
+        if ($this->user && !$force) {
             return $this->user;
         }
 

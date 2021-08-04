@@ -32,5 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view invoice', function (User $user, Invoice $invoice) {
             return $user->can('viewAny', Invoice::class);
         });
+
+        Gate::define('manage tenancy', fn (User $user) => $user->manages_tenancy);
     }
 }
