@@ -234,7 +234,10 @@ namespace App\Models{
  * @method static Builder|Invoice isNotVoid()
  * @method static Builder|Invoice newModelQuery()
  * @method static Builder|Invoice newQuery()
+ * @method static Builder|Invoice notAChild()
+ * @method static Builder|Invoice paid()
  * @method static Builder|Invoice query()
+ * @method static Builder|Invoice unpaid()
  * @method static Builder|Invoice whereAmountDue($value)
  * @method static Builder|Invoice whereApplyTax($value)
  * @method static Builder|Invoice whereAvailableAt($value)
@@ -807,9 +810,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $initial_school_entry_date
  * @property string|null $initial_district_grade_level
  * @property string|null $initial_school_grade_level
+ * @property-read int $account_balance
  * @property-read mixed $full_name
  * @property-read mixed $grade_level_formatted
  * @property-read mixed $grade_level_short_formatted
+ * @property-read int $revenue
+ * @property-read int $unpaid_invoices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
  * @property-read int|null $guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices

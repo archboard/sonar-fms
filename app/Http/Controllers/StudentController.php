@@ -60,13 +60,9 @@ class StudentController extends Controller
     {
         $title = $student->full_name;
         $student->load('users');
-        $unpaidInvoices = $student->invoices()
-            ->whereNull('paid_at')
-            ->count();
-        $unpaidAmount = $student->invoices()
-            ->sum('remaining_balance');
-        $totalAmount = $student->invoices()
-            ->sum('amount_due');
+        $unpaidInvoices = $student->unpaid_invoices;
+        $unpaidAmount = $student->account_balance;
+        $revenue = $student->revenue;
         $breadcrumbs = [
             [
                 'label' => __('Students'),
@@ -90,7 +86,7 @@ class StudentController extends Controller
             ],
             'breadcrumbs' => $breadcrumbs,
             'unpaidAmount' => $unpaidAmount,
-            'revenue' => $totalAmount - $unpaidAmount,
+            'revenue' => $revenue,
         ])->withViewData(compact('title'));
     }
 }

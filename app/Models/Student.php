@@ -76,6 +76,30 @@ class Student extends Model
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function getAccountBalanceAttribute(): int
+    {
+        return $this->invoices()
+            ->isNotVoid()
+            ->unpaid()
+            ->sum('remaining_balance');
+    }
+
+    public function getUnpaidInvoicesAttribute(): int
+    {
+        return $this->invoices()
+            ->isNotVoid()
+            ->unpaid()
+            ->count();
+    }
+
+    public function getRevenueAttribute(): int
+    {
+        return $this->invoices()
+            ->isNotVoid()
+            ->paid()
+            ->sum('pre_tax_subtotal');
+    }
+
     public function getGradeLevelShortFormattedAttribute()
     {
         if ($this->grade_level > 0) {

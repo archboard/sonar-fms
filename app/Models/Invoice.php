@@ -121,6 +121,21 @@ class Invoice extends Model
         $builder->whereNull('voided_at');
     }
 
+    public function scopeUnpaid(Builder $builder)
+    {
+        $builder->whereNull('paid_at');
+    }
+
+    public function scopePaid(Builder $builder)
+    {
+        $builder->whereNotNull('paid_at');
+    }
+
+    public function scopeNotAChild(Builder $builder)
+    {
+        $builder->whereNull('parent_uuid');
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
