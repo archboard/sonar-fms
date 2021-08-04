@@ -20,12 +20,12 @@
               <Label for="timezone">{{ __('Timezone') }}</Label>
               <Timezone v-model="form.timezone" id="timezone" data-cy="timezone" required />
             </InputWrap>
-            <InputWrap :error="form.errors.password">
+            <InputWrap v-if="tenant.allow_password_auth" :error="form.errors.password">
               <Label for="password">{{ __('Password') }}</Label>
               <Input v-model="form.password" type="password" id="password" data-cy="password" />
               <HelpText class="mt-1 ml-1">{{ __('Leave empty to keep your current password.') }}</HelpText>
             </InputWrap>
-            <InputWrap :error="form.errors.password_confirmation">
+            <InputWrap v-if="tenant.allow_password_auth" :error="form.errors.password_confirmation">
               <Label for="password_confirmation">{{ __('Confirm Password') }}</Label>
               <Input v-model="form.password_confirmation" type="password" id="password_confirmation" data-cy="password_confirmation" />
             </InputWrap>
@@ -42,22 +42,24 @@
 </template>
 
 <script>
-import { defineComponent, ref, inject } from 'vue'
+import { defineComponent, inject } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Authenticated from '../../layouts/Authenticated'
+import Authenticated from '@/layouts/Authenticated'
 import pick from 'lodash/pick'
-import Fieldset from '../../components/forms/Fieldset'
-import InputWrap from '../../components/forms/InputWrap'
-import Label from '../../components/forms/Label'
-import Input from '../../components/forms/Input'
-import Button from '../../components/Button'
-import CardWrapper from '../../components/CardWrapper'
-import CardPadding from '../../components/CardPadding'
-import HelpText from '../../components/HelpText'
-import CardAction from '../../components/CardAction'
+import Fieldset from '@/components/forms/Fieldset'
+import InputWrap from '@/components/forms/InputWrap'
+import Label from '@/components/forms/Label'
+import Input from '@/components/forms/Input'
+import Button from '@/components/Button'
+import CardWrapper from '@/components/CardWrapper'
+import CardPadding from '@/components/CardPadding'
+import HelpText from '@/components/HelpText'
+import CardAction from '@/components/CardAction'
 import Timezone from '@/components/forms/Timezone'
+import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
     Timezone,
     CardAction,
