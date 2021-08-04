@@ -16,7 +16,7 @@ class Cash extends PaymentMethodBase implements PaymentMethodDriver
 
     public function description(): string
     {
-        return __('This is an offline collection method. For payments received, you will need to record payments manually.');
+        return __('This is an offline collection method for cash or check. For payments received, you will need to record payments manually.');
     }
 
     public function component(): ?string

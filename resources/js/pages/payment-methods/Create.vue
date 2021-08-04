@@ -121,6 +121,7 @@ export default defineComponent({
   },
   props: {
     drivers: Object,
+    driver: String,
     paymentMethod: {
       type: Object,
       default: () => ({}),
@@ -130,7 +131,7 @@ export default defineComponent({
   setup (props) {
     const $route = inject('$route')
     const form = useForm({
-      driver: props.paymentMethod.driver || null,
+      driver: props.paymentMethod.driver || props.driver || null,
       invoice_description: props.paymentMethod.invoice_description || null,
       options: props.paymentMethod.options || {},
       show_on_invoice: isUndefined(props.paymentMethod.show_on_invoice) ? true : props.paymentMethod.show_on_invoice,

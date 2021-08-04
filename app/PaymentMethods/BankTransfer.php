@@ -13,4 +13,9 @@ class BankTransfer extends Cash implements PaymentMethodDriver
     {
         return __('Bank transfer');
     }
+
+    public function description(): string
+    {
+        return __('This is a bank transfer collection method. For payments received, you will likely need to record payments manually.');
+    }
 }

@@ -24,6 +24,8 @@ class PaymentMethod extends Model
 
     protected $guarded = [];
 
+    public bool $includeDriverWithResource = true;
+
     protected $casts = [
         'options' => 'json',
         'active' => 'boolean',
@@ -75,5 +77,26 @@ class PaymentMethod extends Model
     {
         return static::makeDriver($this->driver)
             ->setPaymentMethod($this);
+    }
+
+    public static function getListForSchool(School $school): array
+    {
+        $paymentMethods = $school
+            ->paymentMethods
+            ->keyBy('driver');
+
+        return array_map(
+            function (PaymentMethodDriver $driver) use ($paymentMethods) {
+                /** @var static $paymentMethod */
+                $paymentMethod = $paymentMethods->get($driver->key(), new PaymentMethod());
+                $paymentMethod->includeDriverWithResource = false;
+
+                $driver->setPaymentMethod($paymentMethod)
+                    ->setIncludePaymentMethodInResource(true);
+
+                return $driver;
+            },
+            PaymentMethod::getAllDrivers()
+        );
     }
 }

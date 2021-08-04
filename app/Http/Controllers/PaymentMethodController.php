@@ -35,15 +35,12 @@ class PaymentMethodController extends Controller
                 'route' => route('payment-methods.index'),
             ],
         ];
-        $paymentMethods = $request->school()
-            ->paymentMethods()
-            ->orderBy('id')
-            ->get();
+        $drivers = PaymentMethod::getListForSchool($request->school());
 
         return inertia('payment-methods/Index', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'paymentMethods' => PaymentMethodResource::collection($paymentMethods),
+            'paymentMethods' => PaymentMethodDriverResource::collection($drivers),
         ])->withViewData(compact('title'));
     }
 
@@ -52,7 +49,7 @@ class PaymentMethodController extends Controller
      *
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function create()
+    public function create(Request $request)
     {
         $title = __('Add new payment method');
         $breadcrumbs = [
@@ -77,6 +74,7 @@ class PaymentMethodController extends Controller
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
             'drivers' => $drivers,
+            'driver' => $request->input('driver'),
         ])->withViewData(compact('title'));
     }
 

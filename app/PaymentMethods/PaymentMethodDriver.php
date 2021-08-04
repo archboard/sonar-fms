@@ -12,6 +12,8 @@ interface PaymentMethodDriver
     public function description(): string;
     public function component(): ?string;
     public function getPaymentMethod(): ?PaymentMethod;
-    public function setPaymentMethod(PaymentMethod $method): PaymentMethodDriver;
+    public function setPaymentMethod(?PaymentMethod $method): PaymentMethodDriver;
     public function getValidationRules(): array;
+    public function includePaymentMethodInResource(): bool;
+    public function setIncludePaymentMethodInResource(bool $include): PaymentMethodDriver;
 }

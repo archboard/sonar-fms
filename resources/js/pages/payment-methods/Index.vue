@@ -1,40 +1,39 @@
 <template>
   <Authenticated>
-    <template #actions>
-      <Button component="inertia-link" as="button" :href="$route('payment-methods.create')" size="sm">
-        {{ __('Add method') }}
-      </Button>
-    </template>
-
     <Table>
       <Thead>
         <tr>
           <Th>{{ __('Method') }}</Th>
+          <Th>{{ __('Description') }}</Th>
           <Th></Th>
         </tr>
       </Thead>
       <Tbody>
         <tr
           v-for="method in paymentMethods"
-          :key="method.id"
+          :key="method.key"
         >
           <Td :lighter="false">
-            <div class="flex items-center space-x-2">
-              <span>{{ method.driver_data.label }}</span>
-              <SolidBadge v-if="!method.active" size="sm" color="primary">
+            <div class="flex items-center space-x-2 whitespace-nowrap">
+              <span>{{ method.label }}</span>
+              <SolidBadge v-if="!method.payment_method.id" size="sm" color="yellow">
+                {{ __('Not configured') }}
+              </SolidBadge>
+              <SolidBadge v-else-if="!method.payment_method.active" size="sm" color="primary">
                 {{ __('Inactive') }}
               </SolidBadge>
             </div>
           </Td>
-          <Td class="text-right">
-            <Link :href="$route('payment-methods.edit', method)">
+          <Td>
+            {{ method.description }}
+          </Td>
+          <Td class="text-right whitespace-nowrap">
+            <Link v-if="method.payment_method.id" :href="$route('payment-methods.edit', method.payment_method)">
               {{ __('Edit') }}
             </Link>
-          </Td>
-        </tr>
-        <tr v-if="paymentMethods.length === 0">
-          <Td colspan="2" class="text-center">
-            {{ __('No payment methods are configured yet.') }} <Link :href="$route('payment-methods.create')">{{ __('Add one') }}</Link>.
+            <Link v-else :href="$route('payment-methods.create', { driver: method.key })">
+              {{ __('Set up') }}
+            </Link>
           </Td>
         </tr>
       </Tbody>
