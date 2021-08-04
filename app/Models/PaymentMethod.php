@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\PaymentMethodDriverNotFound;
+use App\PaymentMethods\BankTransfer;
 use App\PaymentMethods\Cash;
 use App\PaymentMethods\PaymentMethodDriver;
 use App\Traits\BelongsToSchool;
@@ -32,6 +33,7 @@ class PaymentMethod extends Model
     public static function drivers(): array
     {
         return [
+            'bank_transfer' => BankTransfer::class,
             'cash' => Cash::class,
         ];
     }
@@ -46,9 +48,14 @@ class PaymentMethod extends Model
 
     public static function options(): array
     {
-        return [
-            'cash' => __('Cash/check'),
-        ];
+        return collect(static::drivers())
+            ->mapWithKeys(function ($driver) {
+                /** @var PaymentMethodDriver $instance */
+                $instance = new $driver;
+
+                return [$instance->key() => $instance->label()];
+            })
+            ->toArray();
     }
 
     public static function makeDriver(string $driverName): PaymentMethodDriver

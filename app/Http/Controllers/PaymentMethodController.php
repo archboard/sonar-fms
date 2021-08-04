@@ -91,7 +91,7 @@ class PaymentMethodController extends Controller
         $data = $request->validate([
             'driver' => [
                 'required',
-                Rule::in(array_keys(PaymentMethod::options())),
+                Rule::in(array_keys(PaymentMethod::drivers())),
                 Rule::unique('payment_methods')->where(function ($query) {
                     return $query->where('school_id', School::current()->id);
                 }),
@@ -175,7 +175,7 @@ class PaymentMethodController extends Controller
         $data = $request->validate([
             'driver' => [
                 'required',
-                Rule::in(array_keys(PaymentMethod::options())),
+                Rule::in(array_keys(PaymentMethod::drivers())),
                 Rule::unique('payment_methods')->where(function ($query) {
                     return $query->where('school_id', School::current()->id);
                 })->ignoreModel($paymentMethod),

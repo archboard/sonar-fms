@@ -2,8 +2,6 @@
 
 namespace App\PaymentMethods;
 
-use Illuminate\Http\Request;
-
 class Cash extends PaymentMethodBase implements PaymentMethodDriver
 {
     public function key(): string
