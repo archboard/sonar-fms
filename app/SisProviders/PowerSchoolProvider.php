@@ -32,6 +32,10 @@ class PowerSchoolProvider implements SisProvider
 
     public function getSchoolsFromSis(): array
     {
+        if (config('app.cloud')) {
+            return $this->tenant->schools;
+        }
+
         $response = $this->builder
             ->to('/ws/v1/district/school')
             ->get();
@@ -56,17 +60,9 @@ class PowerSchoolProvider implements SisProvider
     {
         return collect($this->getAllSchools())
             ->map(function (School $school) {
-                return $this->tenant
-                    ->schools()
-                    ->updateOrCreate(
-                        ['sis_id' => $school->sis_id],
-                        [
-                            'name' => $school->name,
-                            'school_number' => $school->school_number,
-                            'low_grade' => $school->low_grade,
-                            'high_grade' => $school->high_grade,
-                        ]
-                    );
+                $school->save();
+
+                return $school;
             });
     }
 
@@ -76,16 +72,16 @@ class PowerSchoolProvider implements SisProvider
             $sisId = $sisId->sis_id;
         }
 
-        $results = $this->builder
-            ->to("/ws/v1/school/{$sisId}")
-            ->get();
-
         if (
             config('app.cloud') &&
             !$this->tenant->schools()->where('sis_id', $sisId)->exists()
         ) {
             throw new \Exception("Your license does not support this school. Please update your license and try again.");
         }
+
+        $results = $this->builder
+            ->to("/ws/v1/school/{$sisId}")
+            ->get();
 
         return $results->school;
     }
