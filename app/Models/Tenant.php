@@ -169,9 +169,11 @@ class Tenant extends TenantBase
 
     public function toArray()
     {
+        // TODO for cloud, these SIS specific settings need to be pulled from the provider
         return [
             'name' => $this->name,
             'license' => $this->license,
+            'sis' => $this->sis,
             'ps_url' => $this->ps_url,
             'ps_client_id' => $this->ps_client_id,
             'ps_secret' => $this->ps_secret,

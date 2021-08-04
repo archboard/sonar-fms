@@ -208,7 +208,10 @@
           </HelpText>
         </CardPadding>
 
-        <form @submit.prevent="schoolsForm.put($route('tenant.schools'), { preserveScroll: true })">
+        <CardPadding v-if="tenant.is_cloud">
+          To change which schools from {{ tenant.sis }} are active, you must update your subscription in your <Link is="a" :href="`https://account.archboard.io/subscriptions/${tenant.license}`" target="_blank">Archboard account</Link>. After making changes to your subscription, Sonar FMS will automatically update.
+        </CardPadding>
+        <form v-else @submit.prevent="schoolsForm.put($route('tenant.schools'), { preserveScroll: true })">
           <CardPadding>
             <Fieldset>
               <InputWrap
@@ -247,26 +250,27 @@
 import { defineComponent, ref, inject, computed, onBeforeUnmount } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
-import Authenticated from '../../layouts/Authenticated'
-import Fieldset from '../../components/forms/Fieldset'
-import InputWrap from '../../components/forms/InputWrap'
-import Label from '../../components/forms/Label'
-import Input from '../../components/forms/Input'
-import Button from '../../components/Button'
-import Checkbox from '../../components/forms/Checkbox'
-import CheckboxText from '../../components/forms/CheckboxText'
-import CardWrapper from '../../components/CardWrapper'
-import CardPadding from '../../components/CardPadding'
-import CardAction from '../../components/CardAction'
-import CardSectionHeader from '../../components/CardSectionHeader'
-import HelpText from '../../components/HelpText'
-import Select from '../../components/forms/Select'
-import FormMultipartWrapper from '../../components/forms/FormMultipartWrapper'
+import Authenticated from '@/layouts/Authenticated'
+import Fieldset from '@/components/forms/Fieldset'
+import InputWrap from '@/components/forms/InputWrap'
+import Label from '@/components/forms/Label'
+import Input from '@/components/forms/Input'
+import Button from '@/components/Button'
+import Checkbox from '@/components/forms/Checkbox'
+import CheckboxText from '@/components/forms/CheckboxText'
+import CardWrapper from '@/components/CardWrapper'
+import CardPadding from '@/components/CardPadding'
+import CardAction from '@/components/CardAction'
+import CardSectionHeader from '@/components/CardSectionHeader'
+import HelpText from '@/components/HelpText'
+import Select from '@/components/forms/Select'
+import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper'
 import range from 'lodash/range'
 import { TrashIcon } from '@heroicons/vue/outline'
-import Alert from '../../components/Alert'
-import Spinner from '../../components/icons/spinner'
+import Alert from '@/components/Alert'
+import Spinner from '@/components/icons/spinner'
 import dayjs from '@/plugins/dayjs'
+import Link from '@/components/Link'
 
 export default defineComponent({
   components: {
@@ -287,7 +291,8 @@ export default defineComponent({
     Label,
     InputWrap,
     Fieldset,
-    Authenticated
+    Authenticated,
+    Link,
   },
 
   props: {

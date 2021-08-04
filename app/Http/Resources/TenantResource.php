@@ -24,6 +24,7 @@ class TenantResource extends JsonResource
             'schools' => SchoolResource::collection($this->whenLoaded('schools')),
             'is_syncing' => !!$this->batch_id,
             'is_cloud' => config('app.cloud'),
+            'sis' => $this->sis,
         ];
     }
 }
