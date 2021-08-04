@@ -718,8 +718,8 @@ export default {
       items: props.invoiceImport.mapping?.items || [],
       scholarships: props.invoiceImport.mapping?.scholarships || [],
       payment_schedules: props.invoiceImport.mapping?.payment_schedules || [],
-      apply_tax: isUndefined(props.invoiceImport.mapping.apply_tax) ? true : props.invoiceImport.mapping.apply_tax,
-      use_school_tax_defaults: isUndefined(props.invoiceImport.mapping.use_school_tax_defaults) ? true : props.invoiceImport.mapping.use_school_tax_defaults,
+      apply_tax: isUndefined(props.invoiceImport.mapping?.apply_tax) ? true : props.invoiceImport.mapping.apply_tax,
+      use_school_tax_defaults: isUndefined(props.invoiceImport.mapping?.use_school_tax_defaults) ? true : props.invoiceImport.mapping.use_school_tax_defaults,
       tax_rate: props.invoiceImport.mapping?.tax_rate || addMapFieldValue(),
       tax_label: props.invoiceImport.mapping?.tax_label || addMapFieldValue(),
     })
