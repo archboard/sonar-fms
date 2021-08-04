@@ -22,6 +22,10 @@
       </Dropdown>
     </template>
 
+    <Alert v-if="invoice.is_void" level="error" class="mb-4">
+      {{ __('This invoice is void.') }}
+    </Alert>
+
     <!-- Details for smaller screens -->
     <div class="xl:hidden grid grid-cols-4 gap-5 pb-6 mb-8 border-b border-gray-300 dark:border-gray-600">
       <div>
@@ -41,6 +45,14 @@
         </SidebarHeader>
         <div class="mt-2 leading-8">
           {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
+        </div>
+      </div>
+      <div v-if="invoice.is_void">
+        <SidebarHeader>
+          {{ __('Voided') }}
+        </SidebarHeader>
+        <div class="mt-2 leading-8">
+          {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
         </div>
       </div>
       <div v-if="invoice.available_at">
@@ -111,6 +123,14 @@
             {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
           </div>
         </div>
+        <div v-if="invoice.is_void" class="pt-6">
+          <SidebarHeader>
+            {{ __('Voided') }}
+          </SidebarHeader>
+          <div class="mt-2 leading-8">
+            {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
+          </div>
+        </div>
         <div v-if="invoice.available_at" class="pt-6">
           <SidebarHeader>
             {{ __('Available') }}
@@ -162,10 +182,12 @@ import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    Alert,
     InvoiceActionItems,
     ConvertInvoiceModal,
     InvoiceStatusModal,
