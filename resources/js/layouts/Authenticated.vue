@@ -302,15 +302,16 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, nextTick, onMounted } from 'vue'
-import Notifications from '../components/Notifications'
+import { defineComponent, ref, watch, nextTick } from 'vue'
+import Notifications from '@/components/Notifications'
 import { usePage } from '@inertiajs/inertia-vue3'
-import TopSearch from '../components/TopSearch'
-import SchoolSwitcher from '../components/SchoolSwitcher'
-import LocaleSelector from '../components/LocaleSelector'
+import TopSearch from '@/components/TopSearch'
+import SchoolSwitcher from '@/components/SchoolSwitcher'
+import LocaleSelector from '@/components/LocaleSelector'
 import darkStore from '@/stores/theme'
 import { HomeIcon } from '@heroicons/vue/solid'
 import { XIcon } from '@heroicons/vue/outline'
+import setsTitle from '@/composition/setsTitle'
 
 export default defineComponent({
   components: {
@@ -323,6 +324,7 @@ export default defineComponent({
   },
 
   setup () {
+    setsTitle()
     const showMenu = ref(false)
     const showMenuWrapper = ref(false)
     const page = usePage()
@@ -333,11 +335,6 @@ export default defineComponent({
           showMenu.value = true
         })
       }
-    })
-    onMounted(() => {
-      document.title = page.props.value.title
-        ? `${page.props.value.title} | Sonar FMS`
-        : 'Sonar FMS'
     })
 
     return {
