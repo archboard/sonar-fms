@@ -27,10 +27,12 @@ class DownloadInvoicePdfController extends Controller
 
         $content = view('invoice', [
             'layout' => $layout,
-            'invoices' => [$invoice],
+            'invoice' => $invoice,
             'title' => $title,
             'currency' => $invoice->currency,
         ])->render();
+
+        $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/layout-{$layout->id}");
 
         $browserShot = Browsershot::html($content)
             ->disableJavascript()
@@ -40,6 +42,9 @@ class DownloadInvoicePdfController extends Controller
             ->showBackground()
             ->setNodeBinary(config('services.node.binary'))
             ->setNpmBinary(config('services.node.npm'))
+            ->addChromiumArguments([
+                'user-data-dir' => $userDir
+            ])
             ->hideHeader()
             ->hideFooter();
 
