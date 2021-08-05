@@ -11,6 +11,9 @@
     </SonarMenuItem>
   </div>
   <div class="p-1">
+    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.preview', invoice)" target="_blank">
+      {{ __('Preview PDF') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
       {{ __('View PDF') }}
     </SonarMenuItem>
