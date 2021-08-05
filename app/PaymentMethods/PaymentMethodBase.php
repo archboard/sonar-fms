@@ -37,4 +37,9 @@ abstract class PaymentMethodBase
     {
         return $this->includePaymentMethodInResource;
     }
+
+    public function getInvoiceContent(): ?string
+    {
+        return $this->paymentMethod->options['instructions'] ?? null;
+    }
 }

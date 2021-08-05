@@ -16,4 +16,5 @@ interface PaymentMethodDriver
     public function getValidationRules(): array;
     public function includePaymentMethodInResource(): bool;
     public function setIncludePaymentMethodInResource(bool $include): PaymentMethodDriver;
+    public function getInvoiceContent(): ?string;
 }

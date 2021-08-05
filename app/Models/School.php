@@ -105,7 +105,8 @@ class School extends Model
 
     public function paymentMethods(): HasMany
     {
-        return $this->hasMany(PaymentMethod::class);
+        return $this->hasMany(PaymentMethod::class)
+            ->orderBy('driver');
     }
 
     public function getGradeLevelsAttribute(): array

@@ -9,6 +9,7 @@ use App\PaymentMethods\PaymentMethodDriver;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,12 +26,18 @@ class PaymentMethod extends Model
     protected $guarded = [];
 
     public bool $includeDriverWithResource = true;
+    protected PaymentMethodDriver $paymentMethodDriver;
 
     protected $casts = [
         'options' => 'json',
         'active' => 'boolean',
         'show_on_invoice' => 'boolean',
     ];
+
+    public function scopeShowOnInvoice(Builder $builder)
+    {
+        $builder->where('show_on_invoice', true);
+    }
 
     public static function drivers(): array
     {
@@ -75,8 +82,14 @@ class PaymentMethod extends Model
 
     public function getDriver(): PaymentMethodDriver
     {
-        return static::makeDriver($this->driver)
+        if (isset($this->paymentMethodDriver)) {
+            return $this->paymentMethodDriver;
+        }
+
+        $this->paymentMethodDriver = static::makeDriver($this->driver)
             ->setPaymentMethod($this);
+
+        return $this->paymentMethodDriver;
     }
 
     public static function getListForSchool(School $school): array
