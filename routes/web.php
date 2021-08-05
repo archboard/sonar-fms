@@ -153,11 +153,13 @@ Route::middleware('tenant')->group(function () {
                 Route::post('convert', \App\Http\Controllers\ConvertInvoiceToTemplateController::class)
                     ->name('convert');
 
-                Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
-                    ->name('preview');
+                Route::middleware('needs_layout')->group(function () {
+                    Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
+                        ->name('preview');
 
-                Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
-                    ->name('download');
+                    Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
+                        ->name('download');
+                });
             });
 
         Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)

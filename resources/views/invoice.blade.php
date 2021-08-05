@@ -1,3 +1,7 @@
+@php
+/** @var \App\Models\Invoice $invoice */
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
   <head>
@@ -17,7 +21,13 @@
     <div class="bg-white min-h-screen mx-auto p-8 space-y-8" style="max-width:{{ $layout->max_width }};">
       @foreach($layout->layout_data['rows'] as $row)
         @if($row['isInvoiceTable'])
-          <x-invoice-table :invoices="$invoices" :currency="$currency" />
+          @if($invoice->children->isEmpty())
+            <x-invoice-table :invoice="$invoice" :currency="$currency" />
+          @else
+            @foreach($invoice->children as $child)
+              <x-invoice-table :invoice="$child" :currency="$currency" />
+            @endforeach
+          @endif
         @else
           <div class="ck-content flex items-start space-x-6">
             @foreach($row['columns'] as $column)
@@ -28,6 +38,7 @@
           </div>
         @endif
       @endforeach
+
     </div>
   </body>
 </html>

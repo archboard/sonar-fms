@@ -8,6 +8,7 @@ use App\Http\Middleware\CanInstall;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
 use App\Http\Middleware\ManagesTenancy;
+use App\Http\Middleware\NeedsDefaultInvoicdLayout;
 use App\Http\Middleware\ScopeBouncer;
 use App\Http\Middleware\SelfHosted;
 use App\Http\Middleware\SetLocale;
@@ -87,5 +88,6 @@ class Kernel extends HttpKernel
         'allows_oidc_auth' => AllowsOidcLogins::class,
         'manages_tenancy' => ManagesTenancy::class,
         'can_install' => CanInstall::class,
+        'needs_layout' => NeedsDefaultInvoicdLayout::class,
     ];
 }

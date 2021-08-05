@@ -2,111 +2,111 @@
 /** @var \App\Models\Invoice $invoice */
 @endphp
 
-@props(['invoices' => [], 'currency'])
+@props(['invoice' => [], 'currency'])
 
 <div class="space-y-8">
-  @foreach($invoices as $invoice)
-    <div class="relative">
-      @if($invoice->is_void)
+  <div class="relative">
+    @if($invoice->is_void)
 {{--        <div class="absolute z-40 inset-0 backdrop-filter backdrop-blur-[1px] -m-6"></div>--}}
-        <div class="absolute z-50 inset-0 flex items-center justify-center">
-          <div class="border-[1rem] border-red-500 text-red-500 -rotate-6 text-9xl font-bold tracking-wider p-8 rounded-3xl">
-            VOID
-          </div>
-        </div>
-      @endif
-      <div class="flex justify-between">
-        <div class="">
-          <div class="text-lg font-medium">{{ $invoice->title }}</div>
-          <div class="text-gray-700 text-sm">{{ __('Invoice #:number', ['number' => $invoice->id]) }}</div>
-        </div>
-        <div class="text-right">
-          <h3 class="text-lg font-medium">{{ $invoice->student->full_name }} <span class="text-gray-500">({{ $invoice->student->student_number }})</span></h3>
-          <div class="text-gray-700 text-sm">{{ $invoice->student->grade_level_formatted }}</div>
+      <div class="absolute z-50 inset-0 flex items-center justify-center">
+        <div class="border-[1rem] border-red-500 text-red-500 -rotate-6 text-9xl font-bold tracking-wider p-8 rounded-3xl">
+          VOID
         </div>
       </div>
+    @endif
+    <div class="flex justify-between">
+      <div class="">
+        <div class="text-lg font-medium">{{ $invoice->title }}</div>
+        <div class="text-gray-700 text-sm">{{ __('Invoice #:number', ['number' => $invoice->id]) }}</div>
+      </div>
+      <div class="text-right">
+        <h3 class="text-lg font-medium">{{ $invoice->student->full_name }} <span class="text-gray-500">({{ $invoice->student->student_number }})</span></h3>
+        <div class="text-gray-700 text-sm">{{ $invoice->student->grade_level_formatted }}</div>
+      </div>
+    </div>
 
-      @if($invoice->description)
-        <div class="mt-4 text-sm">{{ $invoice->description }}</div>
-      @endif
+    @if($invoice->description)
+      <div class="mt-4 text-sm">{{ $invoice->description }}</div>
+    @endif
 
+    <table class="w-full mt-4">
+      <thead>
+        <tr>
+          <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
+          <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
+          <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
+          <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($invoice->invoiceItems as $invoiceItem)
+          <tr>
+            <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
+            <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
+            <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
+            <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount, $currency) }}</td>
+          </tr>
+        @endforeach
+        <tr>
+          <td class="font-bold text-left px-4 py-2 text-sm" colspan="3">
+            {{ __('Subtotal') }}
+          </td>
+          <td class="font-bold text-right px-4 py-2 text-sm">
+            {{ displayCurrency($invoice->subtotal, $currency) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    @if($invoice->invoiceScholarships->isNotEmpty())
       <table class="w-full mt-4">
         <thead>
           <tr>
-            <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
-            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
-            <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
-            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
+            <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border" colspan="2">{{ __('Scholarship') }}</th>
           </tr>
         </thead>
         <tbody>
-          @foreach($invoice->invoiceItems as $invoiceItem)
+          @foreach($invoice->invoiceScholarships as $invoiceScholarship)
             <tr>
-              <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
-              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
-              <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
-              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount, $currency) }}</td>
+              <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">
+                {{ $invoiceScholarship->name }}
+                @if($invoiceScholarship->percentage)
+                  <span class="text-gray-500">({{ $invoiceScholarship->percentage_formatted }})</span>
+                @endif
+              </td>
+              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceScholarship->calculated_amount, $currency) }}</td>
             </tr>
           @endforeach
           <tr>
-            <td class="font-bold text-left px-4 py-2 text-sm" colspan="3">
-              {{ __('Subtotal') }}
+            <td class="font-bold text-left px-4 py-2 text-sm">
+              {{ __('Scholarship total') }}
             </td>
             <td class="font-bold text-right px-4 py-2 text-sm">
-              {{ displayCurrency($invoice->subtotal, $currency) }}
+              {{ displayCurrency($invoice->discount_total, $currency) }}
             </td>
           </tr>
         </tbody>
       </table>
+    @endif
 
-      @if($invoice->invoiceScholarships->isNotEmpty())
+    @if(!$invoice->parent_uuid && $invoice->school->collect_tax && $invoice->apply_tax)
+      <div class="mt-4">
         <table class="w-full mt-4">
-          <thead>
-            <tr>
-              <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border" colspan="2">{{ __('Scholarship') }}</th>
-            </tr>
-          </thead>
           <tbody>
-            @foreach($invoice->invoiceScholarships as $invoiceScholarship)
-              <tr>
-                <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">
-                  {{ $invoiceScholarship->name }}
-                  @if($invoiceScholarship->percentage)
-                    <span class="text-gray-500">({{ $invoiceScholarship->percentage_formatted }})</span>
-                  @endif
-                </td>
-                <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceScholarship->calculated_amount, $currency) }}</td>
-              </tr>
-            @endforeach
             <tr>
-              <td class="font-bold text-left px-4 py-2 text-sm">
-                {{ __('Scholarship total') }}
+              <td class="font-bold text-left px-4 py-2 text-sm border-t">
+                {{ $invoice->tax_label }} <span class="font-normal text-gray-500">({{ $invoice->tax_rate_formatted }})</span>
               </td>
-              <td class="font-bold text-right px-4 py-2 text-sm">
-                {{ displayCurrency($invoice->discount_total, $currency) }}
+              <td class="font-bold text-right px-4 py-2 text-sm border-t">
+                {{ displayCurrency($invoice->tax_due, $currency) }}
               </td>
             </tr>
           </tbody>
-        </table>
-      @endif
+      </table>
+      </div>
+    @endif
 
-      @if($invoice->school->collect_tax && $invoice->apply_tax)
-        <div class="mt-4">
-          <table class="w-full mt-4">
-            <tbody>
-              <tr>
-                <td class="font-bold text-left px-4 py-2 text-sm border-t">
-                  {{ $invoice->tax_label }} <span class="font-normal text-gray-500">({{ $invoice->tax_rate_formatted }})</span>
-                </td>
-                <td class="font-bold text-right px-4 py-2 text-sm border-t">
-                  {{ displayCurrency($invoice->tax_due, $currency) }}
-                </td>
-              </tr>
-            </tbody>
-        </table>
-        </div>
-      @endif
-
+    @if(!$invoice->parent_uuid)
       <table class="w-full mt-4 border-2 border-gray-500">
         <tbody>
           <tr>
@@ -137,12 +137,12 @@
         </div>
 
         <div class="mt-6">
-{{--          <h2 class="font-bold text-lg mb-4">{{ __('Available payment schedules') }}</h2>--}}
+  {{--          <h2 class="font-bold text-lg mb-4">{{ __('Available payment schedules') }}</h2>--}}
           <div class="space-y-4">
             @foreach($invoice->invoicePaymentSchedules as $paymentSchedule)
               <div>
                 <h3 class="font-medium mb-2">{{ __(':number payments (:total_price)', ['number' => $paymentSchedule->invoicePaymentTerms->count(), 'total_price' => displayCurrency($paymentSchedule->amount, $currency)]) }}</h3>
-{{--                <div class="grid grid-cols-4 gap-4">--}}
+  {{--                <div class="grid grid-cols-4 gap-4">--}}
                 <div class="flex items-start space-x-4">
                   @foreach($paymentSchedule->invoicePaymentTerms as $term)
                     <div class="flex-0 w-full border p-4">
@@ -159,6 +159,6 @@
           </div>
         </div>
       @endif
-    </div>
-  @endforeach
+    @endif
+  </div>
 </div>
