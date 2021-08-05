@@ -2,6 +2,8 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import plugins from '@/plugins'
 import components from '@/components'
+import get from 'lodash/get'
+import flashesNotifications from '@/plugins/flashesNotifications'
 import './bootstrap'
 
 createInertiaApp({
@@ -21,5 +23,7 @@ createInertiaApp({
 
     // Mount the app
     app.mount(el)
+
+    flashesNotifications(get(props, 'initialPage.props.flash'))
   },
 })
