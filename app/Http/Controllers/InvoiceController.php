@@ -84,4 +84,29 @@ class InvoiceController extends Controller
             ],
         ])->withViewData(compact('title'));
     }
+
+    public function edit(Request $request, Invoice $invoice)
+    {
+        $title = __('Update invoice');
+        $breadcrumbs = [
+            [
+                'label' => __('Invoices'),
+                'route' => route('invoices.index'),
+            ],
+            [
+                'label' => $invoice->title,
+                'route' => route('invoices.show', $invoice),
+            ],
+            [
+                'label' => __('Edit'),
+                'route' => route('invoices.edit', $invoice),
+            ],
+        ];
+
+        return inertia('invoices/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'student' => $student->toResource(),
+        ])->withViewData(compact('title'));
+    }
 }

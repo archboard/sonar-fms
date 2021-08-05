@@ -271,6 +271,10 @@ class Invoice extends Model
 
     public function getStatusLabelAttribute(): string
     {
+        if (!$this->published_at) {
+            return __('Draft');
+        }
+
         if ($this->paid_at) {
             return __('Paid');
         }

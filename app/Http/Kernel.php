@@ -7,6 +7,8 @@ use App\Http\Middleware\AllowsPasswordLogins;
 use App\Http\Middleware\CanInstall;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\Installed;
+use App\Http\Middleware\InvoiceNotPublished;
+use App\Http\Middleware\InvoicePublished;
 use App\Http\Middleware\ManagesTenancy;
 use App\Http\Middleware\NeedsDefaultInvoicdLayout;
 use App\Http\Middleware\ScopeBouncer;
@@ -89,5 +91,7 @@ class Kernel extends HttpKernel
         'manages_tenancy' => ManagesTenancy::class,
         'can_install' => CanInstall::class,
         'needs_layout' => NeedsDefaultInvoicdLayout::class,
+        'invoice_published' => InvoicePublished::class,
+        'invoice_unpublished' => InvoiceNotPublished::class,
     ];
 }

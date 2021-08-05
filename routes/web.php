@@ -141,7 +141,8 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/', [\App\Http\Controllers\InvoiceController::class, 'show'])
                     ->name('show');
 
-                Route::get('edit', [\App\Http\Controllers\InvoiceController::class, 'show'])
+                Route::middleware('invoice_unpublished')
+                    ->get('edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])
                     ->name('edit');
 
                 Route::post('status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
