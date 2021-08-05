@@ -65,6 +65,7 @@ class Invoice extends Model
         'tax_due',
         'pre_tax_subtotal',
         'parent_uuid',
+        'published_at',
     ];
 
     protected $casts = [
@@ -78,6 +79,7 @@ class Invoice extends Model
         'notify_at' => 'datetime',
         'notified_at' => 'datetime',
         'available_at' => 'datetime',
+        'published_at' => 'datetime',
     ];
 
     protected $keyType = 'string';

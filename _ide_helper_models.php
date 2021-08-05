@@ -194,6 +194,7 @@ namespace App\Models{
  * @property int $tax_due
  * @property int|null $pre_tax_subtotal
  * @property string|null $parent_uuid
+ * @property Carbon|null $published_at
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
@@ -256,6 +257,7 @@ namespace App\Models{
  * @method static Builder|Invoice wherePaidAt($value)
  * @method static Builder|Invoice whereParentUuid($value)
  * @method static Builder|Invoice wherePreTaxSubtotal($value)
+ * @method static Builder|Invoice wherePublishedAt($value)
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
  * @method static Builder|Invoice whereStudentId($value)
@@ -618,19 +620,20 @@ namespace App\Models{
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\PaymentMethodFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod query()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereDriver($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereInvoiceDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereOptions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereShowOnInvoice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentMethod whereUpdatedAt($value)
+ * @method static Builder|PaymentMethod newModelQuery()
+ * @method static Builder|PaymentMethod newQuery()
+ * @method static Builder|PaymentMethod query()
+ * @method static Builder|PaymentMethod showOnInvoice()
+ * @method static Builder|PaymentMethod whereActive($value)
+ * @method static Builder|PaymentMethod whereCreatedAt($value)
+ * @method static Builder|PaymentMethod whereDriver($value)
+ * @method static Builder|PaymentMethod whereId($value)
+ * @method static Builder|PaymentMethod whereInvoiceDescription($value)
+ * @method static Builder|PaymentMethod whereOptions($value)
+ * @method static Builder|PaymentMethod whereSchoolId($value)
+ * @method static Builder|PaymentMethod whereShowOnInvoice($value)
+ * @method static Builder|PaymentMethod whereTenantId($value)
+ * @method static Builder|PaymentMethod whereUpdatedAt($value)
  */
 	class IdeHelperPaymentMethod extends \Eloquent {}
 }
