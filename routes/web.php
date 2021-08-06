@@ -65,6 +65,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/students', [\App\Http\Controllers\StudentController::class, 'index'])
             ->name('students.index');
 
+        Route::get('/search/students', \App\Http\Controllers\StudentFetchController::class)
+            ->name('students.search');
+
         Route::prefix('/students/{student}')
             ->name('students.')
             ->group(function () {
