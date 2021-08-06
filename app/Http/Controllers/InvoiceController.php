@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateInvoiceForStudentsRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\Student;
@@ -47,6 +48,44 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Shows the form for creating a new invoice
+     * where students are added
+     *
+     * @return \Inertia\Response|\Inertia\ResponseFactory
+     */
+    public function create()
+    {
+        $title = __('Create a new invoice');
+        $breadcrumbs = [
+            [
+                'label' => __('Invoices'),
+                'route' => route('invoices.index'),
+            ],
+            [
+                'label' => __('New invoice'),
+                'route' => route('invoices.create'),
+            ],
+        ];
+
+        return inertia('invoices/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'students' => [],
+            'endpoint' => route('invoices.store'),
+            'method' => 'post',
+        ])->withViewData(compact('title'));
+    }
+
+    /**
+     * @param CreateInvoiceForStudentsRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(CreateInvoiceForStudentsRequest $request)
+    {
+        return redirect()->route('invoices.index', ['batch_id' => '123']);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\Models\Invoice  $invoice
@@ -85,6 +124,11 @@ class InvoiceController extends Controller
         ])->withViewData(compact('title'));
     }
 
+    /**
+     * @param Request $request
+     * @param Invoice $invoice
+     * @return \Inertia\Response|\Inertia\ResponseFactory
+     */
     public function edit(Request $request, Invoice $invoice)
     {
         $title = __('Update invoice');
@@ -106,7 +150,7 @@ class InvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'student' => $student->toResource(),
+            'student' => $invoice->student->toResource(),
         ])->withViewData(compact('title'));
     }
 }

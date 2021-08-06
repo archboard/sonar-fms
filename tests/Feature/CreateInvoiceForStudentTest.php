@@ -20,6 +20,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
@@ -47,6 +48,21 @@ class CreateInvoiceForStudentTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_has_all_required_props()
+    {
+        $this->assignPermission('create', Invoice::class);
+
+        $this->get(route('students.invoices.create', $this->school->students->random()))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('students')
+                ->has('endpoint')
+                ->has('method')
+                ->component('invoices/Create')
+            );
+    }
+
     public function test_can_create_invoice_for_student_with_notify_now()
     {
         $this->withoutExceptionHandling();
@@ -58,6 +74,7 @@ class CreateInvoiceForStudentTest extends TestCase
             Term::factory()->make()
         );
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -116,6 +133,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $available = now()->startOfSecond();
 
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => $available->format('Y-m-d\TH:i:s.v\Z'),
@@ -174,6 +192,7 @@ class CreateInvoiceForStudentTest extends TestCase
         Queue::fake();
         $student = $this->school->students->random();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -208,6 +227,7 @@ class CreateInvoiceForStudentTest extends TestCase
         Queue::fake();
         $student = $this->school->students->random();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -282,6 +302,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $item1Id = $this->uuid();
         $item2id = $this->uuid();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -362,6 +383,7 @@ class CreateInvoiceForStudentTest extends TestCase
         Queue::fake();
         $student = $this->school->students->random();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -431,6 +453,7 @@ class CreateInvoiceForStudentTest extends TestCase
         Queue::fake();
         $student = $this->school->students->random();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
@@ -500,6 +523,7 @@ class CreateInvoiceForStudentTest extends TestCase
         Queue::fake();
         $student = $this->school->students->random();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -588,6 +612,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $item2 = $this->uuid();
         $item3 = $this->uuid();
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -759,6 +784,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $item2 = $this->uuid();
         $item3 = $this->uuid();
         $invoiceData = [
+            'students' => [1],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -878,6 +904,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->user->school->refresh();
 
         $invoiceData = [
+            'students' => [1],
             'title' => 'Test invoice 2021',
             'description' => null,
             'available_at' => null,
@@ -919,6 +946,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $student = $this->school->students->random();
 
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -970,6 +998,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $student = $this->school->students->random();
 
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -1021,6 +1050,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $student = $this->school->students->random();
 
         $invoiceData = [
+            'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,

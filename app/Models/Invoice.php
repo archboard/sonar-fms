@@ -109,6 +109,8 @@ class Invoice extends Model
                 $builder->where('id', 'ilike', "{$search}%")
                     ->orWhere('title', 'ilike', "%{$search}%");
             });
+        })->when($filters['batch_id'] ?? null, function (Builder $builder, $batchId) {
+            $builder->where('batch_id', $batchId);
         });
 
         $orderBy = $filters['orderBy'] ?? 'title';

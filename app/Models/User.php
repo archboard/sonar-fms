@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Resources\SchoolResource;
 use App\Traits\BelongsToTenant;
 use Carbon\Factory;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -158,6 +157,14 @@ class User extends Authenticatable implements HasLocalePreference
                 $join->on('student_selections.user_id', '=', 'users.id');
             })
             ->whereRaw('student_selections.school_id = users.school_id');
+    }
+
+    public function getSelectedStudentsAttribute(): Collection
+    {
+        return Student::join('student_selections', 'student_id', '=', 'students.id')
+            ->where('student_selections.school_id', $this->school_id)
+            ->where('student_selections.user_id', $this->id)
+            ->get();
     }
 
     public function invoiceImports(): HasMany

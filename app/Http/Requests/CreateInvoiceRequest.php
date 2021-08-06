@@ -33,19 +33,24 @@ class CreateInvoiceRequest extends FormRequest
         $school = $this->school();
 
         return [
+            'students' => [
+                'required',
+                'array',
+                'min:1',
+            ],
             'title' => 'required',
             'description' => 'nullable',
             'due_at' => 'nullable|date',
             'available_at' => 'nullable|date',
             'term_id' => [
                 'nullable',
-                Rule::in($school->terms->pluck('id')),
+                Rule::in($school->terms()->pluck('id')),
             ],
             'notify' => 'boolean',
             'items' => 'required|array|min:1',
             'items.*.fee_id' => [
                 'nullable',
-                Rule::in($school->fees->pluck('id')),
+                Rule::in($school->fees()->pluck('id')),
             ],
             'items.*.name' => 'required',
             'items.*.amount_per_unit' => 'required|integer',
@@ -53,7 +58,7 @@ class CreateInvoiceRequest extends FormRequest
             'scholarships' => 'array',
             'scholarships.*.scholarship_id' => [
                 'nullable',
-                Rule::in($school->scholarships->pluck('id')),
+                Rule::in($school->scholarships()->pluck('id')),
             ],
             'scholarships.*.name' => 'required',
             'scholarships.*.amount' => 'nullable|integer|required_without:scholarships.*.percentage',

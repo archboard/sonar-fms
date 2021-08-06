@@ -70,7 +70,9 @@ class StudentInvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'student' => $student->toResource(),
+            'students' => [$student->id],
+            'endpoint' => route('students.invoices.store', $student),
+            'method' => 'post',
         ])->withViewData(compact('title'));
     }
 
@@ -83,7 +85,7 @@ class StudentInvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request, Student $student)
     {
-        InvoiceFromRequestFactory::make($request, $student)
+        InvoiceFromRequestFactory::make($request)
             ->build();
 
         session()->flash('success', __('Invoice created successfully.'));

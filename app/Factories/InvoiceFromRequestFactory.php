@@ -25,10 +25,9 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
 
-    public static function make(CreateInvoiceRequest $request = null, Student|Collection $students = null): static
+    public static function make(CreateInvoiceRequest $request = null): static
     {
         return (new static)
-            ->setStudents($students)
             ->setRequest($request);
     }
 
@@ -38,6 +37,9 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->validatedData = $request->validated();
         $this->school = $request->school();
         $this->user = $request->user();
+        $this->students = $this->school->students()
+            ->whereIn('id', $this->validatedData['students'])
+            ->get();
 
         ray('Validated data', $this->validatedData);
 
@@ -45,17 +47,6 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             ->setScholarshipAttributes()
             ->setPaymentScheduleAttributes()
             ->setInvoiceAttributes();
-    }
-
-    public function setStudents(Student|Collection $students = null): static
-    {
-        if ($students instanceof Student) {
-            $students = collect([$students]);
-        }
-
-        $this->students = $students ?? collect();
-
-        return $this;
     }
 
     /**

@@ -8,8 +8,15 @@
     </Alert>
 
     <FormMultipartWrapper>
-      <!-- Invoice details -->
+      <!-- Students -->
       <div>
+        <InvoiceStudents
+          v-model="form.students"
+        />
+      </div>
+
+      <!-- Invoice details -->
+      <div class="pt-8">
         <div class="mb-6">
           <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
           <HelpText>
@@ -205,9 +212,11 @@ import useSchool from '@/composition/useSchool'
 import InvoiceItems from '@/components/forms/invoices/InvoiceItems'
 import InvoiceScholarships from '@/components/forms/invoices/InvoiceScholarships'
 import InvoicePaymentSchedules from '@/components/forms/invoices/InvoicePaymentSchedules'
+import InvoiceStudents from '@/components/forms/invoices/InvoiceStudents'
 
 export default {
   components: {
+    InvoiceStudents,
     InvoicePaymentSchedules,
     InvoiceScholarships,
     InvoiceItems,
@@ -238,9 +247,17 @@ export default {
     DatePicker,
   },
   props: {
-    student: {
-      type: Object,
-      default: () => ({})
+    endpoint: {
+      type: String,
+      required: true,
+    },
+    method: {
+      type: String,
+      required: true,
+    },
+    students: {
+      type: Array,
+      default: () => ([])
     },
     invoice: {
       type: Object,
@@ -258,13 +275,13 @@ export default {
   emits: ['update:invoiceForm'],
 
   setup (props, { emit }) {
-    const $route = inject('$route')
     const { terms } = fetchesTerms()
     const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
     const isNew = computed(() => !props.invoice.id)
     const { school } = useSchool()
     const form = useForm({
+      students: props.students,
       title: props.invoice.title || null,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,
@@ -312,24 +329,8 @@ export default {
     })
     const totalDue = computed(() => displayCurrency(total.value))
 
-    const saveInvoice = close => {
-      let route = $route('selection.invoices.create')
-
-      if (props.student.id) {
-        route = props.invoice.id
-          ? $route('students.invoices.update', [props.student, props.invoice])
-          : $route('students.invoices.store', [props.student])
-      }
-      const method = props.invoice.id
-        ? 'put'
-        : 'post'
-
-      form[method](route, {
-        onSuccess () {
-          if (typeof close === 'function') {
-            close()
-          }
-        },
+    const saveInvoice = () => {
+      form[props.method](props.endpoint, {
         onFinish () {
           form.processing = false
         }

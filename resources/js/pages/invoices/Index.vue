@@ -6,7 +6,7 @@
         :menu-items="[
           {
             label: __('By hand'),
-            route: '#',
+            route: $route('invoices.create'),
           },
           {
             label: __('From import'),

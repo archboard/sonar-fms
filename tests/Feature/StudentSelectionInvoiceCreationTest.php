@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
@@ -50,6 +51,11 @@ class StudentSelectionInvoiceCreationTest extends TestCase
         $this->assignPermission('create', Invoice::class);
 
         $this->get(route('selection.invoices.create'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('students')
+            )
             ->assertOk();
     }
 
@@ -65,6 +71,7 @@ class StudentSelectionInvoiceCreationTest extends TestCase
         $item2 = $this->uuid();
         $item3 = $this->uuid();
         $invoiceData = [
+            'students' => $students->pluck('id')->toArray(),
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
             'available_at' => null,
@@ -162,7 +169,7 @@ class StudentSelectionInvoiceCreationTest extends TestCase
             ],
         ];
 
-        $this->post(route('selection.invoices.create'), $invoiceData)
+        $this->post(route('selection.invoices.store'), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
 

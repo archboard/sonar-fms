@@ -67,6 +67,7 @@ Route::middleware('tenant')->group(function () {
 
         Route::get('/search/students', \App\Http\Controllers\StudentFetchController::class)
             ->name('students.search');
+        Route::post('/search/students', \App\Http\Controllers\StudentFetchController::class);
 
         Route::prefix('/students/{student}')
             ->name('students.')
@@ -138,6 +139,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
             ->name('invoices.index');
 
+        Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
+            ->name('invoices.create');
+
         Route::prefix('/invoices/{invoice}')
             ->name('invoices.')
             ->group(function () {
@@ -171,7 +175,8 @@ Route::middleware('tenant')->group(function () {
 
         Route::get('/selection/invoices/create', [\App\Http\Controllers\StudentSelectionInvoiceController::class, 'index'])
             ->name('selection.invoices.create');
-        Route::post('/selection/invoices/create', [\App\Http\Controllers\StudentSelectionInvoiceController::class, 'store']);
+        Route::post('/selection/invoices/create', [\App\Http\Controllers\StudentSelectionInvoiceController::class, 'store'])
+            ->name('selection.invoices.store');
 
         Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
             ->name('terms.index');

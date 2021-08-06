@@ -45,9 +45,17 @@ export default defineComponent({
   },
 
   props: {
-    student: {
-      type: Object,
-      default: () => ({})
+    endpoint: {
+      type: String,
+      required: true,
+    },
+    method: {
+      type: String,
+      required: true,
+    },
+    students: {
+      type: Array,
+      default: () => ([])
     },
     defaultTemplate: {
       type: Object,

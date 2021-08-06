@@ -16,25 +16,30 @@ class StudentSelectionInvoiceController extends Controller
         $this->authorize('create', Invoice::class);
 
         $title = __('Create invoice for student selection');
-        $students = $request->user()
-            ->studentSelections;
+        $breadcrumbs = [
+            [
+                'label' => __('Invoices'),
+                'route' => route('invoices.index'),
+            ],
+            [
+                'label' => __('Invoices for selection'),
+                'route' => route('selection.invoices.create'),
+            ],
+        ];
+        /** @var User $user */
+        $user = $request->user();
 
         return inertia('invoices/Create', [
             'title' => $title,
-            'students' => StudentResource::collection($students),
+            'breadcrumbs' => $breadcrumbs,
+            'students' => $user->selected_students->pluck('id'),
         ])->withViewData(compact('title'));
     }
 
     public function store(CreateInvoiceRequest $request)
     {
-        /** @var User $user */
-        $user = $request->user()
-            ->load('studentSelections', 'studentSelections.student');
-
-        $invoices = InvoiceFromRequestFactory::make(
-            $request,
-            $user->studentSelections->map->student
-        )->build();
+        $invoices = InvoiceFromRequestFactory::make($request)
+            ->build();
 
         session()->flash('success', __(':count invoices created successfully.', [
             'count' => $invoices->count(),

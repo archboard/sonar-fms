@@ -237,8 +237,10 @@ namespace App\Models{
  * @method static Builder|Invoice newQuery()
  * @method static Builder|Invoice notAChild()
  * @method static Builder|Invoice paid()
+ * @method static Builder|Invoice published()
  * @method static Builder|Invoice query()
  * @method static Builder|Invoice unpaid()
+ * @method static Builder|Invoice unpublished()
  * @method static Builder|Invoice whereAmountDue($value)
  * @method static Builder|Invoice whereApplyTax($value)
  * @method static Builder|Invoice whereAvailableAt($value)
@@ -1049,6 +1051,7 @@ namespace App\Models{
  * @property-read string $full_name
  * @property-read bool $is_school_admin
  * @property-read array $school_permissions
+ * @property-read Collection $selected_students
  * @property-read mixed $student_selection
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
  * @property-read int|null $invoice_imports_count

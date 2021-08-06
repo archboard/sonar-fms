@@ -44,6 +44,8 @@ class Student extends Model
             });
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->whereIn('grade_level', $grades);
+        })->when($filters['ids'] ?? null, function (Builder $builder, array $ids) {
+            $builder->whereIn('id', $ids);
         });
 
         // Enrollment status
