@@ -133,6 +133,16 @@ class Invoice extends Model
         $builder->whereNotNull('paid_at');
     }
 
+    public function scopeUnpublished(Builder $builder)
+    {
+        $builder->whereNull('published_at');
+    }
+
+    public function scopePublished(Builder $builder)
+    {
+        $builder->whereNotNull('published_at');
+    }
+
     public function scopeNotAChild(Builder $builder)
     {
         $builder->whereNull('parent_uuid');
@@ -250,6 +260,10 @@ class Invoice extends Model
 
     public function getStatusColorAttribute(): string
     {
+        if (!$this->published_at) {
+            return 'gray';
+        }
+
         if ($this->paid_at) {
             return 'green';
         }

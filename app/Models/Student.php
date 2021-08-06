@@ -80,6 +80,7 @@ class Student extends Model
     {
         return $this->invoices()
             ->isNotVoid()
+            ->published()
             ->unpaid()
             ->sum('remaining_balance');
     }
@@ -88,6 +89,7 @@ class Student extends Model
     {
         return $this->invoices()
             ->isNotVoid()
+            ->published()
             ->unpaid()
             ->count();
     }
@@ -96,6 +98,7 @@ class Student extends Model
     {
         return $this->invoices()
             ->isNotVoid()
+            ->published()
             ->paid()
             ->sum('pre_tax_subtotal');
     }
