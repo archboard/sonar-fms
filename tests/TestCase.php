@@ -4,9 +4,11 @@ namespace Tests;
 
 use App\Factories\UuidFactory;
 use App\Models\School;
+use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Collection;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -86,5 +88,34 @@ abstract class TestCase extends BaseTestCase
     public function addUser(): User
     {
         return $this->createUser();
+    }
+
+    public function createStudent(array $attributes): Student
+    {
+        $attributes = array_merge(
+            ['tenant_id' => $this->tenant->id],
+            $attributes
+        );
+
+        /** @var Student $student */
+        $student = $this->school->students()
+            ->save(Student::factory()->make($attributes));
+
+        return $student;
+    }
+
+    public function createStudents(array $attributes, int $count): Collection
+    {
+        $attributes = array_merge(
+            ['tenant_id' => $this->tenant->id],
+            $attributes
+        );
+
+        return $this->school->students()
+            ->saveMany(
+                Student::factory()
+                    ->count($count)
+                    ->make($attributes)
+            );
     }
 }
