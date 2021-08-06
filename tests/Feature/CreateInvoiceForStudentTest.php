@@ -23,7 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
-class CreateInvoiceTest extends TestCase
+class CreateInvoiceForStudentTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
