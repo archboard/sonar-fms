@@ -10,7 +10,7 @@
           leave-from-class="opacity-100"
           leave-to-class="opacity-0"
         >
-          <div v-if="show" class="fixed inset-0 transition-opacity" style="backdrop-filter: blur(5px);" aria-hidden="true" @click="close">
+          <div v-if="show" class="fixed inset-0 transition-opacity" style="backdrop-filter: blur(5px);" aria-hidden="true">
             <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
           </div>
         </transition>
@@ -27,7 +27,7 @@
           leave-to-class="opacity-0 -translate-y-5"
           @after-leave="$emit('close')"
         >
-          <div v-if="show" ref="modal" :class="modalSize" class="inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+          <div v-if="show" v-clickaway="close" ref="modal" :class="modalSize" class="inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
               <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-600 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
                 <span class="sr-only">Close</span>
@@ -68,9 +68,16 @@ import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import Button from './Button'
 import ModalHeadline from './modals/ModalHeadline'
+import clickaway from '@/directives/clickaway'
 
 export default defineComponent({
-  components: {ModalHeadline, Button},
+  directives: {
+    clickaway,
+  },
+  components: {
+    ModalHeadline,
+    Button
+  },
   emits: ['close', 'action'],
 
   props: {
@@ -151,10 +158,6 @@ export default defineComponent({
 
     close () {
       this.show = false
-    },
-
-    clickedAway () {
-      console.log('clicked away')
     },
 
     isLevel (level) {
