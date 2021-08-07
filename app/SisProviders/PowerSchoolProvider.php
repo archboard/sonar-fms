@@ -42,6 +42,7 @@ class PowerSchoolProvider implements SisProvider
 
         return array_map(function ($school) {
             return new School([
+                'tenant_id' => $this->tenant->id,
                 'sis_id' => $school->id,
                 'name' => $school->name,
                 'school_number' => $school->school_number,
