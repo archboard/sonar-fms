@@ -138,6 +138,8 @@ Route::middleware('tenant')->group(function () {
          */
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])
             ->name('invoices.index');
+        Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store'])
+            ->name('invoices.store');
 
         Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
             ->name('invoices.create');

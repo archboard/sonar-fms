@@ -22,6 +22,7 @@ class CreateInvoiceByHandTest extends TestCase
 
     public function test_the_create_page_is_inertia_set()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('create', Invoice::class);
 
         $this->get(route('invoices.create'))
