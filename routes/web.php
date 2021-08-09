@@ -245,14 +245,16 @@ Route::middleware('tenant')->group(function () {
                 Route::get('sync/progress', \App\Http\Controllers\GetSisSyncBatchController::class)
                     ->name('sis.sync.batch');
 
-                Route::put('tenant/schools', \App\Http\Controllers\Settings\SaveActiveSchoolsController::class)
-                    ->name('tenant.schools');
-
                 Route::put('users/{user}/manager', \App\Http\Controllers\Settings\UpdateTenancyManagerStatusController::class)
                     ->name('users.tenancy_manager');
 
-                Route::post('test', \App\Http\Controllers\SendTestMailController::class)
-                    ->name('smtp.test');
+                Route::middleware('self_hosted')->group(function () {
+                    Route::put('tenant/schools', \App\Http\Controllers\Settings\SaveActiveSchoolsController::class)
+                        ->name('tenant.schools');
+
+                    Route::post('test', \App\Http\Controllers\SendTestMailController::class)
+                        ->name('smtp.test');
+                });
             });
         });
     });
