@@ -11,6 +11,7 @@ use App\Http\Middleware\InvoiceNotPublished;
 use App\Http\Middleware\InvoicePublished;
 use App\Http\Middleware\ManagesTenancy;
 use App\Http\Middleware\NeedsDefaultInvoicdLayout;
+use App\Http\Middleware\SchoolSettingsSaved;
 use App\Http\Middleware\ScopeBouncer;
 use App\Http\Middleware\SelfHosted;
 use App\Http\Middleware\SetLocale;
@@ -93,5 +94,6 @@ class Kernel extends HttpKernel
         'needs_layout' => NeedsDefaultInvoicdLayout::class,
         'invoice_published' => InvoicePublished::class,
         'invoice_unpublished' => InvoiceNotPublished::class,
+        'school_settings' => SchoolSettingsSaved::class,
     ];
 }
