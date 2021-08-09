@@ -15,7 +15,8 @@ if (!function_exists('displayCurrency')) {
      */
     function displayCurrency(int $amount = null, Currency $currency = null): string {
         if (is_null($currency)) {
-            $currency = request()->school()->currency;
+            $currency = request()->school()->currency ??
+                new Currency(['code' => 'USD']);
         }
 
         try {
