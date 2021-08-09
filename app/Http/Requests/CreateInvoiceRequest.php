@@ -102,6 +102,7 @@ class CreateInvoiceRequest extends FormRequest
     public function messages()
     {
         return [
+            'students.*' => __('You must create an invoice for at least one student.'),
             'scholarships.*.amount.required_without' => __('The amount is required when not using a percentage.'),
             'scholarships.*.percentage.required_without' => __('The percentage is required when not using an amount.'),
         ];

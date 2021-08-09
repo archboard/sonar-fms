@@ -43,7 +43,7 @@
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('student_number')">
               <span>
-                {{ __('Student Number') }}
+                {{ __('Student number') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
                 <SortAscendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />

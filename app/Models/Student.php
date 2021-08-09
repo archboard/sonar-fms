@@ -36,6 +36,7 @@ class Student extends Model
 
     public function scopeFilter(Builder $builder, array $filters)
     {
+        ray('filters', $filters, $filters['ids'] ?? null);
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where(function (Builder $builder) use ($search) {
                 $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
@@ -44,8 +45,8 @@ class Student extends Model
             });
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->whereIn('grade_level', $grades);
-        })->when($filters['ids'] ?? null, function (Builder $builder, array $ids) {
-            $builder->whereIn('id', $ids);
+        })->when(isset($filters['ids']), function (Builder $builder) use ($filters) {
+            $builder->whereIn('id', $filters['ids']);
         });
 
         // Enrollment status

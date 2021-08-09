@@ -49,9 +49,7 @@ class StudentInvoiceController extends Controller
      */
     public function create(Request $request, Student $student)
     {
-        $title = __('Create a new invoice for :student', [
-            'student' => $student->full_name,
-        ]);
+        $title = __('Create a new invoice');
         $breadcrumbs = [
             [
                 'label' => __('Students'),

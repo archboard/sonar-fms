@@ -99,12 +99,9 @@
     </FadeInGroup>
   </ul>
 
-  <div class="relative flex justify-center mt-6">
-    <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-      <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-      <span>{{ __('Add payment schedule') }}</span>
-    </button>
-  </div>
+  <AddThingButton @click="addPaymentSchedule">
+    {{ __('Add payment schedule') }}
+  </AddThingButton>
 </template>
 
 <script>
@@ -114,10 +111,12 @@ import invoiceFormComponent from '@/composition/invoiceFormComponent'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
 import Mocker from '@/components/Mocker'
 import DatePicker from '@/components/forms/DatePicker'
+import AddThingButton from '@/components/forms/AddThingButton'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],
   components: {
+    AddThingButton,
     DatePicker,
     Mocker,
   },

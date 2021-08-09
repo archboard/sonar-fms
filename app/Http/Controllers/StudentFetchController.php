@@ -20,7 +20,7 @@ class StudentFetchController extends Controller
 
         $students = $request->school()
             ->students()
-            ->filter($request->only('s'))
+            ->filter($request->all())
             ->limit(10)
             ->get();
 

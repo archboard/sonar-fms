@@ -14,6 +14,8 @@
       :student="student"
       :invoice-template="invoiceTemplate"
       v-model:invoice-form="form"
+      :method="method"
+      :endpoint="endpoint"
     />
   </Authenticated>
 

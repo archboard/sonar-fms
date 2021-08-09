@@ -12,6 +12,7 @@
       <div>
         <InvoiceStudents
           v-model="form.students"
+          :form="form"
         />
       </div>
 
@@ -174,10 +175,8 @@
 </template>
 
 <script>
-import { computed, inject, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import { PlusSmIcon } from '@heroicons/vue/solid'
-import { TrashIcon } from '@heroicons/vue/outline'
 import Fieldset from '@/components/forms/Fieldset'
 import CardHeader from '@/components/CardHeader'
 import HelpText from '@/components/HelpText'
@@ -213,6 +212,7 @@ import InvoiceItems from '@/components/forms/invoices/InvoiceItems'
 import InvoiceScholarships from '@/components/forms/invoices/InvoiceScholarships'
 import InvoicePaymentSchedules from '@/components/forms/invoices/InvoicePaymentSchedules'
 import InvoiceStudents from '@/components/forms/invoices/InvoiceStudents'
+import useProp from '@/composition/useProp'
 
 export default {
   components: {
@@ -242,8 +242,6 @@ export default {
     CardHeader,
     Fieldset,
     Label,
-    PlusSmIcon,
-    TrashIcon,
     DatePicker,
   },
   props: {
@@ -254,10 +252,6 @@ export default {
     method: {
       type: String,
       required: true,
-    },
-    students: {
-      type: Array,
-      default: () => ([])
     },
     invoice: {
       type: Object,
@@ -275,13 +269,14 @@ export default {
   emits: ['update:invoiceForm'],
 
   setup (props, { emit }) {
+    const students = useProp('students')
     const { terms } = fetchesTerms()
     const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
     const isNew = computed(() => !props.invoice.id)
     const { school } = useSchool()
     const form = useForm({
-      students: props.students,
+      students: students.value,
       title: props.invoice.title || null,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,
