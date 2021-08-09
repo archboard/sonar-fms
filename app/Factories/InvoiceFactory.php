@@ -40,6 +40,7 @@ abstract class InvoiceFactory
 
     protected string $now;
     protected string $notifyAt;
+    protected bool $asDraft = false;
 
     public function __construct()
     {
@@ -61,6 +62,13 @@ abstract class InvoiceFactory
 
         $this->now = now()->toDateTimeString();
         $this->notifyAt = now()->addMinutes(15)->toIso8601String();
+    }
+
+    public function asDraft(bool $asDraft = true): static
+    {
+        $this->asDraft = $asDraft;
+
+        return $this;
     }
 
     protected function uuid(): string
@@ -114,7 +122,17 @@ abstract class InvoiceFactory
 
         DB::transaction(function () {
             DB::table('invoices')
-                ->insert($this->invoices->toArray());
+                ->insert(
+                    $this->invoices
+                        ->map(function (array $invoice) {
+                            $invoice['published_at'] = $this->asDraft
+                                ? null
+                                : $this->now;
+
+                            return $invoice;
+                        })
+                        ->toArray()
+                );
 
             DB::table('invoice_items')
                 ->insert($this->invoiceItems->toArray());
