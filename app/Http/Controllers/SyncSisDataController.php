@@ -20,9 +20,13 @@ class SyncSisDataController extends Controller
         if ($tenant->batch_id) {
             $batch = Bus::findBatch($tenant->batch_id);
 
-            if (!$batch->finished()) {
+            if ($batch && !$batch->finished()) {
                 session()->flash('error', __('SIS data is currently syncing.'));
                 return back();
+            }
+
+            if (!$batch) {
+                $tenant->update(['batch_id' => null]);
             }
         }
 

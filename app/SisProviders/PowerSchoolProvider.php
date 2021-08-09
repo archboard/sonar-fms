@@ -41,14 +41,13 @@ class PowerSchoolProvider implements SisProvider
             ->get();
 
         return array_map(function ($school) {
-            return new School([
-                'tenant_id' => $this->tenant->id,
+            return [
                 'sis_id' => $school->id,
                 'name' => $school->name,
                 'school_number' => $school->school_number,
                 'low_grade' => $school->low_grade,
                 'high_grade' => $school->high_grade,
-            ]);
+            ];
         }, $response->schools->school);
     }
 
@@ -60,10 +59,13 @@ class PowerSchoolProvider implements SisProvider
     public function syncSchools(): Collection
     {
         return collect($this->getAllSchools())
-            ->map(function (School $school) {
-                $school->save();
-
-                return $school;
+            ->map(function (array $school) {
+                return $this->tenant
+                    ->schools()
+                    ->updateOrCreate(
+                        Arr::only($school, 'sis_id'),
+                        Arr::except($school, 'sis_id')
+                    );
             });
     }
 

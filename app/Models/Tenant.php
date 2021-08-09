@@ -147,11 +147,16 @@ class Tenant extends TenantBase
         ray()->clearScreen();
         ray('Starting sis sync');
 
+        $schools = $this->sisProvider()
+            ->syncSchools()
+            ->filter(fn (School $school) => $school->active);
+
+        if ($schools->isEmpty()) {
+            return $this;
+        }
+
         $batch = Bus::batch(
-            $this->sisProvider()
-                ->syncSchools()
-                ->filter(fn (School $school) => $school->active)
-                ->map(fn (School $school) => new SyncSchool($school))
+            $schools->map(fn (School $school) => new SyncSchool($school))
         )->then(function (Batch $batch) {
             $this->notifySyncEmails(TenantSyncComplete::class);
         })->catch(function (Batch $batch, \Throwable $ex) {
