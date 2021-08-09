@@ -29,7 +29,7 @@ export default defineComponent({
 
   setup (props, { emit }) {
     const findCurrency = id => props.currencies.find(c => c.id === id)
-    const localValue = ref(findCurrency(props.modelValue).id)
+    const localValue = ref(findCurrency(props.modelValue)?.id || null)
 
     watch(localValue, (newVal) => {
       emit('update:modelValue', newVal)
