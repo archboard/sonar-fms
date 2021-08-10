@@ -27,11 +27,18 @@
           v-for="student in students"
           :key="student.id"
         >
-          <Td :lighter="false">{{ student.full_name }}</Td>
+          <Td :lighter="false">
+            <a :href="$route('students.show', student)" class="hover:underline" target="_blank">
+              {{ student.full_name }}
+            </a>
+          </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_formatted }}</Td>
           <Td class="text-right">
-            <div class="flex items-center justify-end">
+            <div class="flex items-center justify-end space-x-2">
+              <a :href="$route('students.show', student)" class="text-primary-600 dark:text-primary-500 hover:text-primary-500 dark:hover:text-primary-300 focus:outline-none transition" target="_blank">
+                <ExternalLinkIcon class="w-4 h-4" />
+              </a>
               <button @click.prevent="removeStudent" class="text-red-600 dark:text-red-500 hover:text-red-500 dark:hover:text-red-300 focus:outline-none transition" type="button">
                 <TrashIcon class="w-4 h-4" />
               </button>
@@ -59,7 +66,7 @@ import invoiceFormComponent from '@/composition/invoiceFormComponent'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
 import tables from '@/components/tables'
 import fetchesStudents from '@/composition/fetchesStudents'
-import { TrashIcon } from '@heroicons/vue/outline'
+import { TrashIcon, ExternalLinkIcon } from '@heroicons/vue/outline'
 import AddThingButton from '@/components/forms/AddThingButton'
 import Alert from '@/components/Alert'
 import StudentSearchModal from '@/components/modals/StudentSearchModal'
@@ -72,6 +79,7 @@ export default defineComponent({
     AddThingButton,
     ...tables,
     TrashIcon,
+    ExternalLinkIcon,
   },
 
   setup (props, context) {
