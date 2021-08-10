@@ -10,6 +10,7 @@
         v-for="(item, index) in items"
         :key="item.__id"
         @mouseover="activeIndex = index"
+        @click="$emit('selected', item)"
       >
         <slot
           name="item"
@@ -22,7 +23,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import Input from '@/components/forms/Input'
 import { nanoid } from 'nanoid'
 
@@ -55,6 +56,20 @@ export default defineComponent({
 
         return item
       })
+    })
+    const listener = (e) => {
+      if (e.key === 'Enter') {
+        e.stopPropagation()
+        emit('selected', mappedItems.value[activeIndex.value])
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('keydown', listener)
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('keydown', listener)
     })
 
     return {
