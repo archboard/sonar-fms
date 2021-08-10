@@ -42,9 +42,15 @@
     </Table>
   </FadeIn>
 
-<!--  <AddThingButton @click="addStudent = true">-->
-<!--    {{ __('Add students') }}-->
-<!--  </AddThingButton>-->
+  <AddThingButton @click="addStudent = true">
+    {{ __('Add students') }}
+  </AddThingButton>
+
+  <StudentSearchModal
+    v-if="addStudent"
+    @close="addStudent = false"
+    @selected="studentSelected"
+  />
 </template>
 
 <script>
@@ -56,10 +62,12 @@ import fetchesStudents from '@/composition/fetchesStudents'
 import { TrashIcon } from '@heroicons/vue/outline'
 import AddThingButton from '@/components/forms/AddThingButton'
 import Alert from '@/components/Alert'
+import StudentSearchModal from '@/components/modals/StudentSearchModal'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],
   components: {
+    StudentSearchModal,
     Alert,
     AddThingButton,
     ...tables,
@@ -74,6 +82,14 @@ export default defineComponent({
       const index = localValue.value.findIndex(id => id === studentId)
       localValue.value.splice(index, 1)
     }
+    const studentSelected = student => {
+      if (typeof student === 'object') {
+        localValue.value.push(student.id)
+      } else {
+        localValue.value.push(student)
+      }
+    }
+
     watchEffect(() => {
       search({ ids: localValue.value })
     })
@@ -84,6 +100,7 @@ export default defineComponent({
       students,
       removeStudent,
       fetchingStudents,
+      studentSelected,
     }
   }
 })

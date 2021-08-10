@@ -25,8 +25,30 @@
           @after-leave="$emit('close')"
         >
           <div v-if="show" v-clickaway="close" ref="modal" class="inline-block max-w-md align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true">
-            <div class="sm:flex sm:items-start px-4 pt-5 pb-4 sm:p-6">
-              <Typeahead />
+            <div class="px-4 pt-5 pb-4 sm:p-6">
+              <Label for="student-search-term">{{ __('Seach for student') }}</Label>
+              <Input v-model="term" id="student-search-term" :placeholder="__('Search by name, email or student number')" type="search" autofocus />
+
+              <Loader v-if="fetchingStudents" class="pb-0" />
+
+              <FadeIn>
+                <div v-if="students.length > 0" class="mt-4 w-full space-y-1">
+                  <a
+                    v-for="student in students"
+                    :key="student.id"
+                    @click.prevent="selected(student)"
+                    href="#"
+                    class="flex justify-between text-sm w-full rounded items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                  >
+                    <div>
+                      {{ student.full_name }} <span class="text-gray-500 dark:text-gray-400">({{ student.student_number }})</span>
+                    </div>
+                    <div>
+                      {{ student.grade_level_formatted }}
+                    </div>
+                  </a>
+                </div>
+              </FadeIn>
             </div>
           </div>
         </transition>
@@ -36,47 +58,74 @@
 </template>
 
 <script>
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { defineComponent, nextTick, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import clickaway from '@/directives/clickaway'
-import Typeahead from '@/components/forms/Typeahead'
+import fetchesStudents from '@/composition/fetchesStudents'
+import Input from '@/components/forms/Input'
+import Label from '@/components/forms/Label'
+import FadeIn from '@/components/transitions/FadeIn'
+import Loader from '@/components/Loader'
+import debounce from 'lodash/debounce'
 
 export default defineComponent({
   directives: {
     clickaway,
   },
   components: {
-    Typeahead,
+    Loader,
+    FadeIn,
+    Input,
+    Label,
   },
   emits: ['close', 'selected'],
 
-  props: {
-  },
-
   setup (props, { emit }) {
-    const show = ref(true)
+    const show = ref(false)
+    const term = ref('')
+    const { students, search, fetchingStudents } = fetchesStudents()
     const modal = ref(null)
     const close = () => {
       show.value = false
     }
+    const selected = student => {
+      emit('selected', student)
+      close()
+    }
     const listener = (e) => {
       if (e.key === 'Escape') {
         e.stopPropagation()
-        this.close()
+        close()
       }
     }
+    const runSearch = debounce(() => {
+      search({ s: term.value })
+    }, 500)
+
+    watchEffect(() => {
+      if (term.value) {
+        runSearch()
+      } else {
+        students.value = []
+      }
+    })
+
+    watchEffect(() => {
+      if (show.value) {
+        nextTick(() => {
+          disableBodyScroll(modal.value)
+        })
+      } else {
+        clearAllBodyScrollLocks()
+      }
+    })
 
     onMounted(() => {
-      show.value = true
       document.addEventListener('keydown', listener)
-
-      nextTick(() => {
-        disableBodyScroll(modal.value)
-      })
+      show.value = true
     })
 
     onUnmounted(() => {
-      clearAllBodyScrollLocks()
       document.removeEventListener('keydown', listener)
     })
 
@@ -84,6 +133,10 @@ export default defineComponent({
       show,
       modal,
       close,
+      students,
+      term,
+      selected,
+      fetchingStudents,
     }
   },
 })
