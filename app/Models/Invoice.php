@@ -111,6 +111,12 @@ class Invoice extends Model
             });
         })->when($filters['batch_id'] ?? null, function (Builder $builder, $batchId) {
             $builder->where('batch_id', $batchId);
+        })->when($filters['ids'] ?? null, function (Builder $builder, $ids) {
+            if (is_array($ids)) {
+                $builder->whereIn('uuid', $ids);
+            } else {
+                $builder->where('uuid', $ids);
+            }
         });
 
         $orderBy = $filters['orderBy'] ?? 'title';
