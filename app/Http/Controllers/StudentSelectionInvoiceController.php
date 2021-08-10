@@ -50,10 +50,6 @@ class StudentSelectionInvoiceController extends Controller
         $invoices = InvoiceFromRequestFactory::make($request)
             ->build();
 
-        session()->flash('success', __(':count invoices created successfully.', [
-            'count' => $invoices->count(),
-        ]));
-
-        return redirect()->route('students.index');
+        return Invoice::successfullyCreatedResponse($invoices);
     }
 }

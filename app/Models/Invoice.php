@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -679,5 +680,21 @@ class Invoice extends Model
         $this->update(['published_at' => now()]);
 
         return $this;
+    }
+
+    public static function successfullyCreatedResponse(Collection $results): RedirectResponse
+    {
+        if ($results->count() === 1) {
+            session()->flash('success', __('Invoice created successfully.'));
+        } else {
+            session()->flash('success', __(':count invoices created successfully.', [
+                'count' => $results->count(),
+            ]));
+        }
+
+        $invoice = Invoice::where('uuid', $results->first())
+            ->first();
+
+        return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
     }
 }

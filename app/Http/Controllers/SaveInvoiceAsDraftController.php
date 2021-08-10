@@ -22,17 +22,6 @@ class SaveInvoiceAsDraftController extends Controller
             ->asDraft()
             ->build();
 
-        if ($results->count() === 1) {
-            session()->flash('success', __('Invoice created successfully.'));
-        } else {
-            session()->flash('success', __(':count invoices created successfully.', [
-                'count' => $results->count(),
-            ]));
-        }
-
-        $invoice = Invoice::where('uuid', $results->first())
-            ->first();
-
-        return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
+        return Invoice::successfullyCreatedResponse($results);
     }
 }

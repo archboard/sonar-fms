@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Factories\InvoiceFromRequestFactory;
 use App\Http\Requests\CreateInvoiceForStudentsRequest;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
@@ -83,7 +84,10 @@ class InvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request)
     {
-        return redirect()->route('invoices.index', ['batch_id' => '123']);
+        $results = InvoiceFromRequestFactory::make($request)
+            ->build();
+
+        return Invoice::successfullyCreatedResponse($results);
     }
 
     /**
