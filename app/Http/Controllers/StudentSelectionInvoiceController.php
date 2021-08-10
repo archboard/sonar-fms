@@ -36,6 +36,13 @@ class StudentSelectionInvoiceController extends Controller
         ])->withViewData(compact('title'));
     }
 
+    /**
+     * This stores the invoices that could be for the selection,
+     * or changed on the actual invoice page
+     *
+     * @param CreateInvoiceRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(CreateInvoiceRequest $request)
     {
         $invoices = InvoiceFromRequestFactory::make($request)
