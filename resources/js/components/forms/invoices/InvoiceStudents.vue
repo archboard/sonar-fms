@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6">
     <CardSectionHeader>
-      {{ __('Students') }}
+      {{ __('Students') }}<req />
     </CardSectionHeader>
     <HelpText class="text-sm mt-1">
       {{ __('Add or remove the students for which this invoice will be created.') }}
@@ -70,10 +70,12 @@ import { TrashIcon, ExternalLinkIcon } from '@heroicons/vue/outline'
 import AddThingButton from '@/components/forms/AddThingButton'
 import Error from '@/components/forms/Error'
 import StudentSearchModal from '@/components/modals/StudentSearchModal'
+import Req from '@/components/forms/Req'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],
   components: {
+    Req,
     StudentSearchModal,
     Error,
     AddThingButton,

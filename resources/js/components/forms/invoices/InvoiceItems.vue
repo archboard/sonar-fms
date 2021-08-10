@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6">
     <CardSectionHeader>
-      {{ __('Invoice line items') }}
+      {{ __('Invoice line items') }}<req />
     </CardSectionHeader>
     <HelpText class="text-sm mt-1">
       {{ __('Add line items to the build the invoice and total receivable amount.') }}
@@ -101,9 +101,11 @@ import invoiceItemForm from '@/composition/invoiceItemForm'
 import invoiceFormComponent from '@/composition/invoiceFormComponent'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
 import AddThingButton from '@/components/forms/AddThingButton'
+import Req from '@/components/forms/Req'
 
 export default defineComponent({
   components: {
+    Req,
     AddThingButton
   },
   mixins: [InvoiceFormCollection],
