@@ -87,6 +87,7 @@ class Invoice extends Model
     // These are the attributes/properties that are
     // used on the invoice form based on the API Resource
     public static array $formAttributes = [
+        'students',
         'title',
         'description',
         'term_id',
