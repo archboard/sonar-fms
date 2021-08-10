@@ -55,6 +55,8 @@ class StudentSelectionInvoiceCreationTest extends TestCase
                 ->has('title')
                 ->has('breadcrumbs')
                 ->has('students')
+                ->has('endpoint')
+                ->has('method')
             )
             ->assertOk();
     }

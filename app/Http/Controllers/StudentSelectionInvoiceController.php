@@ -33,6 +33,8 @@ class StudentSelectionInvoiceController extends Controller
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
             'students' => $user->selected_students->pluck('id'),
+            'endpoint' => route('selection.invoices.store'),
+            'method' => 'post',
         ])->withViewData(compact('title'));
     }
 
