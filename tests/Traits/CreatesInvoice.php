@@ -13,12 +13,12 @@ trait CreatesInvoice
 {
     use WithFaker;
 
-    protected function createInvoice(): Invoice
+    protected function createInvoice(array $invoiceAttributes = []): Invoice
     {
+        $attributes = array_merge(['user_id' => $this->user->id], $invoiceAttributes);
+
         /** @var Invoice $invoice */
-        $invoice = Invoice::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
+        $invoice = Invoice::factory()->create($attributes);
 
         $invoice->invoiceItems()
             ->saveMany(
