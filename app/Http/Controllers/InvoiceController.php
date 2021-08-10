@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateInvoiceForStudentsRequest;
+use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\Student;
@@ -80,7 +81,7 @@ class InvoiceController extends Controller
      * @param CreateInvoiceForStudentsRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateInvoiceForStudentsRequest $request)
+    public function store(CreateInvoiceRequest $request)
     {
         return redirect()->route('invoices.index', ['batch_id' => '123']);
     }

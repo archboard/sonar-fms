@@ -1078,7 +1078,6 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
             ->assertRedirect()
             ->assertSessionHas('success');
-        ray($this->school);
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
@@ -1091,5 +1090,43 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals(10100, $invoice->remaining_balance);
         $this->assertEquals(10000, $invoice->subtotal);
         $this->assertEquals(0, $invoice->discount_total);
+    }
+
+    public function test_can_save_invoice_as_draft()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+
+        $students = $this->school->students->random(3);
+
+        $invoiceData = [
+            'students' => $students->pluck('id')->toArray(),
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+        ];
+
+        $this->post(route('invoices.store.draft'), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $invoices = $this->school->invoices()->get();
+
+        $this->assertEquals(3, $invoices->count());
+        $this->assertTrue($invoices->every(fn (Invoice $invoice) => is_null($invoice->published_at)));
     }
 }
