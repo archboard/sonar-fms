@@ -30,6 +30,7 @@ class SchoolFactory extends Factory
             'low_grade' => $this->faker->numberBetween(-2, 0),
             'active' => true,
             'currency_id' => Currency::firstWhere('code', 'CNY')->id,
+            'timezone' => 'Asia/Shanghai',
         ];
     }
 }
