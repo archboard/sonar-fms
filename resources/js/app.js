@@ -24,6 +24,7 @@ createInertiaApp({
     // Mount the app
     app.mount(el)
 
+    el.removeAttribute('data-page')
     flashesNotifications(get(props, 'initialPage.props.flash'))
   },
 })
