@@ -6,6 +6,7 @@ import Error from '@/components/forms/Error'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
+import Label from '@/components/forms/Label'
 import InputWrap from '@/components/forms/InputWrap'
 import Fieldset from '@/components/forms/Fieldset'
 import Select from '@/components/forms/Select'
@@ -16,6 +17,7 @@ import FadeIn from '@/components/transitions/FadeIn'
 
 export default {
   components: {
+    Label,
     FadeIn,
     Button,
     CurrencyInput,
