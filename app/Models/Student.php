@@ -36,7 +36,6 @@ class Student extends Model
 
     public function scopeFilter(Builder $builder, array $filters)
     {
-        ray('filters', $filters, $filters['ids'] ?? null);
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where(function (Builder $builder) use ($search) {
                 $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
