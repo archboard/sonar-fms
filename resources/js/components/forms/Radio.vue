@@ -1,7 +1,7 @@
 <template>
   <input
     type="radio"
-    class="cursor-pointer focus:ring-primary-200 h-4 w-4 text-primary-600 dark:text-primary-500 border-gray-300"
+    class="cursor-pointer focus:ring-primary-200 h-4 w-4 text-primary-600 dark:text-primary-500 border-gray-300 dark:focus:ring-offset-gray-800"
     :value="value"
     v-model="proxyChecked"
     @change="$emit('change', proxyChecked)"
