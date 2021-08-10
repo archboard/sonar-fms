@@ -11,7 +11,6 @@
     </Alert>
 
     <InvoiceForm
-      :student="student"
       :invoice-template="invoiceTemplate"
       v-model:invoice-form="form"
       :method="method"
@@ -29,10 +28,10 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '../../layouts/Authenticated'
-import InvoiceForm from './Form'
-import InvoiceTemplatesModal from '../../components/modals/InvoiceTemplatesModal'
-import Button from '../../components/Button'
+import Authenticated from '@/layouts/Authenticated'
+import InvoiceForm from '@/pages/invoices/Form'
+import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal'
+import Button from '@/components/Button'
 import PageProps from '@/mixins/PageProps'
 import Alert from '@/components/Alert'
 
