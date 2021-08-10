@@ -8,9 +8,9 @@
     </HelpText>
   </div>
 
-  <Alert v-if="form.errors.students" level="error">
+  <Error v-if="form.errors.students">
     {{ form.errors.students }}
-  </Alert>
+  </Error>
 
   <FadeIn>
     <Table v-if="students.length > 0">
@@ -68,14 +68,14 @@ import tables from '@/components/tables'
 import fetchesStudents from '@/composition/fetchesStudents'
 import { TrashIcon, ExternalLinkIcon } from '@heroicons/vue/outline'
 import AddThingButton from '@/components/forms/AddThingButton'
-import Alert from '@/components/Alert'
+import Error from '@/components/forms/Error'
 import StudentSearchModal from '@/components/modals/StudentSearchModal'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],
   components: {
     StudentSearchModal,
-    Alert,
+    Error,
     AddThingButton,
     ...tables,
     TrashIcon,
