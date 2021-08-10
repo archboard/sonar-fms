@@ -168,6 +168,9 @@ Route::middleware('tenant')->group(function () {
                         Route::post('convert', \App\Http\Controllers\ConvertInvoiceToTemplateController::class)
                             ->name('convert');
 
+                        Route::put('publish', \App\Http\Controllers\PublishInvoiceController::class)
+                            ->name('publish');
+
                         Route::middleware('needs_layout')->group(function () {
                             Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
                                 ->name('preview');

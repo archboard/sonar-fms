@@ -667,4 +667,16 @@ class Invoice extends Model
             'for_import' => false,
         ]);
     }
+
+    /**
+     * Sets the published date on the invoice
+     *
+     * @return $this
+     */
+    public function publish(): static
+    {
+        $this->update(['published_at' => now()]);
+
+        return $this;
+    }
 }

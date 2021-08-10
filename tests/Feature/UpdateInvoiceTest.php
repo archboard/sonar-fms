@@ -34,11 +34,40 @@ class UpdateInvoiceTest extends TestCase
         $this->invoice = $this->createInvoice();
     }
 
+    public function test_invoice_publish_permission()
+    {
+        $this->put(route('invoices.publish', $this->invoice))
+            ->assertForbidden();
+    }
+
+    public function test_can_mark_invoice_as_published_if_not()
+    {
+        $this->assignPermission('update', Invoice::class);
+        $this->invoice->update(['published_at' => null]);
+
+        $this->assertNull($this->invoice->refresh()->published_at);
+
+        $this->put(route('invoices.publish', $this->invoice))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertNotNull($this->invoice->refresh()->published_at);
+    }
+
+    public function test_cant_mark_invoice_as_republished()
+    {
+        $this->assignPermission('update', Invoice::class);
+
+        $this->assertNotNull($this->invoice->refresh()->published_at);
+
+        $this->put(route('invoices.publish', $this->invoice))
+            ->assertSessionHas('error')
+            ->assertRedirect();
+    }
+
     public function test_can_update_all_areas_of_existing_invoice()
     {
         $this->markTestIncomplete('Skipping update invoice test');
-
-        ray()->clearScreen();
 
         $this->withoutExceptionHandling();
         $this->assignPermission('update', Invoice::class);
