@@ -197,8 +197,8 @@ export default defineComponent({
       s: '',
       perPage: 25,
       page: 1,
-      orderBy: 'title',
-      orderDir: 'asc',
+      orderBy: '',
+      orderDir: '',
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()

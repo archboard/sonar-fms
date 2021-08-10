@@ -119,8 +119,8 @@ class Invoice extends Model
             }
         });
 
-        $orderBy = $filters['orderBy'] ?? 'title';
-        $orderDir = $filters['orderDir'] ?? 'asc';
+        $orderBy = $filters['orderBy'] ?? 'invoices.created_at';
+        $orderDir = $filters['orderDir'] ?? 'desc';
 
         $builder->orderBy($orderBy, $orderDir);
         $builder->orderBy('invoices.title', $orderDir);
