@@ -13,6 +13,7 @@
         <InvoiceStudents
           v-model="form.students"
           :form="form"
+          :allow-student-editing="allowStudentEditing"
         />
       </div>
 
@@ -267,6 +268,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    allowStudentEditing: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:invoiceForm'],
 
@@ -279,7 +284,7 @@ export default {
     const isNew = computed(() => !props.invoice.id)
     const { school } = useSchool()
     const form = useForm({
-      students: students.value,
+      students: students.value || props.invoice.students || [],
       title: props.invoice.title || null,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,

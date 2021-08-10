@@ -39,7 +39,7 @@
               <a :href="$route('students.show', student)" class="text-primary-600 dark:text-primary-500 hover:text-primary-500 dark:hover:text-primary-300 focus:outline-none transition" target="_blank">
                 <ExternalLinkIcon class="w-4 h-4" />
               </a>
-              <button @click.prevent="removeStudent" class="text-red-600 dark:text-red-500 hover:text-red-500 dark:hover:text-red-300 focus:outline-none transition" type="button">
+              <button v-if="allowStudentEditing" @click.prevent="removeStudent" class="text-red-600 dark:text-red-500 hover:text-red-500 dark:hover:text-red-300 focus:outline-none transition" type="button">
                 <TrashIcon class="w-4 h-4" />
               </button>
             </div>
@@ -49,7 +49,7 @@
     </Table>
   </FadeIn>
 
-  <AddThingButton @click="addStudent = true">
+  <AddThingButton v-if="allowStudentEditing" @click="addStudent = true">
     {{ __('Add students') }}
   </AddThingButton>
 
@@ -82,6 +82,12 @@ export default defineComponent({
     ...tables,
     TrashIcon,
     ExternalLinkIcon,
+  },
+  props: {
+    allowStudentEditing: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup (props, context) {

@@ -15,6 +15,7 @@
       v-model:invoice-form="form"
       :method="method"
       :endpoint="endpoint"
+      :allow-student-editing="allowStudentEditing"
     />
   </Authenticated>
 
@@ -65,7 +66,11 @@ export default defineComponent({
     duplicating: {
       type: Boolean,
       default: false,
-    }
+    },
+    allowStudentEditing: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup (props) {
