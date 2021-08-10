@@ -57,7 +57,7 @@
             </HelpText>
           </InputWrap>
 
-          <InputWrap>
+          <InputWrap :error="form.errors.term_id">
             <Label for="term_id">{{ __('Term') }}</Label>
             <Select v-model="form.term_id" id="term_id">
               <option :value="null">{{ __('No term') }}</option>
@@ -168,7 +168,6 @@
     @action="saveInvoice"
     :action-loading="form.processing"
     size="xl"
-    :auto-close="false"
   >
     <InvoiceSummary :invoice="form" />
   </Modal>
@@ -333,13 +332,13 @@ export default {
     }
 
     // Watch for changes to apply a template
-    watchEffect(() => {
-      applyTemplate(props.invoiceTemplate)
+    watch(() => props.invoiceTemplate, state => {
+      applyTemplate(state)
     })
 
-    watch(form, () => {
-      emit('update:invoiceForm', form)
-    })
+    watch(() => form, state => {
+      emit('update:invoiceForm', state)
+    }, { deep: true })
 
     return {
       reviewing,
