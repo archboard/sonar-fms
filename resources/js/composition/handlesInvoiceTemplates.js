@@ -1,4 +1,5 @@
 import { inject, ref } from 'vue'
+import omit from 'lodash/omit'
 
 export default (forImport) => {
   const $http = inject('$http')
@@ -21,8 +22,9 @@ export default (forImport) => {
     const method = form.id
       ? 'put'
       : 'post'
+    const data = form.data()
 
-    await $http[method](route, form.data())
+    await $http[method](route, omit(data, ['template.students']))
     fetchTemplates()
   }
   const deleteTemplate = template => {

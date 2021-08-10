@@ -2,7 +2,6 @@
   <Modal
     @action="save"
     @close="$emit('close')"
-    :auto-close="false"
     :headline="__('Invoice Templates')"
     :action-loading="templateForm.processing"
     ref="modal"
@@ -37,7 +36,7 @@
       <Fieldset>
         <InputWrap :error="templateForm.errors.name">
           <Label for="new-template-name" :required="true">{{ __('Name') }}</Label>
-          <Input v-model="templateForm.name" id="new-template-name" />
+          <Input v-model="templateForm.name" :placeholder="__('My template name')" id="new-template-name" />
         </InputWrap>
       </Fieldset>
     </form>
