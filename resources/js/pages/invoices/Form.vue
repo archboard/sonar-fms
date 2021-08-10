@@ -156,9 +156,12 @@
     </FormMultipartWrapper>
   </form>
 
-  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md">
-    <Button type="button" size="lg" @click.prevent="reviewing = true">
+  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md space-x-2">
+    <Button type="button" @click.prevent="reviewing = true">
       {{ __('Review and save') }}
+    </Button>
+    <Button type="button" @click.prevent="saveAsDraft" color="white">
+      {{ __('Save as draft') }}
     </Button>
   </div>
 
@@ -174,7 +177,7 @@
 </template>
 
 <script>
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, inject, ref, watch, watchEffect } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import Fieldset from '@/components/forms/Fieldset'
 import CardHeader from '@/components/CardHeader'
@@ -268,6 +271,7 @@ export default {
   emits: ['update:invoiceForm'],
 
   setup (props, { emit }) {
+    const $route = inject('$route')
     const students = useProp('students')
     const { terms } = fetchesTerms()
     const reviewing = ref(false)
@@ -330,6 +334,13 @@ export default {
         }
       })
     }
+    const saveAsDraft = () => {
+      form.post($route('invoices.store.draft'), {
+        onFinish () {
+          form.processing = false
+        }
+      })
+    }
 
     // Watch for changes to apply a template
     watch(() => props.invoiceTemplate, state => {
@@ -353,6 +364,7 @@ export default {
       total,
       totalDue,
       strategies,
+      saveAsDraft,
     }
   },
 }
