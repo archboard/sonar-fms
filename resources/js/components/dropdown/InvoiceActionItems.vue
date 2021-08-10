@@ -12,6 +12,9 @@
     <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student)">
       {{ __('View student') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
+      {{ __('New invoice for student') }}
+    </SonarMenuItem>
   </div>
   <div class="p-1">
     <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.preview', invoice)" target="_blank">
