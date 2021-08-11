@@ -91,6 +91,11 @@
             <Link is="a" href="#" @click.prevent="displayModal(fee)">{{ __('Edit') }}</Link>
           </Td>
         </tr>
+        <tr v-if="fees.data.length === 0">
+          <Td colspan="5" class="text-center">
+            {{ __('No fees exist yet.') }} <Link @click.prevent="showModal = true" is="button">{{ __('Add one') }}</Link>.
+          </Td>
+        </tr>
       </Tbody>
     </Table>
 
@@ -105,25 +110,24 @@
 </template>
 
 <script>
-import { defineComponent, inject, ref, watch } from 'vue'
-import debounce from 'lodash/debounce'
-import handlesFilters from '../../composition/handlesFilters'
-import searchesItems from '../../composition/searchesItems'
-import Authenticated from '../../layouts/Authenticated'
-import Table from '../../components/tables/Table'
-import Thead from '../../components/tables/Thead'
-import Th from '../../components/tables/Th'
-import Tbody from '../../components/tables/Tbody'
-import Td from '../../components/tables/Td'
-import Checkbox from '../../components/forms/Checkbox'
-import Pagination from '../../components/tables/Pagination'
-import Input from '../../components/forms/Input'
+import { defineComponent, inject, ref } from 'vue'
+import handlesFilters from '@/composition/handlesFilters'
+import searchesItems from '@/composition/searchesItems'
+import Authenticated from '@/layouts/Authenticated'
+import Table from '@/components/tables/Table'
+import Thead from '@/components/tables/Thead'
+import Th from '@/components/tables/Th'
+import Tbody from '@/components/tables/Tbody'
+import Td from '@/components/tables/Td'
+import Checkbox from '@/components/forms/Checkbox'
+import Pagination from '@/components/tables/Pagination'
+import Input from '@/components/forms/Input'
 import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCircleIcon } from '@heroicons/vue/outline'
 import Link from '@/components/Link'
-import HelpText from '../../components/HelpText'
-import Button from '../../components/Button'
-import FeeFormModal from '../../components/modals/FeeFormModal'
-import displaysCurrency from '../../composition/displaysCurrency'
+import HelpText from '@/components/HelpText'
+import Button from '@/components/Button'
+import FeeFormModal from '@/components/modals/FeeFormModal'
+import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   components: {
