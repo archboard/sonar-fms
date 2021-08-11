@@ -78,6 +78,11 @@
             <Link is="a" href="#" @click.prevent="displayModal(scholarship)">{{ __('Edit') }}</Link>
           </Td>
         </tr>
+        <tr v-if="scholarships.data.length === 0">
+          <Td colspan="4" class="text-center">
+            {{ __('No scholarships exist yet.') }} <Link @click.prevent="showModal = true" is="button">{{ __('Add one') }}</Link>.
+          </Td>
+        </tr>
       </Tbody>
     </Table>
 
