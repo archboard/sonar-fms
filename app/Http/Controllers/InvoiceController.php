@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Factories\InvoiceFromRequestFactory;
-use App\Http\Requests\CreateInvoiceForStudentsRequest;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
@@ -79,7 +78,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @param CreateInvoiceForStudentsRequest $request
+     * @param CreateInvoiceRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateInvoiceRequest $request)
