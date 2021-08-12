@@ -352,6 +352,14 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->isA('school admin');
     }
 
+    public function getCarbonFactory(): Factory
+    {
+        return new Factory([
+            'locale' => $this->locale,
+            'timezone' => $this->timezone,
+        ]);
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [
