@@ -74,6 +74,7 @@ class Invoice extends Model
         'apply_tax' => 'boolean',
         'use_school_tax_defaults' => 'boolean',
         'tax_rate' => 'float',
+        'invoice_date' => 'date',
         'due_at' => 'datetime',
         'voided_at' => 'datetime',
         'paid_at' => 'datetime',

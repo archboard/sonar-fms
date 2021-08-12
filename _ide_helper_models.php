@@ -174,7 +174,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
- * @property string $invoice_date
+ * @property Carbon $invoice_date
  * @property Carbon|null $available_at
  * @property Carbon|null $due_at
  * @property Carbon|null $paid_at
