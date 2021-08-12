@@ -3,7 +3,7 @@
     v-model="localValue"
     color="pink"
     :is-dark="darkStore.state.isDark"
-    mode="dateTime"
+    :mode="mode"
     :minute-increment="15"
     :model-config="modelConfig"
     :attributes="attributes"
