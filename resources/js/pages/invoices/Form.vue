@@ -19,78 +19,7 @@
 
       <!-- Invoice details -->
       <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>{{ __('Invoice details') }}</CardSectionHeader>
-          <HelpText>
-            {{ __('These are the general details about the invoice.') }}
-          </HelpText>
-        </div>
-        <Fieldset>
-          <InputWrap :error="form.errors.title">
-            <Label for="title" :required="true">{{ __('Title') }}</Label>
-            <Input v-model="form.title" id="title" required autofocus />
-            <HelpText>
-              {{ __('Give the invoice a meaningful title that is easily recognizable and descriptive.') }}
-            </HelpText>
-          </InputWrap>
-
-          <InputWrap>
-            <Label for="description">{{ __('Description') }}</Label>
-            <Textarea v-model="form.description" id="description" />
-            <HelpText>
-              {{ __('This is a description of the invoice that will be displayed with the invoice.') }}
-            </HelpText>
-          </InputWrap>
-
-          <InputWrap :error="form.errors.invoice_date">
-            <Label for="invoice_date">{{ __('Invoice date') }}</Label>
-            <DatePicker v-model="form.invoice_date" id="invoice_date" mode="date" />
-            <HelpText>
-              {{ __('This is the date that will appear on the invoice as the date the invoice was issued.') }}
-            </HelpText>
-          </InputWrap>
-
-          <InputWrap :error="form.errors.available_at">
-            <Label for="available_at">{{ __('Availability') }}</Label>
-            <DatePicker v-model="form.available_at" id="available_at" />
-            <HelpText>
-              {{ __("Set a date and time that this invoice is available to the student's guardians or other contacts. Before the configured time, it will only be viewable to admins. This is helpful to use if you want to prepare and preview invoices before actually making them available for the student. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-            </HelpText>
-          </InputWrap>
-
-          <InputWrap :error="form.errors.due_at">
-            <Label for="due_at">{{ __('Due date') }}</Label>
-            <DatePicker v-model="form.due_at" id="due_at" />
-            <HelpText>
-              {{ __("Set the date and time that this invoice is due, or don't set one to not have a due date. The time is based on your current timezone of :timezone. If this timezone is incorrect you can change it in your Personal Settings.", { timezone }) }}
-            </HelpText>
-          </InputWrap>
-
-          <InputWrap :error="form.errors.term_id">
-            <Label for="term_id">{{ __('Term') }}</Label>
-            <Select v-model="form.term_id" id="term_id">
-              <option :value="null">{{ __('No term') }}</option>
-              <option
-                v-for="term in terms"
-                :key="term.id"
-                :value="term.id"
-              >
-                {{ term.school_years }} - {{ term.name }}
-              </option>
-            </Select>
-            <HelpText>{{ __('Associating a term with an invoice allows you to group invoices by school term and offers another reporting perspective.') }}</HelpText>
-          </InputWrap>
-
-          <InputWrap>
-            <CheckboxWrapper>
-              <Checkbox v-model:checked="form.notify" />
-              <CheckboxText>{{ __('Queue notification') }}</CheckboxText>
-            </CheckboxWrapper>
-            <HelpText>
-              {{ __("Having this option enabled will automatically queue an email to be sent notifying the appropriate parties of the available invoice. There is a 15-minute delay of sending the notification which allows you to make adjustments, cancel the notification, or delete the invoice all together. If this is not enabled, you may send a notification manually later.") }}
-            </HelpText>
-          </InputWrap>
-        </Fieldset>
+        <InvoiceDetailsForm v-model="form" />
       </div>
 
       <!-- Invoice line items -->
@@ -120,47 +49,7 @@
 
       <!-- Tax -->
       <div class="pt-8" v-if="school.collect_tax">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Taxes') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add tax details for this invoice.') }}
-          </HelpText>
-        </div>
-
-        <Fieldset>
-          <InputWrap :error="form.errors.apply_tax">
-            <CheckboxWrapper>
-              <Checkbox v-model:checked="form.apply_tax" />
-              <CheckboxText>{{ __('Apply tax rate to this invoice.') }}</CheckboxText>
-            </CheckboxWrapper>
-            <HelpText>{{ __('When this option is enabled, a tax is added to the amount due.') }}</HelpText>
-          </InputWrap>
-
-          <FadeIn>
-            <InputWrap v-if="form.apply_tax" :error="form.errors.use_school_tax_defaults">
-              <CheckboxWrapper>
-                <Checkbox v-model:checked="form.use_school_tax_defaults" />
-                <CheckboxText>{{ __('Use school default tax rate and label - :label (:rate).', { label: school.tax_label, rate: school.tax_rate_formatted }) }}</CheckboxText>
-              </CheckboxWrapper>
-            </InputWrap>
-          </FadeIn>
-
-          <FadeInGroup>
-            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_rate">
-              <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
-              <Input v-model="form.tax_rate" id="tax_rate" />
-              <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
-            </InputWrap>
-
-            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_label">
-              <Label for="tax_label" :required="true">{{ __('Tax label') }}</Label>
-              <Input v-model="form.tax_label" id="tax_label" placeholder="VAT" />
-              <HelpText>{{ __('This is the label that will be displayed for the name/type of tax.') }}</HelpText>
-            </InputWrap>
-          </FadeInGroup>
-        </Fieldset>
+        <InvoiceTax v-model="form" />
       </div>
     </FormMultipartWrapper>
   </form>
@@ -224,9 +113,15 @@ import InvoiceScholarships from '@/components/forms/invoices/InvoiceScholarships
 import InvoicePaymentSchedules from '@/components/forms/invoices/InvoicePaymentSchedules'
 import InvoiceStudents from '@/components/forms/invoices/InvoiceStudents'
 import useProp from '@/composition/useProp'
+import InvoiceTax from '@/components/forms/invoices/InvoiceTax'
+import InvoiceDetails from '@/components/InvoiceDetails'
+import InvoiceDetailsForm from '@/components/forms/invoices/InvoiceDetailsForm'
 
 export default {
   components: {
+    InvoiceDetailsForm,
+    InvoiceDetails,
+    InvoiceTax,
     InvoiceStudents,
     InvoicePaymentSchedules,
     InvoiceScholarships,
@@ -286,7 +181,6 @@ export default {
   setup (props, { emit }) {
     const $route = inject('$route')
     const students = useProp('students')
-    const { terms } = fetchesTerms()
     const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
     const isNew = computed(() => !props.invoice.id)
@@ -311,6 +205,8 @@ export default {
       payment_schedules: props.invoice.payment_schedules || [],
       apply_tax: true,
       use_school_tax_defaults: true,
+      apply_tax_to_all_items: true,
+      tax_items: [],
       tax_rate: school.value.tax_rate_converted || null,
       tax_label: school.value.tax_label || null,
     })
@@ -326,7 +222,6 @@ export default {
     // Emit the initial value
     emit('update:invoiceForm', form)
 
-    const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
 
     // Numbers
@@ -371,12 +266,9 @@ export default {
       reviewing,
       isNew,
       school,
-      terms,
       form,
       saveInvoice,
       displayCurrency,
-      displayDate,
-      timezone,
       total,
       totalDue,
       strategies,
