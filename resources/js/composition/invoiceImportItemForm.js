@@ -2,18 +2,18 @@ import { nanoid } from 'nanoid'
 import fetchesFees from './fetchesFees'
 import invoiceImportMapField from '@/composition/invoiceImportMapField'
 
-export default (form) => {
+export default () => {
   const { fees } = fetchesFees()
   const { addMapFieldValue } = invoiceImportMapField()
 
-  const addInvoiceLineItem = () => {
-    form.items.push({
+  const makeInvoiceLineItem = () => {
+    return {
       id: nanoid(),
       fee_id: addMapFieldValue(),
       name: addMapFieldValue(),
       amount_per_unit: addMapFieldValue(),
       quantity: addMapFieldValue(1),
-    })
+    }
   }
   const syncItemWithFee = item => {
     const fee = fees.value.find(f => f.id === item.fee_id)
@@ -29,7 +29,7 @@ export default (form) => {
 
   return {
     fees,
-    addInvoiceLineItem,
+    makeInvoiceLineItem,
     syncItemWithFee,
     feeSelected,
   }

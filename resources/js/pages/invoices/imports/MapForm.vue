@@ -140,393 +140,29 @@
 
       <!-- Invoice line items -->
       <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Invoice line items') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add line items to the build the invoice and total receivable amount.') }}
-          </HelpText>
-        </div>
-
-        <Error v-if="form.errors.items">
-          {{ __('You must have at least one invoice item.') }}
-        </Error>
-
-        <ul class="space-y-3">
-          <FadeInGroup>
-            <li
-              v-for="(item, index) in form.items"
-              :key="item.id"
-            >
-              <CardWrapper>
-                <CardPadding>
-                  <Fieldset>
-                    <InputWrap :error="form.errors[`items.${index}.fee_id`]">
-                      <Label :for="`fee_id_${index}`">{{ __('Fee') }}</Label>
-                      <MapField v-model="item.fee_id" :headers="headers" :id="`fee_id_${index}`">
-                        <Select
-                          v-model="item.fee_id.value" :id="`fee_id_${index}`"
-                          @change="feeSelected(item)"
-                        >
-                          <option :value="null">{{ __('Use a custom fee') }}</option>
-                          <option
-                            v-for="fee in fees"
-                            :key="fee.id"
-                            :value="fee.id"
-                          >
-                            {{ fee.name }}{{ fee.code ? ` (${fee.code})` : '' }} - {{ fee.amount_formatted }}
-                          </option>
-                        </Select>
-                        <template v-slot:after>
-                          <HelpText>
-                            {{ __("Associating line items with a fee will help with reporting and syncing data, but isn't required.") }}
-                          </HelpText>
-                        </template>
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap :error="form.errors[`items.${index}.name`]">
-                      <Label :for="`name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <MapField v-model="item.name" :headers="headers" :id="`name_${index}`">
-                        <Input v-model="item.name.value" :id="`name_${index}`" />
-                        <template v-slot:after>
-                          <HelpText>
-                            {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                          </HelpText>
-                        </template>
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap :error="form.errors[`items.${index}.amount_per_unit`]">
-                      <Label :for="`amount_per_unit_${index}`" :required="true">{{ __('Amount per unit') }}</Label>
-                      <MapField v-model="item.amount_per_unit" :headers="headers" :id="`amount_per_unit_${index}`">
-                        <CurrencyInput v-model="item.amount_per_unit.value" :id="`amount_per_unit_${index}`" />
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap :error="form.errors[`items.${index}.quantity`]">
-                      <Label :for="`quantity_${index}`" :required="true">{{ __('Quantity') }}</Label>
-                      <MapField v-model="item.quantity" :headers="headers" :id="`quantity_${index}`">
-                        <Input v-model="item.quantity.value" :id="`quantity_${index}`" type="number" />
-                      </MapField>
-                    </InputWrap>
-
-                    <div class="flex justify-end">
-                      <Button color="red" size="sm" type="button" @click.prevent="form.items.splice(index, 1)">
-                        <TrashIcon class="w-4 h-4" />
-                        <span class="ml-2">{{ __('Remove line item') }}</span>
-                      </Button>
-                    </div>
-                  </Fieldset>
-                </CardPadding>
-              </CardWrapper>
-            </li>
-          </FadeInGroup>
-        </ul>
-
-        <div class="relative flex justify-center mt-6">
-          <button @click.prevent="addInvoiceLineItem" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-            <span>{{ __('Add invoice line item') }}</span>
-          </button>
-        </div>
+        <InvoiceItemMapping
+          v-model="form.items"
+          :form="form"
+          :headers="headers"
+        />
       </div>
 
       <!-- Scholarships -->
       <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Scholarships') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add scholarships to reduce the amount due for the invoice.') }}
-          </HelpText>
-        </div>
-
-        <ul class="space-y-3">
-          <FadeInGroup>
-            <li
-              v-for="(item, index) in form.scholarships"
-              :key="item.id"
-            >
-              <CardWrapper>
-                <CardPadding>
-                  <Fieldset>
-                    <InputWrap :error="form.errors[`scholarships.${index}.scholarship_id`]">
-                      <Label :for="`scholarship_id_${index}`">{{ __('Scholarship') }}</Label>
-                      <MapField v-model="item.scholarship_id" :headers="headers" :id="`scholarship_id_${index}`">
-                        <Select
-                          v-model="item.scholarship_id.value" :id="`scholarship_id_${index}`"
-                          @change="scholarshipSelected(item)"
-                        >
-                          <option :value="null">{{ __('Use a custom scholarship') }}</option>
-                          <option
-                            v-for="scholarship in scholarships"
-                            :key="scholarship.id"
-                            :value="scholarship.id"
-                          >
-                            {{ scholarship.name }} - {{ scholarship.description }}
-                          </option>
-                        </Select>
-                        <template v-slot:after>
-                          <HelpText>
-                            {{ __("Associating a scholarship will help with reporting and syncing data, but isn't required.") }}
-                          </HelpText>
-                        </template>
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap :error="form.errors[`scholarships.${index}.name`]">
-                      <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
-                      <MapField v-model="item.name" :headers="headers" :id="`scholarship_name_${index}`">
-                        <Input v-model="item.name.value" :id="`scholarship_name_${index}`" :placeholder="__('Scholarship name')" />
-                        <template v-slot:after>
-                          <HelpText>
-                            {{ __('This is the label given to the line item and will be displayed on the invoice.') }}
-                          </HelpText>
-                        </template>
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap>
-                      <RadioGroup>
-                        <RadioWrapper>
-                          <Radio v-model:checked="item.use_amount" :value="true" />
-                          <CheckboxText>
-                            {{ __('Use an amount') }}
-                          </CheckboxText>
-                        </RadioWrapper>
-                        <RadioWrapper>
-                          <Radio v-model:checked="item.use_amount" :value="false" />
-                          <CheckboxText>
-                            {{ __('Use a percentage') }}
-                          </CheckboxText>
-                        </RadioWrapper>
-                      </RadioGroup>
-                    </InputWrap>
-
-                    <InputWrap v-if="item.use_amount" :error="form.errors[`scholarships.${index}.amount`]">
-                      <Label :for="`scholarship_amount_${index}`">{{ __('Amount') }}</Label>
-                      <MapField v-model="item.amount" :headers="headers" :id="`scholarship_amount_${index}`">
-                        <CurrencyInput v-model="item.amount.value" :id="`scholarship_amount_${index}`" />
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap v-else :error="form.errors[`scholarships.${index}.percentage`]">
-                      <Label :for="`scholarship_percentage_${index}`" :required="true">{{ __('Percentage') }}</Label>
-                      <MapField v-model="item.percentage" :headers="headers" :id="`scholarship_percentage_${index}`">
-                        <Input v-model="item.percentage.value" :id="`scholarship_percentage_${index}`" />
-                        <template v-slot:after>
-                          <HelpText>
-                            {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
-                          </HelpText>
-                        </template>
-                      </MapField>
-                    </InputWrap>
-
-                    <InputWrap v-if="form.items.length > 1">
-                      <HelpText>
-                        {{ __('Choose the items for which this scholarship applies. If no items are selected, it will be applied to the entire invoice total.') }}
-                      </HelpText>
-                      <div class="mt-3 space-y-1">
-                        <div
-                          v-for="lineItem in form.items"
-                          :key="lineItem.id"
-                        >
-                          <CheckboxWrapper>
-                            <Checkbox v-model:checked="item.applies_to" :value="lineItem.id" />
-                            <CheckboxText>
-                              <span v-if="lineItem.name.isManual">
-                                {{ lineItem.name.value }}
-                              </span>
-                              <span v-else class="flex items-center space-x-1">
-                                <LinkIcon class="w-4 h-4" />
-                                <span>{{ lineItem.name.column }}</span>
-                              </span>
-                            </CheckboxText>
-                          </CheckboxWrapper>
-                        </div>
-                      </div>
-                    </InputWrap>
-
-                    <div class="flex justify-end">
-                      <Button color="red" size="sm" type="button" @click.prevent="form.scholarships.splice(index, 1)">
-                        <TrashIcon class="w-4 h-4" />
-                        <span class="ml-2">{{ __('Remove scholarship') }}</span>
-                      </Button>
-                    </div>
-                  </Fieldset>
-                </CardPadding>
-              </CardWrapper>
-            </li>
-          </FadeInGroup>
-        </ul>
-
-        <div class="relative flex justify-center mt-6">
-          <button @click.prevent="addScholarship" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-            <span>{{ __('Add scholarship') }}</span>
-          </button>
-        </div>
+        <InvoiceScholarshipMapping
+          v-model="form.scholarships"
+          :form="form"
+          :headers="headers"
+        />
       </div>
 
       <!-- Payment schedules -->
       <div class="pt-8">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Payment schedules') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add available payment schedules to allow the invoice to be paid in separate payments rather than all at once.') }}
-          </HelpText>
-        </div>
-
-        <ul class="space-y-3">
-          <FadeInGroup>
-            <li
-              v-for="(item, index) in form.payment_schedules"
-              :key="item.id"
-              class="bg-gray-100 dark:bg-gray-800 shadow overflow-hidden rounded-md p-6"
-            >
-              <ul class="flex flex-wrap -mx-2">
-                <FadeInGroup>
-                  <li
-                    v-for="(term, termIndex) in item.terms"
-                    :key="term.id"
-                    class="px-2 w-full sm:w-1/2 md:w-full lg:w-1/2 xl:w-1/3 mb-4"
-                  >
-                    <div class="rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
-                      <Fieldset>
-                        <InputWrap>
-                          <RadioGroup>
-                            <RadioWrapper>
-                              <Radio v-model:checked="term.use_amount" :value="true" />
-                              <CheckboxText>
-                                {{ __('Use an amount') }}
-                              </CheckboxText>
-                            </RadioWrapper>
-                            <RadioWrapper>
-                              <Radio v-model:checked="term.use_amount" :value="false" />
-                              <CheckboxText>
-                                {{ __('Use a percentage') }}
-                              </CheckboxText>
-                            </RadioWrapper>
-                          </RadioGroup>
-                        </InputWrap>
-
-                        <InputWrap v-if="term.use_amount" :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.amount`]">
-                          <Label :required="true" :for="`schedule_${index}_${termIndex}_amount`">{{ __('Amount') }}</Label>
-                          <MapField v-model="term.amount" :headers="headers" :id="`schedule_${index}_${termIndex}_amount`">
-                            <CurrencyInput v-model="term.amount.value" :id="`schedule_${index}_${termIndex}_amount`" />
-                          </MapField>
-                        </InputWrap>
-
-                        <InputWrap v-else :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.percentage`]">
-                          <Label :for="`scholarship_percentage_${index}`" :required="true">{{ __('Percentage') }}</Label>
-                          <MapField v-model="term.percentage" :headers="headers" :id="`schedule_${index}_${termIndex}_percentage`">
-                            <Input v-model="term.percentage.value" :id="`schedule_${index}_${termIndex}_percentage`" />
-                          </MapField>
-                        </InputWrap>
-
-                        <InputWrap :error="form.errors[`payment_schedules.${index}.terms.${termIndex}.due_at`]">
-                          <Label :for="`schedule_${index}_${termIndex}_due_at`">{{ __('Due date') }}</Label>
-                          <MapField v-model="term.due_at" :headers="headers" :id="`schedule_${index}_${termIndex}_due_at`">
-                            <DatePicker :id="`schedule_${index}_${termIndex}_due_at`" v-model="term.due_at.value" />
-                          </MapField>
-                        </InputWrap>
-
-                        <div class="flex justify-end">
-                          <Button color="red" @click.prevent="removePaymentTerm(item, termIndex)" size="xs">
-                            <TrashIcon class="w-4 h-4" />
-                            <span class="ml-2">{{ __('Remove term') }}</span>
-                          </Button>
-                        </div>
-                      </Fieldset>
-                    </div>
-                  </li>
-                </FadeInGroup>
-
-                <!-- Mock term that just has the button -->
-                <li class="px-2 w-full sm:w-1/2 md:w-full lg:w-1/2 xl:w-1/3 relative">
-                  <div class="opacity-50 rounded-md border border-gray-200 bg-gray-200 dark:bg-gray-800 dark:border-gray-500 p-3">
-                    <Fieldset>
-                      <InputWrap>
-                        <RadioGroup>
-                          <Mocker>
-                            <RadioWrapper>
-                              <Radio />
-                              <CheckboxText>&nbsp;</CheckboxText>
-                            </RadioWrapper>
-                          </Mocker>
-                          <Mocker>
-                            <RadioWrapper>
-                              <Radio />
-                              <CheckboxText>&nbsp;</CheckboxText>
-                            </RadioWrapper>
-                          </Mocker>
-                        </RadioGroup>
-                      </InputWrap>
-
-                      <InputWrap>
-                        <Mocker :inline="true">
-                          <Label>&nbsp;</Label>
-                        </Mocker>
-                        <Mocker>
-                          <CurrencyInput />
-                        </Mocker>
-                        <Mocker>
-                          <div class="text-sm mt-1">&nbsp;</div>
-                        </Mocker>
-                      </InputWrap>
-
-                      <InputWrap>
-                        <Mocker :inline="true">
-                          <Label>&nbsp;</Label>
-                        </Mocker>
-                        <Mocker>
-                          <Input />
-                        </Mocker>
-                        <Mocker>
-                          <div class="text-sm mt-1">&nbsp;</div>
-                        </Mocker>
-                      </InputWrap>
-
-                      <div class="flex justify-end">
-                        <Mocker :inline="true">
-                          <Button color="red" size="xs">
-                            <TrashIcon class="w-4 h-4" />
-                            <span class="ml-2">{{ __('Remove term') }}</span>
-                          </Button>
-                        </Mocker>
-                      </div>
-                    </Fieldset>
-                  </div>
-
-                  <div class="absolute inset-0 -mt-4 flex items-center justify-center">
-                    <Button @click.prevent="addPaymentTerm(item)" size="sm">
-                      {{ __('Add payment term') }}
-                    </Button>
-                  </div>
-                </li>
-              </ul>
-
-              <div class="flex justify-end pt-6">
-                <Button color="red" size="sm" type="button" @click.prevent="form.payment_schedules.splice(index, 1)">
-                  <TrashIcon class="w-4 h-4" />
-                  <span class="ml-2">{{ __('Remove schedule') }}</span>
-                </Button>
-              </div>
-            </li>
-          </FadeInGroup>
-        </ul>
-
-        <div class="relative flex justify-center mt-6">
-          <button @click.prevent="addPaymentSchedule" type="button" class="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-            <PlusSmIcon class="-ml-1.5 mr-1 h-5 w-5 text-gray-400 dark:text-gray-200" aria-hidden="true" />
-            <span>{{ __('Add payment schedule') }}</span>
-          </button>
-        </div>
+        <InvoicePaymentScheduleMapping
+          v-model="form.payment_schedules"
+          :form="form"
+          :headers="headers"
+        />
       </div>
 
       <!-- Tax -->
@@ -593,12 +229,11 @@
 </template>
 
 <script>
-import { computed, inject, ref, watch, watchEffect } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useForm, usePage } from '@inertiajs/inertia-vue3'
 import { PlusSmIcon } from '@heroicons/vue/solid'
 import { TrashIcon, LinkIcon } from '@heroicons/vue/outline'
 import Fieldset from '@/components/forms/Fieldset'
-import CardHeader from '@/components/CardHeader'
 import HelpText from '@/components/HelpText'
 import InputWrap from '@/components/forms/InputWrap'
 import Checkbox from '@/components/forms/Checkbox'
@@ -609,51 +244,40 @@ import fetchesTerms from '@/composition/fetchesTerms'
 import Select from '@/components/forms/Select'
 import Textarea from '@/components/forms/Textarea'
 import displaysCurrency from '@/composition/displaysCurrency'
-import fetchesResolutionStrategies from '@/composition/fetchesResolutionStrategies'
 import Input from '@/components/forms/Input'
 import Button from '@/components/Button'
 import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper'
 import CardSectionHeader from '@/components/CardSectionHeader'
 import FadeIn from '@/components/transitions/FadeIn'
-import Error from '@/components/forms/Error'
 import DatePicker from '@/components/forms/DatePicker'
 import Alert from '@/components/Alert'
 import displaysDate from '@/composition/displaysDate'
-import invoiceImportItemForm from '@/composition/invoiceImportItemForm'
-import invoiceImportScholarshipForm from '@/composition/invoiceImportScholarshipForm'
-import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
-import CurrencyInput from '@/components/forms/CurrencyInput'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
 import InvoiceSummary from '@/components/InvoiceSummary'
-import Mocker from '@/components/Mocker'
 import Modal from '@/components/Modal'
 import invoiceImportMapField from '@/composition/invoiceImportMapField'
 import ColumnSelector from '@/components/forms/ColumnSelector'
 import MapField from '@/components/forms/MapField'
-import Radio from '@/components/forms/Radio'
-import RadioGroup from '@/components/forms/RadioGroup'
-import RadioWrapper from '@/components/forms/RadioWrapper'
-import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import isUndefined from 'lodash/isUndefined'
+import InvoiceItemMapping from '@/components/forms/invoices/InvoiceItemMapping'
+import InvoiceScholarshipMapping from '@/components/forms/invoices/InvoiceScholarshipMapping'
+import InvoicePaymentScheduleMapping from '@/components/forms/invoices/InvoicePaymentScheduleMapping'
 
 export default {
   components: {
+    InvoicePaymentScheduleMapping,
+    InvoiceScholarshipMapping,
+    InvoiceItemMapping,
     FadeInGroup,
-    RadioWrapper,
-    Radio,
-    RadioGroup,
     MapField,
     ColumnSelector,
     Modal,
-    Mocker,
     InvoiceSummary,
     CardPadding,
     CardWrapper,
-    CurrencyInput,
     Alert,
-    Error,
     FadeIn,
     CardSectionHeader,
     FormMultipartWrapper,
@@ -666,7 +290,6 @@ export default {
     Checkbox,
     InputWrap,
     HelpText,
-    CardHeader,
     Fieldset,
     Label,
     PlusSmIcon,
@@ -702,7 +325,6 @@ export default {
     const $route = inject('$route')
     const { terms } = fetchesTerms()
     const reviewing = ref(false)
-    const { strategies } = fetchesResolutionStrategies()
     const { addMapFieldValue } = invoiceImportMapField()
     const page = usePage()
     const form = useForm({
@@ -750,53 +372,15 @@ export default {
       emit('update:invoiceForm', state)
     }, { deep: true })
 
-    // Invoice line items
-    const {
-      fees,
-      addInvoiceLineItem,
-      feeSelected
-    } = invoiceImportItemForm(form)
-
-    // Scholarships
-    const {
-      scholarships,
-      addScholarship,
-      scholarshipSelected
-    } = invoiceImportScholarshipForm(form)
-
-    // Payment schedules
-    const {
-      removePaymentTerm,
-    } = invoicePaymentScheduleForm(form, 0)
-    const {
-      addPaymentTerm,
-      addPaymentSchedule
-    } = invoiceImportPaymentScheduleForm(form)
-
-    // Add an initial line item
-    if (form.items.length === 0) {
-      addInvoiceLineItem()
-    }
-
     return {
       reviewing,
       school,
       terms,
-      fees,
       form,
       saveImport,
-      addInvoiceLineItem,
       displayCurrency,
-      feeSelected,
       displayDate,
       timezone,
-      strategies,
-      scholarships,
-      addScholarship,
-      scholarshipSelected,
-      addPaymentSchedule,
-      addPaymentTerm,
-      removePaymentTerm,
     }
   },
 }

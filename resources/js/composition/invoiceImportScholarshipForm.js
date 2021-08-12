@@ -2,11 +2,11 @@ import { nanoid } from 'nanoid'
 import fetchesScholarships from './fetchesScholarships'
 import invoiceImportMapField from '@/composition/invoiceImportMapField'
 
-export default (form) => {
+export default () => {
   const { addMapFieldValue } = invoiceImportMapField()
   const { scholarships } = fetchesScholarships()
-  const addScholarship = () => {
-    form.scholarships.push({
+  const makeScholarship = () => {
+    return {
       id: nanoid(),
       use_amount: true,
       scholarship_id: addMapFieldValue(),
@@ -15,7 +15,7 @@ export default (form) => {
       percentage: addMapFieldValue(),
       resolution_strategy: addMapFieldValue('App\\ResolutionStrategies\\Least'),
       applies_to: [],
-    })
+    }
   }
   const syncWithScholarship = item => {
     const scholarship = scholarships.value.find(s => s.id === item.scholarship_id)
@@ -34,7 +34,7 @@ export default (form) => {
 
   return {
     scholarships,
-    addScholarship,
+    makeScholarship,
     scholarshipSelected,
   }
 }
