@@ -42,6 +42,14 @@
             </HelpText>
           </InputWrap>
 
+          <InputWrap :error="form.errors.invoice_date">
+            <Label for="invoice_date">{{ __('Invoice date') }}</Label>
+            <DatePicker v-model="form.invoice_date" id="invoice_date" mode="date" />
+            <HelpText>
+              {{ __('This is the date that will appear on the invoice as the date the invoice was issued.') }}
+            </HelpText>
+          </InputWrap>
+
           <InputWrap :error="form.errors.available_at">
             <Label for="available_at">{{ __('Availability') }}</Label>
             <DatePicker v-model="form.available_at" id="available_at" />
@@ -288,6 +296,9 @@ export default {
       title: props.invoice.title || null,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,
+      invoice_date: props.invoice.invoice_date
+        ? dayjs(props.invoice.invoice_date).toDate()
+        : dayjs().toDate(),
       available_at: props.invoice.available_at
         ? dayjs(props.invoice.available_at).toDate()
         : null,

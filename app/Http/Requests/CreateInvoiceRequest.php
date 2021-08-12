@@ -41,6 +41,7 @@ class CreateInvoiceRequest extends FormRequest
             'title' => 'required',
             'description' => 'nullable',
             'due_at' => 'nullable|date',
+            'invoice_date' => 'nullable|date',
             'available_at' => 'nullable|date',
             'term_id' => [
                 'nullable',

@@ -21,6 +21,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\Assert;
+use JamesMills\LaravelTimezone\Facades\Timezone;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
@@ -1054,7 +1055,8 @@ class CreateInvoiceForStudentTest extends TestCase
             'students' => [$student->id],
             'title' => 'Test invoice 2021',
             'description' => $this->faker->sentence,
-            'available_at' => null,
+            'invoice_date' => '2021-08-11T06:17:20.933Z',
+            'available_at' => '2021-08-11T00:00:00.000Z',
             'due_at' => null,
             'term_id' => null,
             'notify' => false,
@@ -1090,6 +1092,8 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals(10100, $invoice->remaining_balance);
         $this->assertEquals(10000, $invoice->subtotal);
         $this->assertEquals(0, $invoice->discount_total);
+        $this->assertEquals('2021-08-11', $invoice->invoice_date->format('Y-m-d'));
+        $this->assertEquals('2021-08-11 00:00', $invoice->invoice_date->format('Y-m-d H:i'));
     }
 
     public function test_can_save_invoice_as_draft()

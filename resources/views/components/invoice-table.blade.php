@@ -17,7 +17,14 @@
     <div class="flex justify-between">
       <div class="">
         <div class="text-lg font-medium">{{ $invoice->title }}</div>
-        <div class="text-gray-700 text-sm">{{ __('Invoice #:number', ['number' => $invoice->id]) }}</div>
+        <div class="text-gray-700 text-sm space-x-2">
+          <span>
+            {{ $invoice->invoice_date->formatLocalized('%B %e, %Y') }}
+          </span>
+          <span>
+            {{ __('Invoice #:number', ['number' => $invoice->id]) }}
+          </span>
+        </div>
       </div>
       <div class="text-right">
         <h3 class="text-lg font-medium">{{ $invoice->student->full_name }} <span class="text-gray-500">({{ $invoice->student->student_number }})</span></h3>
