@@ -195,6 +195,7 @@ namespace App\Models{
  * @property int|null $pre_tax_subtotal
  * @property string|null $parent_uuid
  * @property Carbon|null $published_at
+ * @property bool $apply_tax_to_all_items
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
@@ -224,6 +225,8 @@ namespace App\Models{
  * @property-read int|null $invoice_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
  * @property-read int|null $invoice_scholarships_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTaxItem[] $invoiceTaxItems
+ * @property-read int|null $invoice_tax_items_count
  * @property-read Invoice|null $parent
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student $student
@@ -243,6 +246,7 @@ namespace App\Models{
  * @method static Builder|Invoice unpublished()
  * @method static Builder|Invoice whereAmountDue($value)
  * @method static Builder|Invoice whereApplyTax($value)
+ * @method static Builder|Invoice whereApplyTaxToAllItems($value)
  * @method static Builder|Invoice whereAvailableAt($value)
  * @method static Builder|Invoice whereBatchId($value)
  * @method static Builder|Invoice whereCreatedAt($value)
@@ -569,6 +573,33 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceScholarship whereUuid($value)
  */
 	class IdeHelperInvoiceScholarship extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoiceTaxItem
+ *
+ * @mixin IdeHelperInvoiceTaxItem
+ * @property string $uuid
+ * @property string $invoice_uuid
+ * @property string $invoice_item_uuid
+ * @property int $amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string|null $amount_formatted
+ * @property-read \App\Models\Invoice $invoice
+ * @property-read \App\Models\InvoiceItem $invoiceItem
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereInvoiceItemUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereUuid($value)
+ */
+	class IdeHelperInvoiceTaxItem extends \Eloquent {}
 }
 
 namespace App\Models{

@@ -31,6 +31,7 @@ abstract class InvoiceFactory
     protected Collection $itemScholarshipPivot;
     protected Collection $invoicePaymentSchedules;
     protected Collection $invoicePaymentTerms;
+    protected Collection $invoiceTaxItems;
 
     protected array $fillableInvoiceAttributes;
     protected array $fillableInvoiceItemAttributes;
@@ -53,6 +54,7 @@ abstract class InvoiceFactory
         $this->itemScholarshipPivot = collect();
         $this->invoicePaymentSchedules = collect();
         $this->invoicePaymentTerms = collect();
+        $this->invoiceTaxItems = collect();
 
         $this->fillableInvoiceAttributes = (new Invoice)->getFillable();
         $this->fillableInvoiceItemAttributes = (new InvoiceItem)->getFillable();
@@ -117,7 +119,8 @@ abstract class InvoiceFactory
             $this->invoiceScholarships->toArray(),
             $this->itemScholarshipPivot->toArray(),
             $this->invoicePaymentSchedules->toArray(),
-            $this->invoicePaymentTerms->toArray()
+            $this->invoicePaymentTerms->toArray(),
+            $this->invoiceTaxItems->toArray(),
         )->green();
 
         DB::transaction(function () {
@@ -148,6 +151,9 @@ abstract class InvoiceFactory
 
             DB::table('invoice_payment_terms')
                 ->insert($this->invoicePaymentTerms->toArray());
+
+            DB::table('invoice_tax_items')
+                ->insert($this->invoiceTaxItems->toArray());
         });
 
         return $this->invoices->map(function (array $invoice) {

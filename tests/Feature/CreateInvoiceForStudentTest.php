@@ -14,6 +14,7 @@ use App\Models\Term;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
 use App\Utilities\NumberUtility;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Redirector;
@@ -886,6 +887,8 @@ class CreateInvoiceForStudentTest extends TestCase
             'use_school_tax_defaults' => false,
             'tax_rate' => 0.1,
             'tax_label' => 'VAT',
+            'apply_tax_to_all_items' => false,
+            'tax_items' => [$item1, $item3],
         ];
 
         $request = $this->getTestRequest($invoiceData);
@@ -934,6 +937,49 @@ class CreateInvoiceForStudentTest extends TestCase
             ->validateResolved();
     }
 
+    public function test_tax_items_field_validation()
+    {
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+        $this->user->school->refresh();
+        $student = $this->school->students->random();
+
+        $invoiceData = [
+            'students' => [1],
+            'title' => 'Test invoice 2021',
+            'description' => null,
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => null,
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => true,
+            'tax_rate' => null,
+            'tax_label' => null,
+            'apply_tax_to_all_items' => false,
+            'tax_items' => [],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertSessionHasErrors(['tax_items'])
+            ->assertSessionDoesntHaveErrors(['tax_rate', 'tax_label']);
+    }
+
     public function test_can_create_invoice_with_taxes()
     {
         $this->withoutExceptionHandling();
@@ -968,6 +1014,7 @@ class CreateInvoiceForStudentTest extends TestCase
             'payment_schedules' => [],
             'apply_tax' => true,
             'use_school_tax_defaults' => true,
+            'apply_tax_to_all_items' => true,
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -1075,6 +1122,7 @@ class CreateInvoiceForStudentTest extends TestCase
             'use_school_tax_defaults' => false,
             'tax_rate' => .01,
             'tax_label' => 'VAT',
+            'apply_tax_to_all_items' => true,
         ];
 
         $this->post(route('students.invoices.store', [$student]), $invoiceData)
@@ -1092,8 +1140,10 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals(10100, $invoice->remaining_balance);
         $this->assertEquals(10000, $invoice->subtotal);
         $this->assertEquals(0, $invoice->discount_total);
-        $this->assertEquals('2021-08-11', $invoice->invoice_date->format('Y-m-d'));
-        $this->assertEquals('2021-08-11 00:00', $invoice->invoice_date->format('Y-m-d H:i'));
+        $this->assertEquals(
+            Carbon::parse('2021-08-11T06:17:20.933Z')->setTimezone($this->user->timezone)->format('Y-m-d'),
+            $invoice->invoice_date->format('Y-m-d')
+        );
     }
 
     public function test_can_save_invoice_as_draft()

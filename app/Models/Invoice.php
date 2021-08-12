@@ -67,12 +67,14 @@ class Invoice extends Model
         'pre_tax_subtotal',
         'parent_uuid',
         'published_at',
+        'apply_tax_to_all_items',
     ];
 
     protected $casts = [
         'notify_now' => 'boolean',
         'apply_tax' => 'boolean',
         'use_school_tax_defaults' => 'boolean',
+        'apply_tax_to_all_items' => 'boolean',
         'tax_rate' => 'float',
         'invoice_date' => 'date',
         'due_at' => 'datetime',
@@ -212,6 +214,11 @@ class Invoice extends Model
     public function invoicePayments(): HasMany
     {
         return $this->hasMany(InvoicePayment::class, 'invoice_uuid', 'uuid');
+    }
+
+    public function invoiceTaxItems(): HasMany
+    {
+        return $this->hasMany(InvoiceTaxItem::class, 'invoice_uuid', 'uuid');
     }
 
     public function getIsVoidAttribute(): bool

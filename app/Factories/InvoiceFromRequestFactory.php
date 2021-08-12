@@ -21,6 +21,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected array $invoiceScholarshipAttributes = [];
     protected array $invoicePaymentScheduleAttributes = [];
     protected array $invoicePaymentTermAttributes = [];
+    protected array $invoiceTaxItemAttributes = [];
 
     protected int $preTaxTotal = 0;
     protected int $subtotal = 0;
@@ -166,22 +167,39 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         return $this;
     }
 
-    protected function calculateScholarshipAmount(array $item): int
+    protected function calculateScholarshipAmount(array $scholarshipItem, array $itemIds = []): int
     {
-        $subtotal = empty($item['applies_to'])
+        $subtotal = empty($itemIds)
             ? $this->subtotal
             : array_reduce(
-                $item['applies_to'],
+                $itemIds,
                 fn ($total, $id) => $total + $this->invoiceItemAttributes[$id]['amount'], 0
             );
 
-        $discount = (int) $item['amount'] ?: 0;
-        $percentageDiscount = $item['percentage']
-            ? (int) round($subtotal * ((float) $item['percentage']))
+        if (!empty($scholarshipItem['applies_to'])) {
+            $subtotal = array_reduce(
+                $scholarshipItem['applies_to'],
+                function ($total, $id) use ($itemIds) {
+                    if (
+                        empty($itemIds) ||
+                        in_array($id, $itemIds)
+                    ) {
+                        return $total + $this->invoiceItemAttributes[$id]['amount'];
+                    }
+
+                    return $total;
+                },
+                0
+            );
+        }
+
+        $discount = (int) $scholarshipItem['amount'] ?: 0;
+        $percentageDiscount = $scholarshipItem['percentage']
+            ? (int) round($subtotal * ((float) $scholarshipItem['percentage']))
             : 0;
 
         if ($discount > 0 && $percentageDiscount > 0) {
-            $strategy = $item['resolution_strategy'];
+            $strategy = $scholarshipItem['resolution_strategy'];
             $resolver = new $strategy();
 
             return $resolver($discount, $percentageDiscount);
@@ -210,7 +228,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             ? $this->subtotal
             : $this->discountTotal;
         $this->invoiceAttributes['pre_tax_subtotal'] = $this->preTaxTotal;
-        $this->invoiceAttributes['tax_due'] = round($this->preTaxTotal * $this->invoiceAttributes['tax_rate']);
+
+        $this->setTaxDueAttribute();
 
         $totalDue = $this->preTaxTotal + $this->invoiceAttributes['tax_due'];
         $this->invoiceAttributes['amount_due'] = $totalDue;
@@ -245,6 +264,42 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         );
 
         return $this;
+    }
+
+    protected function setTaxDueAttribute(): static
+    {
+        $preTaxTotal = $this->getGetApplicablePretaxTotal();
+
+        $this->invoiceAttributes['tax_due'] = round($preTaxTotal * $this->invoiceAttributes['tax_rate']);
+
+        return $this;
+    }
+
+    protected function getGetApplicablePretaxTotal(): int
+    {
+        if ($this->invoiceAttributes['apply_tax_to_all_items'] ?? true) {
+            return $this->preTaxTotal;
+        }
+
+        // Get the subset of items subtotal
+        $subtotal = array_reduce(
+            $this->validatedData['tax_items'] ?? [],
+            fn ($total, $id) => $total + $this->invoiceItemAttributes[$id]['amount'],
+            0,
+        );
+
+        // Start with the subtotal and subtract
+        // the discounts if there are any
+        $totalWithDiscount = array_reduce(
+            $this->validatedData['scholarships'],
+            fn ($total, $scholarshipItem) =>
+                $total - $this->calculateScholarshipAmount($scholarshipItem, $this->validatedData['tax_items']),
+            $subtotal,
+        );
+
+        return $totalWithDiscount < 0
+            ? 0
+            : $totalWithDiscount;
     }
 
     public function build(): Collection

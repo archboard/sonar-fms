@@ -88,6 +88,7 @@ class CreateInvoiceRequest extends FormRequest
                     $this->boolean('apply_tax') &&
                     !$this->boolean('use_school_tax_defaults')
                 ),
+                'nullable',
                 'numeric',
             ],
             'tax_label' => [
@@ -96,6 +97,21 @@ class CreateInvoiceRequest extends FormRequest
                     $this->boolean('apply_tax') &&
                     !$this->boolean('use_school_tax_defaults')
                 ),
+            ],
+            'apply_tax_to_all_items' => [
+                Rule::requiredIf(fn () =>
+                    $school->collect_tax &&
+                    $this->boolean('apply_tax')
+                ),
+                'boolean',
+            ],
+            'tax_items' => [
+                Rule::requiredIf(fn () =>
+                    $school->collect_tax &&
+                    $this->boolean('apply_tax') &&
+                    !$this->boolean('apply_tax_to_all_items')
+                ),
+                'array',
             ],
         ];
     }
