@@ -120,8 +120,9 @@ class InvoiceImport extends Model
             'student_column' => 'required',
             'title' => new InvoiceImportMap('required', true),
             'description' => new InvoiceImportMap('nullable'),
-            'due_at' => new InvoiceImportMap('nullable'),
-            'available_at' => new InvoiceImportMap('nullable'),
+            'import_date' => new InvoiceImportMap('nullable|date'),
+            'due_at' => new InvoiceImportMap('nullable|date'),
+            'available_at' => new InvoiceImportMap('nullable|date'),
             'term_id' => new InvoiceImportMap([
                 'nullable',
                 Rule::in($this->school->terms->pluck('id')),

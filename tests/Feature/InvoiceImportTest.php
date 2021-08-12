@@ -327,6 +327,7 @@ class InvoiceImportTest extends TestCase
                 'student_column' => 'student number',
                 'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
                 'description' => $this->makeMapField(),
+                'invoice_date' => $this->makeMapField('invoice date'),
                 'due_at' => $this->makeMapField('due date'),
                 'available_at' => $this->makeMapField('available date'),
                 'term_id' => $this->makeMapField(null, $term->id, true),
@@ -425,6 +426,10 @@ class InvoiceImportTest extends TestCase
             $this->assertTrue(
                 Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->available_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9)
+                    ->equalTo($invoice->invoice_date)
             );
         });
 
@@ -781,6 +786,7 @@ class InvoiceImportTest extends TestCase
                 'student_column' => 'student number',
                 'title' => $this->makeMapField('invoice name'),
                 'description' => $this->makeMapField(),
+                'invoice_date' => $this->makeMapField(value: '2021-08-11T06:17:20.933Z', isManual: true),
                 'due_at' => $this->makeMapField('due date'),
                 'available_at' => $this->makeMapField('available date'),
                 'term_id' => $this->makeMapField(),
@@ -879,6 +885,11 @@ class InvoiceImportTest extends TestCase
             $this->assertTrue(
                 Carbon::create(2021, 9, 1, 0, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->available_at)
+            );
+            $this->assertEquals(
+                Carbon::parse('2021-08-11T06:17:20.933Z')->setTimezone($this->user->timezone)
+                    ->format('Y-m-d'),
+                $invoice->invoice_date->format('Y-m-d')
             );
 
             if (empty($row['item 1 fee'])) {

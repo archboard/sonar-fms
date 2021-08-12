@@ -30,6 +30,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected int $importedRecords = 0;
     protected bool $attributesBuilt = false;
     protected bool $asModels = false;
+    protected string $userNow = '';
 
     protected Collection $terms;
     protected Collection $fees;
@@ -63,6 +64,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $this->terms = $this->school->terms->keyBy('sis_assigned_id');
         $this->fees = $this->school->fees->keyBy('id');
         $this->scholarships = $this->school->scholarships->keyBy('id');
+        $this->userNow = now($this->user->timezone)->format('Y-m-d');
 
         return $this;
     }
@@ -141,7 +143,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * @param $value
      * @return string|null
      */
-    protected function convertDate($value): ?string
+    protected function convertDateTime($value): ?string
     {
         if (is_numeric($value)) {
             $date = Carbon::create(1900, 1, 1, 0, 0, 0, $this->user->timezone);
@@ -152,6 +154,33 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 ->roundUnit('minute', 15)
                 ->setTimezone(config('app.timezone'))
                 ->toDateTimeString();
+        }
+
+        try {
+            return Carbon::parse($value, $this->user->timezone)
+                ->setTimezone(config('app.timezone'))
+                ->toDateTimeString();
+        } catch (InvalidFormatException $exception) {
+            return null;
+        }
+    }
+
+    /**
+     * Converts Excel's number format to a
+     * Carbon instance and returns the date string
+     *
+     * @param $value
+     * @return string|null
+     */
+    protected function convertDate($value): ?string
+    {
+        if (is_numeric($value)) {
+            $date = Carbon::create(1900, 1, 1, 0, 0, 0, $this->user->timezone);
+            $days = floatval($value) - 2;
+            $hours = $days * 24;
+            $minutes = $hours * 60;
+            return $date->addMinutes($minutes)
+                ->toDateString();
         }
 
         try {
@@ -295,10 +324,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'uuid' => $this->uuid(),
             'title' => $this->getMapValue('title'),
             'description' => $this->getMapValue('description'),
-            'due_at' => $this->getMapValue('due_at', 'date'),
-            'available_at' => $this->getMapValue('available_at', 'date'),
-            // TODO implement setting this via an import column
-            'invoice_date' => $this->now,
+            'invoice_date' => $this->getMapValue('invoice_date', 'date') ?? $this->userNow,
+            'due_at' => $this->getMapValue('due_at', 'date time'),
+            'available_at' => $this->getMapValue('available_at', 'date time'),
             'term_id' => $this->getMapValue('term_id', 'term'),
             'notify' => $this->getMapValue('notify'),
             'created_at' => $this->now,

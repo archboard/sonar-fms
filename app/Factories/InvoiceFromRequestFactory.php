@@ -5,6 +5,7 @@ namespace App\Factories;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Student;
 use App\Utilities\NumberUtility;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class InvoiceFromRequestFactory extends InvoiceFactory
@@ -63,8 +64,16 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
         $this->invoiceAttributes['user_id'] = $this->user->id;
-        $this->invoiceAttributes['invoice_date'] = $this->invoiceAttributes['invoice_date']
-            ?? now()->format('Y-m-d');
+        // Invoice date is tricky because it isn't a datetime, just a date
+        // So we want to store it as the date the user thinks it is, since
+        // we don't know the hour offset to convert it from UTC, so make it
+        // a static date that doesn't get converted to a weird day based
+        // on an arbitrary timezone and don't convert when displaying
+        $this->invoiceAttributes['invoice_date'] = ($this->invoiceAttributes['invoice_date'] ?? null)
+            ? Carbon::parse($this->invoiceAttributes['invoice_date'])
+                ->setTimezone($this->user->timezone)
+                ->format('Y-m-d')
+            : now($this->user->timezone)->format('Y-m-d');
         $this->invoiceAttributes['created_at'] = $this->now;
         $this->invoiceAttributes['updated_at'] = $this->now;
 

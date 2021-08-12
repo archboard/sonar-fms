@@ -81,6 +81,18 @@
             </MapField>
           </InputWrap>
 
+          <InputWrap :error="form.errors.invoice_date">
+            <Label for="invoice_date">{{ __('Invoice date') }}</Label>
+            <MapField v-model="form.invoice_date" :headers="headers" id="invoice_date">
+              <DatePicker v-model="form.invoice_date.value" id="invoice_date" mode="date" />
+              <template v-slot:after>
+                <HelpText>
+                  {{ __('This is the date that will appear on the invoice as the date the invoice was issued.') }}
+                </HelpText>
+              </template>
+            </MapField>
+          </InputWrap>
+
           <InputWrap :error="form.errors.available_at">
             <Label for="available_at">{{ __('Availability') }}</Label>
             <MapField v-model="form.available_at" :headers="headers" id="available_at">
@@ -334,6 +346,7 @@ export default {
       title: props.invoiceImport.mapping?.title || addMapFieldValue(),
       description: props.invoiceImport.mapping?.description || addMapFieldValue(),
       term_id: props.invoiceImport.mapping?.term_id || addMapFieldValue(),
+      invoice_date: props.invoiceImport.mapping?.invoice_date || addMapFieldValue(new Date),
       available_at: props.invoiceImport.mapping?.available_at || addMapFieldValue(),
       due_at: props.invoiceImport.mapping?.due_at || addMapFieldValue(),
       notify: props.invoiceImport.mapping?.notify || false,
