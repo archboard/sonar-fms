@@ -40,14 +40,14 @@
       </InputWrap>
     </FadeInGroup>
 
-    <InputWrap :error="localValue.errors.apply_tax_to_all_items">
+    <InputWrap v-if="localValue.tax_items.length > 1" :error="localValue.errors.apply_tax_to_all_items">
       <CheckboxWrapper>
         <Checkbox v-model:checked="localValue.apply_tax_to_all_items" />
         <CheckboxText>{{ __('Apply tax to whole invoice') }}</CheckboxText>
       </CheckboxWrapper>
 
       <FadeIn>
-        <div v-if="!localValue.apply_tax_to_all_items && localValue.tax_items.length > 0" class="mt-3 ml-8 space-y-1">
+        <div v-if="!localValue.apply_tax_to_all_items" class="mt-3 ml-8 space-y-1">
           <HelpText>
             {{ __('Apply tax to the following items:') }}
           </HelpText>

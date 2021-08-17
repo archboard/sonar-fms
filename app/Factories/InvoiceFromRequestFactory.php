@@ -292,8 +292,13 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
     protected function setTaxDueAttribute(): static
     {
-        // The simple case
-        if ($this->invoiceAttributes['apply_tax_to_all_items'] ?? true) {
+        // The simple case of applying to all items,
+        // or if there are not more than 1 tax items
+        // then we're applying the tax to all the items
+        if (
+            ($this->invoiceAttributes['apply_tax_to_all_items'] ?? true) ||
+            count($this->validatedData['tax_items']) < 2
+        ) {
             $this->invoiceAttributes['tax_due'] = round($this->preTaxTotal * $this->invoiceAttributes['tax_rate']);
 
             return $this;
