@@ -68,6 +68,7 @@ class Invoice extends Model
         'parent_uuid',
         'published_at',
         'apply_tax_to_all_items',
+        'relative_tax_rate',
     ];
 
     protected $casts = [
@@ -76,6 +77,7 @@ class Invoice extends Model
         'use_school_tax_defaults' => 'boolean',
         'apply_tax_to_all_items' => 'boolean',
         'tax_rate' => 'float',
+        'relative_tax_rate' => 'float',
         'invoice_date' => 'date',
         'due_at' => 'datetime',
         'voided_at' => 'datetime',

@@ -47,18 +47,28 @@
       </CheckboxWrapper>
 
       <FadeIn>
-        <div v-if="!localValue.apply_tax_to_all_items" class="mt-3 ml-8 space-y-1">
+        <div v-if="!localValue.apply_tax_to_all_items && localValue.tax_items.length > 0" class="mt-3 ml-8 space-y-1">
           <HelpText>
             {{ __('Apply tax to the following items:') }}
           </HelpText>
           <div
-            v-for="lineItem in localValue.items"
-            :key="lineItem.id"
+            v-for="(taxItem, index) in localValue.tax_items"
+            :key="taxItem.item_id"
           >
             <CheckboxWrapper>
-              <Checkbox v-model:checked="localValue.tax_items" :value="lineItem.id" />
-              <CheckboxText>{{ lineItem.name || lineItem.id }}</CheckboxText>
+              <Checkbox v-model:checked="taxItem.selected" />
+              <CheckboxText>{{ taxItem.name || taxItem.item_id }}</CheckboxText>
             </CheckboxWrapper>
+
+            <FadeIn>
+              <div v-if="taxItem.selected" class="pl-6">
+                <InputWrap :error="localValue.errors[`tax_items.${index}.tax_rate`]">
+                  <Label :for="`tax_items.${index}.tax_rate`" :required="true">{{ __('Tax rate') }}</Label>
+                  <Input v-model="taxItem.tax_rate" :id="`tax_items.${index}.tax_rate`" class="w-auto" />
+                  <HelpText>{{ __('This is the tax rate percentage to be applied to this item.') }}</HelpText>
+                </InputWrap>
+              </div>
+            </FadeIn>
           </div>
           <Error v-if="localValue.errors.tax_items">
             {{ localValue.errors.tax_items }}
@@ -70,7 +80,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { computed, defineComponent, watchEffect } from 'vue'
 import hasModelValue from '@/composition/hasModelValue'
 import CardSectionHeader from '@/components/CardSectionHeader'
 import HelpText from '@/components/HelpText'
@@ -109,6 +119,30 @@ export default defineComponent({
   setup (props, { emit }) {
     const { localValue } = hasModelValue(props, emit)
     const { school } = useSchool()
+
+    watchEffect(() => {
+      localValue.value.tax_items = localValue.value.items.map(item => {
+        const existingTaxItem = localValue.value.tax_items.find(t => t.item_id === item.id)
+
+        if (existingTaxItem) {
+          return {
+            item_id: item.id,
+            name: item.name,
+            tax_rate: existingTaxItem.tax_rate,
+            selected: existingTaxItem.selected,
+          }
+        }
+
+        return {
+          item_id: item.id,
+          name: item.name,
+          tax_rate: localValue.value.use_school_tax_defaults
+            ? school.value.tax_rate_converted
+            : localValue.value.tax_rate,
+          selected: false,
+        }
+      })
+    })
 
     return {
       localValue,

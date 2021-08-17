@@ -63,7 +63,7 @@
                 <h4 class="font-bold">
                   {{ __('Line item total: :total', { total: displayCurrency(item.amount_per_unit * item.quantity) }) }}
                 </h4>
-                <Button color="red" size="sm" type="button" @click.prevent="localValue.splice(index, 1)">
+                <Button color="red" size="sm" type="button" @click.prevent="removeInvoiceLineItem(item)">
                   <TrashIcon class="w-4 h-4" />
                   <span class="ml-2">{{ __('Remove line item') }}</span>
                 </Button>
@@ -116,6 +116,7 @@ export default defineComponent({
       fees,
       subtotal,
       addInvoiceLineItem,
+      removeInvoiceLineItem,
       feeSelected
     } = invoiceItemForm(props.form)
 
@@ -125,6 +126,7 @@ export default defineComponent({
       fees,
       subtotal,
       addInvoiceLineItem,
+      removeInvoiceLineItem,
       feeSelected,
     }
   }

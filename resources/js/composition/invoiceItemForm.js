@@ -14,6 +14,11 @@ export default (form) => {
       quantity: 1,
     })
   }
+  const removeInvoiceLineItem = item => {
+    const index = form.items.findIndex(i => i.id === item.id)
+
+    form.items.splice(index, 1)
+  }
   const syncItemWithFee = item => {
     const fee = fees.value.find(f => f.id === item.fee_id)
 
@@ -39,6 +44,7 @@ export default (form) => {
     getItemsTotal,
     getItemTotal,
     addInvoiceLineItem,
+    removeInvoiceLineItem,
     syncItemWithFee,
     feeSelected,
   }

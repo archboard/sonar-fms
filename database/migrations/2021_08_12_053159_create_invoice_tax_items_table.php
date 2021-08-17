@@ -20,6 +20,7 @@ class CreateInvoiceTaxItemsTable extends Migration
             $table->uuid('invoice_item_uuid')->index();
             $table->foreign('invoice_item_uuid')->references('uuid')->on('invoice_items')->onDelete('cascade');
             $table->unsignedBigInteger('amount');
+            $table->decimal('tax_rate', 9, 8)->nullable();
             $table->timestamps();
         });
     }

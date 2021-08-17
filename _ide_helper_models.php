@@ -196,6 +196,7 @@ namespace App\Models{
  * @property string|null $parent_uuid
  * @property Carbon|null $published_at
  * @property bool $apply_tax_to_all_items
+ * @property float|null $relative_tax_rate
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
@@ -264,6 +265,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereParentUuid($value)
  * @method static Builder|Invoice wherePreTaxSubtotal($value)
  * @method static Builder|Invoice wherePublishedAt($value)
+ * @method static Builder|Invoice whereRelativeTaxRate($value)
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
  * @method static Builder|Invoice whereStudentId($value)
@@ -584,6 +586,7 @@ namespace App\Models{
  * @property string $invoice_uuid
  * @property string $invoice_item_uuid
  * @property int $amount
+ * @property string|null $tax_rate
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string|null $amount_formatted
@@ -596,6 +599,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereInvoiceItemUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereTaxRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem whereUuid($value)
  */

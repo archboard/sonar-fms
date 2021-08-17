@@ -27,13 +27,13 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
 
-    public static function make(CreateInvoiceRequest $request = null): static
+    public static function make(CreateInvoiceRequest $request): static
     {
         return (new static)
             ->setRequest($request);
     }
 
-    public function setRequest(CreateInvoiceRequest $request = null): static
+    public function setRequest(CreateInvoiceRequest $request): static
     {
         $this->request = $request;
         $this->validatedData = $request->validated();
@@ -191,11 +191,34 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 },
                 0
             );
+
+            // If the subtotal at this point is 0,
+            // this means there are no tax items
+            // that overlap with the scholarship's `applies_to`
+            if ($subtotal === 0) {
+                return 0;
+            }
         }
 
         $discount = (int) $scholarshipItem['amount'] ?: 0;
+
+        // If we're only dealing with a set of items, we need to calculate
+        // the relative discount from the static amount
+        if ($discount > 0 && !empty($itemIds)) {
+            $discount = array_reduce(
+                $itemIds,
+                function ($total, $id) use ($discount) {
+                    return $total +
+                        ($this->invoiceItemAttributes[$id]['amount'] / $this->subtotal) *
+                        $discount;
+                },
+                0,
+            );
+        }
+
+        $percent = NumberUtility::convertPercentageFromUser($scholarshipItem['percentage']);
         $percentageDiscount = $scholarshipItem['percentage']
-            ? (int) round($subtotal * ((float) $scholarshipItem['percentage']))
+            ? round($subtotal * $percent)
             : 0;
 
         if ($discount > 0 && $percentageDiscount > 0) {
@@ -234,6 +257,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $totalDue = $this->preTaxTotal + $this->invoiceAttributes['tax_due'];
         $this->invoiceAttributes['amount_due'] = $totalDue;
         $this->invoiceAttributes['remaining_balance'] = $totalDue;
+        $this->invoiceAttributes['relative_tax_rate'] = round($this->invoiceAttributes['tax_due'] / $totalDue, 8);
 
         return $this;
     }
@@ -268,38 +292,59 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
     protected function setTaxDueAttribute(): static
     {
-        $preTaxTotal = $this->getGetApplicablePretaxTotal();
+        // The simple case
+        if ($this->invoiceAttributes['apply_tax_to_all_items'] ?? true) {
+            $this->invoiceAttributes['tax_due'] = round($this->preTaxTotal * $this->invoiceAttributes['tax_rate']);
 
-        $this->invoiceAttributes['tax_due'] = round($preTaxTotal * $this->invoiceAttributes['tax_rate']);
+            return $this;
+        }
+
+        $this->setTaxItemAttributes();
+
+        // We can determine the tax due after setting the attributes
+        $this->invoiceAttributes['tax_due'] = array_reduce(
+            $this->invoiceTaxItemAttributes,
+            fn ($total, $item) => $total + $item['amount'],
+            0,
+        );
 
         return $this;
     }
 
-    protected function getGetApplicablePretaxTotal(): int
+    protected function setTaxItemAttributes()
     {
-        if ($this->invoiceAttributes['apply_tax_to_all_items'] ?? true) {
-            return $this->preTaxTotal;
-        }
+        $this->invoiceTaxItemAttributes = array_map(
+            function (array $taxItem) {
+                $subtotal = $this->invoiceItemAttributes[$taxItem['item_id']]['amount'];
+                // This runs through each scholarship and determines
+                // if the scholarship applies to the tax's invoice item
+                // Start with the subtotal and subtract the discounts
+                $pretax = array_reduce(
+                    $this->validatedData['scholarships'],
+                    function ($total, $scholarshipItem) use ($taxItem) {
+                        $discount = $this->calculateScholarshipAmount($scholarshipItem, [$taxItem['item_id']]);
+                        ray('item discount', $discount);
 
-        // Get the subset of items subtotal
-        $subtotal = array_reduce(
-            $this->validatedData['tax_items'] ?? [],
-            fn ($total, $id) => $total + $this->invoiceItemAttributes[$id]['amount'],
-            0,
+                        return $total - $discount;
+                    },
+                    $subtotal,
+                );
+
+                ray('tax item', $subtotal, $pretax);
+                $pretax = $pretax < 0 ? 0 : $pretax;
+                $taxRate = NumberUtility::convertPercentageFromUser($taxItem['tax_rate']);
+
+                return [
+                    'item_id' => $taxItem['item_id'],
+                    'amount' => round($pretax * $taxRate),
+                    'tax_rate' => $taxRate,
+                ];
+            },
+            array_filter(
+                $this->validatedData['tax_items'] ?? [],
+                fn ($taxItem) => $taxItem['selected']
+            ),
         );
-
-        // Start with the subtotal and subtract
-        // the discounts if there are any
-        $totalWithDiscount = array_reduce(
-            $this->validatedData['scholarships'],
-            fn ($total, $scholarshipItem) =>
-                $total - $this->calculateScholarshipAmount($scholarshipItem, $this->validatedData['tax_items']),
-            $subtotal,
-        );
-
-        return $totalWithDiscount < 0
-            ? 0
-            : $totalWithDiscount;
     }
 
     public function build(): Collection
@@ -348,9 +393,9 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             );
 
             // Payment schedules
-            if (!empty($this->validatedData['payment_schedules'])) {
-                $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge(
-                    array_map(function (array $item) use ($invoiceUuid) {
+            $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge(
+                array_map(
+                    function (array $item) use ($invoiceUuid) {
                         $scheduleUuid = $this->uuid();
                         $item['uuid'] = $scheduleUuid;
                         $item['invoice_uuid'] = $invoiceUuid;
@@ -371,9 +416,24 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                         );
 
                         return $this->cleanPaymentScheduleAttributes($item);
-                    }, $this->invoicePaymentScheduleAttributes)
-                );
-            }
+                    },
+                    $this->invoicePaymentScheduleAttributes
+                )
+            );
+
+            // Invoice tax items
+            $this->invoiceTaxItems = $this->invoiceTaxItems->merge(
+                array_map(
+                    fn ($taxItem) => [
+                        'uuid' => $this->uuid(),
+                        'invoice_uuid' => $invoiceUuid,
+                        'invoice_item_uuid' => $items[$taxItem['item_id']]['uuid'],
+                        'amount' => $taxItem['amount'],
+                        'tax_rate' => $taxItem['tax_rate'],
+                    ],
+                    $this->invoiceTaxItemAttributes,
+                )
+            );
         });
 
         return $this->store();

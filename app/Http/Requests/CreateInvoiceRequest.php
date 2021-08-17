@@ -97,6 +97,7 @@ class CreateInvoiceRequest extends FormRequest
                     $this->boolean('apply_tax') &&
                     !$this->boolean('use_school_tax_defaults')
                 ),
+                'nullable',
             ],
             'apply_tax_to_all_items' => [
                 Rule::requiredIf(fn () =>
@@ -113,6 +114,9 @@ class CreateInvoiceRequest extends FormRequest
                 ),
                 'array',
             ],
+            'tax_items.*.item_id' => 'required|in_array:items.*.id',
+            'tax_items.*.selected' => 'required|boolean',
+            'tax_items.*.tax_rate' => 'required|numeric',
         ];
     }
 

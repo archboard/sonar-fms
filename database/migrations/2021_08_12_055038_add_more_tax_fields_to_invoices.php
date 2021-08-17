@@ -15,6 +15,7 @@ class AddMoreTaxFieldsToInvoices extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->boolean('apply_tax_to_all_items')->default(true);
+            $table->decimal('relative_tax_rate', 9, 8)->nullable();
         });
     }
 
@@ -26,7 +27,7 @@ class AddMoreTaxFieldsToInvoices extends Migration
     public function down()
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->dropColumn(['apply_tax_to_all_items']);
+            $table->dropColumn(['apply_tax_to_all_items', 'relative_tax_rate']);
         });
     }
 }

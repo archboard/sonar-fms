@@ -888,7 +888,18 @@ class CreateInvoiceForStudentTest extends TestCase
             'tax_rate' => 0.1,
             'tax_label' => 'VAT',
             'apply_tax_to_all_items' => false,
-            'tax_items' => [$item1, $item3],
+            'tax_items' => [
+                [
+                    'item_id' => $item1,
+                    'selected' => true,
+                    'tax_rate' => 8,
+                ],
+                [
+                    'item_id' => $item3,
+                    'selected' => true,
+                    'tax_rate' => 9,
+                ]
+            ],
         ];
 
         $request = $this->getTestRequest($invoiceData);
@@ -1182,5 +1193,125 @@ class CreateInvoiceForStudentTest extends TestCase
 
         $this->assertEquals(3, $invoices->count());
         $this->assertTrue($invoices->every(fn (Invoice $invoice) => is_null($invoice->published_at)));
+    }
+
+    public function test_can_calculate_correct_tax_amount()
+    {
+        $this->withoutExceptionHandling();
+        Queue::fake();
+
+        $this->assignPermission('create', Invoice::class);
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+
+        $student = $this->school->students->random();
+
+        $item1 = $this->uuid();
+        $item2 = $this->uuid();
+        $item3 = $this->uuid();
+        $invoiceData = [
+            'students' => [$student->id],
+            'title' => 'Test invoice 2021',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $item1,
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item2,
+                    'fee_id' => null,
+                    'name' => 'Line item 2',
+                    'amount_per_unit' => 10000,
+                    'quantity' => 1,
+                ],
+                [
+                    'id' => $item3,
+                    'fee_id' => null,
+                    'name' => 'Line item 3',
+                    'amount_per_unit' => 5000,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance A',
+                    'amount' => null,
+                    'percentage' => 10,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance B',
+                    'amount' => 1000,
+                    'percentage' => null,
+                    'resolution_strategy' => Least::class,
+                ],
+                [
+                    'id' => $this->uuid(),
+                    'scholarship_id' => null,
+                    'name' => 'Tuition Assistance C',
+                    'amount' => 100,
+                    'percentage' => 50,
+                    'resolution_strategy' => Greatest::class,
+                    'applies_to' => [$item1, $item2],
+                ],
+            ],
+            'payment_schedules' => [],
+            'apply_tax' => true,
+            'use_school_tax_defaults' => true,
+            'apply_tax_to_all_items' => false,
+            'tax_items' => [
+                [
+                    'item_id' => $item1,
+                    'selected' => true,
+                    'tax_rate' => 8,
+                ],
+                [
+                    'item_id' => $item2,
+                    'selected' => false,
+                    'tax_rate' => 8,
+                ],
+                [
+                    'item_id' => $item3,
+                    'selected' => true,
+                    'tax_rate' => 9,
+                ]
+            ],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $student->refresh();
+        $this->assertEquals(1, $student->invoices()->count());
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+        $this->assertTrue($invoice->apply_tax);
+        $this->assertTrue($invoice->use_school_tax_defaults);
+        $this->assertFalse($invoice->apply_tax_to_all_items);
+        $this->assertEquals(2, $invoice->invoiceTaxItems()->count());
+        $this->assertEquals(25000, $invoice->subtotal);
+        $this->assertEquals(11500, $invoice->pre_tax_subtotal);
+        $this->assertEquals(675, $invoice->tax_due);
+        $this->assertEquals(13500, $invoice->discount_total);
+        $this->assertEquals(12175, $invoice->amount_due);
+        $this->assertEquals(12175, $invoice->remaining_balance);
+        $this->assertEquals(0.05544148, $invoice->relative_tax_rate);
     }
 }
