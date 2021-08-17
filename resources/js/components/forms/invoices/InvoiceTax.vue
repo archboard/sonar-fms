@@ -29,7 +29,7 @@
     <FadeInGroup>
       <InputWrap v-if="localValue.apply_tax && !localValue.use_school_tax_defaults" :error="localValue.errors.tax_rate">
         <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
-        <Input v-model="localValue.tax_rate" id="tax_rate" />
+        <PercentInput v-model="localValue.tax_rate" id="tax_rate" />
         <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
       </InputWrap>
 
@@ -64,8 +64,9 @@
               <div v-if="taxItem.selected" class="pl-6">
                 <InputWrap :error="localValue.errors[`tax_items.${index}.tax_rate`]">
                   <Label :for="`tax_items.${index}.tax_rate`" :required="true">{{ __('Tax rate') }}</Label>
-                  <Input v-model="taxItem.tax_rate" :id="`tax_items.${index}.tax_rate`" class="w-auto" />
+                  <PercentInput v-model="taxItem.tax_rate" :id="`tax_items.${index}.tax_rate`" class="w-auto" />
                   <HelpText>{{ __('This is the tax rate percentage to be applied to this item.') }}</HelpText>
+                  <pre>{{ taxItem.tax_rate }}</pre>
                 </InputWrap>
               </div>
             </FadeIn>
@@ -95,9 +96,11 @@ import CheckboxText from '@/components/forms/CheckboxText'
 import FadeIn from '@/components/transitions/FadeIn'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import useSchool from '@/composition/useSchool'
+import PercentInput from '@/components/forms/PercentInput'
 
 export default defineComponent({
   components: {
+    PercentInput,
     FadeInGroup,
     FadeIn,
     CheckboxText,

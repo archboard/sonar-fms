@@ -62,7 +62,7 @@
 
               <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.percentage`]">
                 <Label :for="`scholarship_percentage_${index}`">{{ __('Percentage') }}</Label>
-                <Input v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
+                <PercentInput v-model="item.percentage" :id="`scholarship_percentage_${index}`" />
                 <HelpText>
                   {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
                 </HelpText>
@@ -131,9 +131,11 @@ import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import AddThingButton from '@/components/forms/AddThingButton'
+import PercentInput from '@/components/forms/PercentInput'
 
 export default defineComponent({
   components: {
+    PercentInput,
     AddThingButton,
     CheckboxText,
     Checkbox,
