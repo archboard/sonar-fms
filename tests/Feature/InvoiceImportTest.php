@@ -12,6 +12,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
+use App\Models\InvoiceTaxItem;
 use App\Models\Scholarship;
 use App\Models\Student;
 use App\Models\Term;
@@ -174,6 +175,7 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_save_import_mapping_passing_validation()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('update', InvoiceImport::class);
         Storage::fake();
         $this->school->update([
@@ -194,6 +196,7 @@ class InvoiceImportTest extends TestCase
             'starting_row' => 3,
         ]);
 
+        $itemId = $this->uuid();
         $data = [
             'student_attribute' => 'student_number',
             'student_column' => 'student number',
@@ -205,6 +208,7 @@ class InvoiceImportTest extends TestCase
             'notify' => false,
             'items' => [
                 [
+                    'id' => $itemId,
                     'fee_id' => $this->makeMapField(),
                     'name' => $this->makeMapField('invoice name'),
                     'amount_per_unit' => $this->makeMapField('invoice amount'),
@@ -213,6 +217,7 @@ class InvoiceImportTest extends TestCase
             ],
             'scholarships' => [
                 [
+                    'id' => $this->uuid(),
                     'name' => $this->makeMapField(value: 'Assistance', isManual: true),
                     'use_amount' => false,
                     'amount' => $this->makeMapField(),
@@ -225,6 +230,14 @@ class InvoiceImportTest extends TestCase
             'use_school_tax_defaults' => false,
             'tax_rate' => $this->makeMapField(value: 0.07, isManual: true),
             'tax_label' => $this->makeMapField(value: 'VAT', isManual: true),
+            'apply_tax_to_all_items' => false,
+            'tax_items' => [
+                [
+                    'item_id' => $itemId,
+                    'selected' => true,
+                    'tax_rate' => $this->makeMapField(value: 10, isManual: true),
+                ]
+            ],
         ];
 
         $this->putJson(route('invoices.imports.map', $import), $data)
@@ -1024,6 +1037,8 @@ class InvoiceImportTest extends TestCase
             'use_school_tax_defaults' => false,
             'tax_rate' => $this->makeMapField(),
             'tax_label' => $this->makeMapField(),
+            'apply_tax_to_all_items' => true,
+            'tax_items' => [],
         ];
         $import = InvoiceImport::create([
             'user_id' => $this->user->id,
@@ -1051,5 +1066,231 @@ class InvoiceImportTest extends TestCase
         $import->mapping = $mapping;
         $this->assertTrue($import->hasValidMapping());
         $this->assertEmpty($import->getMappingValidationErrors());
+    }
+
+    public function test_can_import_individual_item_tax_rate()
+    {
+        $this->withoutExceptionHandling();
+        Storage::fake();
+        Event::fake();
+
+        $this->school->update([
+            'collect_tax' => true,
+            'tax_rate' => 0.05,
+            'tax_label' => 'Taxes',
+        ]);
+
+        $originalPath = InvoiceImport::storeFile(
+            $this->getUploadedFile('taxed.xls'),
+            $this->school
+        );
+        /** @var Term $term */
+        $term = $this->school->terms()
+            ->save(
+                Term::factory()->make()
+            );
+
+        $itemId1 = $this->uuid();
+        $itemId2 = $this->uuid();
+        $import = InvoiceImport::make([
+            'user_id' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField('invoice name'),
+                'description' => $this->makeMapField(),
+                'invoice_date' => $this->makeMapField('invoice date'),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(null, $term->id, true),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $itemId1,
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'item 1', isManual: true),
+                        'amount_per_unit' => $this->makeMapField('item 1'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                    [
+                        'id' => $itemId2,
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'item 2', isManual: true),
+                        'amount_per_unit' => $this->makeMapField('item 2'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'name' => $this->makeMapField(value: 'Assistance 1', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [$itemId1],
+                    ],
+                    [
+                        'id' => $this->uuid(),
+                        'name' => $this->makeMapField(value: 'Assistance 2', isManual: true),
+                        'use_amount' => true,
+                        'amount' => $this->makeMapField('discount amount'),
+                        'percentage' => $this->makeMapField(),
+                        'applies_to' => [],
+                    ],
+                ],
+                'payment_schedules' => [],
+                'apply_tax' => true,
+                'use_school_tax_defaults' => true,
+                'tax_rate' => $this->makeMapField(),
+                'tax_label' => $this->makeMapField(),
+                'apply_tax_to_all_items' => false,
+                'tax_items' => [
+                    [
+                        'item_id' => $itemId1,
+                        'selected' => true,
+                        'tax_rate' => $this->makeMapField('tax rate')
+                    ],
+                    [
+                        'item_id' => $itemId2,
+                        'selected' => false,
+                        'tax_rate' => $this->makeMapField(value: 0.05, isManual: true)
+                    ],
+                ],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
+            });
+
+        (new ProcessInvoiceImport($import))
+            ->handle();
+
+        $import->refresh();
+        $contents = $import->getImportContents();
+        $contentsByStudentNumber = $contents->keyBy('student number');
+
+        $values = $contents
+            ->pluck('student number')
+            ->filter(fn ($value) => !is_null($value));
+
+        $students = $import->school->students()
+            ->whereIn('student_number', $values)
+            ->get();
+
+        $students->each(function (Student $student, int $index) use ($contentsByStudentNumber, $term) {
+            $this->assertEquals(1, $student->invoices->count());
+            /** @var Invoice $invoice */
+            $invoice = $student->invoices->first();
+
+            $row = $contentsByStudentNumber->get($student->student_number);
+
+            // Check invoice items and subtotal
+            $subtotal = $row['item 1'] * 100 + $row['item 2'] * 100;
+            $items = ['item 1', 'item 2'];
+            $this->assertEquals(2, $invoice->invoiceItems->count());
+            $this->assertEquals($subtotal, $invoice->subtotal);
+
+            foreach ($items as $item) {
+                /** @var InvoiceItem $item */
+                $invoiceItem = $invoice->invoiceItems->firstWhere('name', $item);
+                $this->assertEquals($row[$item] * 100, $invoiceItem->amount);
+                $this->assertEquals($row[$item] * 100, $invoiceItem->amount_per_unit);
+                $this->assertEquals(1, $invoiceItem->quantity);
+            }
+
+            // Check scholarships and discount total
+            $discount = 0;
+            $this->assertTrue($invoice->invoiceScholarships->count() > 0);
+
+            // This discount only applies to item 1
+            if (!empty($row['discount'])) {
+                /** @var InvoiceScholarship $scholarship1 */
+                $scholarship1 = $invoice->invoiceScholarships->firstWhere('name', 'Assistance 1');
+                $this->assertEquals($row['discount'], $scholarship1->percentage);
+                $this->assertEquals(0, $scholarship1->amount);
+                $this->assertEquals($row['item 1'] * 100 * $row['discount'], $scholarship1->calculated_amount);
+                $discount += $scholarship1->calculated_amount;
+            }
+
+            if (!empty($row['discount amount'])) {
+                /** @var InvoiceScholarship $scholarship2 */
+                $scholarship2 = $invoice->invoiceScholarships->firstWhere('name', 'Assistance 2');
+
+                $this->assertEquals(0, $scholarship2->percentage);
+                $this->assertEquals($row['discount amount'] * 100, $scholarship2->amount);
+                $this->assertEquals($row['discount amount'] * 100, $scholarship2->calculated_amount);
+                $discount += $scholarship2->calculated_amount;
+            }
+
+            $pretax = $subtotal - $discount;
+            if ($pretax < 0) {
+                $pretax = 0;
+            }
+
+            $this->assertEquals($term->id, $invoice->term_id);
+            $this->assertEquals($pretax, $invoice->pre_tax_subtotal);
+            $this->assertEquals(1, $invoice->invoiceTaxItems->count());
+
+            // The tax configuration is that the tax only applies to item 1
+            $itemSubtotal = $row['item 1'] * 100;
+            $itemDiscount1 = empty($row['discount'])
+                ? 0
+                : ($itemSubtotal * $row['discount']);
+            $ratio = $itemSubtotal / $subtotal;
+            $itemDiscount2 = $row['discount amount'] * 100 * $ratio;
+            $itemPretax = $itemSubtotal - $itemDiscount1 - $itemDiscount2;
+
+            $tax = round($itemPretax * $row['tax rate']);
+
+            /** @var InvoiceTaxItem $taxItem */
+            $taxItem = $invoice->invoiceTaxItems->first();
+            /** @var InvoiceItem $invoiceItem */
+            $invoiceItem = $invoice->invoiceItems->firstWhere('name', 'item 1');
+
+            $this->assertEquals($invoiceItem->uuid, $taxItem->invoice_item_uuid);
+            $this->assertEquals($row['tax rate'], $taxItem->tax_rate);
+            $this->assertEquals($tax, $invoice->tax_due);
+            $this->assertEquals($this->school->tax_rate, $invoice->tax_rate);
+            $this->assertEquals($this->school->tax_label, $invoice->tax_label);
+
+            $due = $pretax + $tax;
+
+            $this->assertEquals($due, $invoice->amount_due);
+            $this->assertEquals($due, $invoice->remaining_balance);
+            $this->assertNotNull($invoice->invoiceImport);
+            $this->assertTrue(
+                Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->due_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->available_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9)
+                    ->equalTo($invoice->invoice_date)
+            );
+        });
+
+        $this->assertEquals(3, $import->imported_records);
+        $this->assertEquals(1, $import->failed_records);
+        $this->assertCount(4, $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
     }
 }

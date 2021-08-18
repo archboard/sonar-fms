@@ -29,14 +29,22 @@
     <FadeInGroup>
       <InputWrap v-if="localValue.apply_tax && !localValue.use_school_tax_defaults" :error="localValue.errors.tax_rate">
         <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
-        <PercentInput v-model="localValue.tax_rate" id="tax_rate" />
-        <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
+        <MapField v-model="localValue.tax_rate" :headers="headers" id="tax_rate">
+          <Input v-model="localValue.tax_rate.value" id="tax_rate" />
+          <template v-slot:after>
+            <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
+          </template>
+        </MapField>
       </InputWrap>
 
       <InputWrap v-if="localValue.apply_tax && !localValue.use_school_tax_defaults" :error="localValue.errors.tax_label">
         <Label for="tax_label" :required="true">{{ __('Tax label') }}</Label>
-        <Input v-model="localValue.tax_label" id="tax_label" placeholder="VAT" />
-        <HelpText>{{ __('This is the label that will be displayed for the name/type of tax.') }}</HelpText>
+        <MapField v-model="localValue.tax_label" :headers="headers" id="tax_label">
+          <Input v-model="localValue.tax_label.value" id="tax_label" placeholder="VAT" />
+          <template v-slot:after>
+            <HelpText>{{ __('This is the label that will be displayed for the name/type of tax.') }}</HelpText>
+          </template>
+        </MapField>
       </InputWrap>
     </FadeInGroup>
 
@@ -57,15 +65,28 @@
           >
             <CheckboxWrapper>
               <Checkbox v-model:checked="taxItem.selected" />
-              <CheckboxText>{{ taxItem.name || taxItem.item_id }}</CheckboxText>
+              <CheckboxText>
+                <span v-if="taxItem.name.isManual">
+                  {{ taxItem.name.value || taxItem.item_id }}
+                </span>
+                <span v-else class="flex items-center space-x-1">
+                  <LinkIcon class="w-4 h-4" />
+                  <span>{{ taxItem.name.column }}</span>
+                </span>
+              </CheckboxText>
             </CheckboxWrapper>
 
             <FadeIn>
               <div v-if="taxItem.selected" class="pl-6">
                 <InputWrap :error="localValue.errors[`tax_items.${index}.tax_rate`]">
                   <Label :for="`tax_items.${index}.tax_rate`" :required="true">{{ __('Tax rate') }}</Label>
-                  <PercentInput v-model="taxItem.tax_rate" :id="`tax_items.${index}.tax_rate`" class="w-auto" />
-                  <HelpText>{{ __('This is the tax rate percentage to be applied to this item.') }}</HelpText>
+                  <MapField v-model="taxItem.tax_rate" :headers="headers" :id="`tax_items.${index}.tax_rate`">
+                    <PercentInput v-model="taxItem.tax_rate.value" :id="`tax_items.${index}.tax_rate`" class="w-auto" />
+                    <template #after>
+                      <HelpText>{{ __('This is the tax rate percentage to be applied to this item.') }}</HelpText>
+                    </template>
+                  </MapField>
+                  <pre>{{ taxItem.tax_rate }}</pre>
                 </InputWrap>
               </div>
             </FadeIn>
@@ -80,49 +101,54 @@
 </template>
 
 <script>
-import { computed, defineComponent, watchEffect } from 'vue'
-import hasModelValue from '@/composition/hasModelValue'
-import CardSectionHeader from '@/components/CardSectionHeader'
-import HelpText from '@/components/HelpText'
+import { defineComponent } from 'vue'
 import InputWrap from '@/components/forms/InputWrap'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import Checkbox from '@/components/forms/Checkbox'
-import Input from '@/components/forms/Input'
-import Label from '@/components/forms/Label'
-import Error from '@/components/forms/Error'
-import Fieldset from '@/components/forms/Fieldset'
 import CheckboxText from '@/components/forms/CheckboxText'
+import HelpText from '@/components/HelpText'
 import FadeIn from '@/components/transitions/FadeIn'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
-import useSchool from '@/composition/useSchool'
+import MapField from '@/components/forms/MapField'
+import Input from '@/components/forms/Input'
+import Label from '@/components/forms/Label'
+import Fieldset from '@/components/forms/Fieldset'
 import PercentInput from '@/components/forms/PercentInput'
+import Error from '@/components/forms/Error'
+import hasModelValue from '@/composition/hasModelValue'
+import CardSectionHeader from '@/components/CardSectionHeader'
+import useSchool from '@/composition/useSchool'
 import generatesTaxItems from '@/composition/generatesTaxItems'
+import { LinkIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({
   components: {
+    CardSectionHeader,
     PercentInput,
+    MapField,
     FadeInGroup,
     FadeIn,
+    HelpText,
     CheckboxText,
     Checkbox,
     CheckboxWrapper,
     InputWrap,
-    HelpText,
-    CardSectionHeader,
     Input,
     Label,
     Fieldset,
     Error,
+    LinkIcon,
   },
   props: {
     modelValue: Object,
+    headers: Array,
   },
   emits: ['update:modelValue'],
 
   setup (props, { emit }) {
     const { localValue } = hasModelValue(props, emit)
     const { school } = useSchool()
-    generatesTaxItems(localValue)
+    generatesTaxItems(localValue, true)
 
     return {
       localValue,

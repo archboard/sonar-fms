@@ -200,6 +200,26 @@ class InvoiceImport extends Model
                 'nullable',
                 'min:1',
             ]),
+            'apply_tax_to_all_items' => [
+                Rule::requiredIf(fn () =>
+                    $this->school->collect_tax &&
+                    ($mapping['apply_tax'] ?? false)
+                ),
+                'boolean',
+            ],
+            'tax_items' => [
+                Rule::requiredIf(fn () =>
+                    $this->school->collect_tax &&
+                    ($mapping['apply_tax'] ?? false) &&
+                    !($mapping['apply_tax_to_all_items'] ?? false)
+                ),
+                'array',
+            ],
+            'tax_items.*.item_id' => 'required|in_array:items.*.id',
+            'tax_items.*.selected' => 'required|boolean',
+            'tax_items.*.tax_rate' => [
+                new InvoiceImportMap('required|numeric', true),
+            ],
         ]);
     }
 

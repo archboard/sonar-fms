@@ -9,6 +9,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
+use App\Models\InvoiceTaxItem;
 use App\Models\Student;
 use App\Utilities\NumberUtility;
 use Brick\Money\Money;
@@ -31,6 +32,11 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected bool $attributesBuilt = false;
     protected bool $asModels = false;
     protected string $userNow = '';
+    protected int $rowSubtotal = 0;
+    protected int $rowDiscountTotal = 0;
+    protected int $rowPreTaxSubtotal = 0;
+    protected int $rowTaxDue = 0;
+    protected string $rowInvoiceUuid = '';
 
     protected Collection $terms;
     protected Collection $fees;
@@ -42,10 +48,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
     // that need to be stored in the db
     protected Collection $localInvoices;
     protected Collection $localInvoiceItems;
+    protected Collection $localInvoiceItemsKeyedById;
     protected Collection $localInvoiceScholarships;
     protected Collection $localItemScholarshipPivot;
     protected Collection $localInvoicePaymentSchedules;
     protected Collection $localInvoicePaymentTerms;
+    protected Collection $localInvoiceTaxItems;
 
     public static function make(InvoiceImport $import = null): static
     {
@@ -95,10 +103,16 @@ class InvoiceFromImportFactory extends InvoiceFactory
     {
         $this->localInvoices = collect();
         $this->localInvoiceItems = collect();
+        $this->localInvoiceItemsKeyedById = collect();
         $this->localInvoiceScholarships = collect();
         $this->localItemScholarshipPivot = collect();
         $this->localInvoicePaymentSchedules = collect();
         $this->localInvoicePaymentTerms = collect();
+        $this->localInvoiceTaxItems = collect();
+        $this->rowSubtotal = 0;
+        $this->rowDiscountTotal = 0;
+        $this->rowPreTaxSubtotal = 0;
+        $this->rowTaxDue = 0;
 
         return $this;
     }
@@ -131,9 +145,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $this->warnings[] = $message;
     }
 
-    protected function getMapField(string $key)
+    protected function getMapField(string $key, $default = null)
     {
-        return Arr::get($this->import->mapping, $key) ?? null;
+        return Arr::get($this->import->mapping, $key, $default) ?? null;
     }
 
     /**
@@ -273,11 +287,57 @@ class InvoiceFromImportFactory extends InvoiceFactory
         return $scholarship->id;
     }
 
-    protected function getMapValue(string $key, string $conversion = null)
+    protected function convertTaxRate($value)
     {
-        $mapField = $this->getMapField($key);
+        if ($this->collectingTax()) {
+            if ($this->getMapValue('use_school_tax_defaults')) {
+                return $this->school->tax_rate;
+            }
 
-        if (!is_array($mapField)) {
+            return NumberUtility::convertPercentageFromUser($value);
+        }
+
+        return 0;
+    }
+
+    protected function convertTaxLabel($value)
+    {
+        if ($this->collectingTax()) {
+            if ($this->getMapValue('use_school_tax_defaults')) {
+                return $this->school->tax_label;
+            }
+
+            return $value;
+        }
+
+        return null;
+    }
+
+    protected function collectingTax(): bool
+    {
+        return $this->school->collect_tax &&
+            $this->getMapValue('apply_tax');
+    }
+
+    /**
+     * This gets a value from the mapping
+     * or from the row if the value is mapped to
+     * the spreadsheet
+     *
+     * @param string $key
+     * @param string|null $conversion
+     * @return array|\ArrayAccess|mixed|null
+     */
+    protected function getMapValue(string $key, string $conversion = null, $default = null)
+    {
+        $mapField = $this->getMapField($key, $default);
+
+        // Check that the resulting field is an array
+        // that has all the column mapping keys
+        if (
+            !is_array($mapField) ||
+            !Arr::has($mapField, ['isManual', 'column', 'value'])
+        ) {
             return $mapField;
         }
 
@@ -299,8 +359,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
     }
 
     /**
-     * Sets the most attributes we can before knowing line item
-     * and scholarship details
+     * Sets the invoice attributes.
+     * This is done last after all items, scholarships,
+     * and tax details have been figured out
      *
      * @return array
      * @throws InvalidImportMapValue
@@ -321,7 +382,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'student_id' => $student->id,
             'user_id' => $this->user->id,
             'import_id' => $this->import->id,
-            'uuid' => $this->uuid(),
+            'uuid' => $this->rowInvoiceUuid,
             'title' => $this->getMapValue('title'),
             'description' => $this->getMapValue('description'),
             'invoice_date' => $this->getMapValue('invoice_date', 'date') ?? $this->userNow,
@@ -329,9 +390,25 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'available_at' => $this->getMapValue('available_at', 'date time'),
             'term_id' => $this->getMapValue('term_id', 'term'),
             'notify' => $this->getMapValue('notify'),
+            'subtotal' => $this->rowSubtotal,
+            'discount_total' => $this->rowDiscountTotal,
+            'apply_tax' => $this->getMapValue('apply_tax'),
+            'apply_tax_to_all_items' => $this->getMapValue(key: 'apply_tax_to_all_items', default: true),
+            'pre_tax_subtotal' => $this->rowPreTaxSubtotal,
+            'tax_rate' => $this->getMapValue('tax_rate', 'tax rate'),
+            'tax_label' => $this->getMapValue('tax_label', 'tax label'),
+            'tax_due' => $this->rowTaxDue,
+            'published_at' => $this->now,
             'created_at' => $this->now,
             'updated_at' => $this->now,
         ];
+
+        $amountDue = $this->rowPreTaxSubtotal + $this->rowTaxDue;
+        $attributes['amount_due'] = $amountDue;
+        $attributes['remaining_balance'] = $amountDue;
+
+        $relativeTaxRate = $this->rowTaxDue / $amountDue;
+        $attributes['relative_tax_rate'] = round($relativeTaxRate, 8);
 
         if ($attributes['notify']) {
             $attributes['notified_at'] = null;
@@ -344,18 +421,17 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * This builds the invoice items for an invoice
      * and returns the invoice item attributes keyed
-     * by the id they were give on the frontend so we
+     * by the id they were give on the frontend so that we
      * can map to scholarship relationships
      *
-     * @param string $invoiceUuid
      * @return Collection
      * @throws InvalidImportMapValue
      */
-    protected function buildInvoiceItems(string $invoiceUuid): Collection
+    protected function buildInvoiceItems(): Collection
     {
         /** @var Collection $items */
         $items = collect($this->getMapField('items'))
-            ->reduce(function (Collection $items, array $item, int $index) use ($invoiceUuid) {
+            ->reduce(function (Collection $items, array $item, int $index) {
                 // If there isn't an amount value configured, do not add this item
                 if (blank($this->getMapValue("items.{$index}.amount_per_unit"))) {
                     return $items;
@@ -379,7 +455,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 if ($perUnit > 0 && $quantity > 0) {
                     $items->put($item['id'], [
                         'batch_id' => $this->batchId,
-                        'invoice_uuid' => $invoiceUuid,
+                        'invoice_uuid' => $this->rowInvoiceUuid,
                         'uuid' => $this->uuid(),
                         'fee_id' => $this->getMapValue("items.{$index}.fee_id", 'fee'),
                         'name' => $this->getMapValue("items.{$index}.name") ?? 'Line item',
@@ -410,15 +486,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * Therefore, if there is no amount or percentage
      * we won't add any scholarships for the row
      *
-     * @param string $invoiceUuid
-     * @param int $subtotal
-     * @param Collection $invoiceItems
      * @return int
      */
-    protected function buildInvoiceScholarships(string $invoiceUuid, int $subtotal, Collection $invoiceItems): int
+    protected function buildInvoiceScholarships(): int
     {
         return collect($this->getMapField('scholarships'))
-            ->reduce(function (int $total, array $item, int $index) use ($invoiceUuid, $subtotal, $invoiceItems) {
+            ->reduce(function (int $total, array $item, int $index) {
                 $amount = $this->getMapValue("scholarships.{$index}.amount", 'currency');
                 $percentage = $this->getMapValue("scholarships.{$index}.percentage", 'percentage');
 
@@ -433,7 +506,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 $attributes = [
                     'batch_id' => $this->batchId,
-                    'invoice_uuid' => $invoiceUuid,
+                    'invoice_uuid' => $this->rowInvoiceUuid,
                     'uuid' => $this->uuid(),
                     'scholarship_id' => $this->getMapValue("scholarships.{$index}.scholarship_id", 'scholarship'),
                     'name' => $this->getMapValue("scholarships.{$index}.name"),
@@ -442,18 +515,18 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     'created_at' => $this->now,
                     'updated_at' => $this->now,
                 ];
-                $applicableSubtotal = $subtotal;
+                $applicableSubtotal = $this->rowSubtotal;
 
                 if (
                     !empty($item['applies_to']) &&
-                    count($item['applies_to']) !== $invoiceItems->count()
+                    count($item['applies_to']) !== $this->localInvoiceItemsKeyedById->count()
                 ) {
-                    // This is probably "bad practice" since the reduce
+                    // This is probably "bad practice" since the reduce's
                     // callback adds items to the pivot collection (side effect),
                     // but I don't want to iterate the items again
                     $applicableSubtotal = collect($item['applies_to'])
-                        ->reduce(function (int $total, string $id) use ($attributes, $invoiceItems) {
-                            $invoiceItem = $invoiceItems->get($id);
+                        ->reduce(function (int $total, string $id) use ($attributes) {
+                            $invoiceItem = $this->localInvoiceItemsKeyedById->get($id);
 
                             $this->localItemScholarshipPivot->push([
                                 'invoice_item_uuid' => $invoiceItem['uuid'],
@@ -491,19 +564,17 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * them for this row. Don't throw an exception and import the
      * rest of the invoice normally.
      *
-     * @param string $invoiceUuid
-     * @param int $amountDue
      * @return Collection
      */
-    protected function buildPaymentSchedules(string $invoiceUuid, int $amountDue): Collection
+    protected function buildPaymentSchedules(): Collection
     {
         return collect($this->getMapField('payment_schedules'))
-            ->each(function (array $item, int $scheduleIndex) use ($invoiceUuid, $amountDue) {
+            ->each(function (array $item, int $scheduleIndex) {
                 $scheduleUuid = $this->uuid();
                 $scheduleAttributes = [
                     'uuid' => $scheduleUuid,
                     'batch_id' => $this->batchId,
-                    'invoice_uuid' => $invoiceUuid,
+                    'invoice_uuid' => $this->rowInvoiceUuid,
                     'created_at' => $this->now,
                     'updated_at' => $this->now,
                 ];
@@ -513,7 +584,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                         int $total,
                         array $term,
                         int $termIndex
-                    ) use ($invoiceUuid, $scheduleUuid, $amountDue, $scheduleIndex) {
+                    ) use ($scheduleUuid, $scheduleIndex) {
                         $amount = $this->getMapValue(
                             "payment_schedules.{$scheduleIndex}.terms.{$termIndex}.amount",
                             'currency'
@@ -533,12 +604,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                         $termAmountDue = $term['use_amount']
                             ? $amount
-                            : $amountDue * $percentage;
+                            : $this->rowPreTaxSubtotal * $percentage;
 
                         $this->localInvoicePaymentTerms->push([
                             'uuid' => $this->uuid(),
                             'batch_id' => $this->batchId,
-                            'invoice_uuid' => $invoiceUuid,
+                            'invoice_uuid' => $this->rowInvoiceUuid,
                             'invoice_payment_schedule_uuid' => $scheduleUuid,
                             'amount' => $amount,
                             'percentage' => $percentage,
@@ -559,6 +630,102 @@ class InvoiceFromImportFactory extends InvoiceFactory
             });
     }
 
+    /**
+     * Builds the invoice tax items for the invoice if applicable,
+     * and return the total tax due regardless of tax items
+     *
+     * @return int
+     */
+    protected function buildTaxItemAttributes(): int
+    {
+        // Not collecting tax means no tax due
+        if (!$this->collectingTax()) {
+            return 0;
+        }
+
+        $taxItems = $this->getMapValue(key: 'tax_items', default: []);
+
+        // If we're applying to all items
+        // or there is only one item,
+        // apply the general tax rate
+        if (
+            $this->getMapValue(key: 'apply_tax_to_all_items', default: true) ||
+            count($taxItems) < 2
+        ) {
+            return $this->rowPreTaxSubtotal * $this->getMapValue('tax_rate', 'tax rate');
+        }
+
+        return collect($taxItems)
+            ->filter(fn ($taxItem) => $taxItem['selected'])
+            ->reduce(function (int $total, array $taxItem, int $index) {
+                $invoiceItem = $this->localInvoiceItemsKeyedById->get($taxItem['item_id']);
+                $discount = $this->getItemDiscount($taxItem['item_id']);
+                $taxRate = $this->getMapValue("tax_items.{$index}.tax_rate", 'percentage');
+                $amount = round(($invoiceItem['amount'] - $discount) * $taxRate);
+
+                $this->localInvoiceTaxItems->push([
+                    'uuid' => $this->uuid(),
+                    'invoice_uuid' => $this->rowInvoiceUuid,
+                    'invoice_item_uuid' => $invoiceItem['uuid'],
+                    'amount' => $amount,
+                    'tax_rate' => $taxRate,
+                    'created_at' => $this->now,
+                    'updated_at' => $this->now,
+                ]);
+
+                return $total + $amount;
+            }, 0);
+    }
+
+    /**
+     * This gets the total discount for an individual item
+     *
+     * @param $itemId
+     * @return int
+     */
+    protected function getItemDiscount($itemId): int
+    {
+        return collect($this->getMapField('scholarships'))
+            ->reduce(function (int $total, array $item, int $index) use ($itemId) {
+                $amount = $this->getMapValue("scholarships.{$index}.amount", 'currency');
+                $percentage = $this->getMapValue("scholarships.{$index}.percentage", 'percentage');
+
+                // Don't process if there isn't an amount
+                // or percentage since scholarships are optional
+                if (
+                    ($item['use_amount'] && empty($amount)) ||
+                    (!$item['use_amount'] && empty($percentage)) ||
+                    (
+                        !empty($item['applies_to']) &&
+                        !in_array($itemId, $item['applies_to'])
+                    )
+                ) {
+                    return $total;
+                }
+
+                $invoiceItem = $this->localInvoiceItemsKeyedById->get($itemId);
+                $itemSubtotal = $invoiceItem['amount'];
+
+                // Get the relative discount amount based on this item's
+                // proportion of the subtotal
+                $ratio = $itemSubtotal / $this->rowSubtotal;
+                $discount = round($amount * $ratio);
+
+                // If we're not using amount calculate the discount
+                // based on the appropriate subtotal
+                if (!$item['use_amount']) {
+                    $discount = $itemSubtotal * $percentage;
+                }
+
+                // Don't let the discount exceed the subtotal
+                if ($discount > $itemSubtotal) {
+                    $discount = $itemSubtotal;
+                }
+
+                return $total + $discount;
+            }, 0);
+    }
+
     public function buildAttributes()
     {
         $this->contents->each(function (Collection $row, int $rowIndex) {
@@ -573,38 +740,39 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     throw new InvalidImportMapValue('Missing student identifier value');
                 }
 
-                $invoiceAttributes = $this->getInvoiceAttributes();
-                $invoiceUuid = $invoiceAttributes['uuid'];
+                $this->rowInvoiceUuid = $this->uuid();
 
                 // Build the items
-                $items = $this->buildInvoiceItems($invoiceUuid);
-                $subtotal = $items->reduce(fn ($total, $item) => $total + $item['amount']);
-                $this->localInvoiceItems = $this->localInvoiceItems->merge($items->values());
+                $this->localInvoiceItemsKeyedById = $this->buildInvoiceItems();
+                $this->rowSubtotal = $this->localInvoiceItemsKeyedById->reduce(fn ($total, $item) => $total + $item['amount']);
+                $this->localInvoiceItems = $this->localInvoiceItemsKeyedById->values();
 
                 // Build the scholarships
-                $discount = $this->buildInvoiceScholarships($invoiceUuid, $subtotal, $items);
+                $this->rowDiscountTotal = $this->buildInvoiceScholarships();
 
-                $amountDue = $subtotal - $discount;
-
-                if ($amountDue < 0) {
-                    $amountDue = 0;
+                // If the discount is greater than the row subtotal,
+                // set the discount to be the subtotal's value.
+                // Not sure if this is desired behavior, just my guess
+                // and could change after review
+                if ($this->rowDiscountTotal > $this->rowSubtotal) {
+                    $this->rowDiscountTotal = $this->rowSubtotal;
                 }
 
-                $invoiceAttributes['amount_due'] = $amountDue;
-                $invoiceAttributes['remaining_balance'] = $amountDue;
-                $invoiceAttributes['subtotal'] = $subtotal;
-                $invoiceAttributes['discount_total'] = $discount > $subtotal
-                    ? $subtotal
-                    : $discount;
+                // Set the pretax total, 0 if negative
+                // Would we support negative account balance?
+                $this->rowPreTaxSubtotal = $this->rowSubtotal - $this->rowDiscountTotal;
 
                 // Build the payment schedules
-                $this->buildPaymentSchedules($invoiceUuid, $amountDue);
+                $this->buildPaymentSchedules();
 
-                // After everything has been calculated add the invoice to the collection
-                $this->localInvoices->push($invoiceAttributes);
+                // Build the tax items and set the tax due
+                $this->rowTaxDue = $this->buildTaxItemAttributes();
+
+                // After everything, generate the invoice attributes and add them to the collection
+                $this->localInvoices->push($this->getInvoiceAttributes());
 
                 // Add the successful result
-                $this->addResult($invoiceUuid);
+                $this->addResult($this->rowInvoiceUuid);
 
                 // Merge the local table data with the parent collections
                 $this->commit();
@@ -683,6 +851,16 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     return $schedule;
                 })
             );
+            $invoice->setRelation(
+                'invoiceTaxItems',
+                $this->localInvoiceTaxItems->map(function ($item) {
+                    $taxItem = new InvoiceTaxItem($item);
+                    $invoiceItem = $this->localInvoiceItems->firstWhere('uuid', $taxItem->invoice_item_uuid);
+                    $taxItem->setRelation('invoiceItem', new InvoiceItem($invoiceItem));
+
+                    return $taxItem;
+                })
+            );
 
             $this->models->push($invoice);
         } else {
@@ -692,6 +870,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $this->itemScholarshipPivot = $this->itemScholarshipPivot->merge($this->localItemScholarshipPivot);
             $this->invoicePaymentSchedules = $this->invoicePaymentSchedules->merge($this->localInvoicePaymentSchedules);
             $this->invoicePaymentTerms = $this->invoicePaymentTerms->merge($this->localInvoicePaymentTerms);
+            $this->invoiceTaxItems = $this->invoiceTaxItems->merge($this->localInvoiceTaxItems);
         }
 
         $this->resetLocalStores();

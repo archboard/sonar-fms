@@ -343,6 +343,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                     'item_id' => $taxItem['item_id'],
                     'amount' => round($pretax * $taxRate),
                     'tax_rate' => $taxRate,
+                    'created_at' => $this->now,
+                    'updated_at' => $this->now,
                 ];
             },
             array_filter(

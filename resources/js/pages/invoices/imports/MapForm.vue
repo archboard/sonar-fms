@@ -179,55 +179,10 @@
 
       <!-- Tax -->
       <div class="pt-8" v-if="school.collect_tax">
-        <div class="mb-6">
-          <CardSectionHeader>
-            {{ __('Taxes') }}
-          </CardSectionHeader>
-          <HelpText class="text-sm mt-1">
-            {{ __('Add tax details for this invoice.') }}
-          </HelpText>
-        </div>
-
-        <Fieldset>
-          <InputWrap :error="form.errors.apply_tax">
-            <CheckboxWrapper>
-              <Checkbox v-model:checked="form.apply_tax" />
-              <CheckboxText>{{ __('Apply tax rate to this invoice.') }}</CheckboxText>
-            </CheckboxWrapper>
-            <HelpText>{{ __('When this option is enabled, a tax is added to the amount due.') }}</HelpText>
-          </InputWrap>
-
-          <FadeIn>
-            <InputWrap v-if="form.apply_tax" :error="form.errors.use_school_tax_defaults">
-              <CheckboxWrapper>
-                <Checkbox v-model:checked="form.use_school_tax_defaults" />
-                <CheckboxText>{{ __('Use school default tax rate and label - :label (:rate).', { label: school.tax_label, rate: school.tax_rate_formatted }) }}</CheckboxText>
-              </CheckboxWrapper>
-            </InputWrap>
-          </FadeIn>
-
-          <FadeInGroup>
-            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_rate">
-              <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
-              <MapField v-model="form.tax_rate" :headers="headers" id="tax_rate">
-                <Input v-model="form.tax_rate.value" id="tax_rate" />
-                <template v-slot:after>
-                  <HelpText>{{ __('This is the tax rate percentage to be applied to this invoice.') }}</HelpText>
-                </template>
-              </MapField>
-            </InputWrap>
-
-            <InputWrap v-if="form.apply_tax && !form.use_school_tax_defaults" :error="form.errors.tax_label">
-              <Label for="tax_label" :required="true">{{ __('Tax label') }}</Label>
-              <MapField v-model="form.tax_label" :headers="headers" id="tax_label">
-                <Input v-model="form.tax_label.value" id="tax_label" placeholder="VAT" />
-                <template v-slot:after>
-                  <HelpText>{{ __('This is the label that will be displayed for the name/type of tax.') }}</HelpText>
-                </template>
-              </MapField>
-            </InputWrap>
-          </FadeInGroup>
-        </Fieldset>
+        <InvoiceTaxMapping
+          v-model="form"
+          :headers="headers"
+        />
       </div>
     </FormMultipartWrapper>
 
@@ -276,9 +231,11 @@ import isUndefined from 'lodash/isUndefined'
 import InvoiceItemMapping from '@/components/forms/invoices/InvoiceItemMapping'
 import InvoiceScholarshipMapping from '@/components/forms/invoices/InvoiceScholarshipMapping'
 import InvoicePaymentScheduleMapping from '@/components/forms/invoices/InvoicePaymentScheduleMapping'
+import InvoiceTaxMapping from '@/components/forms/invoices/InvoiceTaxMapping'
 
 export default {
   components: {
+    InvoiceTaxMapping,
     InvoicePaymentScheduleMapping,
     InvoiceScholarshipMapping,
     InvoiceItemMapping,
@@ -357,6 +314,8 @@ export default {
       use_school_tax_defaults: isUndefined(props.invoiceImport.mapping?.use_school_tax_defaults) ? true : props.invoiceImport.mapping.use_school_tax_defaults,
       tax_rate: props.invoiceImport.mapping?.tax_rate || addMapFieldValue(),
       tax_label: props.invoiceImport.mapping?.tax_label || addMapFieldValue(),
+      apply_tax_to_all_items: props.invoiceImport.mapping?.apply_tax_to_all_items || true,
+      tax_items: props.invoiceImport.mapping?.tax_items || [],
     })
     form.errors = props.errors
     // Emit the initial value
