@@ -277,6 +277,7 @@ class InvoiceImportTest extends TestCase
                 'notify' => false,
                 'items' => [
                     [
+                        'id' => $this->uuid(),
                         'fee_id' => $this->makeMapField(),
                         'name' => $this->makeMapField('invoice name'),
                         'amount_per_unit' => $this->makeMapField('invoice amount'),
@@ -285,6 +286,7 @@ class InvoiceImportTest extends TestCase
                 ],
                 'scholarships' => [
                     [
+                        'id' => $this->uuid(),
                         'name' => $this->makeMapField(value: 'Assistance', isManual: true),
                         'use_amount' => false,
                         'amount' => $this->makeMapField(),
@@ -778,7 +780,7 @@ class InvoiceImportTest extends TestCase
             ])
         );
 
-        // Seed a scholarship for reference sake
+        // Seed a scholarship for reference's sake
         $this->school->scholarships()
             ->save(
                 Scholarship::factory()->make([

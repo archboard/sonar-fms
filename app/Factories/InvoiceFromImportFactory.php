@@ -189,11 +189,12 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected function convertDate($value): ?string
     {
         if (is_numeric($value)) {
-            $date = Carbon::create(1900, 1, 1, 0, 0, 0, $this->user->timezone);
+            $date = Carbon::create(1900);
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
-            return $date->addMinutes($minutes)
+            return $date->setTimezone($this->user->timezone)
+                ->addMinutes($minutes)
                 ->toDateString();
         }
 
@@ -392,7 +393,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'notify' => $this->getMapValue('notify'),
             'subtotal' => $this->rowSubtotal,
             'discount_total' => $this->rowDiscountTotal,
-            'apply_tax' => $this->getMapValue('apply_tax'),
+            'apply_tax' => $this->getMapValue('apply_tax', null, false),
             'apply_tax_to_all_items' => $this->getMapValue(key: 'apply_tax_to_all_items', default: true),
             'pre_tax_subtotal' => $this->rowPreTaxSubtotal,
             'tax_rate' => $this->getMapValue('tax_rate', 'tax rate'),
