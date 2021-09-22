@@ -23,6 +23,8 @@ Route::middleware(['self_hosted', 'can_install'])->group(function () {
         ->name('install');
 });
 
+Route::post('/ps/webhook', \App\Http\Controllers\PowerSchoolWebhookController::class);
+
 Route::middleware('tenant')->group(function () {
     Route::get('/', \App\Http\Controllers\IndexController::class);
 

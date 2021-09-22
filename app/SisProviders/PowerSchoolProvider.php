@@ -582,4 +582,99 @@ class PowerSchoolProvider implements SisProvider
     {
         return 'PowerSchool';
     }
+
+    public function registerWebhooks()
+    {
+        $data = [
+            'event_subscriptions' => [
+                'key' => 'sonar-fms-key',
+                'callback_url' => app()->environment('local')
+                    ? 'https://archboard.us-2.sharedwithexpose.com/ps/webhook'
+                    : url('/ps/webhook'),
+                'event_subscription' => [
+                    [
+                        'resource' => '/ws/v1/student/*',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/student/*',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/student/*',
+                        'event_type' => 'DELETE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/student/*',
+                        'event_type' => 'SCHOOL_ENROLLMENT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section_enrollment/*',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section_enrollment/*',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section_enrollment/*',
+                        'event_type' => 'DELETE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/staff/*',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/staff/*',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/staff/*',
+                        'event_type' => 'DELETE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section/*',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section/*',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/section/*',
+                        'event_type' => 'DELETE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/course/*',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/course/*',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/course/*',
+                        'event_type' => 'DELETE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/test_subscription',
+                        'event_type' => 'INSERT',
+                    ],
+                    [
+                        'resource' => '/ws/v1/test_subscription',
+                        'event_type' => 'UPDATE',
+                    ],
+                    [
+                        'resource' => '/ws/v1/test_subscription',
+                        'event_type' => 'DELETE',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->getBuilder()
+             ->withData($data)
+             ->to('/ws/v1/event_subscription')
+             ->put();
+    }
 }

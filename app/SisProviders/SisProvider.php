@@ -23,5 +23,6 @@ interface SisProvider
     public function syncSchoolStudentEnrollment($sisId);
     public function syncSchoolTerms($sisId);
     public function fullSchoolSync($sisId);
+    public function registerWebhooks();
     public function getBuilder(): RequestBuilder;
 }
