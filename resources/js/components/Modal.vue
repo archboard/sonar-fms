@@ -1,66 +1,38 @@
 <template>
-  <teleport to="body">
-    <div class="fixed z-10 inset-0 overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
-        <transition
-          enter-active-class="duration-300 ease-out"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100"
-          leave-active-class="duration-200 ease-in"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-        >
-          <div v-if="show" class="fixed inset-0 transition-opacity" style="backdrop-filter: blur(5px);" aria-hidden="true">
-            <div @click="close" class="absolute inset-0 bg-gray-800 opacity-75"></div>
-          </div>
-        </transition>
-
-        <!-- This element is to trick the browser into centering the modal contents. -->
-<!--        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>-->
-
-        <transition
-          enter-active-class="ease-out duration-300"
-          enter-from-class="opacity-0 -translate-y-5"
-          enter-to-class="opacity-100 translate-y-0"
-          leave-active-class="ease-in duration-200"
-          leave-from-class="opacity-100 translate-y-0"
-          leave-to-class="opacity-0 -translate-y-5"
-          @after-leave="$emit('close')"
-        >
-          <div v-if="show" ref="modal" :class="modalSize" class="inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
-              <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-600 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
-                <span class="sr-only">Close</span>
-                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div class="sm:flex sm:items-start px-4 pt-5 pb-4 sm:p-6">
-              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <ModalHeadline v-if="headline">
-                  {{ headline }}
-                </ModalHeadline>
-                <div>
-                  <slot/>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
-              <slot name="actions">
-                <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
-                  {{ computedActionText }}
-                </Button>
-                <Button @click.prevent="close" type="button" color="white" class="text-sm">
-                  Cancel
-                </Button>
-              </slot>
+  <ModalWrapper :show="show">
+    <DropIn @after-leave="$emit('close')">
+      <div v-if="show" ref="modal" :class="modalSize" class="w-full inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+        <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
+          <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-600 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
+            <span class="sr-only">Close</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="sm:flex sm:items-start px-4 pt-5 pb-4 sm:p-6">
+          <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+            <ModalHeadline v-if="headline">
+              {{ headline }}
+            </ModalHeadline>
+            <div>
+              <slot/>
             </div>
           </div>
-        </transition>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
+          <slot name="actions">
+            <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
+              {{ computedActionText }}
+            </Button>
+            <Button @click.prevent="close" type="button" color="white" class="text-sm">
+              Cancel
+            </Button>
+          </slot>
+        </div>
       </div>
-    </div>
-  </teleport>
+    </DropIn>
+  </ModalWrapper>
 </template>
 
 <script>
@@ -68,9 +40,13 @@ import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import Button from './Button'
 import ModalHeadline from './modals/ModalHeadline'
+import ModalWrapper from '@/components/modals/ModalWrapper'
+import DropIn from '@/components/transitions/DropIn'
 
 export default defineComponent({
   components: {
+    DropIn,
+    ModalWrapper,
     ModalHeadline,
     Button
   },
