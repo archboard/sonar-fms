@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\Assert;
 use JetBrains\PhpStorm\ArrayShape;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
@@ -59,7 +60,11 @@ class InvoiceImportTest extends TestCase
         $this->assignPermission('viewAny', InvoiceImport::class);
 
         $this->get(route('invoices.imports.index'))
-            ->assertOk();
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('imports')
+            );
     }
 
     public function test_can_create_invoice_import()
