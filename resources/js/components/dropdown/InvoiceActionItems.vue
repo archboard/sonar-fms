@@ -6,6 +6,9 @@
     <SonarMenuItem v-if="can('invoices.update') && !invoice.is_void && invoice.published_at" @click.prevent="$emit('editStatus')">
       {{ __('Change status') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.edit', invoice)">
+      {{ __('Edit') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
       {{ __('Publish') }}
     </SonarMenuItem>
