@@ -1,7 +1,7 @@
 <template>
   <component
     :is="component"
-    class="border border-transparent overflow-hidden font-medium rounded-md shadow hover:shadow-none text-white focus:outline-none transition ease-in-out duration-150 relative text-center justify-center disabled:cursor-not-allowed"
+    class="border border-transparent overflow-hidden font-medium rounded-md shadow hover:shadow-none text-white focus:outline-none transition ease-in-out duration-150 relative text-center justify-center disabled:cursor-not-allowed focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
     :class="[
       buttonSize,
       buttonColor,
@@ -98,7 +98,7 @@ export default {
         height: '',
       },
       colors: {
-        primary: 'bg-primary-600 hover:bg-primary-500 focus:ring focus:ring-primary-400 active:bg-primary-600',
+        primary: 'bg-primary-600 hover:bg-primary-500 focus:ring-primary-400 active:bg-primary-600',
         red: 'bg-red-600 hover:bg-red-500 focus:border-red-700 focus:shadow-outline-red active:bg-red-700',
         yellow: 'bg-yellow-600 hover:bg-yellow-500 focus:border-yellow-700 focus:shadow-outline-yellow active:bg-yellow-700',
         green: 'bg-green-600 hover:bg-green-500 focus:border-green-700 focus:shadow-outline-green active:bg-green-700',
