@@ -100,6 +100,7 @@
       <div class="mt-4">
         <table class="w-full mt-4">
           <tbody>
+          @if($invoice->invoiceTaxItems->isEmpty())
             <tr>
               <td class="font-bold text-left px-4 py-2 text-sm border-t">
                 {{ $invoice->tax_label }} <span class="font-normal text-gray-500">({{ $invoice->tax_rate_formatted }})</span>
@@ -108,8 +109,25 @@
                 {{ displayCurrency($invoice->tax_due, $currency) }}
               </td>
             </tr>
+          @else
+            <tr>
+              <td colspan="2" class="font-bold text-left px-4 py-2 text-sm border-t">
+                {{ $invoice->tax_label }}
+              </td>
+            </tr>
+            @foreach($invoice->invoiceTaxItems as $taxItem)
+              <tr>
+                <td class="text-left px-4 py-2 text-sm border-t">
+                  {{ $taxItem->invoiceItem->name }} <span class="font-normal text-gray-500">({{ $taxItem->tax_rate_formatted }})</span>
+                </td>
+                <td class="font-bold text-right px-4 py-2 text-sm border-t">
+                  {{ displayCurrency($taxItem->amount, $currency) }}
+                </td>
+              </tr>
+            @endforeach
+          @endif
           </tbody>
-      </table>
+        </table>
       </div>
     @endif
 

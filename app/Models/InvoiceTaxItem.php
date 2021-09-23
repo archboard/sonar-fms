@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
+use App\Traits\HasTaxRateAttribute;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,7 @@ class InvoiceTaxItem extends Model
 {
     use HasResource;
     use BelongsToInvoice;
+    use HasTaxRateAttribute;
 
     protected $guarded = [];
 
