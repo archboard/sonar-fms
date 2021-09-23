@@ -7,7 +7,7 @@ import flashesNotifications from '@/plugins/flashesNotifications'
 import './bootstrap'
 
 createInertiaApp({
-  title: title => title ? `${title} | Sonar FMS` : 'Sonar FMS',
+  title: title => title ? `${title} | ${process.env.APP_NAME}` : process.env.APP_NAME,
   resolve: name => import(`./pages/${name}`),
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
