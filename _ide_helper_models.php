@@ -590,6 +590,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string|null $amount_formatted
+ * @property-read mixed $tax_rate_converted
+ * @property-read mixed $tax_rate_formatted
  * @property-read \App\Models\Invoice $invoice
  * @property-read \App\Models\InvoiceItem $invoiceItem
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTaxItem newModelQuery()
