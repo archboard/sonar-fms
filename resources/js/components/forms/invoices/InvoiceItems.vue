@@ -8,7 +8,7 @@
     </HelpText>
   </div>
 
-  <Error v-if="form.errors.items">
+  <Error v-if="form.errors.items" class="mb-4">
     {{ __('You must have at least one invoice item.') }}
   </Error>
 
