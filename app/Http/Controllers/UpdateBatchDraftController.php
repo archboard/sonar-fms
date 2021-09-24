@@ -6,22 +6,26 @@ use App\Factories\InvoiceFromRequestFactory;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 
-class UpdateDraftInvoiceController extends Controller
+class UpdateBatchDraftController extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param UpdateInvoiceRequest $request
-     * @param Invoice $invoice
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function __invoke(UpdateInvoiceRequest $request, Invoice $invoice)
+    public function __invoke(UpdateInvoiceRequest $request, string $batch)
     {
+        $this->authorize('update', Invoice::class);
+
         $results = InvoiceFromRequestFactory::make($request)
             ->asDraft()
             ->build();
 
-        $invoice->delete();
+        // Delete the original batch of unpublished
+        Invoice::batch($batch)
+            ->unpublished()
+            ->delete();
 
         return Invoice::successfullyUpdatedResponse($results);
     }

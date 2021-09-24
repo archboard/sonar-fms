@@ -121,4 +121,79 @@ trait CreatesInvoice
         return $invoice->setCalculatedAttributes(true)
             ->refresh();
     }
+
+    public function createBatchInvoices(int $count = 2, array $invoiceAttributes = []): string
+    {
+        $batchId = $this->uuid();
+        $attributes = array_merge([
+            'batch_id' => $batchId,
+            'user_id' => $this->user->id,
+        ], $invoiceAttributes);
+
+        /** @var Invoice $baseInvoice */
+        $baseInvoice = Invoice::factory()
+            ->make($attributes);
+        $baseItems = InvoiceItem::factory()
+            ->count($this->faker->numberBetween(1, 5))
+            ->make();
+        $baseScholarships = InvoiceScholarship::factory()
+            ->count($this->faker->numberBetween(0, 3))
+            ->make();
+        $baseSchedules = InvoicePaymentSchedule::factory()
+            ->count($this->faker->numberBetween(0, 3))
+            ->make();
+        $baseTerms = InvoicePaymentTerm::factory()
+            ->count($this->faker->numberBetween(1, 5))
+            ->make();
+
+        Collection::times($count)
+            ->map(function () use ($baseInvoice, $baseItems, $baseScholarships, $baseSchedules, $baseTerms) {
+                $student = $this->createStudent();
+                $invoice = $baseInvoice->replicate();
+                $invoice->uuid = $this->uuid();
+                $invoice->student_id = $student->id;
+                $invoice->save();
+
+                $baseItems->map(function (InvoiceItem $baseItem) use ($invoice) {
+                    $item = $baseItem->replicate();
+                    $item->uuid = $this->uuid();
+                    $item->invoice_uuid = $invoice->uuid;
+
+                    return $item;
+                });
+
+                $baseScholarships
+                    ->each(function (InvoiceScholarship $base) use ($invoice) {
+                        $scholarship = $base->replicate();
+                        $scholarship->uuid = $this->uuid();
+                        $scholarship->invoice_uuid = $invoice->uuid;
+                        $scholarship->setAmount()->save();
+                    });
+
+                $baseSchedules
+                    ->each(function (InvoicePaymentSchedule $baseSchedule) use ($invoice, $baseTerms) {
+                        $schedule = $baseSchedule->replicate();
+                        $schedule->uuid = $this->uuid();
+                        $schedule->invoice_uuid = $invoice->uuid;
+
+                        $terms = $baseTerms->map(function (InvoicePaymentTerm $baseTerm) use ($schedule) {
+                            $term = $baseTerm->replicate();
+                            $term->uuid = $this->uuid();
+                            $term->invoice_uuid = $schedule->invoice_uuid;
+                            $term->invoice_payment_schedule_uuid = $schedule->uuid;
+
+                            return $term;
+                        });
+
+                        $schedule->setRelation('invoicePaymentTerms', $terms);
+                        $schedule->setAmount()->save();
+
+                        $terms->each(fn ($term) => $term->save());
+                    });
+
+                return $invoice;
+            });
+
+        return $batchId;
+    }
 }

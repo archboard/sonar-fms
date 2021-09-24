@@ -152,6 +152,15 @@ Route::middleware('tenant')->group(function () {
                     ->put('/invoices/draft/{invoice}', \App\Http\Controllers\UpdateDraftInvoiceController::class)
                     ->name('invoices.update.draft');
 
+                Route::get('/batches/{batch}/edit', \App\Http\Controllers\EditBatchDraftInvoicesController::class)
+                    ->name('batches.edit');
+
+                Route::post('/batches/{batch}/draft', \App\Http\Controllers\UpdateBatchDraftController::class)
+                    ->name('batches.draft');
+
+                Route::put('/batches/{batch}', \App\Http\Controllers\UpdateBatchController::class)
+                    ->name('batches.update');
+
                 Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
                     ->name('invoices.create');
 

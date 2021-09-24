@@ -234,6 +234,7 @@ namespace App\Models{
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\Term|null $term
  * @property-read \App\Models\User $user
+ * @method static Builder|Invoice batch(string $batch)
  * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static Builder|Invoice filter(array $filters)
  * @method static Builder|Invoice isNotVoid()

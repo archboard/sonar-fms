@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Factories\InvoiceFromRequestFactory;
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\Student;
@@ -168,11 +169,11 @@ class InvoiceController extends Controller
      * but just deletes the original invoice
      * after creating a new invoice from the request
      *
-     * @param CreateInvoiceRequest $request
+     * @param UpdateInvoiceRequest $request
      * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(CreateInvoiceRequest $request, Invoice $invoice)
+    public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
         $results = InvoiceFromRequestFactory::make($request)
             ->build();

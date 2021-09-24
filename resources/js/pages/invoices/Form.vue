@@ -242,26 +242,23 @@ export default {
     })
     const totalDue = computed(() => displayCurrency(total.value))
 
+    const options = {
+      onFinish () {
+        form.processing = false
+      }
+    }
     const saveInvoice = () => {
-      form[props.method](props.endpoint, {
-        onFinish () {
-          form.processing = false
-        }
-      })
+      form[props.method](props.endpoint, options)
     }
     const saveAsDraft = () => {
-      form.post($route('invoices.store.draft'), {
-        onFinish () {
-          form.processing = false
-        }
-      })
+      form.post($route('invoices.store.draft'), options)
     }
     const updateDraft = () => {
-      form.put($route('invoices.update.draft', props.invoice.uuid), {
-        onFinish () {
-          form.processing = false
-        }
-      })
+      if (props.allowStudentEditing) {
+        form.post($route('batches.draft', props.invoice.batch_id), options)
+      } else {
+        form.put($route('invoices.update.draft', props.invoice.uuid), options)
+      }
     }
 
     // Watch for changes to apply a template

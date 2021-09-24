@@ -78,7 +78,7 @@ class InvoiceDraftTest extends TestCase
     public function test_can_save_draft_invoice_as_draft_again()
     {
         $this->withoutExceptionHandling();
-        $this->assignPermission('create', Invoice::class);
+        $this->assignPermission('update', Invoice::class);
         $invoice = $this->createInvoice(['published_at' => null, 'student_id' => $this->student->id]);
         $data = $this->generateInvoiceRequestAttributesForStudent($this->student);
 
@@ -89,5 +89,82 @@ class InvoiceDraftTest extends TestCase
         // The original invoice should not exist
         $this->assertDatabaseMissing('invoices', ['uuid' => $invoice->uuid]);
         $this->assertEquals(1, $this->student->invoices()->count());
+    }
+
+    public function test_cant_edit_batch_without_permission()
+    {
+        $batchId = $this->createBatchInvoices();
+
+        $this->get(route('batches.edit', $batchId))
+            ->assertForbidden();
+    }
+
+    public function test_cant_edit_batch_draft_invoices_that_are_published()
+    {
+        $this->assignPermission('update', Invoice::class);
+        $batchId = $this->createBatchInvoices();
+
+        Invoice::batch($batchId)->update(['published_at' => now()]);
+
+        $this->get(route('batches.edit', $batchId))
+            ->assertSessionHas('error')
+            ->assertRedirect();
+    }
+
+    public function test_can_edit_batch_draft_invoices()
+    {
+        $this->assignPermission('update', Invoice::class);
+        $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
+
+        $this->get(route('batches.edit', $batchId))
+            ->assertOk()
+            ->assertViewHas('title')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('invoice')
+                ->has('method')
+                ->has('endpoint')
+            );
+    }
+
+    public function test_can_update_batch_draft_invoices()
+    {
+        $this->assignPermission('update', Invoice::class);
+
+        $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
+        $newAttributes = $this->generateInvoiceRequestAttributes();
+        $students = Invoice::batch($batchId)->pluck('student_id');
+        $newAttributes['students'] = $students->toArray();
+
+        $this->post(route('batches.draft', $batchId), $newAttributes)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('invoices', ['batch_id' => $batchId]);
+        $this->assertEquals($students->count(), Invoice::whereIn('student_id', $students)->unpublished()->count());
+    }
+
+    public function test_can_update_published_batch_draft_invoices()
+    {
+        $this->assignPermission('update', Invoice::class);
+
+        $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
+        $students = Invoice::batch($batchId)->pluck('student_id');
+        $student = Student::find($students->random());
+
+        // Publish one of the invoices
+        $student->invoices()->update(['published_at' => now()]);
+
+        $newAttributes = $this->generateInvoiceRequestAttributes();
+        $newAttributes['students'] = $students
+            ->filter(fn ($id) => $id !== $student->id)
+            ->toArray();
+
+        $this->post(route('batches.draft', $batchId), $newAttributes)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertEquals($batchId, $student->invoices()->latest()->first()->batch_id);
+        $this->assertEquals($students->count() - 1, Invoice::whereIn('student_id', $students)->unpublished()->count());
     }
 }

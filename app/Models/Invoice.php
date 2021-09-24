@@ -163,6 +163,11 @@ class Invoice extends Model
         $builder->whereNull('parent_uuid');
     }
 
+    public function scopeBatch(Builder $builder, string $batch)
+    {
+        $builder->where('batch_id', $batch);
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
@@ -690,8 +695,10 @@ class Invoice extends Model
         $template = $this->asInvoiceTemplate();
 
         $template['uuid'] = $this->uuid;
+        $template['batch_id'] = $this->batch_id;
         $template['students'] = $asBatch
-            ? static::where('batch_id', $this->batch_id)
+            ? static::batch($this->batch_id)
+                ->unpublished()
                 ->pluck('student_id')
                 ->toArray()
             : [$this->student_id];

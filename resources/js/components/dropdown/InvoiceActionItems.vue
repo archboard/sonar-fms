@@ -9,6 +9,9 @@
     <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.edit', invoice)">
       {{ __('Edit') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('batches.edit', invoice.batch_id)">
+      {{ __('Edit batch') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
       {{ __('Publish') }}
     </SonarMenuItem>

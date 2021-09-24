@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Invoice;
+
 class UpdateInvoiceRequest extends CreateInvoiceRequest
 {
     /**
@@ -11,6 +13,6 @@ class UpdateInvoiceRequest extends CreateInvoiceRequest
      */
     public function authorize()
     {
-        return $this->user()->can('update', $this->route('invoice'));
+        return $this->user()->can('update', Invoice::class);
     }
 }
