@@ -685,7 +685,8 @@ class Invoice extends Model
                 'tax_rate' => $taxItems->has($item->uuid)
                     ? $taxItems->get($item->uuid)->tax_rate_converted
                     : $this->school->tax_rate_converted,
-            ]);
+            ])
+            ->toArray();
 
         return $data;
     }
