@@ -257,7 +257,9 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $totalDue = $this->preTaxTotal + $this->invoiceAttributes['tax_due'];
         $this->invoiceAttributes['amount_due'] = $totalDue;
         $this->invoiceAttributes['remaining_balance'] = $totalDue;
-        $this->invoiceAttributes['relative_tax_rate'] = round($this->invoiceAttributes['tax_due'] / $totalDue, 8);
+        $this->invoiceAttributes['relative_tax_rate'] = $totalDue > 0
+            ? round($this->invoiceAttributes['tax_due'] / $totalDue, 8)
+            : 0;
 
         return $this;
     }
