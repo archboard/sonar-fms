@@ -90,7 +90,7 @@ abstract class TestCase extends BaseTestCase
         return $this->createUser();
     }
 
-    public function createStudent(array $attributes): Student
+    public function createStudent(array $attributes = []): Student
     {
         $attributes = array_merge(
             ['tenant_id' => $this->tenant->id],

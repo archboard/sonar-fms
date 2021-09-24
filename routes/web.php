@@ -148,6 +148,10 @@ Route::middleware('tenant')->group(function () {
                 Route::post('/invoices/draft', \App\Http\Controllers\SaveInvoiceAsDraftController::class)
                     ->name('invoices.store.draft');
 
+                Route::middleware('invoice_unpublished')
+                    ->put('/invoices/draft/{invoice}', \App\Http\Controllers\UpdateDraftInvoiceController::class)
+                    ->name('invoices.update.draft');
+
                 Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
                     ->name('invoices.create');
 
@@ -158,8 +162,13 @@ Route::middleware('tenant')->group(function () {
                             ->name('show');
 
                         Route::middleware('invoice_unpublished')
-                            ->get('edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])
-                            ->name('edit');
+                            ->group(function () {
+                                Route::get('edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])
+                                    ->name('edit');
+
+                                Route::put('update', [\App\Http\Controllers\InvoiceController::class, 'update'])
+                                    ->name('update');
+                            });
 
                         Route::post('status', \App\Http\Controllers\ChangeInvoiceStatusController::class)
                             ->name('status');

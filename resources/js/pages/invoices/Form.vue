@@ -54,12 +54,15 @@
     </FormMultipartWrapper>
   </form>
 
-  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md space-x-2">
+  <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md space-x-3">
     <Button type="button" @click.prevent="reviewing = true">
-      {{ __('Review and save') }}
+      {{ __('Review and publish') }}
     </Button>
-    <Button type="button" @click.prevent="saveAsDraft" color="white">
+    <Button v-if="isNew" type="button" @click.prevent="saveAsDraft" color="white">
       {{ __('Save as draft') }}
+    </Button>
+    <Button v-else type="button" @click.prevent="updateDraft" color="white">
+      {{ __('Update draft') }}
     </Button>
   </div>
 
@@ -116,6 +119,7 @@ import useProp from '@/composition/useProp'
 import InvoiceTax from '@/components/forms/invoices/InvoiceTax'
 import InvoiceDetails from '@/components/InvoiceDetails'
 import InvoiceDetailsForm from '@/components/forms/invoices/InvoiceDetailsForm'
+import isUndefined from 'lodash/isUndefined'
 
 export default {
   components: {
@@ -183,7 +187,7 @@ export default {
     const students = useProp('students')
     const reviewing = ref(false)
     const { strategies } = fetchesResolutionStrategies()
-    const isNew = computed(() => !props.invoice.id)
+    const isNew = computed(() => !props.invoice.uuid)
     const { school } = useSchool()
     const form = useForm({
       students: students.value || props.invoice.students || [],
@@ -203,12 +207,12 @@ export default {
       items: props.invoice.items || [],
       scholarships: props.invoice.scholarships || [],
       payment_schedules: props.invoice.payment_schedules || [],
-      apply_tax: true,
-      use_school_tax_defaults: true,
-      apply_tax_to_all_items: true,
-      tax_items: [],
-      tax_rate: school.value.tax_rate_converted || null,
-      tax_label: school.value.tax_label || null,
+      apply_tax: isUndefined(props.invoice.apply_tax) ? true : props.invoice.apply_tax,
+      use_school_tax_defaults: isUndefined(props.invoice.use_school_tax_defaults) ? true : props.invoice.use_school_tax_defaults,
+      apply_tax_to_all_items: isUndefined(props.invoice.apply_tax_to_all_items) ? true : props.invoice.apply_tax_to_all_items,
+      tax_items: props.invoice.tax_items || [],
+      tax_rate: isUndefined(props.invoice.tax_rate) ? (school.value.tax_rate_converted || null) : props.invoice.tax_rate,
+      tax_label: isUndefined(props.invoice.tax_label) ? (school.value.tax_label || null) : props.invoice.tax_label,
     })
     const applyTemplate = template => {
       Object.keys(form.data())
@@ -252,6 +256,13 @@ export default {
         }
       })
     }
+    const updateDraft = () => {
+      form.put($route('invoices.update.draft', props.invoice.uuid), {
+        onFinish () {
+          form.processing = false
+        }
+      })
+    }
 
     // Watch for changes to apply a template
     watch(() => props.invoiceTemplate, state => {
@@ -273,6 +284,7 @@ export default {
       totalDue,
       strategies,
       saveAsDraft,
+      updateDraft,
     }
   },
 }

@@ -631,7 +631,9 @@ class Invoice extends Model
             'invoiceScholarships',
             'invoiceScholarships.appliesTo',
             'invoicePaymentSchedules',
-            'invoicePaymentSchedules.invoicePaymentTerms'
+            'invoicePaymentSchedules.invoicePaymentTerms',
+            'invoiceTaxItems',
+            'invoiceTaxItems.invoiceItem',
         );
 
         $resource = $this->toResource()
@@ -666,7 +668,35 @@ class Invoice extends Model
             $data['payment_schedules']
         );
 
+        // Tax attributes, some need converting
+        $data['tax_rate'] = $this->tax_rate_converted;
+
+        $taxItems = $this->invoiceTaxItems->keyBy('invoice_item_uuid');
+        $data['tax_items'] = $this->invoiceItems
+            ->map(fn (InvoiceItem $item) => [
+                'item_id' => $item->uuid,
+                'name' => $item->name,
+                'selected' => $taxItems->has($item->uuid),
+                'tax_rate' => $taxItems->has($item->uuid)
+                    ? $taxItems->get($item->uuid)->tax_rate_converted
+                    : $this->school->tax_rate_converted,
+            ]);
+
         return $data;
+    }
+
+    public function forEditing(bool $asBatch = false): array
+    {
+        $template = $this->asInvoiceTemplate();
+
+        $template['uuid'] = $this->uuid;
+        $template['students'] = $asBatch
+            ? static::where('batch_id', $this->batch_id)
+                ->pluck('student_id')
+                ->toArray()
+            : [$this->student_id];
+
+        return $template;
     }
 
     public function convertToInvoiceTemplate(array $data): InvoiceTemplate
@@ -698,6 +728,22 @@ class Invoice extends Model
             session()->flash('success', __('Invoice created successfully.'));
         } else {
             session()->flash('success', __(':count invoices created successfully.', [
+                'count' => $results->count(),
+            ]));
+        }
+
+        $invoice = Invoice::where('uuid', $results->first())
+            ->first();
+
+        return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
+    }
+
+    public static function successfullyUpdatedResponse(Collection $results): RedirectResponse
+    {
+        if ($results->count() === 1) {
+            session()->flash('success', __('Invoice updated successfully.'));
+        } else {
+            session()->flash('success', __(':count invoices updated successfully.', [
                 'count' => $results->count(),
             ]));
         }

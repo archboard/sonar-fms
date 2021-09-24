@@ -9,6 +9,9 @@
     <Alert v-if="duplicating" class="mb-6" level="warning">
       {{ __('This will create a new invoice.') }}
     </Alert>
+    <Alert v-if="invoice.uuid" class="mb-6" level="warning">
+      {{ __('You are editing a draft invoice.') }}
+    </Alert>
 
     <InvoiceForm
       :invoice-template="invoiceTemplate"
@@ -16,6 +19,7 @@
       :method="method"
       :endpoint="endpoint"
       :allow-student-editing="allowStudentEditing"
+      :invoice="invoice"
     />
   </Authenticated>
 
@@ -60,6 +64,11 @@ export default defineComponent({
       default: () => ([])
     },
     defaultTemplate: {
+      type: Object,
+      default: () => ({})
+    },
+    // Used when editing
+    invoice: {
       type: Object,
       default: () => ({})
     },

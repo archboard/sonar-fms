@@ -8,6 +8,7 @@ use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -92,7 +93,8 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Invoice  $invoice
+     * @param Request $request
+     * @param \App\Models\Invoice $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Request $request, Invoice $invoice)
@@ -133,7 +135,7 @@ class InvoiceController extends Controller
      * @param Invoice $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function edit(Request $request, Invoice $invoice)
+    public function edit(Invoice $invoice)
     {
         $title = __('Update invoice');
         $breadcrumbs = [
@@ -154,7 +156,39 @@ class InvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'student' => $invoice->student->toResource(),
+            'invoice' => $invoice->forEditing(),
+            'method' => 'put',
+            'endpoint' => route('invoices.update', $invoice),
+            'allowStudentEditing' => false,
         ])->withViewData(compact('title'));
+    }
+
+    /**
+     * This creates an invoice from a draft,
+     * but just deletes the original invoice
+     * after creating a new invoice from the request
+     *
+     * @param CreateInvoiceRequest $request
+     * @param Invoice $invoice
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(CreateInvoiceRequest $request, Invoice $invoice)
+    {
+        $results = InvoiceFromRequestFactory::make($request)
+            ->build();
+
+        // Scrap the original invoice in favor of the created one
+        $invoice->delete();
+
+        return Invoice::successfullyCreatedResponse($results);
+    }
+
+    public function destroy(Invoice $invoice): RedirectResponse
+    {
+        $invoice->delete();
+
+        session()->flash('success', __('Invoice deleted successfully.'));
+
+        return redirect()->route('invoices.index');
     }
 }

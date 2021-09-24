@@ -6,16 +6,17 @@ use App\Factories\InvoiceFromRequestFactory;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Invoice;
 
-class SaveInvoiceAsDraftController extends Controller
+class UpdateDraftInvoiceController extends Controller
 {
     /**
      * Handle the incoming request.
      *
      * @param CreateInvoiceRequest $request
+     * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function __invoke(CreateInvoiceRequest $request)
+    public function __invoke(CreateInvoiceRequest $request, Invoice $invoice)
     {
         $this->authorize('create', Invoice::class);
 
@@ -23,6 +24,8 @@ class SaveInvoiceAsDraftController extends Controller
             ->asDraft()
             ->build();
 
-        return Invoice::successfullyCreatedResponse($results);
+        $invoice->delete();
+
+        return Invoice::successfullyUpdatedResponse($results);
     }
 }
