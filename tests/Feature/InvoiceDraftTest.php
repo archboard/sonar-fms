@@ -144,7 +144,7 @@ class InvoiceDraftTest extends TestCase
         $this->assertEquals($students->count(), Invoice::whereIn('student_id', $students)->unpublished()->count());
     }
 
-    public function test_can_update_published_batch_draft_invoices()
+    public function test_can_update_unpublished_batch_draft_invoices()
     {
         $this->assignPermission('update', Invoice::class);
 
