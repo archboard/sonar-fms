@@ -70,7 +70,7 @@
             </div>
           </Th>
           <Th>
-            <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('amount_due')">
+            <div class="flex items-center justify-end text-right cursor-pointer" @click="sortColumn('amount_due')">
               <span>
                 {{ __('Total due') }}
               </span>
@@ -81,7 +81,7 @@
             </div>
           </Th>
           <Th>
-            <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('remaining_balance')">
+            <div class="flex items-center justify-end text-right cursor-pointer" @click="sortColumn('remaining_balance')">
               <span>
                 {{ __('Remaining balance') }}
               </span>
