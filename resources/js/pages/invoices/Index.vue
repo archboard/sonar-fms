@@ -99,6 +99,8 @@
           v-for="invoice in invoices.data"
           :key="invoice.id"
           :invoice="invoice"
+          @edit-status="editInvoice"
+          @convert-to-template="useAsTemplate"
         />
       </Tbody>
     </Table>
@@ -108,9 +110,9 @@
   </Authenticated>
 
   <InvoiceStatusModal
-    v-if="can('invoices.update') && editInvoice.id"
-    @close="editInvoice = {}"
-    :invoice="editInvoice"
+    v-if="can('invoices.update') && selectedInvoice.id"
+    @close="selectedInvoice = {}"
+    :invoice="selectedInvoice"
   />
   <ConvertInvoiceModal
     v-if="convertInvoice.id"
@@ -190,7 +192,6 @@ export default defineComponent({
   setup (props) {
     const $route = inject('$route')
     const showFilters = ref(false)
-    const editing = ref(false)
     const selectedInvoice = ref({})
     const { can } = checksPermissions()
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
@@ -205,11 +206,12 @@ export default defineComponent({
 
     const editInvoice = (invoice = {}) => {
       selectedInvoice.value = invoice
-      editing.value = true
     }
 
-    const statusInvoice = ref({})
     const convertInvoice = ref({})
+    const useAsTemplate = invoice => {
+      convertInvoice.value = invoice
+    }
 
     return {
       filters,
@@ -219,12 +221,11 @@ export default defineComponent({
       resetFilters,
       searchTerm,
       selectedInvoice,
-      editing,
       displayCurrency,
       editInvoice,
       can,
-      statusInvoice,
       convertInvoice,
+      useAsTemplate,
     }
   }
 })

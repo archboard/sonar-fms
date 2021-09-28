@@ -23,8 +23,8 @@
         <InvoiceActionItems
           :invoice="invoice"
           :show-view="true"
-          @edit-status="editInvoice = invoice"
-          @convert-to-template="convertInvoice = invoice"
+          @edit-status="$emit('editStatus', invoice)"
+          @convert-to-template="$emit('convertToTemplate', invoice)"
         />
       </VerticalDotMenu>
     </Td>
@@ -53,6 +53,7 @@ export default defineComponent({
       default: true,
     }
   },
+  emits: ['editStatus', 'convertToTemplate'],
 
   setup () {
     const { can } = checksPermissions()
