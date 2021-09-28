@@ -36,7 +36,8 @@ class PaymentMethod extends Model
 
     public function scopeShowOnInvoice(Builder $builder)
     {
-        $builder->where('show_on_invoice', true);
+        $builder->where('show_on_invoice', true)
+            ->where('active', true);
     }
 
     public static function drivers(): array
