@@ -29,7 +29,7 @@
       </InputWrap>
       <InputWrap :error="form.errors.percentage">
         <Label for="percentage">{{ __('Default percentage') }}</Label>
-        <Input v-model="form.percentage" id="percentage" />
+        <PercentInput v-model="form.percentage" id="percentage" />
         <HelpText>
           {{ __('This is the default scholarship percentage that will be applied to the invoice. This value is the percentage of the total invoice amount that has been deducted from the invoice. [invoice total] - ([invoice total] * [scholarship percentage]) = [total with scholarship applied].') }}
         </HelpText>
@@ -71,9 +71,11 @@ import Link from '../Link'
 import DepartmentsModal from './DepartmentsModal'
 import FeeCategoriesModal from './FeeCategoriesModal'
 import CurrencyInput from '../forms/CurrencyInput'
+import PercentInput from '@/components/forms/PercentInput'
 
 export default defineComponent({
   components: {
+    PercentInput,
     CurrencyInput,
     FeeCategoriesModal,
     DepartmentsModal,
