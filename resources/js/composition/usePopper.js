@@ -1,4 +1,4 @@
-import { ref, onMounted, watchEffect, nextTick } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'
 import { createPopper } from '@popperjs/core'
 
 export default (options) => {
