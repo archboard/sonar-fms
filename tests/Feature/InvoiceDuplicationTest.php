@@ -71,6 +71,9 @@ class InvoiceDuplicationTest extends TestCase
                 ->component('invoices/Create')
                 ->where('duplicating', true)
                 ->where('defaultTemplate', $invoice->asInvoiceTemplate())
+                ->has('students')
+                ->has('method')
+                ->has('endpoint')
             );
     }
 }

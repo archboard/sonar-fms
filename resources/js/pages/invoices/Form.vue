@@ -262,6 +262,7 @@ export default {
     }
 
     // Watch for changes to apply a template
+    applyTemplate(props.invoiceTemplate)
     watch(() => props.invoiceTemplate, state => {
       applyTemplate(state)
     })
