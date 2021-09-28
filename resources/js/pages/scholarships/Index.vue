@@ -24,6 +24,17 @@
     <Table>
       <Thead>
         <tr>
+          <Th class="pr-0">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('id')">
+              <span>
+                {{ __('ID') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderBy === 'id' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'id' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('name')">
               <span>
@@ -62,9 +73,10 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(scholarship, index) in scholarships.data"
+          v-for="scholarship in scholarships.data"
           :key="scholarship.id"
         >
+          <Td class="pr-0 w-1">{{ scholarship.id }}</Td>
           <Td :lighter="false">
             {{ scholarship.name }}
             <HelpText v-if="scholarship.description">

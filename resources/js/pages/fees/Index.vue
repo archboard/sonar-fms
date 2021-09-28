@@ -24,6 +24,17 @@
     <Table>
       <Thead>
         <tr>
+          <Th class="pr-0">
+            <div class="flex items-center cursor-pointer w-auto" @click="sortColumn('id')">
+              <span>
+                {{ __('ID') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderBy === 'id' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'id' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
           <Th>
             <div class="flex items-center cursor-pointer" @click="sortColumn('name')">
               <span>
@@ -73,16 +84,16 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(fee, index) in fees.data"
+          v-for="fee in fees.data"
           :key="fee.id"
         >
+          <Td class="pr-0 w-1">{{ fee.id }}</Td>
           <Td :lighter="false">
             {{ fee.name }} <span v-if="fee.code" class="text-gray-400 dark:text-gray-500">({{ fee.code }})</span>
             <HelpText v-if="fee.description">
               {{ fee.description }}
             </HelpText>
           </Td>
-<!--          <Td class="text-right">{{ fee.amount_formatted }}</Td>-->
           <Td class="text-right">{{ displayCurrency(fee.amount) }}</Td>
           <Td>{{ fee.fee_category?.name }}</Td>
           <Td>{{ fee.department?.name }}</Td>
