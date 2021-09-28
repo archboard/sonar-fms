@@ -713,7 +713,7 @@ class Invoice extends Model
             'school_id' => $this->school_id,
             'user_id' => auth()->id(),
             'name' => $data['name'] ?? "Created from invoice {$this->number_formatted}",
-            'template' => $this->asInvoiceTemplate(),
+            'template' => Arr::except($this->asInvoiceTemplate(), 'students'),
             'for_import' => false,
         ]);
     }
