@@ -31,8 +31,8 @@ return [
     ],
 
     'node' => [
-        'binary' => env('NODE_BINARY', '/usr/local/bin/node'),
-        'npm' => env('NPM_BINARY', '/usr/local/bin/npm'),
+        'binary' => env('NODE_BINARY', '/usr/bin/node'),
+        'npm' => env('NPM_BINARY', '/usr/bin/npm'),
     ],
 
 ];
