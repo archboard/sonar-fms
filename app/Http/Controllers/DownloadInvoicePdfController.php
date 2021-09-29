@@ -45,6 +45,7 @@ class DownloadInvoicePdfController extends Controller
             ->addChromiumArguments([
                 'user-data-dir' => $userDir
             ])
+            ->ignoreHttpsErrors()
             ->hideHeader()
             ->hideFooter();
 
