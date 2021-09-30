@@ -33,9 +33,28 @@
       </button>
     </div>
 
+    <FadeIn>
+      <div v-if="user.invoice_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4 flex text-sm">
+        <span v-if="user.invoice_selection.length === 1">
+          {{ __(':count invoice selected', { count: user.invoice_selection.length }) }}
+        </span>
+        <span v-else>
+          {{ __(':count invoices selected', { count: user.invoice_selection.length }) }}
+        </span>
+        <div class="space-x-3 ml-3">
+          <Link is="a" href="#" @click.prevent="clearSelection">
+            {{ __('Remove selection') }}
+          </Link>
+        </div>
+      </div>
+    </FadeIn>
+
     <Table>
       <Thead>
         <tr>
+          <th class="w-8 text-left pl-6">
+            <Checkbox v-model:checked="selectAll" />
+          </th>
           <Th class="w-1">
             <div class="flex items-center cursor-pointer" @click="sortColumn('id')">
               <span>
@@ -101,7 +120,17 @@
           :invoice="invoice"
           @edit-status="editInvoice"
           @convert-to-template="useAsTemplate"
-        />
+        >
+          <template #prepend>
+            <td class="pl-6 py-4 text-sm">
+              <Checkbox
+                v-model:checked="user.invoice_selection"
+                @change="selectInvoice(invoice)"
+                :value="invoice.uuid"
+              />
+            </td>
+          </template>
+        </InvoiceTableRow>
       </Tbody>
     </Table>
 
@@ -123,7 +152,8 @@
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, inject, nextTick, ref, watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import handlesFilters from '@/composition/handlesFilters'
 import searchesItems from '@/composition/searchesItems'
 import Authenticated from '@/layouts/Authenticated'
@@ -151,10 +181,12 @@ import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
+import FadeIn from '@/components/transitions/FadeIn'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    FadeIn,
     InvoiceTableRow,
     ConvertInvoiceModal,
     InvoiceStatusModal,
@@ -191,8 +223,10 @@ export default defineComponent({
 
   setup (props) {
     const $route = inject('$route')
+    const $http = inject('$http')
     const showFilters = ref(false)
     const selectedInvoice = ref({})
+    const selectAll = ref(false)
     const { can } = checksPermissions()
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
@@ -203,6 +237,29 @@ export default defineComponent({
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
+
+    // Selection
+    const selectInvoice = invoice => {
+      nextTick(() => {
+        const add = props.user.invoice_selection.includes(invoice.uuid)
+        const method = add ? 'put' : 'delete'
+
+        $http[method]($route('invoice-selection.update', invoice.uuid))
+      })
+    }
+    const clearSelection = async () => {
+      await $http.delete($route('invoice-selection.remove'))
+      props.user.invoice_selection = []
+    }
+    watch(selectAll, (newVal) => {
+      if (newVal) {
+        Inertia.post($route('invoice-selection.store'), filters.value, {
+          preserveState: true
+        })
+      } else {
+        clearSelection()
+      }
+    })
 
     const editInvoice = (invoice = {}) => {
       selectedInvoice.value = invoice
@@ -226,6 +283,9 @@ export default defineComponent({
       can,
       convertInvoice,
       useAsTemplate,
+      selectAll,
+      selectInvoice,
+      clearSelection,
     }
   }
 })

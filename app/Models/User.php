@@ -110,6 +110,15 @@ class User extends Authenticatable implements HasLocalePreference
         return collect();
     }
 
+    public function getInvoiceSelectionAttribute()
+    {
+        if ($this->relationLoaded('invoiceSelections')) {
+            return $this->invoiceSelections->pluck('invoice_uuid');
+        }
+
+        return collect();
+    }
+
     public function getIsSchoolAdminAttribute(): bool
     {
         return $this->isSchoolAdmin();

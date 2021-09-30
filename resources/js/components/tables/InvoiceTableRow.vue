@@ -1,5 +1,6 @@
 <template>
   <tr>
+    <slot name="prepend" />
     <Td class="pr-0">
       <div class="flex items-center">
         <span class="mr-2">{{ invoice.id }}</span>

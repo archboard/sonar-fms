@@ -582,6 +582,7 @@ namespace App\Models{
 /**
  * App\Models\InvoiceSelection
  *
+ * @mixin IdeHelperInvoiceSelection
  * @property int $id
  * @property int $school_id
  * @property int $user_id
@@ -595,7 +596,6 @@ namespace App\Models{
  * @method static Builder|InvoiceSelection whereInvoiceUuid($value)
  * @method static Builder|InvoiceSelection whereSchoolId($value)
  * @method static Builder|InvoiceSelection whereUserId($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoiceSelection extends \Eloquent {}
 }
@@ -1107,8 +1107,9 @@ namespace App\Models{
  * @property-read int|null $abilities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $activeSchools
  * @property-read int|null $active_schools_count
- * @property-read mixed $date_factory
+ * @property-read Factory $date_factory
  * @property-read string $full_name
+ * @property-read mixed $invoice_selection
  * @property-read bool $is_school_admin
  * @property-read array $school_permissions
  * @property-read Collection $selected_students

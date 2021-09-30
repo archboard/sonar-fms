@@ -39,6 +39,7 @@ class InvoiceController extends Controller
 
         /** @var User $user */
         $user = $request->user();
+        $user->load('invoiceSelections');
 
         return inertia('invoices/Index', [
             'title' => $title,
