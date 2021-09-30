@@ -79,14 +79,14 @@
             />
           </td>
           <Td :lighter="false">
-            <label :for="`student_${student.id}`" class="cursor-pointer">{{ student.full_name }}</label>
+            <Link :href="`/students/${student.id}`">{{ student.full_name }}</Link>
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', student)">
+                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${student.id}`">
                   {{ __('View') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', student)">
