@@ -85,11 +85,20 @@ Route::middleware('tenant')->group(function () {
                         Route::resource('/invoices', \App\Http\Controllers\Students\StudentInvoiceController::class);
                     });
 
+                /**
+                 * Selections
+                 */
                 Route::resource('/student-selection', \App\Http\Controllers\StudentSelectionController::class)
                     ->except('create', 'show', 'edit');
 
                 Route::delete('/student-selection', \App\Http\Controllers\RemoveStudentSelectionController::class)
                     ->name('student-selection.remove');
+
+                Route::resource('/invoice-selection', \App\Http\Controllers\InvoiceSelectionController::class)
+                    ->except('create', 'show', 'edit');
+
+                Route::delete('/invoice-selection', \App\Http\Controllers\RemoveInvoiceSelectionController::class)
+                    ->name('invoice-selection.remove');
 
                 /**
                  * Fee-related routes

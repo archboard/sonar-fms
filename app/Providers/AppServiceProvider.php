@@ -65,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
             return request()->header('x-inertia');
         });
 
-        Relation::enforceMorphMap([
+        Relation::morphMap([
             'user' => User::class,
             'student' => Student::class,
             'invoice' => Invoice::class,

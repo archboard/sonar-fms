@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Traits\SendsApiResponses;
 use Illuminate\Http\Request;
 
-class RemoveStudentSelectionController extends Controller
+class RemoveInvoiceSelectionController extends Controller
 {
     use SendsApiResponses;
 
@@ -21,7 +21,7 @@ class RemoveStudentSelectionController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $user->studentSelections()->delete();
+        $user->invoiceSelections()->delete();
 
         return $this->success(__('Selection removed successfully.'));
     }

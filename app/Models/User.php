@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -119,7 +120,7 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function getDateFactoryAttribute()
+    public function getDateFactoryAttribute(): Factory
     {
         return new Factory([
             'locale' => $this->locale,
@@ -159,12 +160,45 @@ class User extends Authenticatable implements HasLocalePreference
             ->whereRaw('student_selections.school_id = users.school_id');
     }
 
+    public function selectedStudents(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Student::class,
+            StudentSelection::class,
+            'student_id',
+            'id',
+            'id',
+            'user_id'
+        );
+    }
+
     public function getSelectedStudentsAttribute(): Collection
     {
         return Student::join('student_selections', 'student_id', '=', 'students.id')
             ->where('student_selections.school_id', $this->school_id)
             ->where('student_selections.user_id', $this->id)
             ->get();
+    }
+
+    public function invoiceSelections(): HasMany
+    {
+        return $this->hasMany(InvoiceSelection::class)
+            ->join('users', function (JoinClause $join) {
+                $join->on('invoice_selections.user_id', '=', 'users.id');
+            })
+            ->whereRaw('invoice_selections.school_id = users.school_id');
+    }
+
+    public function selectedInvoices(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Invoice::class,
+            InvoiceSelection::class,
+            'user_id',
+            'uuid',
+            'id',
+            'invoice_uuid'
+        )->where('invoice_selections.school_id', $this->school_id);
     }
 
     public function invoiceImports(): HasMany
@@ -196,7 +230,7 @@ class User extends Authenticatable implements HasLocalePreference
      * @param int|Student $studentId
      * @return User
      */
-    public function selectStudent(Student|int $studentId): User
+    public function selectStudent(Student|int $studentId): static
     {
         if ($studentId instanceof Student) {
             $studentId = $studentId->id;
@@ -209,8 +243,29 @@ class User extends Authenticatable implements HasLocalePreference
         if (!$exists) {
             DB::table('student_selections')->insert([
                 'school_id' => $this->school_id,
-                'student_id' => $studentId,
                 'user_id' => $this->id,
+                'student_id' => $studentId,
+            ]);
+        }
+
+        return $this;
+    }
+
+    public function selectInvoice(Invoice|string $invoiceUuid): static
+    {
+        if ($invoiceUuid instanceof Invoice) {
+            $invoiceUuid = $invoiceUuid->uuid;
+        }
+
+        $exists = $this->invoiceSelections()
+            ->invoice($invoiceUuid)
+            ->exists();
+
+        if (!$exists) {
+            DB::table('invoice_selections')->insert([
+                'school_id' => $this->school_id,
+                'user_id' => $this->id,
+                'invoice_uuid' => $invoiceUuid,
             ]);
         }
 
@@ -237,9 +292,8 @@ class User extends Authenticatable implements HasLocalePreference
         // Attach the school relationship
         $this->schools()->syncWithoutDetaching($schools->pluck('id'));
 
-        // TODO: finish
         $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students) {
-            $school = $schools->get($students->schoolNumber);
+            $school = $schools->get($student->schoolNumber);
 
             if (!$school) {
                 return $studentUsers;
@@ -257,7 +311,7 @@ class User extends Authenticatable implements HasLocalePreference
                 return $studentUsers;
             }
 
-            // Create the student here
+            // TODO: Create the student here
 
             return $studentUsers;
         }, []);

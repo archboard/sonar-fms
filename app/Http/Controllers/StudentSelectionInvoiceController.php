@@ -32,7 +32,7 @@ class StudentSelectionInvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'students' => $user->selected_students->pluck('id'),
+            'students' => $user->studentSelections()->pluck('student_id'),
             'endpoint' => route('selection.invoices.store'),
             'method' => 'post',
         ])->withViewData(compact('title'));

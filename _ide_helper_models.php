@@ -580,6 +580,28 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\InvoiceSelection
+ *
+ * @property int $id
+ * @property int $school_id
+ * @property int $user_id
+ * @property string $invoice_uuid
+ * @property-read \App\Models\Invoice $invoice
+ * @method static Builder|InvoiceSelection invoice(string $uuid)
+ * @method static Builder|InvoiceSelection newModelQuery()
+ * @method static Builder|InvoiceSelection newQuery()
+ * @method static Builder|InvoiceSelection query()
+ * @method static Builder|InvoiceSelection whereId($value)
+ * @method static Builder|InvoiceSelection whereInvoiceUuid($value)
+ * @method static Builder|InvoiceSelection whereSchoolId($value)
+ * @method static Builder|InvoiceSelection whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoiceSelection extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\InvoiceTaxItem
  *
  * @mixin IdeHelperInvoiceTaxItem
@@ -1093,6 +1115,8 @@ namespace App\Models{
  * @property-read mixed $student_selection
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
  * @property-read int|null $invoice_imports_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceSelection[] $invoiceSelections
+ * @property-read int|null $invoice_selections_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
@@ -1100,6 +1124,10 @@ namespace App\Models{
  * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $selectedInvoices
+ * @property-read int|null $selected_invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $selectedStudents
+ * @property-read int|null $selected_students_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\StudentSelection[] $studentSelections
  * @property-read int|null $student_selections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
