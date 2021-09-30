@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
 use App\Models\School;
+use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
@@ -61,5 +64,11 @@ class AppServiceProvider extends ServiceProvider
         Request::macro('wantsInertia', function () {
             return request()->header('x-inertia');
         });
+
+        Relation::enforceMorphMap([
+            'user' => User::class,
+            'student' => Student::class,
+            'invoice' => Invoice::class,
+        ]);
     }
 }
