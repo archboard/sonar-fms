@@ -15,13 +15,24 @@
       </button>
     </div>
 
-    <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4">
-      {{ __(':count students selected', { count: user.student_selection.length }) }}
-      <a href="#" class="ml-3 font-medium hover:underline" @click.prevent="clearSelection">{{ __('Remove selection') }}</a>
-      <inertia-link class="ml-3 font-medium hover:underline" :href="$route('selection.invoices.create')">
-        {{ __('Create invoice') }}
-      </inertia-link>
-    </div>
+    <FadeIn>
+      <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4 flex text-sm">
+        <span v-if="user.student_selection.length === 1">
+          {{ __(':count student selected', { count: user.student_selection.length }) }}
+        </span>
+        <span v-else>
+          {{ __(':count students selected', { count: user.student_selection.length }) }}
+        </span>
+        <div class="space-x-3 ml-3">
+          <Link is="a" href="#" @click.prevent="clearSelection">
+            {{ __('Remove selection') }}
+          </Link>
+          <Link :href="$route('selection.invoices.create')">
+            {{ __('Create invoice') }}
+          </Link>
+        </div>
+      </div>
+    </FadeIn>
 
     <Table>
       <Thead>
@@ -132,10 +143,12 @@ import checksPermissions from '@/composition/checksPermissions'
 import PageProps from '@/mixins/PageProps'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import FadeIn from '@/components/transitions/FadeIn'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    FadeIn,
     SonarMenuItem,
     VerticalDotMenu,
     XCircleIcon,
