@@ -70,7 +70,7 @@ class InvoiceImportController extends Controller
         /** @var InvoiceImport $import */
         $import = $school->invoiceImports()
             ->make([
-                'user_id' => $request->user()->id,
+                'user_uuid' => $request->user()->id,
                 'file_path' => InvoiceImport::storeFile($uploadedFile, $school),
                 'heading_row' => $data['heading_row'],
                 'starting_row' => $data['starting_row'],

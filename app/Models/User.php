@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use App\Traits\UsesUuid;
 use Carbon\Factory;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
@@ -31,31 +32,17 @@ class User extends Authenticatable implements HasLocalePreference
     use HasResource;
     use HasRolesAndAbilities;
     use BelongsToTenant;
+    use UsesUuid;
 
     const TEACHER = 'teacher';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $guarded = [];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'manages_tenancy' => 'boolean',
     ];
@@ -104,7 +91,7 @@ class User extends Authenticatable implements HasLocalePreference
     public function getStudentSelectionAttribute()
     {
         if ($this->relationLoaded('studentSelections')) {
-            return $this->studentSelections->pluck('student_id');
+            return $this->studentSelections->pluck('student_uuid');
         }
 
         return collect();
@@ -164,7 +151,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         return $this->hasMany(StudentSelection::class)
             ->join('users', function (JoinClause $join) {
-                $join->on('student_selections.user_id', '=', 'users.id');
+                $join->on('student_selections.user_uuid', '=', 'users.id');
             })
             ->whereRaw('student_selections.school_id = users.school_id');
     }
@@ -174,18 +161,18 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->hasManyThrough(
             Student::class,
             StudentSelection::class,
-            'student_id',
+            'student_uuid',
             'id',
             'id',
-            'user_id'
+            'user_uuid'
         );
     }
 
     public function getSelectedStudentsAttribute(): Collection
     {
-        return Student::join('student_selections', 'student_id', '=', 'students.id')
+        return Student::join('student_selections', 'student_uuid', '=', 'students.id')
             ->where('student_selections.school_id', $this->school_id)
-            ->where('student_selections.user_id', $this->id)
+            ->where('student_selections.user_uuid', $this->id)
             ->get();
     }
 
@@ -193,7 +180,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         return $this->hasMany(InvoiceSelection::class)
             ->join('users', function (JoinClause $join) {
-                $join->on('invoice_selections.user_id', '=', 'users.id');
+                $join->on('invoice_selections.user_uuid', '=', 'users.id');
             })
             ->whereRaw('invoice_selections.school_id = users.school_id');
     }
@@ -203,7 +190,7 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->hasManyThrough(
             Invoice::class,
             InvoiceSelection::class,
-            'user_id',
+            'user_uuid',
             'uuid',
             'id',
             'invoice_uuid'
@@ -252,8 +239,8 @@ class User extends Authenticatable implements HasLocalePreference
         if (!$exists) {
             DB::table('student_selections')->insert([
                 'school_id' => $this->school_id,
-                'user_id' => $this->id,
-                'student_id' => $studentId,
+                'user_uuid' => $this->id,
+                'student_uuid' => $studentId,
             ]);
         }
 
@@ -273,7 +260,7 @@ class User extends Authenticatable implements HasLocalePreference
         if (!$exists) {
             DB::table('invoice_selections')->insert([
                 'school_id' => $this->school_id,
-                'user_id' => $this->id,
+                'user_uuid' => $this->id,
                 'invoice_uuid' => $invoiceUuid,
             ]);
         }
@@ -316,7 +303,7 @@ class User extends Authenticatable implements HasLocalePreference
                     'school_id' => $school->id,
                 ]);
 
-                $studentUsers[] = $existingStudent->id;
+                $studentUsers[] = $existingstudent->uuid;
                 return $studentUsers;
             }
 
@@ -328,8 +315,8 @@ class User extends Authenticatable implements HasLocalePreference
 //        $students = Student::whereIn('sis_id', $data->get('studentids', []))
 //            ->pluck('id')
 //            ->map(fn ($student) => [
-//                'student_id' => $student,
-//                'user_id' => $this->id,
+//                'student_uuid' => $student,
+//                'user_uuid' => $this->id,
 //            ]);
 //
 //        $user->students()->detach();

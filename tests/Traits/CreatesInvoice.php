@@ -81,7 +81,7 @@ trait CreatesInvoice
 
     protected function createInvoice(array $invoiceAttributes = []): Invoice
     {
-        $attributes = array_merge(['user_id' => $this->user->id], $invoiceAttributes);
+        $attributes = array_merge(['user_uuid' => $this->user->uuid], $invoiceAttributes);
 
         /** @var Invoice $invoice */
         $invoice = Invoice::factory()->create($attributes);

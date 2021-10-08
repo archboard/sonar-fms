@@ -48,8 +48,8 @@ class PowerSchoolOpenIdLoginController extends Controller
             $students = Student::whereIn('sis_id', $data->get('studentids', []))
                 ->pluck('id')
                 ->map(fn ($student) => [
-                    'student_id' => $student,
-                    'user_id' => $user->id,
+                    'student_uuid' => $student,
+                    'user_uuid' => $user->id,
                 ]);
 
             $user->students()->detach();

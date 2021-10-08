@@ -16,7 +16,8 @@ class CreateInvoiceImportsTable extends Migration
         Schema::create('invoice_imports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_uuid')->nullable();
+            $table->foreign('user_uuid')->references('uuid')->on('users')->onDelete('set null');
             $table->string('file_path');
             $table->integer('heading_row')->default(1);
             $table->integer('starting_row')->default(2);

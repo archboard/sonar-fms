@@ -146,7 +146,7 @@ class PowerSchoolProvider implements SisProvider
                         $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
 
                         // If the school record exists already, update the staff id just in case
-                        if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) {
+                        if ($existingSchool && $existingSchool->pivot->staff_id !== $user->uuid) {
                             $existingUser->schools()
                                 ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
                         }
@@ -154,7 +154,7 @@ class PowerSchoolProvider implements SisProvider
                         elseif (!$existingSchool) {
                             $entries[] = [
                                 'school_id' => $school->id,
-                                'user_id' => $existingUser->id,
+                                'user_uuid' => $existingUser->uuid,
                                 'staff_id' => $user->id,
                             ];
                         }
@@ -175,7 +175,7 @@ class PowerSchoolProvider implements SisProvider
 
                     $entries[] = [
                         'school_id' => $school->id,
-                        'user_id' => $newUser->id,
+                        'user_uuid' => $newUser->uuid,
                         'staff_id' => $user->id,
                     ];
 
@@ -213,7 +213,7 @@ class PowerSchoolProvider implements SisProvider
                     $attributes = $this->getStudentAttributes($student);
 
                     // If it exists, then update
-                    if ($existingStudent = $existingStudents->get($student->id)) {
+                    if ($existingStudent = $existingStudents->get($student->uuid)) {
                         $existingStudent->update($attributes);
                         return $entries;
                     }
@@ -221,7 +221,7 @@ class PowerSchoolProvider implements SisProvider
                     // It's a new student
                     $attributes['tenant_id'] = $this->tenant->id;
                     $attributes['school_id'] = $school->id;
-                    $attributes['sis_id'] = $student->id;
+                    $attributes['sis_id'] = $student->uuid;
                     $attributes['created_at'] = $now;
                     $attributes['updated_at'] = $now;
                     $entries[] = $attributes;
@@ -265,7 +265,7 @@ class PowerSchoolProvider implements SisProvider
 
         $now = now();
         $attributes['school_id'] = $school->id;
-        $attributes['sis_id'] = $student->id;
+        $attributes['sis_id'] = $student->uuid;
         $attributes['created_at'] = $now;
         $attributes['updated_at'] = $now;
 
@@ -409,7 +409,7 @@ class PowerSchoolProvider implements SisProvider
                         'school_id' => $school->id,
                         'term_id' => $term->id,
                         'course_id' => $course->id,
-                        'user_id' => $teacher->id,
+                        'user_uuid' => $teacher->id,
                         'sis_id' => $section->id,
                         'section_number' => optional($section)->section_number,
                         'expression' => optional($section)->expression,
@@ -466,7 +466,7 @@ class PowerSchoolProvider implements SisProvider
                             return $enrollments;
                         }
 
-                        $student = $students->get($enrollment->student_id);
+                        $student = $students->get($enrollment->student_uuid);
 
                         if (!$student || $enrollment->dropped) {
                             return $enrollments;
@@ -474,7 +474,7 @@ class PowerSchoolProvider implements SisProvider
 
                         $enrollments[] = [
                             'section_id' => $section->id,
-                            'student_id' => $student->id,
+                            'student_uuid' => $student->uuid,
                         ];
 
                         return $enrollments;

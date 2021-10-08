@@ -16,7 +16,7 @@ class StudentSelection extends Model
 
     public function scopeStudent(Builder $builder, $studentId)
     {
-        $builder->where('student_id', $studentId);
+        $builder->where('student_uuid', $studentId);
     }
 
     public function student(): BelongsTo

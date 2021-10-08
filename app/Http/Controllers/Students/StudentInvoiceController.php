@@ -68,7 +68,7 @@ class StudentInvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'students' => [$student->id],
+            'students' => [$student->uuid],
             'endpoint' => route('students.invoices.store', $student),
             'method' => 'post',
         ])->withViewData(compact('title'));

@@ -40,8 +40,8 @@ class StudentSelectionController extends Controller
             ->pluck('id')
             ->map(fn ($student) => [
                 'school_id' => $school->id,
-                'student_id' => $student,
-                'user_id' => $user->id,
+                'student_uuid' => $student,
+                'user_uuid' => $user->id,
             ]);
 
         // Delete the existing selection

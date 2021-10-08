@@ -14,10 +14,10 @@ class CreateStudentUserPivotTable extends Migration
     public function up()
     {
         Schema::create('student_user', function (Blueprint $table) {
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('student_uuid')->constrained('students', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('relationship')->nullable();
-            $table->primary(['student_id', 'user_id']);
+            $table->primary(['student_uuid', 'user_uuid']);
         });
     }
 

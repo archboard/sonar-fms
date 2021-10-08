@@ -33,10 +33,10 @@ class InvoiceFactory extends Factory
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
             'invoice_date' => now(),
-            'student_id' => $school->students()
+            'student_uuid' => $school->students()
                 ->inRandomOrder()
                 ->first()
-                ->id,
+                ->uuid,
             'apply_tax' => $this->faker->boolean,
             'use_school_tax_defaults' => $this->faker->boolean,
             'tax_rate' => $this->faker->randomFloat(5, 0.001, 0.1),

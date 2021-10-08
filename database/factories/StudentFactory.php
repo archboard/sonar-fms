@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Factories\UuidFactory;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
@@ -24,6 +25,7 @@ class StudentFactory extends Factory
     public function definition()
     {
         return [
+            'uuid' => UuidFactory::make(),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->firstName,
             'email' => $this->faker->email,

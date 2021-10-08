@@ -15,8 +15,8 @@ class CreateSectionStudentTable extends Migration
     {
         Schema::create('section_student', function (Blueprint $table) {
             $table->foreignId('section_id')->constrained()->onDelete('cascade');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->primary(['section_id', 'student_id']);
+            $table->foreignUuid('student_uuid')->constrained('students', 'uuid')->onDelete('cascade');
+            $table->primary(['section_id', 'student_uuid']);
         });
     }
 

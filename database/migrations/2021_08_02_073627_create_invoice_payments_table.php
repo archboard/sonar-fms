@@ -25,10 +25,10 @@ class CreateInvoicePaymentsTable extends Migration
             $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onDelete('set null');
             $table->dateTime('paid_at')->nullable();
             $table->unsignedBigInteger('amount')->nullable();
-            $table->unsignedBigInteger('recorded_by')->nullable();
-            $table->foreign('recorded_by')->references('id')->on('users')->onDelete('set null');
-            $table->unsignedBigInteger('made_by')->nullable();
-            $table->foreign('made_by')->references('id')->on('users')->onDelete('set null');
+            $table->uuid('recorded_by')->nullable();
+            $table->foreign('recorded_by')->references('uuid')->on('users')->onDelete('set null');
+            $table->uuid('made_by')->nullable();
+            $table->foreign('made_by')->references('uuid')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }

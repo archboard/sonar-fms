@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Factories\UuidFactory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -23,6 +24,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'uuid' => UuidFactory::make(),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,

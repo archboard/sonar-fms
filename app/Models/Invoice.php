@@ -44,7 +44,7 @@ class Invoice extends Model
         'import_id',
         'tenant_id',
         'school_id',
-        'student_id',
+        'student_uuid',
         'term_id',
         'invoice_layout_id',
         'title',
@@ -87,10 +87,6 @@ class Invoice extends Model
         'available_at' => 'datetime',
         'published_at' => 'datetime',
     ];
-
-    protected $keyType = 'string';
-
-    protected $primaryKey = 'uuid';
 
     // These are the attributes/properties that are
     // used on the invoice form based on the API Resource
@@ -702,9 +698,9 @@ class Invoice extends Model
         $template['students'] = $asBatch
             ? static::batch($this->batch_id)
                 ->unpublished()
-                ->pluck('student_id')
+                ->pluck('student_uuid')
                 ->toArray()
-            : [$this->student_id];
+            : [$this->student_uuid];
 
         return $template;
     }
@@ -713,7 +709,7 @@ class Invoice extends Model
     {
         return InvoiceTemplate::create([
             'school_id' => $this->school_id,
-            'user_id' => auth()->id(),
+            'user_uuid' => auth()->id(),
             'name' => $data['name'] ?? "Created from invoice {$this->number_formatted}",
             'template' => Arr::except($this->asInvoiceTemplate(), 'students'),
             'for_import' => false,

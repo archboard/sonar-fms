@@ -17,11 +17,11 @@ namespace App\Models{
  * @mixin IdeHelperActivity
  * @property int $id
  * @property string|null $log_name
- * @property string $description
+ * @property string|null $description
  * @property string|null $subject_type
- * @property int|null $subject_id
+ * @property string|null $subject_id
  * @property string|null $causer_type
- * @property int|null $causer_id
+ * @property string|null $causer_id
  * @property \Illuminate\Support\Collection|null $properties
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -207,19 +207,21 @@ namespace App\Models{
  * App\Models\Invoice
  *
  * @mixin IdeHelperInvoice
- * @property string $id
+ * @property int $id
  * @property string $uuid
  * @property string|null $batch_id
  * @property string|null $import_id
  * @property int $tenant_id
  * @property int $school_id
- * @property int $student_id
- * @property int $user_id
+ * @property string $student_uuid
+ * @property string $user_uuid
  * @property int|null $term_id
  * @property string $title
  * @property string|null $description
  * @property int|null $amount_due
  * @property int|null $remaining_balance
+ * @property int|null $subtotal
+ * @property int|null $discount_total
  * @property Carbon $invoice_date
  * @property Carbon|null $available_at
  * @property Carbon|null $due_at
@@ -231,8 +233,6 @@ namespace App\Models{
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $invoice_layout_id
- * @property int|null $subtotal
- * @property int|null $discount_total
  * @property bool $apply_tax
  * @property bool $use_school_tax_defaults
  * @property float|null $tax_rate
@@ -315,7 +315,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereRelativeTaxRate($value)
  * @method static Builder|Invoice whereRemainingBalance($value)
  * @method static Builder|Invoice whereSchoolId($value)
- * @method static Builder|Invoice whereStudentId($value)
+ * @method static Builder|Invoice whereStudentUuid($value)
  * @method static Builder|Invoice whereSubtotal($value)
  * @method static Builder|Invoice whereTaxDue($value)
  * @method static Builder|Invoice whereTaxLabel($value)
@@ -325,7 +325,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereTitle($value)
  * @method static Builder|Invoice whereUpdatedAt($value)
  * @method static Builder|Invoice whereUseSchoolTaxDefaults($value)
- * @method static Builder|Invoice whereUserId($value)
+ * @method static Builder|Invoice whereUserUuid($value)
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
  */
@@ -339,7 +339,7 @@ namespace App\Models{
  * @mixin IdeHelperInvoiceImport
  * @property int $id
  * @property int $school_id
- * @property int $user_id
+ * @property string|null $user_uuid
  * @property string $file_path
  * @property int $heading_row
  * @property int $starting_row
@@ -360,7 +360,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
- * @property-read \App\Models\User $user
+ * @property-read \App\Models\User|null $user
  * @method static Builder|InvoiceImport filter(array $filters)
  * @method static Builder|InvoiceImport newModelQuery()
  * @method static Builder|InvoiceImport newQuery()
@@ -380,7 +380,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereStartingRow($value)
  * @method static Builder|InvoiceImport whereTotalRecords($value)
  * @method static Builder|InvoiceImport whereUpdatedAt($value)
- * @method static Builder|InvoiceImport whereUserId($value)
+ * @method static Builder|InvoiceImport whereUserUuid($value)
  */
 	class IdeHelperInvoiceImport extends \Eloquent {}
 }
@@ -478,8 +478,8 @@ namespace App\Models{
  * @property int|null $payment_method_id
  * @property \Illuminate\Support\Carbon|null $paid_at
  * @property int|null $amount
- * @property int|null $recorded_by
- * @property int|null $made_by
+ * @property string|null $recorded_by
+ * @property string|null $made_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Currency|null $currency
@@ -631,7 +631,7 @@ namespace App\Models{
  * @mixin IdeHelperInvoiceSelection
  * @property int $id
  * @property int $school_id
- * @property int $user_id
+ * @property string $user_uuid
  * @property string $invoice_uuid
  * @property-read \App\Models\Invoice $invoice
  * @method static Builder|InvoiceSelection invoice(string $uuid)
@@ -641,7 +641,7 @@ namespace App\Models{
  * @method static Builder|InvoiceSelection whereId($value)
  * @method static Builder|InvoiceSelection whereInvoiceUuid($value)
  * @method static Builder|InvoiceSelection whereSchoolId($value)
- * @method static Builder|InvoiceSelection whereUserId($value)
+ * @method static Builder|InvoiceSelection whereUserUuid($value)
  */
 	class IdeHelperInvoiceSelection extends \Eloquent {}
 }
@@ -684,7 +684,7 @@ namespace App\Models{
  * @mixin IdeHelperInvoiceTemplate
  * @property int $id
  * @property int $school_id
- * @property int|null $user_id
+ * @property string|null $user_uuid
  * @property string $name
  * @property array $template
  * @property bool $for_import
@@ -704,7 +704,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereSchoolId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereTemplate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceTemplate whereUserUuid($value)
  */
 	class IdeHelperInvoiceTemplate extends \Eloquent {}
 }
@@ -869,7 +869,7 @@ namespace App\Models{
  * @property int $school_id
  * @property int|null $term_id
  * @property int $course_id
- * @property int $user_id
+ * @property string $user_uuid
  * @property int $sis_id
  * @property string|null $section_number
  * @property string|null $expression
@@ -892,7 +892,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Section whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Section whereUserUuid($value)
  */
 	class IdeHelperSection extends \Eloquent {}
 }
@@ -902,7 +902,7 @@ namespace App\Models{
  * App\Models\Student
  *
  * @mixin IdeHelperStudent
- * @property int $id
+ * @property string $uuid
  * @property int $tenant_id
  * @property int $school_id
  * @property int $sis_id
@@ -951,7 +951,6 @@ namespace App\Models{
  * @method static Builder|Student whereEnrolled($value)
  * @method static Builder|Student whereFirstName($value)
  * @method static Builder|Student whereGradeLevel($value)
- * @method static Builder|Student whereId($value)
  * @method static Builder|Student whereInitialDistrictEntryDate($value)
  * @method static Builder|Student whereInitialDistrictGradeLevel($value)
  * @method static Builder|Student whereInitialSchoolEntryDate($value)
@@ -963,6 +962,7 @@ namespace App\Models{
  * @method static Builder|Student whereStudentNumber($value)
  * @method static Builder|Student whereTenantId($value)
  * @method static Builder|Student whereUpdatedAt($value)
+ * @method static Builder|Student whereUuid($value)
  */
 	class IdeHelperStudent extends \Eloquent {}
 }
@@ -973,8 +973,8 @@ namespace App\Models{
  *
  * @mixin IdeHelperStudentSelection
  * @property int $school_id
- * @property int $student_id
- * @property int $user_id
+ * @property string $student_uuid
+ * @property string $user_uuid
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\User $user
  * @method static Builder|StudentSelection newModelQuery()
@@ -982,8 +982,8 @@ namespace App\Models{
  * @method static Builder|StudentSelection query()
  * @method static Builder|StudentSelection student($studentId)
  * @method static Builder|StudentSelection whereSchoolId($value)
- * @method static Builder|StudentSelection whereStudentId($value)
- * @method static Builder|StudentSelection whereUserId($value)
+ * @method static Builder|StudentSelection whereStudentUuid($value)
+ * @method static Builder|StudentSelection whereUserUuid($value)
  */
 	class IdeHelperStudentSelection extends \Eloquent {}
 }
@@ -1133,7 +1133,7 @@ namespace App\Models{
  * App\Models\User
  *
  * @mixin IdeHelperUser
- * @property int $id
+ * @property string $uuid
  * @property int $tenant_id
  * @property int|null $sis_id
  * @property string|null $first_name
@@ -1191,7 +1191,6 @@ namespace App\Models{
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereFirstName($value)
  * @method static Builder|User whereGuardianId($value)
- * @method static Builder|User whereId($value)
  * @method static Builder|User whereIs($role)
  * @method static Builder|User whereIsAll($role)
  * @method static Builder|User whereIsNot($role)
@@ -1205,6 +1204,7 @@ namespace App\Models{
  * @method static Builder|User whereTenantId($value)
  * @method static Builder|User whereTimezone($value)
  * @method static Builder|User whereUpdatedAt($value)
+ * @method static Builder|User whereUuid($value)
  */
 	class IdeHelperUser extends \Eloquent implements \Illuminate\Contracts\Translation\HasLocalePreference {}
 }

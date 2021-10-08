@@ -44,7 +44,7 @@ class InvoiceTemplateController extends Controller
             'for_import' => 'required|boolean',
         ]);
 
-        $data['user_id'] = $request->user()->id;
+        $data['user_uuid'] = $request->user()->id;
 
         /** @var InvoiceTemplate $template */
         $template = $request->school()

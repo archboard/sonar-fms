@@ -16,8 +16,8 @@ class CreateInvoiceTemplatesTable extends Migration
         Schema::create('invoice_templates', function (Blueprint $table) {
             $table->id();
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->uuid('user_uuid')->nullable();
+            $table->foreign('user_uuid')->references('uuid')->on('users')->onDelete('set null');
             $table->string('name');
             $table->json('template');
             $table->boolean('for_import')->default(false);

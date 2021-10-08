@@ -15,9 +15,9 @@ class CreateStudentSelectionsTable extends Migration
     {
         Schema::create('student_selections', function (Blueprint $table) {
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->primary(['school_id', 'student_id', 'user_id']);
+            $table->foreignUuid('student_uuid')->constrained('students', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->primary(['school_id', 'student_uuid', 'user_uuid']);
         });
     }
 

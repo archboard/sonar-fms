@@ -20,7 +20,7 @@ class CreateSectionsTable extends Migration
             $table->unsignedBigInteger('term_id')->nullable();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
             $table->unsignedBigInteger('sis_id')->index();
             $table->string('section_number')->nullable();
             $table->string('expression')->nullable();

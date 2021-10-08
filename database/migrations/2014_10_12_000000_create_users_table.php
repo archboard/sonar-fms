@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('uuid')->primary();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('sis_id')->nullable()->index();
             $table->string('first_name')->nullable();
@@ -22,17 +22,17 @@ class CreateUsersTable extends Migration
             $table->string('email')->index();
             $table->string('password')->nullable();
             $table->unsignedBigInteger('school_id')->nullable();
-            $table->string('timezone')->nullable();
             $table->foreign('school_id')->references('id')->on('schools')->onDelete('set null');
+            $table->string('timezone')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('school_user', function (Blueprint $table) {
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
             $table->unsignedBigInteger('staff_id')->nullable()->index();
-            $table->primary(['school_id', 'user_id']);
+            $table->primary(['school_id', 'user_uuid']);
         });
     }
 

@@ -45,7 +45,7 @@ class DuplicateInvoiceController extends Controller
         return inertia('invoices/Create', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'students' => [$invoice->student_id],
+            'students' => [$invoice->student_uuid],
             'defaultTemplate' => $invoice->asInvoiceTemplate(),
             'duplicating' => true,
             'method' => 'post',

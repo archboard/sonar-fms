@@ -16,7 +16,7 @@ class CreateInvoiceSelectionsTable extends Migration
         Schema::create('invoice_selections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
             $table->uuid('invoice_uuid')->index();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
         });

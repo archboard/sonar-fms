@@ -35,7 +35,7 @@ class InvoiceSelectionController extends Controller
             ->pluck('uuid')
             ->map(fn ($invoice) => [
                 'school_id' => $school->id,
-                'user_id' => $user->id,
+                'user_uuid' => $user->id,
                 'invoice_uuid' => $invoice,
             ]);
 

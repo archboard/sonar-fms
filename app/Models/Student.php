@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,6 +24,7 @@ class Student extends Model
     use HasResource;
     use HasFactory;
     use BelongsToTenant;
+    use UsesUuid;
 
     protected $guarded = [];
 
