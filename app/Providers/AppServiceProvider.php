@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use Spatie\Activitylog\ActivityLogger;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,5 +71,9 @@ class AppServiceProvider extends ServiceProvider
             'student' => Student::class,
             'invoice' => Invoice::class,
         ]);
+
+        ActivityLogger::macro('component', function (string $component) {
+            return $this->withProperty('component', $component);
+        });
     }
 }
