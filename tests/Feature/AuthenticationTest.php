@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Activity;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,13 +30,18 @@ class AuthenticationTest extends TestCase
         $this->withoutExceptionHandling();
         $user = $this->createUser();
 
-        $response = $this->post('/login', [
-            'email' => strtoupper($user->email),
-            'password' => 'password',
-        ]);
+        $this->post('/login', [
+                'email' => strtoupper($user->email),
+                'password' => 'password',
+            ])
+            ->assertRedirect(RouteServiceProvider::HOME);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+
+        $activity = Activity::first();
+        $this->assertNotNull($activity);
+        $this->assertStringContainsString('successfully', Activity::first()->description);
+        $this->assertEquals('auth', $activity->log_name);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password()
@@ -44,10 +49,16 @@ class AuthenticationTest extends TestCase
         $user = $this->createUser();
 
         $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'wrong-password',
-        ]);
+                'email' => $user->email,
+                'password' => 'wrong-password',
+            ])
+            ->assertSessionHasErrors();
 
         $this->assertGuest();
+
+        $activity = Activity::first();
+        $this->assertNotNull($activity);
+        $this->assertStringContainsString('failed', Activity::first()->description);
+        $this->assertEquals('auth', $activity->log_name);
     }
 }

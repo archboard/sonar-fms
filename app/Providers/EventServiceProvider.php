@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Events\InvoiceImportFinished;
+use App\Listeners\LogFailedLogin;
+use App\Listeners\LogLogin;
 use App\Listeners\SetUserSchool;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +25,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             SetUserSchool::class,
+            LogLogin::class,
+        ],
+        Failed::class => [
+            LogFailedLogin::class,
         ],
         InvoiceImportFinished::class => [],
     ];
