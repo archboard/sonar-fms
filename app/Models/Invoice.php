@@ -90,6 +90,8 @@ class Invoice extends Model
 
     protected $keyType = 'string';
 
+    protected $primaryKey = 'uuid';
+
     // These are the attributes/properties that are
     // used on the invoice form based on the API Resource
     public static array $formAttributes = [
