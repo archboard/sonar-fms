@@ -154,6 +154,14 @@ abstract class InvoiceFactory
 
             DB::table('invoice_tax_items')
                 ->insert($this->invoiceTaxItems->toArray());
+
+//            DB::table(config('activitylog.table_name'))
+//                ->insert($this->invoices->map(fn (array $invoice) => [
+//                    'log_name' => 'default',
+//                    // __('Created by :user.');
+//                    'description' => 'Created by :user.',
+//                    'subjec'
+//                ])->toArray());
         });
 
         return $this->invoices->map(function (array $invoice) {
