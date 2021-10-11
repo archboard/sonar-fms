@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Activity;
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -59,6 +60,10 @@ class ChangeInvoiceStatusTest extends TestCase
 
         $invoice->refresh();
         $this->assertNotNull($invoice->voided_at);
+
+        /** @var Activity $activity */
+        $activity = Activity::latest()->with('causer')->first();
+        $this->assertEquals("Invoice voided by {$this->user->full_name}.", $activity->description);
     }
 
     public function test_can_void_and_not_duplicate()

@@ -113,6 +113,18 @@ class Invoice extends Model
         'tax_label',
     ];
 
+    protected static function booted()
+    {
+        static::saving(function (Invoice $invoice) {
+            if ($invoice->isDirty('voided_at')) {
+                // __('Invoice voided by :user.')
+                activity()
+                    ->on($invoice)
+                    ->log('Invoice voided by :user.');
+            }
+        });
+    }
+
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
