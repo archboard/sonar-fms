@@ -11,7 +11,13 @@ class Activity extends BaseActivity
 {
     public function getDescriptionAttribute($description):? string
     {
-        return __($description, $this->properties->toArray());
+        $properties = collect($this->properties);
+
+        if ($this->relationLoaded('causer')) {
+            $properties->put('user', $this->causer->full_name);
+        }
+
+        return __($description, $properties->toArray());
     }
 
     public function getComponentAttribute():? string

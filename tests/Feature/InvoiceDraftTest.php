@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Activity;
 use App\Models\Invoice;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,6 +50,10 @@ class InvoiceDraftTest extends TestCase
 
         $this->assertNotNull($invoice);
         $this->assertNull($invoice->published_at);
+
+        /** @var Activity $activity */
+        $activity = $invoice->activities()->with('causer')->first();
+        $this->assertEquals("Created as a draft by {$this->user->full_name}.", $activity->description);
     }
 
     public function test_cant_edit_published_invoice()
