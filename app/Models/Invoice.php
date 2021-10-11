@@ -8,6 +8,7 @@ use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
+use App\Traits\HasActivities;
 use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
 use Brick\Money\Money;
@@ -37,6 +38,7 @@ class Invoice extends Model
     use HasFactory;
     use HasResource;
     use HasTaxRateAttribute;
+    use HasActivities;
 
     protected $fillable = [
         'uuid',

@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 abstract class InvoiceFactory
 {
@@ -147,13 +146,20 @@ abstract class InvoiceFactory
             DB::table('invoice_tax_items')
                 ->insert($this->invoiceTaxItems->toArray());
 
-//            DB::table(config('activitylog.table_name'))
-//                ->insert($this->invoices->map(fn (array $invoice) => [
-//                    'log_name' => 'default',
-//                    // __('Created by :user.');
-//                    'description' => 'Created by :user.',
-//                    'subjec'
-//                ])->toArray());
+            DB::table(config('activitylog.table_name'))
+                ->insert($this->invoices->map(fn (array $invoice) => [
+                    'log_name' => 'default',
+                    // __('Created by :user.');
+                    // __('Created as a draft by :user.');
+                    'description' => $this->asDraft ? 'Created as a draft by :user.' : 'Created by :user.',
+                    'subject_type' => 'invoice',
+                    'subject_id' => $invoice['uuid'],
+                    'causer_type' => 'user',
+                    'causer_id' => $this->user->id,
+                    'created_at' => $this->now,
+                    'updated_at' => $this->now,
+                    'batch_uuid' => $this->batchId,
+                ])->toArray());
         });
 
         return $this->invoices->map(function (array $invoice) {

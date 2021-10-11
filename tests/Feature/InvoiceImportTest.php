@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Events\InvoiceImportFinished;
 use App\Http\Resources\InvoiceResource;
 use App\Jobs\ProcessInvoiceImport;
+use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
@@ -456,6 +457,7 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+        $this->assertEquals(3, Activity::count());
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 

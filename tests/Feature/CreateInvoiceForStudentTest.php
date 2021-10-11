@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -117,6 +118,8 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
         $this->assertNotNull($invoice->invoice_date);
+        ray()->queries();
+        $this->assertEquals(1, $invoice->activities()->count());
 
         Queue::assertPushed(SendNewInvoiceNotification::class);
     }
