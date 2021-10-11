@@ -44,7 +44,7 @@
           {{ __('Created') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.created_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.is_void">
@@ -52,7 +52,7 @@
           {{ __('Voided') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.voided_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.available_at">
@@ -60,7 +60,7 @@
           {{ __('Available') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.available_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.available_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.due_at">
@@ -68,7 +68,7 @@
           {{ __('Due') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.due_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.due_at, 'abbr') }}
         </div>
       </div>
     </div>
@@ -120,7 +120,7 @@
             {{ __('Created') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.created_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.is_void" class="pt-6">
@@ -128,7 +128,7 @@
             {{ __('Voided') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.voided_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.available_at" class="pt-6">
@@ -136,7 +136,7 @@
             {{ __('Available') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.available_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.available_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.due_at" class="pt-6">
@@ -144,7 +144,7 @@
             {{ __('Due') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.due_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.due_at, 'abbr') }}
           </div>
         </div>
       </div>

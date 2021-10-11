@@ -9,9 +9,13 @@ export default () => {
     page.props.value.school?.timezone ||
     'UTC'
   )
+  const formats = {
+    full: 'MMMM D, YYYY h:mma',
+    abbr: 'MMM D, YYYY h:mma',
+  }
 
   const getDate = (date) => dayjs(date).tz(timezone.value)
-  const displayDate = (date, format) => getDate(date).format(format)
+  const displayDate = (date, format) => getDate(date).format(formats[format] || format)
 
   return {
     timezone,
