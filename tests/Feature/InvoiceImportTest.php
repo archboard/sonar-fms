@@ -447,9 +447,9 @@ class InvoiceImportTest extends TestCase
                 Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->available_at)
             );
-            $this->assertTrue(
-                Carbon::create(2021, 9)
-                    ->equalTo($invoice->invoice_date)
+            $this->assertEquals(
+                '2021-09-01',
+                $invoice->invoice_date->setTimezone($this->user->timezone)->format('Y-m-d')
             );
         });
 
