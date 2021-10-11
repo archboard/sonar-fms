@@ -363,7 +363,11 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
             // Add the invoice attributes
             $this->invoices->push(array_replace(
-                ['uuid' => $invoiceUuid, 'student_id' => $student->id],
+                [
+                    'uuid' => $invoiceUuid,
+                    'student_id' => $student->id,
+                    'published_at' => $this->asDraft ? null : $this->now,
+                ],
                 $this->invoiceAttributes
             ));
 

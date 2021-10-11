@@ -399,7 +399,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'tax_rate' => $this->getMapValue('tax_rate', 'tax rate'),
             'tax_label' => $this->getMapValue('tax_label', 'tax label'),
             'tax_due' => $this->rowTaxDue,
-            'published_at' => $this->now,
+            'published_at' => $this->asDraft ? null : $this->now,
             'created_at' => $this->now,
             'updated_at' => $this->now,
         ];

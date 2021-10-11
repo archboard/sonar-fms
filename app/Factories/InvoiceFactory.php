@@ -126,15 +126,7 @@ abstract class InvoiceFactory
         DB::transaction(function () {
             DB::table('invoices')
                 ->insert(
-                    $this->invoices
-                        ->map(function (array $invoice) {
-                            $invoice['published_at'] = $this->asDraft
-                                ? null
-                                : $this->now;
-
-                            return $invoice;
-                        })
-                        ->toArray()
+                    $this->invoices->toArray()
                 );
 
             DB::table('invoice_items')
