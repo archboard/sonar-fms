@@ -450,7 +450,7 @@ class InvoiceImportTest extends TestCase
             );
             $this->assertEquals(
                 '2021-09-01',
-                $invoice->invoice_date->setTimezone($this->user->timezone)->format('Y-m-d')
+                $invoice->invoice_date->format('Y-m-d')
             );
         });
 

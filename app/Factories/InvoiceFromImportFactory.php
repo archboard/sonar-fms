@@ -193,8 +193,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
-            return $date->setTimezone($this->user->timezone)
-                ->addMinutes($minutes)
+
+            return $date->addMinutes($minutes)
                 ->toDateString();
         }
 
