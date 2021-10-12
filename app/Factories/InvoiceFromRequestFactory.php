@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Models\Invoice;
 use App\Models\Student;
 use App\Utilities\NumberUtility;
 use Illuminate\Support\Carbon;
@@ -39,6 +40,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->validatedData = $request->validated();
         $this->school = $request->school();
         $this->user = $request->user();
+        $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
         $this->students = $this->school->students()
             ->whereIn('id', $this->validatedData['students'])
             ->get();
@@ -367,6 +369,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                     'uuid' => $invoiceUuid,
                     'student_id' => $student->id,
                     'published_at' => $this->asDraft ? null : $this->now,
+                    'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
                 ],
                 $this->invoiceAttributes
             ));

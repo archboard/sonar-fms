@@ -13,6 +13,7 @@ use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Hidehalo\Nanoid\Client;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,8 @@ class Invoice extends Model
     use HasResource;
     use HasTaxRateAttribute;
     use HasActivities;
+
+    public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     protected $fillable = [
         'uuid',
@@ -71,6 +74,7 @@ class Invoice extends Model
         'published_at',
         'apply_tax_to_all_items',
         'relative_tax_rate',
+        'invoice_number',
     ];
 
     protected $casts = [
@@ -776,5 +780,13 @@ class Invoice extends Model
             ->first();
 
         return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
+    }
+
+    public static function generateInvoiceNumber(string $prefix = ''): string
+    {
+        $id = (new Client(8))
+            ->formattedId(static::ALPHABET);
+
+        return $prefix . $id;
     }
 }

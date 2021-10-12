@@ -17,9 +17,9 @@ namespace App\Models{
  * @mixin IdeHelperActivity
  * @property int $id
  * @property string|null $log_name
- * @property string $description
+ * @property string|null $description
  * @property string|null $subject_type
- * @property int|null $subject_id
+ * @property string|null $subject_id
  * @property string|null $causer_type
  * @property int|null $causer_id
  * @property \Illuminate\Support\Collection|null $properties
@@ -207,7 +207,7 @@ namespace App\Models{
  * App\Models\Invoice
  *
  * @mixin IdeHelperInvoice
- * @property string $id
+ * @property int $id
  * @property string $uuid
  * @property string|null $batch_id
  * @property string|null $import_id
@@ -243,6 +243,9 @@ namespace App\Models{
  * @property Carbon|null $published_at
  * @property bool $apply_tax_to_all_items
  * @property float|null $relative_tax_rate
+ * @property string $invoice_number
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
+ * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
@@ -305,6 +308,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereImportId($value)
  * @method static Builder|Invoice whereInvoiceDate($value)
  * @method static Builder|Invoice whereInvoiceLayoutId($value)
+ * @method static Builder|Invoice whereInvoiceNumber($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -805,12 +809,14 @@ namespace App\Models{
  * @property bool $collect_tax
  * @property float|null $tax_rate
  * @property string|null $tax_label
+ * @property string|null $invoice_number_template
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \App\Models\Currency|null $currency
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read array $grade_levels
+ * @property-read string $invoice_number_prefix
  * @property-read mixed $tax_rate_converted
  * @property-read mixed $tax_rate_formatted
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
@@ -846,6 +852,7 @@ namespace App\Models{
  * @method static Builder|School whereCurrencyId($value)
  * @method static Builder|School whereHighGrade($value)
  * @method static Builder|School whereId($value)
+ * @method static Builder|School whereInvoiceNumberTemplate($value)
  * @method static Builder|School whereLowGrade($value)
  * @method static Builder|School whereName($value)
  * @method static Builder|School whereSchoolNumber($value)

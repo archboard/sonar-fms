@@ -17036,6 +17036,28 @@
      
 }
 
+    namespace Spatie\Activitylog { 
+            /**
+     * 
+     *
+     */ 
+        class ActivityLogger {
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param string $component
+         * @static 
+         */ 
+        public static function component($component)
+        {
+                        return \Spatie\Activitylog\ActivityLogger::component($component);
+        }
+         
+    }
+     
+}
+
 
 namespace  { 
             class App extends \Illuminate\Support\Facades\App {}

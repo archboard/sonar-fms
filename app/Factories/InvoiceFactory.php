@@ -21,6 +21,7 @@ abstract class InvoiceFactory
     public ?School $school = null;
     protected Collection $students;
     protected User $user;
+    protected string $invoiceNumberPrefix = '';
 
     // These are the collections that store the attributes
     // that need to be stored in the db

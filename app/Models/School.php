@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperSchool
@@ -107,6 +108,23 @@ class School extends Model
     {
         return $this->hasMany(PaymentMethod::class)
             ->orderBy('driver');
+    }
+
+    public function getInvoiceNumberPrefix(?User $user = null): string
+    {
+        if (!$this->invoice_number_template) {
+            return '';
+        }
+
+        $now = $user
+            ? $user->getCarbonFactory()->now()
+            : now();
+
+        return Str::replace(
+            ['{year}', '{month}'],
+            [$now->format('Y'), $now->format('m')],
+            $this->invoice_number_template
+        );
     }
 
     public function getGradeLevelsAttribute(): array

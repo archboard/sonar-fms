@@ -434,6 +434,7 @@ class InvoiceImportTest extends TestCase
             if ($due < 0) {
                 $due = 0;
             }
+            $this->assertNotNull($invoice->invoice_number);
             $this->assertEquals($term->id, $invoice->term_id);
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);

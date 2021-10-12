@@ -69,6 +69,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $this->contents = $import->getImportContents();
         $this->school = $import->school;
         $this->user = $import->user;
+        $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
         $this->terms = $this->school->terms->keyBy('sis_assigned_id');
         $this->fees = $this->school->fees->keyBy('id');
         $this->scholarships = $this->school->scholarships->keyBy('id');
@@ -384,6 +385,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'user_id' => $this->user->id,
             'import_id' => $this->import->id,
             'uuid' => $this->rowInvoiceUuid,
+            'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
             'title' => $this->getMapValue('title'),
             'description' => $this->getMapValue('description'),
             'invoice_date' => $this->getMapValue('invoice_date', 'date') ?? $this->userNow,
