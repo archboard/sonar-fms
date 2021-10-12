@@ -16,10 +16,12 @@ export default () => {
 
   const getDate = (date) => dayjs(date).tz(timezone.value)
   const displayDate = (date, format) => getDate(date).format(formats[format] || format)
+  const fromNow = (date) => getDate(date).fromNow()
 
   return {
     timezone,
     displayDate,
     getDate,
+    fromNow,
   }
 }

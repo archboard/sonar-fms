@@ -100,6 +100,8 @@
             <InvoiceDetails :invoice="invoice" />
           </div>
         </div>
+
+        <ActivityFeed :activities="invoice.activities" />
       </div>
 
       <!-- Sidebar for desktop -->
@@ -183,10 +185,13 @@ import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import Alert from '@/components/Alert'
+import { BellIcon } from '@heroicons/vue/solid'
+import ActivityFeed from '@/components/ActivityFeed'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ActivityFeed,
     Alert,
     InvoiceActionItems,
     ConvertInvoiceModal,
@@ -200,6 +205,7 @@ export default defineComponent({
     Authenticated,
     Link,
     SonarMenuItem,
+    BellIcon,
   },
   props: {
     user: Object,
@@ -211,7 +217,7 @@ export default defineComponent({
 
   setup (props) {
     const { displayCurrency } = displaysCurrency()
-    const { displayDate } = displaysDate()
+    const { displayDate, fromNow } = displaysDate()
     const { can, canAny } = checksPermissions(props.permissions)
     const editStatus = ref(false)
     const convert = ref(false)
@@ -223,6 +229,7 @@ export default defineComponent({
       editStatus,
       displayDate,
       convert,
+      fromNow,
     }
   }
 })
