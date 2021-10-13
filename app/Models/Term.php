@@ -31,8 +31,8 @@ class Term extends Model
 
     public function getSchoolYearsAttribute()
     {
-        $start = substr($this->start_year, 2);
-        $end = substr($this->start_year + 1, 2);
+        $start = substr((string) $this->start_year, 2);
+        $end = substr((string) ($this->start_year + 1), 2);
 
         return $start . '-' . $end;
     }

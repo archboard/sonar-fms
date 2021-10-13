@@ -133,12 +133,7 @@ class InvoiceController extends Controller
         ])->withViewData(compact('title'));
     }
 
-    /**
-     * @param Request $request
-     * @param Invoice $invoice
-     * @return \Inertia\Response|\Inertia\ResponseFactory
-     */
-    public function edit(Invoice $invoice)
+    public function edit(Invoice $invoice): \Inertia\ResponseFactory
     {
         $title = __('Update invoice');
         $breadcrumbs = [

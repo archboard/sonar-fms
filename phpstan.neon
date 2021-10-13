@@ -1,0 +1,26 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    scanFiles:
+        # - _ide_helper.php
+        # - _ide_helper_models.php
+
+    # The level 8 is the highest level
+    level: 5
+
+    ignoreErrors:
+        - '#Unsafe usage of new static#'
+        - '#^Call to method \w+\(\) on an unknown class Spatie\\YiiRay\\Ray\.$#'
+        - '#^Call to method \w+\(\) on an unknown class Spatie\\WordPressRay\\Ray\.$#'
+        - '#^Call to method \w+\(\) on an unknown class Spatie\\RayBundle\\Ray\.$#'
+        - '#^PHPDoc tag @mixin contains unknown class App\\Models\S*$#'
+        - '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response::status\(\).$#'
+
+    # excludePaths:
+    #     - ./*/*/FileToBeExcluded.php
+
+    checkMissingIterableValueType: false

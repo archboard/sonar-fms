@@ -12,7 +12,6 @@ class ShowInstallationPageController extends Controller
      * Handle the incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param Tenant $tenant
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function __invoke(Request $request)

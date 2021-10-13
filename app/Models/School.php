@@ -146,9 +146,10 @@ class School extends Model
 
     public static function current(): ?static
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = auth()->user();
 
+        /** @var School $school */
         if ($user && $school = $user->school) {
             return $school;
         }

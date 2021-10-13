@@ -38,6 +38,7 @@
     "laravel/telescope": "^4.4",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^5.0",
+    "nunomaduro/larastan": "^0.7.12",
     "phpunit/phpunit": "^9.3.3",
     "predis/predis": "^1.1"
   },
@@ -86,6 +87,8 @@
       "@php artisan ide-helper:models -M",
       "@php artisan telescope:publish",
       "@php artisan horizon:publish"
-    ]
+    ],
+    "stan": "./vendor/bin/phpstan analyse --memory-limit=2G",
+    "test": "./vendor/bin/phpunit"
   }
 }

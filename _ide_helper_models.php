@@ -816,7 +816,6 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Fee[] $fees
  * @property-read int|null $fees_count
  * @property-read array $grade_levels
- * @property-read string $invoice_number_prefix
  * @property-read mixed $tax_rate_converted
  * @property-read mixed $tax_rate_formatted
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports

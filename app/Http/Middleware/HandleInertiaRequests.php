@@ -71,7 +71,7 @@ class HandleInertiaRequests extends Middleware
                 },
             ],
             'mainNav' => function () use ($request) {
-                /** @var User $user */
+                /** @var User|null $user */
                 $user = $request->user();
 
                 if (!$user) {
@@ -148,7 +148,7 @@ class HandleInertiaRequests extends Middleware
                 return $links;
             },
             'subNav' => function () use ($request) {
-                /** @var User $user */
+                /** @var User|null $user */
                 $user = $request->user();
 
                 if (!$user) {

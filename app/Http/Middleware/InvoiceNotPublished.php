@@ -17,7 +17,7 @@ class InvoiceNotPublished
      */
     public function handle(Request $request, Closure $next)
     {
-        /** @var Invoice $invoice */
+        /** @var Invoice|null $invoice */
         $invoice = $request->route('invoice');
 
         if ($invoice && !$invoice->published_at) {

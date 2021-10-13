@@ -17,7 +17,7 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next)
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $request->user();
 
         $locale = $user

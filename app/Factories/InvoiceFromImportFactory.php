@@ -154,9 +154,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * Converts Excel's number format to a
      * Carbon instance and returns the date/time string
-     *
-     * @param $value
-     * @return string|null
      */
     protected function convertDateTime($value): ?string
     {
@@ -165,7 +162,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
-            return $date->addMinutes($minutes)
+            return $date->addMinutes((int) $minutes)
                 ->roundUnit('minute', 15)
                 ->setTimezone(config('app.timezone'))
                 ->toDateTimeString();
@@ -183,9 +180,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * Converts Excel's number format to a
      * Carbon instance and returns the date string
-     *
-     * @param $value
-     * @return string|null
      */
     protected function convertDate($value): ?string
     {
@@ -195,7 +189,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $hours = $days * 24;
             $minutes = $hours * 60;
 
-            return $date->addMinutes($minutes)
+            return $date->addMinutes((int) $minutes)
                 ->toDateString();
         }
 
@@ -682,11 +676,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     /**
      * This gets the total discount for an individual item
-     *
-     * @param $itemId
-     * @return int
      */
-    protected function getItemDiscount($itemId): int
+    protected function getItemDiscount(string|int $itemId): int
     {
         return collect($this->getMapField('scholarships'))
             ->reduce(function (int $total, array $item, int $index) use ($itemId) {

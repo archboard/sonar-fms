@@ -58,7 +58,6 @@ class FeeController extends Controller
         $school = $request->school();
         $data['tenant_id'] = $school->tenant_id;
 
-        /** @var Fee $fee */
         $school->fees()->create($data);
 
         session()->flash('success', __('Fee created successfully.'));
