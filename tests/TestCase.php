@@ -17,6 +17,7 @@ abstract class TestCase extends BaseTestCase
     protected Tenant $tenant;
     protected School $school;
     protected ?User $user = null;
+    protected bool $signIn = false;
 
     protected function setUp(): void
     {
@@ -37,6 +38,10 @@ abstract class TestCase extends BaseTestCase
 
         $this->app->bind(School::class, fn () => $this->school);
         $this->app->bind(Tenant::class, fn () => $this->tenant);
+
+        if ($this->signIn) {
+            $this->signIn();
+        }
     }
 
     protected function uuid(): string
