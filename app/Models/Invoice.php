@@ -357,6 +357,11 @@ class Invoice extends Model
         return __('Unpaid');
     }
 
+    public function getIdAttribute($id)
+    {
+        return $this->invoice_number;
+    }
+
     public function getPaymentMadeAttribute(): bool
     {
         return $this->amount_due !== $this->remaining_balance;
