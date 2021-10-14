@@ -101,7 +101,7 @@ class InvoiceController extends Controller
      */
     public function show(Request $request, Invoice $invoice)
     {
-        $title = $invoice->title;
+        $title = $invoice->title . ': ' . $invoice->invoice_number;
         $invoice->fullLoad()
             ->load('activities', 'activities.causer');
 

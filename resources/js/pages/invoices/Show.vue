@@ -1,11 +1,10 @@
 <template>
   <Authenticated>
     <template #inTitle>
-      <InvoiceStatusBadge class="ml-3" :invoice="invoice" size="lg" />
     </template>
 
     <template #afterTitle>
-      <HelpText>{{ __('Invoice #:invoice_number', { invoice_number: invoice.id }) }}</HelpText>
+      <InvoiceStatusBadge :invoice="invoice" size="lg" />
     </template>
 
     <template #actions>
@@ -36,7 +35,7 @@
           <Link :href="$route('students.show', student)">
             {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
           </Link>
-          <HelpText class="mt-0">{{ student.grade_level_formatted }}</HelpText>
+          <HelpText class="mt-0 leading-0">{{ student.grade_level_formatted }}</HelpText>
         </div>
       </div>
       <div>
