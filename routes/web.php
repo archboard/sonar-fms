@@ -173,13 +173,13 @@ Route::middleware('tenant')->group(function () {
                 Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
                     ->name('invoices.create');
 
+                Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create']);
+
                 Route::prefix('/invoices/{invoice}')
                     ->name('invoices.')
                     ->group(function () {
                         Route::get('/', [\App\Http\Controllers\InvoiceController::class, 'show'])
                             ->name('show');
-
-                        Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create']);
 
                         Route::middleware('invoice_unpublished')
                             ->group(function () {
