@@ -179,6 +179,8 @@ Route::middleware('tenant')->group(function () {
                         Route::get('/', [\App\Http\Controllers\InvoiceController::class, 'show'])
                             ->name('show');
 
+                        Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create']);
+
                         Route::middleware('invoice_unpublished')
                             ->group(function () {
                                 Route::get('edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])
