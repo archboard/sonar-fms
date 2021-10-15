@@ -220,6 +220,11 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->locale;
     }
 
+    public function invoices(): BelongsToMany
+    {
+        return $this->belongsToMany(Invoice::class);
+    }
+
     public function getPermissionsForSchool(School $school = null): array
     {
         $school = $school ?? $this->school;
