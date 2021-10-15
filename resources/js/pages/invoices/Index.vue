@@ -45,6 +45,9 @@
           <Link is="a" href="#" @click.prevent="clearSelection">
             {{ __('Remove selection') }}
           </Link>
+          <Link href="/combine">
+            {{ __('Combine') }}
+          </Link>
         </div>
       </div>
     </FadeIn>
