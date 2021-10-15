@@ -70,6 +70,11 @@ class InvoiceSelectionController extends Controller
             ->invoice($uuid)
             ->delete();
 
+        if ($request->wantsInertia()) {
+            session()->flash('success', __('Invoice removed from selection.'));
+            return back();
+        }
+
         return response()->json();
     }
 }
