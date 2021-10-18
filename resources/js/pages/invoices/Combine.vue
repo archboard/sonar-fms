@@ -1,6 +1,6 @@
 <template>
   <Authenticated>
-    <form @submit.prevent="combine">
+    <form @submit.prevent="reviewing = true">
       <FormMultipartWrapper>
         <div class="text-gray-700 dark:text-gray-100 mb-8">
           <p class="mb-4">{{ __('Combining invoices allows you to join multiple invoices into a single central invoice, while maintaining all the data and student association of the subsidiary invoices. Payments will be distributed among the subsidiary invoices, which is configurable when recording the payment.') }}</p>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="pt-8">
-          <CardSectionHeader>{{ __('Assigned users') }}</CardSectionHeader>
+          <CardSectionHeader>{{ __('Assigned users') }}<Req /></CardSectionHeader>
           <HelpText>
             {{ __("When you combine invoices, the original users will not be able to view the individual invoices. Only the users selected below will be able to view and interact with the combined invoice.") }}
           </HelpText>
@@ -67,18 +67,48 @@
           <InvoiceDetailsForm v-model="form" />
         </div>
 
+        <!-- Payment schedules -->
+        <div class="pt-8">
+          <InvoicePaymentSchedules
+            v-model="form.payment_schedules"
+            :form="form"
+            :total="total"
+          />
+        </div>
+
         <div class="mt-8 p-4 border-t border-gray-400 bg-gray-200 dark:bg-gray-700 dark:border-gray-300 rounded-b-md space-x-3">
-          <Button type="submit">
-            {{ __('Combine invoices') }}
+          <Button type="button" @click.prevent="reviewing = true">
+            {{ __('Review and combine') }}
+          </Button>
+          <Button v-if="isNew" type="button" @click.prevent="saveAsDraft" color="white">
+            {{ __('Save as draft') }}
+          </Button>
+          <Button v-else type="button" @click.prevent="updateDraft" color="white">
+            {{ __('Update draft') }}
           </Button>
         </div>
       </FormMultipartWrapper>
     </form>
+
+
+    <Modal
+      v-if="reviewing"
+      @close="reviewing = false"
+      @action="combine"
+      :action-loading="form.processing"
+      size="xl"
+    >
+      <CombineInvoiceSummary
+        :invoice="form"
+        :total="total"
+        :selection="selection"
+      />
+    </Modal>
   </Authenticated>
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { computed, defineComponent, inject, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import PageProps from '@/mixins/PageProps'
 import { useForm } from '@inertiajs/inertia-vue3'
@@ -100,10 +130,18 @@ import { Inertia } from '@inertiajs/inertia'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
+import Req from '@/components/forms/Req'
+import InvoicePaymentSchedules from '@/components/forms/invoices/InvoicePaymentSchedules'
+import Modal from '@/components/Modal'
+import CombineInvoiceSummary from '@/components/CombineInvoiceSummary'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    CombineInvoiceSummary,
+    Modal,
+    InvoicePaymentSchedules,
+    Req,
     CheckboxText,
     Checkbox,
     CheckboxWrapper,
@@ -126,10 +164,16 @@ export default defineComponent({
   props: {
     selection: Array,
     suggestedUsers: Array,
+    invoice: {
+      type: Object,
+      default: () => ({})
+    },
   },
 
   setup (props) {
     const $route = inject('$route')
+    const reviewing = ref(false)
+    const isNew = computed(() => !props.invoice.uuid)
     const form = useForm({
       users: [],
       title: null,
@@ -139,18 +183,31 @@ export default defineComponent({
       available_at: null,
       due_at: null,
       notify: false,
+      payment_schedules: [],
     })
     const removeInvoice = invoice => {
       Inertia.delete($route('invoice-selection.update', invoice.uuid), {
         preserveScroll: true,
       })
     }
+
     const combine = () => {}
+    const saveAsDraft = () => {}
+    const updateDraft = () => {}
+
+    const total = computed(
+      () => props.selection.reduce((total, invoice) => total + invoice.amount_due, 0)
+    )
 
     return {
       form,
       combine,
       removeInvoice,
+      total,
+      reviewing,
+      saveAsDraft,
+      updateDraft,
+      isNew,
     }
   }
 })

@@ -4,11 +4,31 @@
       {{ __('Summary') }}
     </CardSectionHeader>
     <HelpText class="text-sm mt-1">
-      {{ __('Below is the summary of the invoice, including all relevant details that will be displayed when viewing the invoice.') }}
+      {{ __('Below is the summary of the invoice that will be created from combining the following invoices.') }}
     </HelpText>
   </div>
 
   <dl class="sm:divide-y sm:divide-gray-200 dark:sm:divide-gray-500">
+    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+        {{ __('Invoices') }}
+      </dt>
+      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+        <div
+          v-for="item in selection"
+          :key="item.uuid"
+          class="flex items-start justify-between py-1"
+        >
+          <div>
+            {{ item.title }}: <span class="text-gray-500 dark:text-gray-400">{{ item.invoice_number }}</span>
+            <p>{{ item.student.full_name }}</p>
+          </div>
+          <div>
+            {{ item.amount_due_formatted }}
+          </div>
+        </div>
+      </dd>
+    </div>
     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
       <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
         {{ __('Title') }}
@@ -76,66 +96,11 @@
     </div>
     <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
       <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-        {{ __('Line items') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-        <div
-          v-for="item in invoice.items"
-          :key="item.id"
-          class="flex justify-between py-1"
-        >
-          <div>
-            {{ __(':name x :quantity', { ...item }) }}
-          </div>
-          <div>
-            {{ displayCurrency(item.amount_per_unit * item.quantity) }}
-          </div>
-        </div>
-        <div
-          class="flex justify-between font-bold"
-          :class="{
-            'mt-2 pt-2 border-t border-gray-200 dark:border-gray-400': invoice.items.length > 0
-          }"
-        >
-          <div>{{ __('Subtotal' )}}</div>
-          <div>{{ displayCurrency(subtotal) }}</div>
-        </div>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-        {{ __('Scholarships') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-        <div
-          v-for="item in invoice.scholarships"
-          :key="item.id"
-          class="flex justify-between py-1"
-        >
-          <div>
-            {{ item.name }}
-          </div>
-          <div>
-            {{ displayCurrency(getItemDiscount(item)) }}
-          </div>
-        </div>
-        <div
-          class="font-bold flex justify-between"
-          :class="{
-            'mt-2 pt-2 border-t border-gray-200 dark:border-gray-400': invoice.scholarships.length > 0
-          }"
-        >
-          <div>{{ __('Scholarship subtotal' )}}</div>
-          <div>{{ displayCurrency(scholarshipSubtotal) }}</div>
-        </div>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
         {{ __('Payment schedules') }}
       </dt>
       <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
         <div class="space-y-2 divide-y divide-gray-200 dark:divide-gray-500">
+          <div v-if="invoice.payment_schedules.length === 0">{{ __('None') }}</div>
           <div
             v-for="(item, index) in invoice.payment_schedules"
             :key="item.id"
@@ -188,8 +153,6 @@ import displaysCurrency from '@/composition/displaysCurrency'
 import Button from '@/components/Button'
 import CardSectionHeader from '@/components/CardSectionHeader'
 import displaysDate from '@/composition/displaysDate'
-import invoiceItemForm from '@/composition/invoiceItemForm'
-import invoiceScholarshipForm from '@/composition/invoiceScholarshipForm'
 import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
@@ -209,7 +172,9 @@ export default {
     invoice: {
       type: Object,
       required: true,
-    }
+    },
+    total: Number,
+    selection: Array,
   },
   emits: ['close'],
 
@@ -218,41 +183,17 @@ export default {
 
     const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
-    const total = computed(() => {
-      let total = subtotal.value - scholarshipSubtotal.value
-
-      if (total < 0) {
-        total = 0
-      }
-
-      return total
-    })
-    const totalDue = computed(() => displayCurrency(total.value))
-
-    // Invoice line items
-    const {
-      subtotal,
-    } = invoiceItemForm(props.invoice)
-
-    // Scholarships
-    const {
-      scholarshipSubtotal,
-      getItemDiscount,
-    } = invoiceScholarshipForm(props.invoice)
+    const totalDue = computed(() => displayCurrency(props.total))
 
     // Payment schedules
-    const { getScheduleTotal } = invoicePaymentScheduleForm(props.invoice, total)
+    const { getScheduleTotal } = invoicePaymentScheduleForm(props.invoice, props.total)
 
     return {
       school,
-      subtotal,
       displayCurrency,
       displayDate,
       timezone,
-      scholarshipSubtotal,
-      total,
       totalDue,
-      getItemDiscount,
       getScheduleTotal,
     }
   },

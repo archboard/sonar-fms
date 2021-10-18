@@ -125,9 +125,7 @@ abstract class InvoiceFactory
 
         DB::transaction(function () {
             DB::table('invoices')
-                ->insert(
-                    $this->invoices->toArray()
-                );
+                ->insert($this->invoices->toArray());
 
             DB::table('invoice_items')
                 ->insert($this->invoiceItems->toArray());

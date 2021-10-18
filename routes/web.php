@@ -232,6 +232,7 @@ Route::middleware('tenant')->group(function () {
 
                 Route::get('/combine', [\App\Http\Controllers\CombineInvoiceSelectionController::class, 'index'])
                     ->name('invoices.combine');
+                Route::post('/combine', [\App\Http\Controllers\CombineInvoiceSelectionController::class, 'store']);
 
                 /**
                  * User Routes

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Factories\CombineInvoiceFactory;
+use App\Http\Requests\CombineInvoicesRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\UserResource;
 use App\Models\Invoice;
@@ -44,5 +46,22 @@ class CombineInvoiceSelectionController extends Controller
             'selection' => InvoiceResource::collection($selection),
             'suggestedUsers' => UserResource::collection($suggestedUsers),
         ])->withViewData(compact('title'));
+    }
+
+    /**
+     * Combines the user's selection into a single invoice
+     * that contains the selection as children invoices
+     *
+     * @param CombineInvoicesRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(CombineInvoicesRequest $request)
+    {
+        $results = CombineInvoiceFactory::make($request)
+            ->build();
+
+        session()->flash('success', __('Invoices combined successfully.'));
+
+        return redirect()->route('invoices.show', $results->first());
     }
 }
