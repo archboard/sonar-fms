@@ -195,7 +195,11 @@ export default defineComponent({
       payment_schedules: props.invoice.payment_schedules || [],
     })
     const removeInvoice = invoice => {
-      Inertia.delete($route('invoice-selection.update', invoice.uuid), {
+      const route = props.invoice.uuid
+        ? `/child/${invoice.uuid}`
+        : $route('invoice-selection.update', invoice.uuid)
+
+      Inertia.delete(route, {
         preserveScroll: true,
       })
     }

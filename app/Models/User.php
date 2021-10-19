@@ -433,6 +433,7 @@ class User extends Authenticatable implements HasLocalePreference
         return static::whereHas('students', function (Builder $builder) {
                 $builder->whereIn('students.id', $this->selectedInvoices->pluck('student_id'));
             })
+            ->orderBy('last_name')
             ->get();
     }
 

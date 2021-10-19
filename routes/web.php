@@ -236,6 +236,8 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'edit']);
                 Route::put('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'update']);
 
+                Route::delete('/child/{invoice}', \App\Http\Controllers\RemoveChildInvoiceController::class);
+
                 /**
                  * User Routes
                  */
