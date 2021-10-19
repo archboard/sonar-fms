@@ -230,9 +230,11 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/layouts/{layout}/preview', \App\Http\Controllers\PreviewLayoutController::class)
                     ->name('layouts.preview');
 
-                Route::get('/combine', [\App\Http\Controllers\CombineInvoiceSelectionController::class, 'index'])
+                Route::get('/combine', [\App\Http\Controllers\CombineInvoiceController::class, 'index'])
                     ->name('invoices.combine');
-                Route::post('/combine', [\App\Http\Controllers\CombineInvoiceSelectionController::class, 'store']);
+                Route::post('/combine', [\App\Http\Controllers\CombineInvoiceController::class, 'store']);
+                Route::get('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'edit']);
+                Route::put('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'update']);
 
                 /**
                  * User Routes

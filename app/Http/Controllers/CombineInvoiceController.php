@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class CombineInvoiceSelectionController extends Controller
+class CombineInvoiceController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -36,15 +36,10 @@ class CombineInvoiceSelectionController extends Controller
             return redirect()->route('invoices.index');
         }
 
-        $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
-                $builder->whereIn('students.id', $selection->pluck('student_id'));
-            })
-            ->get();
-
         return inertia('invoices/Combine', [
             'title' => $title,
             'selection' => InvoiceResource::collection($selection),
-            'suggestedUsers' => UserResource::collection($suggestedUsers),
+            'suggestedUsers' => UserResource::collection($user->getSelectionSuggestedUsers()),
         ])->withViewData(compact('title'));
     }
 
@@ -57,11 +52,52 @@ class CombineInvoiceSelectionController extends Controller
      */
     public function store(CombineInvoicesRequest $request)
     {
-        $results = CombineInvoiceFactory::make($request)
+        $results = CombineInvoiceFactory::make($request, $request->user()->selectedInvoices)
             ->build();
 
         session()->flash('success', __('Invoices combined successfully.'));
 
         return redirect()->route('invoices.show', $results->first());
+    }
+
+    public function edit(Request $request, Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+
+        if ($invoice->published_at) {
+            session()->flash('error', __('This invoice is already published.'));
+
+            return redirect()->route('invoices.show', $invoice);
+        }
+
+        $selection = $invoice->children()
+            ->with('student', 'currency')
+            ->get();
+
+        if ($selection->isEmpty()) {
+            return redirect()->route('invoices.edit', $invoice);
+        }
+
+        $title = __('Edit combined invoice :invoice_number', [
+            'invoice_number' => $invoice->invoice_number,
+        ]);
+
+        $invoice->load(
+            'invoicePaymentSchedules',
+            'invoicePaymentSchedules.invoicePaymentTerms'
+        );
+        $assignedUsers = $invoice->users()->pluck('id');
+        $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
+                $builder->whereIn('students.id', $selection->pluck('student_id'));
+            })
+            ->get();
+
+        return inertia('invoices/Combine', [
+            'title' => $title,
+            'invoice' => $invoice->toResource(),
+            'assignedUsers' => $assignedUsers,
+            'selection' => InvoiceResource::collection($selection),
+            'suggestedUsers' => UserResource::collection($suggestedUsers),
+        ])->withViewData(compact('title'));
     }
 }

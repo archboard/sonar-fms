@@ -428,6 +428,14 @@ class User extends Authenticatable implements HasLocalePreference
         ]);
     }
 
+    public function getSelectionSuggestedUsers(): Collection
+    {
+        return static::whereHas('students', function (Builder $builder) {
+                $builder->whereIn('students.id', $this->selectedInvoices->pluck('student_id'));
+            })
+            ->get();
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [

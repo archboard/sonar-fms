@@ -60,6 +60,7 @@
                 </CheckboxText>
               </CheckboxWrapper>
             </div>
+            <Error v-if="form.errors.users">{{ form.errors.users }}</Error>
           </div>
         </div>
 
@@ -134,6 +135,8 @@ import Req from '@/components/forms/Req'
 import InvoicePaymentSchedules from '@/components/forms/invoices/InvoicePaymentSchedules'
 import Modal from '@/components/Modal'
 import CombineInvoiceSummary from '@/components/CombineInvoiceSummary'
+import isUndefined from 'lodash/isUndefined'
+import Error from '@/components/forms/Error'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -160,6 +163,7 @@ export default defineComponent({
     FormMultipartWrapper,
     Authenticated,
     TrashIcon,
+    Error,
   },
   props: {
     selection: Array,
@@ -168,6 +172,10 @@ export default defineComponent({
       type: Object,
       default: () => ({})
     },
+    assignedUsers: {
+      type: Array,
+      default: () => ([])
+    }
   },
 
   setup (props) {
@@ -175,15 +183,16 @@ export default defineComponent({
     const reviewing = ref(false)
     const isNew = computed(() => !props.invoice.uuid)
     const form = useForm({
-      users: [],
-      title: null,
-      description: null,
-      term_id: null,
-      invoice_date: new Date(),
-      available_at: null,
-      due_at: null,
-      notify: false,
-      payment_schedules: [],
+      draft: !props.invoice.published_at,
+      users: [...props.assignedUsers],
+      title: props.invoice.title || null,
+      description: props.invoice.description || null,
+      term_id: props.invoice.term_id || null,
+      invoice_date: props.invoice.invoice_date ? new Date(props.invoice.invoice_date) : new Date(),
+      available_at: props.invoice.available_at ? new Date(props.invoice.available_at) : null,
+      due_at: props.invoice.due_at ? new Date(props.invoice.due_at) : null,
+      notify: isUndefined(props.invoice.notify) ? false : props.invoice.notify,
+      payment_schedules: props.invoice.payment_schedules || [],
     })
     const removeInvoice = invoice => {
       Inertia.delete($route('invoice-selection.update', invoice.uuid), {
@@ -191,9 +200,16 @@ export default defineComponent({
       })
     }
 
-    const combine = () => {}
-    const saveAsDraft = () => {}
-    const updateDraft = () => {}
+    const combine = () => {
+      form.post(`/combine`)
+    }
+    const saveAsDraft = () => {
+      form.draft = true
+      combine()
+    }
+    const updateDraft = () => {
+      form.draft = true
+    }
 
     const total = computed(
       () => props.selection.reduce((total, invoice) => total + invoice.amount_due, 0)

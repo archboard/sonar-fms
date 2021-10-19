@@ -29,11 +29,13 @@ class InvoiceController extends Controller
         $title = __('Invoices');
         $invoices = $request->school()
             ->invoices()
+            ->notAChild()
             ->with([
                 'student',
                 'school',
                 'currency',
             ])
+            ->withCount('children')
             ->filter($request->all())
             ->paginate($request->input('perPage', 25));
 
@@ -124,7 +126,7 @@ class InvoiceController extends Controller
         return inertia('invoices/Show', [
             'title' => $title,
             'invoice' => $invoice->toResource(),
-            'student' => $invoice->student->toResource(),
+            'student' => $invoice->student?->toResource(),
             'breadcrumbs' => $breadcrumbs,
             'permissions' => [
                 'invoices' => $user->getPermissions(Invoice::class),
@@ -133,8 +135,12 @@ class InvoiceController extends Controller
         ])->withViewData(compact('title'));
     }
 
-    public function edit(Invoice $invoice): \Inertia\ResponseFactory
+    public function edit(Invoice $invoice)
     {
+        if ($invoice->children()->exists()) {
+            return redirect("/combine/{$invoice->uuid}");
+        }
+
         $title = __('Update invoice');
         $breadcrumbs = [
             [

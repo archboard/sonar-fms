@@ -31,9 +31,10 @@ class CombineInvoiceFactory extends InvoiceFactory
     protected int $taxDue = 0;
     protected int $remainingBalance = 0;
 
-    public static function make(CombineInvoicesRequest $request): static
+    public static function make(CombineInvoicesRequest $request, Collection $selection = null): static
     {
         return (new static)
+            ->setSelection($selection)
             ->setRequest($request);
     }
 
@@ -41,11 +42,9 @@ class CombineInvoiceFactory extends InvoiceFactory
     {
         $this->request = $request;
         $this->validatedData = $request->validated();
+        $this->asDraft = $request->boolean('draft');
         $this->school = $request->school();
         $this->user = $request->user();
-        // Only include the invoices which are not void
-        $this->selection = $this->user->selectedInvoices
-            ->filter(fn (Invoice $invoice) => !$invoice->is_void);
         $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
 
         ray('Validated data', $this->validatedData);
@@ -53,6 +52,21 @@ class CombineInvoiceFactory extends InvoiceFactory
         return $this->setTotals()
             ->setInvoiceAttributes()
             ->setPaymentScheduleAttributes();
+    }
+
+    /**
+     * @param Collection<Invoice>|null $selection
+     * @return $this
+     */
+    public function setSelection(Collection $selection = null): static
+    {
+        if ($selection) {
+            // Only include the invoices which are not void
+            $this->selection = $selection
+                ->filter(fn (Invoice $invoice) => !$invoice->is_void);
+        }
+
+        return $this;
     }
 
     /**
@@ -198,16 +212,21 @@ class CombineInvoiceFactory extends InvoiceFactory
     public function build(): Collection
     {
         // Add the invoice attributes
+        $publishedAt = $this->asDraft ? null : $this->now;
         $this->invoices->push(array_replace(
-            ['published_at' => $this->asDraft ? null : $this->now],
+            ['published_at' => $publishedAt],
             $this->invoiceAttributes
         ));
 
         $results = $this->store();
 
         // Update the selection to include the parent id
+        // and match the published status of the parent
         Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
-            ->update(['parent_uuid' => $this->invoiceAttributes['uuid']]);
+            ->update([
+                'parent_uuid' => $this->invoiceAttributes['uuid'],
+                'published_at' => $publishedAt,
+            ]);
 
         // Then remove the user's invoice selection
         $this->user->invoiceSelections()->delete();

@@ -15,10 +15,10 @@
     <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
       {{ __('Publish') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="$route('students.show', invoice.student)">
+    <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="$route('students.show', invoice.student)">
       {{ __('View student') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
+    <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
       {{ __('New invoice for student') }}
     </SonarMenuItem>
   </div>

@@ -28,6 +28,7 @@ class CombineInvoicesRequest extends FormRequest
         $school = $this->school();
 
         return [
+            'draft' => 'nullable|boolean',
             'users' => 'required|array|min:1|exists:users,id',
             'title' => 'required',
             'description' => 'nullable',
@@ -48,7 +49,10 @@ class CombineInvoicesRequest extends FormRequest
 
     public function messages()
     {
-        return [];
+        return [
+            'users.required' => __('Please choose at least one user.'),
+            'users.min' => __('Please choose at least one user.'),
+        ];
     }
 
     public function attributes()

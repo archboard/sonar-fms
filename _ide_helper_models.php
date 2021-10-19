@@ -213,7 +213,7 @@ namespace App\Models{
  * @property string|null $import_id
  * @property int $tenant_id
  * @property int $school_id
- * @property int $student_id
+ * @property int|null $student_id
  * @property int $user_id
  * @property int|null $term_id
  * @property string $title
@@ -279,10 +279,12 @@ namespace App\Models{
  * @property-read int|null $invoice_tax_items_count
  * @property-read Invoice|null $parent
  * @property-read \App\Models\School $school
- * @property-read \App\Models\Student $student
+ * @property-read \App\Models\Student|null $student
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\Term|null $term
  * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
  * @method static Builder|Invoice batch(string $batch)
  * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static Builder|Invoice filter(array $filters)
@@ -1170,6 +1172,8 @@ namespace App\Models{
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceSelection[] $invoiceSelections
  * @property-read int|null $invoice_selections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles

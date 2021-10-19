@@ -234,6 +234,7 @@ class CombineInvoicesTest extends TestCase
         $this->assertEquals(Carbon::parse($data['available_at'])->setTimezone(config('app.timezone'))->toDateTimeString(), $invoice->available_at->toDateTimeString());
         $this->assertEquals(Carbon::parse($data['due_at'])->setTimezone(config('app.timezone'))->toDateTimeString(), $invoice->due_at->toDateTimeString());
         $this->assertNotNull($invoice->invoice_date);
+        $this->assertNotNull($invoice->published_at);
         $this->assertEquals(1, $invoice->activities()->count());
         $this->assertEquals(count($data['payment_schedules']), $invoice->invoicePaymentSchedules()->count());
 
@@ -263,5 +264,39 @@ class CombineInvoicesTest extends TestCase
         }
 
         Queue::assertNothingPushed();
+    }
+
+    public function test_can_join_invoices_with_a_voided_invoice()
+    {
+        $this->assignPermission('create', Invoice::class);
+        $this->createSelection();
+        $voided = $this->selection->random();
+        $voided->update(['voided_at' => now()]);
+        $this->assertEquals($this->selection->count(), $this->user->invoiceSelections()->count());
+
+        $addedUser1 = $this->createUser();
+
+        $data = [
+            'users' => [$addedUser1->id],
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->sentence(),
+            'available_at' => now()->format('Y-m-d\TH:i:s.v\Z'),
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'payment_schedules' => [],
+        ];
+
+        $this->post(route('invoices.combine'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals(0, $this->user->invoiceSelections()->count());
+
+        $childInvoices = Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
+            ->whereNotNull('parent_uuid')
+            ->get();
+
+        $this->assertEquals($this->selection->count() - 1, $childInvoices->count());
     }
 }
