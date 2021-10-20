@@ -15,8 +15,8 @@ class AddInvoiceUserTable extends Migration
     {
         Schema::create('invoice_user', function (Blueprint $table) {
             $table->foreignUuid('invoice_uuid')->constrained('invoices', 'uuid')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->primary(['invoice_uuid', 'user_id']);
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->primary(['invoice_uuid', 'user_uuid']);
         });
     }
 

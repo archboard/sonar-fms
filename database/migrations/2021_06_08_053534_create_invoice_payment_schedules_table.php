@@ -18,6 +18,7 @@ class CreateInvoicePaymentSchedulesTable extends Migration
             $table->uuid('invoice_uuid')->index()->nullable();
             $table->foreign('invoice_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
             $table->uuid('batch_id')->index()->nullable();
+            $table->foreign('batch_id')->references('uuid')->on('invoice_batches')->onDelete('cascade');
             $table->unsignedBigInteger('amount');
             $table->timestamps();
         });

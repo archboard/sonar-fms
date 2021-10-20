@@ -18,12 +18,14 @@ class CreateInvoicesTable extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->index();
             // Used for batch creations, e.g. creating an invoice from the student selection
-            $table->string('batch_id')->index()->nullable();
+            $table->uuid('batch_id')->index()->nullable();
+            $table->foreign('batch_id')->references('uuid')->on('invoice_batches')->onDelete('cascade');
             // Used for tracking imports via excel/csv
             $table->string('import_id')->index()->nullable();
             $table->foreignId('tenant_id')->index()->constrained()->onDelete('cascade');
             $table->foreignId('school_id')->index()->constrained()->onDelete('cascade');
-            $table->foreignUuid('student_uuid')->constrained('students', 'uuid')->onDelete('cascade');
+            $table->uuid('student_uuid')->index()->nullable();
+            $table->foreign('student_uuid')->references('uuid')->on('students')->onDelete('set null');
             $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
             $table->unsignedBigInteger('term_id')->nullable();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('set null');
@@ -41,6 +43,7 @@ class CreateInvoicesTable extends Migration
             $table->boolean('notify')->default(false);
             $table->dateTime('notify_at')->nullable();
             $table->dateTime('notified_at')->nullable();
+            $table->text('created_for')->nullable();
             $table->timestamps();
         });
     }
