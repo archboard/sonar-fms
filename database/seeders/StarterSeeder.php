@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
 use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
@@ -46,6 +47,8 @@ class StarterSeeder extends Seeder
                 'high_grade' => 12,
                 'low_grade' => -2,
                 'active' => true,
+                'currency_id' => Currency::where('code', 'CNY')->first()->id,
+                'timezone' => 'Asia/Shanghai',
             ],
         );
 
