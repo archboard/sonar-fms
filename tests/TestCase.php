@@ -24,7 +24,8 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         // Do a completely fresh db
-        $this->artisan('migrate:refresh --force --seed');
+//        $this->artisan('migrate:refresh --force --seed');
+        $this->seed();
 
         $this->tenant = Tenant::firstOrFail();
         $this->tenant->load('schools');
