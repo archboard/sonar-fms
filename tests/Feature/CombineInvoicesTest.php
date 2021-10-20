@@ -299,4 +299,43 @@ class CombineInvoicesTest extends TestCase
 
         $this->assertEquals($this->selection->count() - 1, $childInvoices->count());
     }
+
+    public function test_can_combine_invoices_into_a_draft()
+    {
+        Queue::fake();
+        $this->assignPermission('create', Invoice::class);
+        $this->createSelection();
+        $this->assertEquals($this->selection->count(), $this->user->invoiceSelections()->count());
+
+        $addedUser1 = $this->createUser();
+        $addedUser2 = $this->createUser();
+
+        $data = [
+            'draft' => true,
+            'users' => [$addedUser1->id, $addedUser2->id],
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->sentence(),
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => true,
+            'payment_schedules' => [],
+        ];
+
+        $this->post(route('invoices.combine'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals(0, $this->user->invoiceSelections()->count());
+
+        $childInvoices = Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
+            ->whereNotNull('parent_uuid')
+            ->get();
+
+        $this->assertEquals($this->selection->count(), $childInvoices->count());
+        $invoice = Invoice::find($childInvoices->first()->parent_uuid);
+        $this->assertNull($invoice->published_at);
+
+        Queue::assertNothingPushed();
+    }
 }
