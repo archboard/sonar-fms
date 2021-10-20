@@ -3,6 +3,7 @@
 namespace App\SisProviders;
 
 use App\Events\SchoolSyncComplete;
+use App\Factories\UuidFactory;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\Student;
@@ -117,6 +118,8 @@ class PowerSchoolProvider implements SisProvider
             ->method('get')
             ->to("/ws/v1/school/{$school->sis_id}/staff")
             ->expansions('emails');
+        $newUsers = collect();
+        $schoolUser = collect();
 
         while ($results = $builder->paginate()) {
             $existingUsers = $this->tenant
@@ -126,67 +129,62 @@ class PowerSchoolProvider implements SisProvider
                 ->get()
                 ->keyBy('sis_id');
 
-            $entries = array_reduce(
-                $results,
-                function ($entries, $user) use ($school, $existingUsers) {
-                    $email = strtolower(optional($user->emails)->work_email);
+            foreach ($results as $user) {
+                $email = strtolower(optional($user->emails)->work_email);
 
-                    if (!$email) {
-                        return $entries;
-                    }
-
-                    /** @var User $existingUser */
-                    if ($existingUser = $existingUsers->get($user->users_dcid)) {
-                        $existingUser->update([
-                            'email' => $email,
-                            'first_name' => optional($user->name)->first_name,
-                            'last_name' => optional($user->name)->last_name,
-                        ]);
-                        /** @var School $existingSchool */
-                        $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
-
-                        // If the school record exists already, update the staff id just in case
-                        if ($existingSchool && $existingSchool->pivot->staff_id !== $user->uuid) {
-                            $existingUser->schools()
-                                ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
-                        }
-                        // If there isn't a school relationship, add it here
-                        elseif (!$existingSchool) {
-                            $entries[] = [
-                                'school_id' => $school->id,
-                                'user_uuid' => $existingUser->uuid,
-                                'staff_id' => $user->id,
-                            ];
-                        }
-
-                        return $entries;
-                    }
-
-                    /** @var User $newUser */
-                    $newUser = $this->tenant
-                        ->users()
-                        ->create([
-                            'sis_id' => $user->users_dcid,
-                            'email' => $email,
-                            'first_name' => optional($user->name)->first_name,
-                            'last_name' => optional($user->name)->last_name,
-                            'school_id' => $school->id,
-                        ]);
-
-                    $entries[] = [
-                        'school_id' => $school->id,
-                        'user_uuid' => $newUser->uuid,
-                        'staff_id' => $user->id,
-                    ];
-
-                    return $entries;
+                if (!$email) {
+                    continue;
                 }
-            );
 
-            if (!empty($entries)) {
-                DB::table('school_user')->insert($entries);
+                /** @var User $existingUser */
+                if ($existingUser = $existingUsers->get($user->users_dcid)) {
+                    $existingUser->update([
+                        'email' => $email,
+                        'first_name' => optional($user->name)->first_name,
+                        'last_name' => optional($user->name)->last_name,
+                    ]);
+                    /** @var School $existingSchool */
+                    $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
+
+                    // If the school record exists already, update the staff id just in case
+                    if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) {
+                        $existingUser->schools()
+                            ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
+                    }
+                    // If there isn't a school relationship, add it here
+                    elseif (!$existingSchool) {
+                        $schoolUser->push([
+                            'school_id' => $school->id,
+                            'user_uuid' => $existingUser->uuid,
+                            'staff_id' => $user->id,
+                        ]);
+                    }
+
+                    continue;
+                }
+
+                /** @var User $newUser */
+                $uuid = UuidFactory::make();
+                $newUsers->push([
+                    'tenant_id' => $this->tenant->id,
+                    'uuid' => $uuid,
+                    'sis_id' => $user->users_dcid,
+                    'email' => $email,
+                    'first_name' => optional($user->name)->first_name,
+                    'last_name' => optional($user->name)->last_name,
+                    'school_id' => $school->id,
+                ]);
+
+                $schoolUser->push([
+                    'school_id' => $school->id,
+                    'user_uuid' => $uuid,
+                    'staff_id' => $user->id,
+                ]);
             }
         }
+
+        DB::table('users')->insert($newUsers->toArray());
+        DB::table('school_user')->insert($schoolUser->toArray());
     }
 
     public function syncSchoolStudents($sisId)
@@ -551,26 +549,34 @@ class PowerSchoolProvider implements SisProvider
         \Bouncer::cache();
 
         ray()->newScreen("Sync for {$school->name}");
-        ray($school->name, 'syncing school info');
+        ray()->measure();
+        ray('syncing school info');
         $this->syncSchool($sisId);
-        ray($school->name, 'syncing school terms');
+        ray()->measure();
+        ray('syncing school terms');
         $this->syncSchoolTerms($sisId);
-        ray($school->name, 'syncing school staff');
+        ray()->measure();
+        ray('syncing school staff');
         $this->syncSchoolStaff($sisId);
-        ray($school->name, 'syncing school students');
+        ray()->measure();
+        ray('syncing school students');
         $this->syncSchoolStudents($sisId);
-        ray($school->name, 'syncing school guardians');
+        ray()->measure();
+        ray('syncing school guardians');
         $this->syncSchoolStudentGuardians($sisId);
-        ray($school->name, 'syncing school courses');
+        ray()->measure();
+        ray('syncing school courses');
         $this->syncSchoolCourses($sisId);
-        ray($school->name, 'syncing school sections');
+        ray()->measure();
+        ray('syncing school sections');
         $this->syncSchoolSections($sisId);
-        ray($school->name, 'syncing school enrollment');
+        ray()->measure();
+        ray('syncing school enrollment');
         $this->syncSchoolStudentEnrollment($sisId);
+        ray()->measure();
 
         \Bouncer::refresh();
         event(new SchoolSyncComplete($school));
-        ray()->clearScreen();
     }
 
     public function getBuilder(): RequestBuilder

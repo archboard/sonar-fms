@@ -122,9 +122,8 @@ class Tenant extends TenantBase
             return $sisId;
         }
 
-        /** @var School $school */
-        $school = $this->schools()->where('sis_id', $sisId)->firstOrFail();
-        return $school;
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->schools()->where('sis_id', $sisId)->firstOrFail();
     }
 
     public function hasBeenInstalled(): bool
