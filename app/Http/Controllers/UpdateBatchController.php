@@ -21,12 +21,8 @@ class UpdateBatchController extends Controller
         $this->authorize('update', Invoice::class);
 
         $results = InvoiceFromRequestFactory::make($request)
+            ->withOriginalBatchId($batch)
             ->build();
-
-        // Delete the original invoice batch
-        Invoice::batch($batch)
-            ->unpublished()
-            ->delete();
 
         return Invoice::successfullyUpdatedResponse($results);
     }

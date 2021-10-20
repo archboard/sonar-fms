@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class CombineInvoiceFactory extends InvoiceFactory
 {
+    protected string $invoiceUuid;
     protected ?CombineInvoicesRequest $request = null;
     protected array $validatedData = [];
     /** @var Collection<Invoice> */

@@ -28,10 +28,19 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
 
-    public static function make(CreateInvoiceRequest $request): static
+    public static function make(CreateInvoiceRequest $request, string $originalBatchId = null): static
     {
-        return (new static)
+        $instance = (new static)
+            ->withOriginalBatchId($originalBatchId)
             ->setRequest($request);
+
+        // Creating the student id => invoice id mapping to
+        // preserve the original invoice uuids
+        if ($instance->originalBatchId) {
+
+        }
+
+        return $instance;
     }
 
     public function setRequest(CreateInvoiceRequest $request): static

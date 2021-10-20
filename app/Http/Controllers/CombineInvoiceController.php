@@ -60,6 +60,14 @@ class CombineInvoiceController extends Controller
         return redirect()->route('invoices.show', $results->first());
     }
 
+    /**
+     * Edit a parent invoice
+     *
+     * @param Request $request
+     * @param Invoice $invoice
+     * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function edit(Request $request, Invoice $invoice)
     {
         $this->authorize('update', $invoice);
@@ -90,6 +98,8 @@ class CombineInvoiceController extends Controller
         $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
                 $builder->whereIn('students.id', $selection->pluck('student_id'));
             })
+            ->orWhereIn('id', $invoice->users()->pluck('id'))
+            ->orderBy('last_name')
             ->get();
 
         return inertia('invoices/Combine', [
@@ -99,5 +109,24 @@ class CombineInvoiceController extends Controller
             'selection' => InvoiceResource::collection($selection),
             'suggestedUsers' => UserResource::collection($suggestedUsers),
         ])->withViewData(compact('title'));
+    }
+
+    public function update(CombineInvoicesRequest $request, Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+
+        $request->invoiceUuid = $invoice->uuid;
+
+        $results = CombineInvoiceFactory::make($request, $invoice->children)
+            ->withUpdateActivityDescription()
+            ->build();
+
+        // Delete the original invoice
+        $invoice->migrateActivity()
+            ->delete();
+
+        session()->flash('success', __('Invoice updated successfully.'));
+
+        return redirect()->route('invoices.show', $results->first());
     }
 }

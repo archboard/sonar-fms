@@ -800,4 +800,18 @@ class Invoice extends Model
 
         return $prefix . $id;
     }
+
+    /**
+     * Saves the
+     *
+     * @param string $uuid
+     * @return $this
+     */
+    public function migrateActivity(string $uuid): static
+    {
+        $this->activities()
+            ->update(['subject_id' => $uuid]);
+
+        return $this;
+    }
 }

@@ -205,14 +205,16 @@ export default defineComponent({
     }
 
     const combine = () => {
+      form.draft = false
       form.post(`/combine`)
     }
     const saveAsDraft = () => {
       form.draft = true
-      combine()
+      form.post(`/combine`)
     }
     const updateDraft = () => {
       form.draft = true
+      form.put(`/combine/${props.invoice.uuid}`)
     }
 
     const total = computed(
