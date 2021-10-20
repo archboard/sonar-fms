@@ -7,6 +7,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
+use App\Models\InvoiceSelection;
 use App\Models\Student;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
@@ -195,5 +196,15 @@ trait CreatesInvoice
             });
 
         return $batchId;
+    }
+
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function selectInvoice(Invoice $invoice): InvoiceSelection
+    {
+        return $this->user->invoiceSelections()
+            ->create([
+                'school_id' => $this->school->id,
+                'invoice_uuid' => $invoice->uuid
+            ]);
     }
 }

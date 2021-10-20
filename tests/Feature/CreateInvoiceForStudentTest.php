@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -105,6 +106,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
         /** @var Invoice $invoice */
         $invoice = $student->invoices()->first();
+        $this->assertNotNull($invoice->invoice_number);
         $this->assertEquals($invoiceData['title'], $invoice->title);
         $this->assertEquals($invoiceData['description'], $invoice->description);
         $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
@@ -117,6 +119,8 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals($invoiceData['available_at'], $invoice->available_at);
         $this->assertEquals(1, $invoice->invoiceItems()->count());
         $this->assertNotNull($invoice->invoice_date);
+        ray()->queries();
+        $this->assertEquals(1, $invoice->activities()->count());
 
         Queue::assertPushed(SendNewInvoiceNotification::class);
     }

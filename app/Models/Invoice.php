@@ -8,14 +8,17 @@ use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
+use App\Traits\HasActivities;
 use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Hidehalo\Nanoid\Client;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Http\RedirectResponse;
@@ -37,6 +40,9 @@ class Invoice extends Model
     use HasFactory;
     use HasResource;
     use HasTaxRateAttribute;
+    use HasActivities;
+
+    public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     protected $fillable = [
         'uuid',
@@ -69,6 +75,7 @@ class Invoice extends Model
         'published_at',
         'apply_tax_to_all_items',
         'relative_tax_rate',
+        'invoice_number',
     ];
 
     protected $casts = [
@@ -106,6 +113,18 @@ class Invoice extends Model
         'tax_rate',
         'tax_label',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Invoice $invoice) {
+            if ($invoice->isDirty('voided_at')) {
+                // __('Invoice voided by :user.')
+                activity()
+                    ->on($invoice)
+                    ->log('Invoice voided by :user.');
+            }
+        });
+    }
 
     public function scopeFilter(Builder $builder, array $filters)
     {
@@ -226,6 +245,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceTaxItem::class, 'invoice_uuid', 'uuid');
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public function getIsVoidAttribute(): bool
     {
         return !!$this->voided_at;
@@ -333,6 +357,11 @@ class Invoice extends Model
         }
 
         return __('Unpaid');
+    }
+
+    public function getIdAttribute($id)
+    {
+        return $this->invoice_number;
     }
 
     public function getPaymentMadeAttribute(): bool
@@ -758,5 +787,27 @@ class Invoice extends Model
             ->first();
 
         return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
+    }
+
+    public static function generateInvoiceNumber(string $prefix = ''): string
+    {
+        $id = (new Client(8))
+            ->formattedId(static::ALPHABET);
+
+        return $prefix . $id;
+    }
+
+    /**
+     * Saves the
+     *
+     * @param string $uuid
+     * @return $this
+     */
+    public function migrateActivity(string $uuid): static
+    {
+        $this->activities()
+            ->update(['subject_id' => $uuid]);
+
+        return $this;
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceTemplate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 use Tests\Traits\SignsIn;
@@ -30,7 +31,7 @@ class ConvertInvoiceToTemplateTest extends TestCase
         /** @var InvoiceTemplate $template */
         $template = $this->school->invoiceTemplates->first();
 
-        $this->assertEquals($invoice->asInvoiceTemplate(), $template->template);
+        $this->assertEquals(Arr::except($invoice->asInvoiceTemplate(), 'students'), $template->template);
         $this->assertFalse($template->for_import);
         $this->assertEquals($this->user->id, $template->user_id);
         $this->assertEquals('My template', $template->name);

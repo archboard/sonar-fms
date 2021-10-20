@@ -1,11 +1,10 @@
 <template>
   <Authenticated>
     <template #inTitle>
-      <InvoiceStatusBadge class="ml-3" :invoice="invoice" size="lg" />
     </template>
 
     <template #afterTitle>
-      <HelpText>{{ __('Invoice #:invoice_number', { invoice_number: invoice.id }) }}</HelpText>
+      <InvoiceStatusBadge :invoice="invoice" size="lg" />
     </template>
 
     <template #actions>
@@ -36,7 +35,7 @@
           <Link :href="$route('students.show', student)">
             {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
           </Link>
-          <HelpText class="mt-0">{{ student.grade_level_formatted }}</HelpText>
+          <HelpText class="mt-0 leading-0">{{ student.grade_level_formatted }}</HelpText>
         </div>
       </div>
       <div>
@@ -44,7 +43,7 @@
           {{ __('Created') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.created_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.is_void">
@@ -52,7 +51,7 @@
           {{ __('Voided') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.voided_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.available_at">
@@ -60,7 +59,7 @@
           {{ __('Available') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.available_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.available_at, 'abbr') }}
         </div>
       </div>
       <div v-if="invoice.due_at">
@@ -68,7 +67,7 @@
           {{ __('Due') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          {{ displayDate(invoice.due_at, 'MMMM D, YYYY H:mm') }}
+          {{ displayDate(invoice.due_at, 'abbr') }}
         </div>
       </div>
     </div>
@@ -100,6 +99,8 @@
             <InvoiceDetails :invoice="invoice" />
           </div>
         </div>
+
+        <ActivityFeed :activities="invoice.activities" />
       </div>
 
       <!-- Sidebar for desktop -->
@@ -120,7 +121,7 @@
             {{ __('Created') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.created_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.created_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.is_void" class="pt-6">
@@ -128,7 +129,7 @@
             {{ __('Voided') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.voided_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.voided_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.available_at" class="pt-6">
@@ -136,7 +137,7 @@
             {{ __('Available') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.available_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.available_at, 'abbr') }}
           </div>
         </div>
         <div v-if="invoice.due_at" class="pt-6">
@@ -144,7 +145,7 @@
             {{ __('Due') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            {{ displayDate(invoice.due_at, 'MMMM D, YYYY H:mm') }}
+            {{ displayDate(invoice.due_at, 'abbr') }}
           </div>
         </div>
       </div>
@@ -183,10 +184,13 @@ import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import Alert from '@/components/Alert'
+import { BellIcon } from '@heroicons/vue/solid'
+import ActivityFeed from '@/components/ActivityFeed'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ActivityFeed,
     Alert,
     InvoiceActionItems,
     ConvertInvoiceModal,
@@ -200,6 +204,7 @@ export default defineComponent({
     Authenticated,
     Link,
     SonarMenuItem,
+    BellIcon,
   },
   props: {
     user: Object,
@@ -211,7 +216,7 @@ export default defineComponent({
 
   setup (props) {
     const { displayCurrency } = displaysCurrency()
-    const { displayDate } = displaysDate()
+    const { displayDate, fromNow } = displaysDate()
     const { can, canAny } = checksPermissions(props.permissions)
     const editStatus = ref(false)
     const convert = ref(false)
@@ -223,6 +228,7 @@ export default defineComponent({
       editStatus,
       displayDate,
       convert,
+      fromNow,
     }
   }
 })

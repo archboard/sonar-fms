@@ -45,7 +45,7 @@
                     {{ __('Tax Settings') }}
                   </CardSectionHeader>
                   <HelpText>
-                    {{ __('Enable tax options for invoices and configure default tax settings') }}
+                    {{ __('Enable tax options for invoices and configure default tax settings.') }}
                   </HelpText>
                 </div>
 
@@ -71,6 +71,29 @@
                       <Input v-model="form.tax_label" id="tax_label" placeholder="VAT" />
                     </InputWrap>
                   </FadeInGroup>
+                </Fieldset>
+              </div>
+              <div class="pt-8">
+                <div class="mb-6">
+                  <CardSectionHeader>
+                    {{ __('Invoice Settings') }}
+                  </CardSectionHeader>
+                  <HelpText>
+                    {{ __('Fine-tune invoice settings.') }}
+                  </HelpText>
+                </div>
+
+                <Fieldset>
+                    <InputWrap :error="form.errors.invoice_number_template">
+                      <Label for="invoice_number_template">{{ __('Invoice number prefix') }}</Label>
+                      <Input v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
+                      <HelpText class="mb-3">
+                        {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-EIXVYSL0` }) }}
+                      </HelpText>
+                      <HelpText>
+                        {{ __('Modifying the prefix now will only affect new invoices and will not change previously generated invoice numbers.') }}
+                      </HelpText>
+                    </InputWrap>
                 </Fieldset>
               </div>
             </FormMultipartWrapper>
@@ -140,6 +163,7 @@ import Timezone from '@/components/forms/Timezone'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import PageProps from '@/mixins/PageProps'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
+import displaysDate from '@/composition/displaysDate'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -177,14 +201,17 @@ export default defineComponent({
       collect_tax: school.collect_tax,
       tax_rate: school.tax_rate_converted,
       tax_label: school.tax_label,
+      invoice_number_template: school.invoice_number_template,
     })
     const submit = () => {
       form.post($route('settings.school'))
     }
+    const { displayDate } = displaysDate()
 
     return {
       form,
       submit,
+      displayDate,
     }
   },
 })

@@ -173,6 +173,8 @@ Route::middleware('tenant')->group(function () {
                 Route::get('create', [\App\Http\Controllers\InvoiceController::class, 'create'])
                     ->name('invoices.create');
 
+                Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create']);
+
                 Route::prefix('/invoices/{invoice}')
                     ->name('invoices.')
                     ->group(function () {
@@ -227,6 +229,14 @@ Route::middleware('tenant')->group(function () {
 
                 Route::get('/layouts/{layout}/preview', \App\Http\Controllers\PreviewLayoutController::class)
                     ->name('layouts.preview');
+
+                Route::get('/combine', [\App\Http\Controllers\CombineInvoiceController::class, 'index'])
+                    ->name('invoices.combine');
+                Route::post('/combine', [\App\Http\Controllers\CombineInvoiceController::class, 'store']);
+                Route::get('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'edit']);
+                Route::put('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'update']);
+
+                Route::delete('/child/{invoice}', \App\Http\Controllers\RemoveChildInvoiceController::class);
 
                 /**
                  * User Routes

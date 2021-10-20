@@ -69,6 +69,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $this->contents = $import->getImportContents();
         $this->school = $import->school;
         $this->user = $import->user;
+        $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
         $this->terms = $this->school->terms->keyBy('sis_assigned_id');
         $this->fees = $this->school->fees->keyBy('id');
         $this->scholarships = $this->school->scholarships->keyBy('id');
@@ -153,9 +154,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * Converts Excel's number format to a
      * Carbon instance and returns the date/time string
-     *
-     * @param $value
-     * @return string|null
      */
     protected function convertDateTime($value): ?string
     {
@@ -164,7 +162,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
-            return $date->addMinutes($minutes)
+            return $date->addMinutes((int) $minutes)
                 ->roundUnit('minute', 15)
                 ->setTimezone(config('app.timezone'))
                 ->toDateTimeString();
@@ -182,9 +180,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * Converts Excel's number format to a
      * Carbon instance and returns the date string
-     *
-     * @param $value
-     * @return string|null
      */
     protected function convertDate($value): ?string
     {
@@ -193,8 +188,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
-            return $date->setTimezone($this->user->timezone)
-                ->addMinutes($minutes)
+
+            return $date->addMinutes((int) $minutes)
                 ->toDateString();
         }
 
@@ -384,6 +379,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'user_uuid' => $this->user->uuid,
             'import_id' => $this->import->id,
             'uuid' => $this->rowInvoiceUuid,
+            'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
             'title' => $this->getMapValue('title'),
             'description' => $this->getMapValue('description'),
             'invoice_date' => $this->getMapValue('invoice_date', 'date') ?? $this->userNow,
@@ -399,7 +395,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'tax_rate' => $this->getMapValue('tax_rate', 'tax rate'),
             'tax_label' => $this->getMapValue('tax_label', 'tax label'),
             'tax_due' => $this->rowTaxDue,
-            'published_at' => $this->now,
+            'published_at' => $this->asDraft ? null : $this->now,
             'created_at' => $this->now,
             'updated_at' => $this->now,
         ];
@@ -680,11 +676,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     /**
      * This gets the total discount for an individual item
-     *
-     * @param $itemId
-     * @return int
      */
-    protected function getItemDiscount($itemId): int
+    protected function getItemDiscount(string|int $itemId): int
     {
         return collect($this->getMapField('scholarships'))
             ->reduce(function (int $total, array $item, int $index) use ($itemId) {

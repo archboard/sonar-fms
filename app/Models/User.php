@@ -207,6 +207,11 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->locale;
     }
 
+    public function invoices(): BelongsToMany
+    {
+        return $this->belongsToMany(Invoice::class);
+    }
+
     public function getPermissionsForSchool(School $school = null): array
     {
         $school = $school ?? $this->school;
@@ -408,6 +413,15 @@ class User extends Authenticatable implements HasLocalePreference
             'locale' => $this->locale,
             'timezone' => $this->timezone,
         ]);
+    }
+
+    public function getSelectionSuggestedUsers(): Collection
+    {
+        return static::whereHas('students', function (Builder $builder) {
+                $builder->whereIn('students.id', $this->selectedInvoices->pluck('student_id'));
+            })
+            ->orderBy('last_name')
+            ->get();
     }
 
     public function getPermissionsMatrix(): array

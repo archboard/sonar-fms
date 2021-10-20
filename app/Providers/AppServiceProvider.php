@@ -73,6 +73,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         ActivityLogger::macro('component', function (string $component) {
+            /** @var ActivityLogger $this */
             return $this->withProperty('component', $component);
         });
     }

@@ -1,7 +1,7 @@
 <template>
   <component
     :is="component"
-    class="border border-transparent overflow-hidden font-medium rounded-md shadow hover:shadow-none text-white focus:outline-none transition ease-in-out duration-150 relative text-center justify-center disabled:cursor-not-allowed focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    class="border border-transparent overflow-hidden font-medium rounded-md shadow hover:shadow-none focus:outline-none transition ease-in-out duration-150 relative text-center justify-center disabled:cursor-not-allowed focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
     :class="[
       buttonSize,
       buttonColor,
@@ -84,7 +84,7 @@ export default {
     return {
       sizes: {
         xs: `px-2.5 py-1.5 text-xs leading-4`,
-        sm: `px-3 py-2 text-sm leading-4`,
+        sm: `px-3 py-1.5 text-sm leading-4`,
         base: `px-4 py-2 text-sm leading-5`,
         lg: `px-4 py-2 sm:py-3 leading-6`,
         xl: `px-4 sm:px-6 py-3 sm:text-lg leading-6`,
@@ -98,11 +98,11 @@ export default {
         height: '',
       },
       colors: {
-        primary: 'bg-primary-600 hover:bg-primary-500 focus:ring-primary-400 active:bg-primary-600',
-        red: 'bg-red-600 hover:bg-red-500 focus:border-red-700 focus:shadow-outline-red active:bg-red-700',
-        yellow: 'bg-yellow-600 hover:bg-yellow-500 focus:border-yellow-700 focus:shadow-outline-yellow active:bg-yellow-700',
-        green: 'bg-green-600 hover:bg-green-500 focus:border-green-700 focus:shadow-outline-green active:bg-green-700',
-        gray: 'bg-gray-600 hover:bg-gray-500 focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700',
+        primary: 'text-white bg-primary-600 hover:bg-primary-500 focus:ring-primary-400 active:bg-primary-600',
+        red: 'text-white bg-red-600 hover:bg-red-500 focus:border-red-700 focus:shadow-outline-red active:bg-red-700',
+        yellow: 'text-white bg-yellow-600 hover:bg-yellow-500 focus:border-yellow-700 focus:shadow-outline-yellow active:bg-yellow-700',
+        green: 'text-white bg-green-600 hover:bg-green-500 focus:border-green-700 focus:shadow-outline-green active:bg-green-700',
+        gray: 'text-white bg-gray-600 hover:bg-gray-500 focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700',
         white: 'text-gray-700 bg-white hover:bg-gray-50 border-gray-300 focus:ring-gray-200 active:bg-gray-100',
       }
     }

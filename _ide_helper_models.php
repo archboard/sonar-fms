@@ -243,6 +243,9 @@ namespace App\Models{
  * @property Carbon|null $published_at
  * @property bool $apply_tax_to_all_items
  * @property float|null $relative_tax_rate
+ * @property string $invoice_number
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
+ * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Currency|null $currency
@@ -276,10 +279,12 @@ namespace App\Models{
  * @property-read int|null $invoice_tax_items_count
  * @property-read Invoice|null $parent
  * @property-read \App\Models\School $school
- * @property-read \App\Models\Student $student
+ * @property-read \App\Models\Student|null $student
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\Term|null $term
  * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
  * @method static Builder|Invoice batch(string $batch)
  * @method static \Database\Factories\InvoiceFactory factory(...$parameters)
  * @method static Builder|Invoice filter(array $filters)
@@ -305,6 +310,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereImportId($value)
  * @method static Builder|Invoice whereInvoiceDate($value)
  * @method static Builder|Invoice whereInvoiceLayoutId($value)
+ * @method static Builder|Invoice whereInvoiceNumber($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -805,6 +811,7 @@ namespace App\Models{
  * @property bool $collect_tax
  * @property float|null $tax_rate
  * @property string|null $tax_label
+ * @property string|null $invoice_number_template
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \App\Models\Currency|null $currency
@@ -846,6 +853,7 @@ namespace App\Models{
  * @method static Builder|School whereCurrencyId($value)
  * @method static Builder|School whereHighGrade($value)
  * @method static Builder|School whereId($value)
+ * @method static Builder|School whereInvoiceNumberTemplate($value)
  * @method static Builder|School whereLowGrade($value)
  * @method static Builder|School whereName($value)
  * @method static Builder|School whereSchoolNumber($value)
@@ -1164,6 +1172,8 @@ namespace App\Models{
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceSelection[] $invoiceSelections
  * @property-read int|null $invoice_selections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles

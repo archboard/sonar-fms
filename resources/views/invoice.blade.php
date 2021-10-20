@@ -10,7 +10,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
     <title>{{ $title }}</title>
     <link href="{{ url('/css/ckeditor.css') }}" rel="stylesheet"/>
+    @if (app()->isLocal())
+    <link href="{{ mix('/css/pdf.css') }}" rel="stylesheet"/>
+    @else
     <link href="{{ url('/css/pdf.css') }}" rel="stylesheet"/>
+    @endif
     <style>
       html {
         font-size: 12px;

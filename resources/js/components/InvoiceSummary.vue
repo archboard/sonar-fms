@@ -181,18 +181,19 @@
 
 <script>
 import { computed } from 'vue'
-import CardHeader from './CardHeader'
-import HelpText from './HelpText'
-import Label from './forms/Label'
-import displaysCurrency from '../composition/displaysCurrency'
-import Button from './Button'
-import CardSectionHeader from './CardSectionHeader'
-import displaysDate from '../composition/displaysDate'
-import invoiceItemForm from '../composition/invoiceItemForm'
-import invoiceScholarshipForm from '../composition/invoiceScholarshipForm'
-import invoicePaymentScheduleForm from '../composition/invoicePaymentScheduleForm'
-import CardWrapper from './CardWrapper'
-import CardPadding from './CardPadding'
+import CardHeader from '@/components/CardHeader'
+import HelpText from '@/components/HelpText'
+import Label from '@/components/forms/Label'
+import displaysCurrency from '@/composition/displaysCurrency'
+import Button from '@/components/Button'
+import CardSectionHeader from '@/components/CardSectionHeader'
+import displaysDate from '@/composition/displaysDate'
+import invoiceItemForm from '@/composition/invoiceItemForm'
+import invoiceScholarshipForm from '@/composition/invoiceScholarshipForm'
+import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
+import CardWrapper from '@/components/CardWrapper'
+import CardPadding from '@/components/CardPadding'
+import useSchool from '@/composition/useSchool'
 
 export default {
   components: {
@@ -213,7 +214,7 @@ export default {
   emits: ['close'],
 
   setup (props) {
-    const school = computed(() => page.props.value.school)
+    const { school } = useSchool()
 
     const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()

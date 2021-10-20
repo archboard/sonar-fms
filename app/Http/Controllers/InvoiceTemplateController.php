@@ -75,8 +75,8 @@ class InvoiceTemplateController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param InvoiceTemplate $template
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, InvoiceTemplate $template)
@@ -100,7 +100,7 @@ class InvoiceTemplateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param InvoiceTemplate $template
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(InvoiceTemplate $template)

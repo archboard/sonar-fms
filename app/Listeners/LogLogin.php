@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,11 +17,14 @@ class LogLogin implements ShouldQueue
      */
     public function handle(Login $event)
     {
+        /** @var User $user */
+        $user = $event->user;
+
         // __(':user logged in successfully.')
         activity('auth')
-            ->on($event->user)
+            ->on($user)
             ->withProperties([
-                'user' => $event->user->full_name,
+                'user' => $user->full_name,
             ])
             ->log(':user logged in successfully.');
     }

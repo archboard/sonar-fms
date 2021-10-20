@@ -11,8 +11,8 @@ class SchoolScope implements Scope
 {
     public function apply(Builder $builder, Model $model)
     {
-        if ($school = app(School::class)) {
-            $builder->where("{$model->getTable()}.school_id", $school->id);
+        if ($school = app(School::class)->id) {
+            $builder->where("{$model->getTable()}.school_id", $school);
         }
     }
 

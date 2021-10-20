@@ -16,7 +16,7 @@ class SendTestMailController extends Controller
      */
     public function __invoke(Request $request)
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $request->user();
 
         $user->notify(new TestSmtp());

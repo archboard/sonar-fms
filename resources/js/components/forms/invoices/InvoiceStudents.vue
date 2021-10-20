@@ -93,7 +93,7 @@ export default defineComponent({
   setup (props, context) {
     const { localValue } = invoiceFormComponent(props, context)
     const { students, search, fetchingStudents } = fetchesStudents()
-    const addStudent = ref(false)
+    const addStudent = ref(props.allowStudentEditing && localValue.value.length === 0)
     const removeStudent = studentId => {
       const index = localValue.value.findIndex(id => id === studentId)
       localValue.value.splice(index, 1)

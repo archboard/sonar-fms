@@ -16,13 +16,12 @@
     @endif
     <div class="flex justify-between">
       <div class="">
-        <div class="text-lg font-medium">{{ $invoice->title }}</div>
+        <div class="text-lg font-medium">
+          {{ $invoice->title }}: {{ $invoice->invoice_number }}
+        </div>
         <div class="text-gray-700 text-sm space-x-2">
           <span>
             {{ $invoice->invoice_date->formatLocalized('%B %e, %Y') }}
-          </span>
-          <span>
-            {{ __('Invoice #:number', ['number' => $invoice->id]) }}
           </span>
         </div>
       </div>

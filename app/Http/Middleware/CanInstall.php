@@ -18,7 +18,7 @@ class CanInstall
      */
     public function handle(Request $request, Closure $next)
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $request->user();
         $tenant = Tenant::firstOrNew(['domain' => $request->getHost()]);
 

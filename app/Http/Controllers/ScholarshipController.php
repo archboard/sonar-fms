@@ -64,17 +64,6 @@ class ScholarshipController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Scholarship  $scholarship
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request, Scholarship $scholarship)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

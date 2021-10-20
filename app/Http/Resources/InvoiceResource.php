@@ -15,7 +15,7 @@ class InvoiceResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'invoice_number' => $this->invoice_number,
             'uuid' => $this->uuid,
             'batch_id' => $this->batch_id,
             'title' => $this->title,
@@ -32,6 +32,7 @@ class InvoiceResource extends JsonResource
             'due_at' => $this->due_at,
             'paid_at' => $this->paid_at,
             'published_at' => $this->published_at,
+            'invoice_date' => $this->invoice_date?->toDateString(),
             'voided_at' => $this->voided_at,
             'is_void' => $this->is_void,
             'notified_at' => $this->notified_at,
@@ -48,6 +49,7 @@ class InvoiceResource extends JsonResource
             'tax_label' => $this->tax_label,
             'tax_rate_formatted' => $this->tax_rate_formatted,
             'tax_rate_converted' => $this->tax_rate_converted,
+            'children_count' => $this->children_count,
             'student' => new StudentResource($this->whenLoaded('student')),
             'students' => [$this->student_uuid],
             'school' => new SchoolResource($this->whenLoaded('school')),
@@ -55,6 +57,7 @@ class InvoiceResource extends JsonResource
             'scholarships' => InvoiceScholarshipResource::collection($this->whenLoaded('invoiceScholarships')),
             'payment_schedules' => InvoicePaymentScheduleResource::collection($this->whenLoaded('invoicePaymentSchedules')),
             'payments' => InvoicePaymentResource::collection($this->whenLoaded('invoicePayments')),
+            'activities' => ActivityResource::collection($this->whenLoaded('activities')),
         ];
     }
 }

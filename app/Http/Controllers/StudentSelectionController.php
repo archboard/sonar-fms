@@ -63,7 +63,7 @@ class StudentSelectionController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         /** @var User $user */
         $user = $request->user();
@@ -77,10 +77,10 @@ class StudentSelectionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Request $request
-     * @param $studentId
+     * @param int $studentId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request, $studentId)
+    public function destroy(Request $request, int $studentId)
     {
         /** @var User $user */
         $user = $request->user();

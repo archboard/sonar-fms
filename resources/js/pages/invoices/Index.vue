@@ -45,6 +45,9 @@
           <Link is="a" href="#" @click.prevent="clearSelection">
             {{ __('Remove selection') }}
           </Link>
+          <Link href="/combine">
+            {{ __('Combine') }}
+          </Link>
         </div>
       </div>
     </FadeIn>
@@ -88,17 +91,17 @@
               </span>
             </div>
           </Th>
-          <Th>
-            <div class="flex items-center justify-end text-right cursor-pointer" @click="sortColumn('amount_due')">
-              <span>
-                {{ __('Total due') }}
-              </span>
-              <span v-if="filters.orderBy === 'amount_due'" class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
-              </span>
-            </div>
-          </Th>
+<!--          <Th>-->
+<!--            <div class="flex items-center justify-end text-right cursor-pointer" @click="sortColumn('amount_due')">-->
+<!--              <span>-->
+<!--                {{ __('Total due') }}-->
+<!--              </span>-->
+<!--              <span v-if="filters.orderBy === 'amount_due'" class="relative h-4 w-4 ml-2">-->
+<!--                <SortAscendingIcon v-if="filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />-->
+<!--                <SortDescendingIcon v-if="filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />-->
+<!--              </span>-->
+<!--            </div>-->
+<!--          </Th>-->
           <Th>
             <div class="flex items-center justify-end text-right cursor-pointer" @click="sortColumn('remaining_balance')">
               <span>

@@ -1,25 +1,25 @@
 <template>
   <tr>
     <slot name="prepend" />
-    <Td class="pr-0">
-      <div class="flex items-center">
-        <span class="mr-2">{{ invoice.id }}</span>
+    <Td class="">
+      <span class="whitespace-nowrap">{{ invoice.invoice_number }}</span>
+    </Td>
+    <Td :lighter="false">
+      <div class="flex items-center space-x-1">
+        <InertiaLink :href="$route('invoices.show', invoice)" class="hover:underline">
+          {{ invoice.title }}
+        </InertiaLink>
         <InvoiceStatusBadge :invoice="invoice" size="sm" />
       </div>
     </Td>
-    <Td :lighter="false">
-      <InertiaLink :href="$route('invoices.show', invoice)" class="hover:underline">
-        {{ invoice.title }}
-      </InertiaLink>
-    </Td>
     <Td :lighter="false" v-if="can('students.viewAny') && showStudent">
-      <InertiaLink :href="$route('students.show', invoice.student)" class="hover:underline">
+      <InertiaLink v-if="invoice.student" :href="$route('students.show', invoice.student)" class="hover:underline">
         {{ invoice.student.full_name }}
       </InertiaLink>
     </Td>
-    <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>
+<!--    <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>-->
     <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
-    <Td class="text-right space-x-2">
+    <Td class="text-right space-x-2 pl-0">
       <VerticalDotMenu>
         <InvoiceActionItems
           :invoice="invoice"

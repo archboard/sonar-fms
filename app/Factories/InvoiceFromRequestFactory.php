@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Http\Requests\CreateInvoiceRequest;
+use App\Models\Invoice;
 use App\Models\Student;
 use App\Utilities\NumberUtility;
 use Illuminate\Support\Carbon;
@@ -27,10 +28,19 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
 
-    public static function make(CreateInvoiceRequest $request): static
+    public static function make(CreateInvoiceRequest $request, string $originalBatchId = null): static
     {
-        return (new static)
+        $instance = (new static)
+            ->withOriginalBatchId($originalBatchId)
             ->setRequest($request);
+
+        // Creating the student id => invoice id mapping to
+        // preserve the original invoice uuids
+        if ($instance->originalBatchId) {
+
+        }
+
+        return $instance;
     }
 
     public function setRequest(CreateInvoiceRequest $request): static
@@ -39,6 +49,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->validatedData = $request->validated();
         $this->school = $request->school();
         $this->user = $request->user();
+        $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
         $this->students = $this->school->students()
             ->whereIn('id', $this->validatedData['students'])
             ->get();
@@ -363,7 +374,12 @@ class InvoiceFromRequestFactory extends InvoiceFactory
 
             // Add the invoice attributes
             $this->invoices->push(array_replace(
-                ['uuid' => $invoiceUuid, 'student_uuid' => $student->uuid],
+                [
+                    'uuid' => $invoiceUuid,
+                    'student_uuid' => $student->uuid,
+                    'published_at' => $this->asDraft ? null : $this->now,
+                    'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
+                ],
                 $this->invoiceAttributes
             ));
 

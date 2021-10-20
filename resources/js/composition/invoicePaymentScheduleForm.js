@@ -24,7 +24,7 @@ export default (form, total) => {
       terms: [],
     }
     let terms = 2 + form.payment_schedules.length
-    const amount = Math.round(total.value / terms)
+    const amount = Math.round((total?.value || total) / terms)
 
     for (let i = 0; i < terms; i++) {
       const term = generateTerm()

@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 abstract class InvoiceFactory
 {
@@ -22,6 +21,9 @@ abstract class InvoiceFactory
     public ?School $school = null;
     protected Collection $students;
     protected User $user;
+    protected string $invoiceNumberPrefix = '';
+    protected ?string $originalBatchId = null;
+    protected array $invoicesToPurge = [];
 
     // These are the collections that store the attributes
     // that need to be stored in the db
@@ -42,6 +44,8 @@ abstract class InvoiceFactory
     protected string $now;
     protected string $notifyAt;
     protected bool $asDraft = false;
+    protected bool $logActivity = true;
+    protected string $activityDescription;
 
     public function __construct()
     {
@@ -71,6 +75,38 @@ abstract class InvoiceFactory
         $this->asDraft = $asDraft;
 
         return $this;
+    }
+
+    public function withOriginalBatchId(string $batchId): static
+    {
+        $this->originalBatchId = $batchId;
+
+        return $this;
+    }
+
+    public function noActivityLogging(): static
+    {
+        $this->logActivity = false;
+
+        return $this;
+    }
+
+    public function withActivityDescription(string $description): static
+    {
+        $this->activityDescription = $description;
+
+        return $this;
+    }
+
+    public function withUpdateActivityDescription(): static
+    {
+        // __(':user updated the draft invoice.')
+        // __(':user updated and published the invoice.')
+        $description = $this->asDraft
+            ? ':user updated the draft invoice.'
+            : ':user updated and published the invoice.';
+
+        return $this->withActivityDescription($description);
     }
 
     protected function uuid(): string
@@ -124,18 +160,21 @@ abstract class InvoiceFactory
         )->green();
 
         DB::transaction(function () {
-            DB::table('invoices')
-                ->insert(
-                    $this->invoices
-                        ->map(function (array $invoice) {
-                            $invoice['published_at'] = $this->asDraft
-                                ? null
-                                : $this->now;
+            // Delete the original batch and replace it with the new one
+            if ($this->originalBatchId) {
+                DB::table('invoice_batches')
+                    ->where('uuid', $this->originalBatchId)
+                    ->delete();
+            }
 
-                            return $invoice;
-                        })
-                        ->toArray()
-                );
+            DB::table('invoice_batches')
+                ->insert([
+                    'uuid' => $this->originalBatchId,
+                    'created_at' => $this->now,
+                ]);
+
+            DB::table('invoices')
+                ->insert($this->invoices->toArray());
 
             DB::table('invoice_items')
                 ->insert($this->invoiceItems->toArray());
@@ -155,17 +194,34 @@ abstract class InvoiceFactory
             DB::table('invoice_tax_items')
                 ->insert($this->invoiceTaxItems->toArray());
 
-//            DB::table(config('activitylog.table_name'))
-//                ->insert($this->invoices->map(fn (array $invoice) => [
-//                    'log_name' => 'default',
-//                    // __('Created by :user.');
-//                    'description' => 'Created by :user.',
-//                    'subjec'
-//                ])->toArray());
+            if ($this->logActivity) {
+                // __('Created by :user.');
+                // __('Created as a draft by :user.');
+                $description = $this->asDraft
+                    ? 'Created as a draft by :user.'
+                    : 'Created by :user.';
+
+                if (!empty($this->activityDescription)) {
+                    $description = $this->activityDescription;
+                }
+
+                DB::table(config('activitylog.table_name'))
+                    ->insert($this->invoices->map(fn (array $invoice) => [
+                        'log_name' => 'default',
+                        'description' => $description,
+                        'subject_type' => 'invoice',
+                        'subject_id' => $invoice['uuid'],
+                        'causer_type' => 'user',
+                        'causer_id' => $this->user->id,
+                        'created_at' => $this->now,
+                        'updated_at' => $this->now,
+                        'batch_uuid' => $this->batchId,
+                    ])->toArray());
+            }
         });
 
         return $this->invoices->map(function (array $invoice) {
-            if ($invoice['notify']) {
+            if ($invoice['notify'] && !$this->asDraft) {
                 SendNewInvoiceNotification::dispatch($invoice['uuid'])
                     ->delay(Carbon::parse($invoice['notify_at']));
             }

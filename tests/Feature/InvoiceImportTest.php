@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Events\InvoiceImportFinished;
 use App\Http\Resources\InvoiceResource;
 use App\Jobs\ProcessInvoiceImport;
+use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
@@ -433,6 +434,7 @@ class InvoiceImportTest extends TestCase
             if ($due < 0) {
                 $due = 0;
             }
+            $this->assertNotNull($invoice->invoice_number);
             $this->assertEquals($term->id, $invoice->term_id);
             $this->assertEquals($due, $invoice->amount_due);
             $this->assertEquals($due, $invoice->remaining_balance);
@@ -447,15 +449,16 @@ class InvoiceImportTest extends TestCase
                 Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
                     ->equalTo($invoice->available_at)
             );
-            $this->assertTrue(
-                Carbon::create(2021, 9)
-                    ->equalTo($invoice->invoice_date)
+            $this->assertEquals(
+                '2021-09-01',
+                $invoice->invoice_date->format('Y-m-d')
             );
         });
 
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+        $this->assertEquals(3, Activity::count());
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 
