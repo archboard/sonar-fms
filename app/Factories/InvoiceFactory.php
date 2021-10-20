@@ -162,7 +162,7 @@ abstract class InvoiceFactory
         });
 
         return $this->invoices->map(function (array $invoice) {
-            if ($invoice['notify']) {
+            if ($invoice['notify'] && !$this->asDraft) {
                 SendNewInvoiceNotification::dispatch($invoice['uuid'])
                     ->delay(Carbon::parse($invoice['notify_at']));
             }
