@@ -8,4 +8,8 @@ use Silber\Bouncer\Database\Role as Model;
 class Role extends Model
 {
     use CreatesUuidForId;
+
+    protected $casts = [
+        'level' => 'int',
+    ];
 }
