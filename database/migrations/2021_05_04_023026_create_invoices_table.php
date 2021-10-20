@@ -26,7 +26,8 @@ class CreateInvoicesTable extends Migration
             $table->foreignId('school_id')->index()->constrained()->onDelete('cascade');
             $table->uuid('student_uuid')->index()->nullable();
             $table->foreign('student_uuid')->references('uuid')->on('students')->onDelete('set null');
-            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->uuid('user_uuid')->nullable();
+            $table->foreign('user_uuid')->references('uuid')->on('users')->onDelete('set null');
             $table->unsignedBigInteger('term_id')->nullable();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('set null');
             $table->string('title');
