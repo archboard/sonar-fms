@@ -2,8 +2,19 @@
 
 namespace App\Traits;
 
+use App\Factories\UuidFactory;
+
 trait UsesUuid
 {
+    public static function bootUsesUuid()
+    {
+        static::creating(function ($model) {
+            if (!$model->uuid) {
+                $model->uuid = UuidFactory::make();
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';
