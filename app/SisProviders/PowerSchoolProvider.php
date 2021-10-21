@@ -4,6 +4,7 @@ namespace App\SisProviders;
 
 use App\Events\SchoolSyncComplete;
 use App\Factories\UuidFactory;
+use App\Models\Course;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\Student;
@@ -15,6 +16,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Ramsey\Uuid\Uuid;
 
 class PowerSchoolProvider implements SisProvider
 {
@@ -195,6 +197,7 @@ class PowerSchoolProvider implements SisProvider
             ->to("/ws/v1/school/{$school->sis_id}/student")
             ->q('school_enrollment.enroll_status==(A,P,G,T,H,I)')
             ->expansions('contact_info,school_enrollment,initial_enrollment');
+        $newStudents = [];
 
         while ($results = $builder->paginate()) {
             $now = now()->format('Y-m-d H:i:s');
@@ -211,27 +214,35 @@ class PowerSchoolProvider implements SisProvider
                     $attributes = $this->getStudentAttributes($student);
 
                     // If it exists, then update
-                    if ($existingStudent = $existingStudents->get($student->uuid)) {
+                    if ($existingStudent = $existingStudents->get($student->id)) {
                         $existingStudent->update($attributes);
                         return $entries;
                     }
 
                     // It's a new student
+                    $attributes['uuid'] = UuidFactory::make();
                     $attributes['tenant_id'] = $this->tenant->id;
                     $attributes['school_id'] = $school->id;
-                    $attributes['sis_id'] = $student->uuid;
+                    $attributes['sis_id'] = $student->id;
                     $attributes['created_at'] = $now;
                     $attributes['updated_at'] = $now;
                     $entries[] = $attributes;
 
                     return $entries;
-                }, []
+                },
+                []
             );
 
-            if (!empty($entries)) {
-                DB::table('students')->insert($entries);
+            $newStudents = array_merge($newStudents, $entries);
+
+            // Batch inserts by 500
+            if (count($newStudents) % 500 === 0) {
+                DB::table('students')->insert($newStudents);
+                $newStudents = [];
             }
         }
+
+        DB::table('students')->insert($newStudents);
     }
 
     public function syncStudent($sisId)
@@ -297,49 +308,47 @@ class PowerSchoolProvider implements SisProvider
         $builder = $this->builder
             ->method('get')
             ->to("/ws/v1/school/{$school->sis_id}/course");
+        // Get courses that exist already
+        $existingCourses = $school->courses()
+            ->get()
+            ->keyBy('sis_id');
+        $newCourses = [];
 
         try {
             while ($results = $builder->paginate()) {
+                ray(count($results))->green();
                 $now = now()->format('Y-m-d H:i:s');
 
-                // Get courses that exist already
-                $existingCourses = $school->courses()
-                    ->whereIn('sis_id', collect($results)->pluck('id'))
-                    ->get()
-                    ->keyBy('sis_id');
-
-                $entries = array_reduce(
-                    $results,
-                    function ($entries, $course) use ($school, $now, $existingCourses) {
-                        // If it exists, then update
-                        if ($existingCourse = $existingCourses->get($course->id)) {
-                            $existingCourse->update([
-                                'name' => $course->course_name,
-                                'course_number' => $course->course_number,
-                            ]);
-
-                            return $entries;
-                        }
-
-                        // It's a new course
-                        $entries[] = [
-                            'tenant_id' => $this->tenant->id,
-                            'school_id' => $school->id,
+                foreach ($results as $course) {
+                    /** @var Course $existingCourse */
+                    if ($existingCourse = $existingCourses->get($course->id)) {
+                        $existingCourse->update([
                             'name' => $course->course_name,
                             'course_number' => $course->course_number,
-                            'sis_id' => $course->id,
-                            'created_at' => $now,
-                            'updated_at' => $now,
-                        ];
+                        ]);
 
-                        return $entries;
-                    }, []
-                );
+                        continue;
+                    }
 
-                if (!empty($entries)) {
-                    DB::table('courses')->insert($entries);
+                    // It's a new course
+                    $newCourses[] = [
+                        'tenant_id' => $this->tenant->id,
+                        'school_id' => $school->id,
+                        'name' => $course->course_name,
+                        'course_number' => $course->course_number,
+                        'sis_id' => $course->id,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+
+                if (count($newCourses) % 500 === 0) {
+                    DB::table('courses')->insert($newCourses);
+                    $newCourses = [];
                 }
             }
+
+            DB::table('courses')->insert($newCourses);
         } catch (\Exception $exception) {
             Log::error("Failed importing courses for {$school->name}.", ['exception' => $exception]);
         }
@@ -526,9 +535,7 @@ class PowerSchoolProvider implements SisProvider
     public function syncSchoolStudentGuardians($sisId)
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
-        $schools = School::select(['id', 'school_number'])
-            ->get()
-            ->keyBy('school_number');
+
 
         $school->students()
             ->get()
