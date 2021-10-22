@@ -18,11 +18,11 @@ interface SisProvider
     public function syncSchool($sisId, bool $force): School;
     public function syncSchoolStaff($sisId);
     public function syncSchoolStudents($sisId);
-    public function syncSchoolCourses($sisId);
-    public function syncSchoolSections($sisId);
-    public function syncSchoolStudentEnrollment($sisId);
+//    public function syncSchoolCourses($sisId);
+//    public function syncSchoolSections($sisId);
+//    public function syncSchoolStudentEnrollment($sisId);
     public function syncSchoolTerms($sisId);
     public function fullSchoolSync($sisId);
-    public function registerWebhooks();
+//    public function registerWebhooks();
     public function getBuilder(): RequestBuilder;
 }
