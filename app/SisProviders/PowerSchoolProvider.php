@@ -124,6 +124,7 @@ class PowerSchoolProvider implements SisProvider
         $schoolUser = collect();
 
         while ($results = $builder->paginate()) {
+            $now = now()->format('Y-m-d H:i:s');
             $existingUsers = $this->tenant
                 ->users()
                 ->whereIn('sis_id', collect($results)->pluck('users_dcid'))
@@ -175,6 +176,8 @@ class PowerSchoolProvider implements SisProvider
                     'first_name' => optional($user->name)->first_name,
                     'last_name' => optional($user->name)->last_name,
                     'school_id' => $school->id,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
                 $schoolUser->push([
