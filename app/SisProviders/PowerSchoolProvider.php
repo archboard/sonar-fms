@@ -648,6 +648,8 @@ class PowerSchoolProvider implements SisProvider
         ray('syncing school staff');
         $this->syncSchoolStaff($school);
         ray()->measure();
+
+        // These are courses/sections/enrollments and aren't very relevant
 //        ray('syncing school courses');
 //        $this->syncSchoolCourses($school);
 //        ray()->measure();
