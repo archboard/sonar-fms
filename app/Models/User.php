@@ -45,6 +45,9 @@ class User extends Authenticatable implements HasLocalePreference
 
     protected $casts = [
         'manages_tenancy' => 'boolean',
+        'sis_id' => 'int',
+        'contact_id' => 'int',
+        'guardian_id' => 'int',
     ];
 
     public function scopeFilter(Builder $builder, array $filters)
@@ -281,51 +284,44 @@ class User extends Authenticatable implements HasLocalePreference
 
         $response = PowerSchool::get("/ws/contacts/{$this->contact_id}/students");
         $contactStudents = collect($response);
-        ray($contactStudents)->purple();
 
         $students = Student::whereIn('sis_id', $contactStudents->pluck('dcid'))
-            ->get()
-            ->keyBy('sis_id');
+            ->pluck('uuid', 'sis_id');
         $schools = School::whereIn('school_number', $contactStudents->pluck('schoolNumber'))
-            ->get()
-            ->keyBy('school_number');
+            ->pluck('id', 'school_number');
+        $studentUser = DB::table('student_user')
+            ->where('user_uuid', $this->uuid)
+            ->pluck('student_uuid');
 
         // Attach the school relationship
-        $this->schools()->syncWithoutDetaching($schools->pluck('id'));
+        $this->schools()->syncWithoutDetaching($schools->values());
 
-        $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students) {
-            $school = $schools->get($student->schoolNumber);
+        $studentUsers = $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students, $studentUser) {
+            $studentUuid = $students->get($student->dcid);
 
-            if (!$school) {
+            // If the school doesn't exist
+            // or the student doesn't exist
+            // or we already have the relationship
+            // don't do anything
+            if (
+                !$schools->has($student->schoolNumber) ||
+                !$studentUuid ||
+                $studentUser->contains($studentUuid)
+            ) {
                 return $studentUsers;
             }
 
-            if ($existingStudent = $students->get($student->dcid)) {
-                $existingStudent->update([
-                    'first_name' => $student->firstName,
-                    'last_name' => $student->lastName,
-                    'student_number' => $student->studentNumber,
-                    'school_id' => $school->id,
-                ]);
-
-                $studentUsers[] = $existingstudent->uuid;
-                return $studentUsers;
-            }
-
-            // TODO: Create the student here
+            $studentUsers[] = [
+                'student_uuid' => $studentUuid,
+                'user_uuid' => $this->uuid,
+                'relationship' => optional($student->studentDetails[0] ?? null)->relationship,
+            ];
 
             return $studentUsers;
         }, []);
 
-//        $students = Student::whereIn('sis_id', $data->get('studentids', []))
-//            ->pluck('id')
-//            ->map(fn ($student) => [
-//                'student_uuid' => $student,
-//                'user_uuid' => $this->id,
-//            ]);
-//
-//        $user->students()->detach();
-//        DB::table('student_user')->insert($students->toArray());
+        ray($studentUsers)->green();
+        DB::table('student_user')->insert($studentUsers);
     }
 
     public function setContactId(): static

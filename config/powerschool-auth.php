@@ -55,7 +55,8 @@ return [
         ],
         'guard' => 'web',
         'identifying_attributes' => [
-            'email' => 'email',
+            'usersDCID' => 'sis_id',
+            'ps_dcid' => 'sis_id',
         ],
         'attribute_transformers' => [
             'email' => \GrantHolle\PowerSchool\Auth\Transformers\Lowercase::class,
@@ -77,7 +78,8 @@ return [
         ],
         'guard' => 'web',
         'identifying_attributes' => [
-            'email' => 'email',
+            'dcid' => 'guardian_id',
+            'ps_dcid' => 'guardian_id',
         ],
         'attribute_transformers' => [
             'email' => \GrantHolle\PowerSchool\Auth\Transformers\Lowercase::class,

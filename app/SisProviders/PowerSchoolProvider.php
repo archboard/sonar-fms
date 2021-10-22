@@ -536,12 +536,85 @@ class PowerSchoolProvider implements SisProvider
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
 
+        /** @var RequestBuilder $builder */
+        $builder = $this->builder
+            ->method('post')
+            ->withData(['dcid' => $school->sis_id])
+            ->pq('com.archboard.sonarfms.school.contacts');
+        $students = $school->students()
+            ->pluck('uuid', 'sis_id');
+        $users = $this->tenant->users()
+            ->pluck('uuid', 'contact_id');
+        $studentUser = [];
+        $newUsers = [];
+        $relations = [];
 
-        $school->students()
-            ->get()
-            ->each(
-                fn (Student $student) => $student->syncGuardians($schools)
-            );
+        while ($results = $builder->paginate()) {
+            ray(count($results))->green();
+            $now = now()->format('Y-m-d H:i:s');
+
+            foreach ($results as $result) {
+                // If the student doesn't exist
+                // or the result doesn't have an email address/name
+                // we can't do anything about the user record
+                if (
+                    !$students->has($result->sis_id) ||
+                    !isset($result->other_email) ||
+                    !isset($result->first_name) ||
+                    !isset($result->last_name)
+                ) {
+                    ray($result)->blue();
+                    continue;
+                }
+
+                $contactId = (int) $result->contact_id;
+
+                if (!$users->has($contactId)) {
+                    $uuid = UuidFactory::make();
+                    $users->put($contactId, $uuid);
+
+                    $newUsers[] = [
+                        'uuid' => $uuid,
+                        'tenant_id' => $this->tenant->id,
+                        'first_name' => $result->first_name,
+                        'last_name' => $result->last_name,
+                        'email' => $result->other_email,
+                        'contact_id' => $contactId,
+                        'guardian_id' => $result->guardian_id,
+                        'school_id' => $school->id,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+
+                $studentUuid = $students->get($result->sis_id);
+                $userUuid = $users->get($contactId);
+                $key = $studentUuid . $userUuid;
+
+                if (!isset($relations[$key])) {
+                    $relations[$key] = 1;
+
+                    $studentUser[] = [
+                        'student_uuid' => $studentUuid,
+                        'user_uuid' => $userUuid,
+                        'relationship' => $result->relationship,
+                    ];
+                }
+            }
+
+            if (count($newUsers) % 500 === 0) {
+                DB::table('users')->insert($newUsers);
+                $newUsers = [];
+            }
+        }
+
+        ray($users->count())->green();
+        DB::table('student_user')->whereIn('user_uuid', $users->values()->toArray())
+            ->delete();
+
+        DB::table('users')->insert($newUsers);
+
+        DB::table('student_user')->insert($studentUser);
     }
 
     /**
@@ -558,29 +631,29 @@ class PowerSchoolProvider implements SisProvider
         ray()->newScreen("Sync for {$school->name}");
         ray()->measure();
         ray('syncing school info');
-        $this->syncSchool($sisId);
+        $this->syncSchool($school);
         ray()->measure();
         ray('syncing school terms');
-        $this->syncSchoolTerms($sisId);
-        ray()->measure();
-        ray('syncing school staff');
-        $this->syncSchoolStaff($sisId);
+        $this->syncSchoolTerms($school);
         ray()->measure();
         ray('syncing school students');
-        $this->syncSchoolStudents($sisId);
+        $this->syncSchoolStudents($school);
         ray()->measure();
         ray('syncing school guardians');
-        $this->syncSchoolStudentGuardians($sisId);
+        $this->syncSchoolStudentGuardians($school);
         ray()->measure();
-        ray('syncing school courses');
-        $this->syncSchoolCourses($sisId);
+        ray('syncing school staff');
+        $this->syncSchoolStaff($school);
         ray()->measure();
-        ray('syncing school sections');
-        $this->syncSchoolSections($sisId);
-        ray()->measure();
-        ray('syncing school enrollment');
-        $this->syncSchoolStudentEnrollment($sisId);
-        ray()->measure();
+//        ray('syncing school courses');
+//        $this->syncSchoolCourses($school);
+//        ray()->measure();
+//        ray('syncing school sections');
+//        $this->syncSchoolSections($school);
+//        ray()->measure();
+//        ray('syncing school enrollment');
+//        $this->syncSchoolStudentEnrollment($school);
+//        ray()->measure();
 
         \Bouncer::refresh();
         event(new SchoolSyncComplete($school));
