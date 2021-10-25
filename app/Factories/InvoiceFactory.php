@@ -23,7 +23,7 @@ abstract class InvoiceFactory
     protected User $user;
     protected string $invoiceNumberPrefix = '';
     protected ?string $originalBatchId = null;
-    protected array $invoicesToPurge = [];
+    protected Collection $studentInvoiceMap;
 
     // These are the collections that store the attributes
     // that need to be stored in the db
@@ -59,6 +59,7 @@ abstract class InvoiceFactory
         $this->invoicePaymentSchedules = collect();
         $this->invoicePaymentTerms = collect();
         $this->invoiceTaxItems = collect();
+        $this->studentInvoiceMap = collect();
 
         $this->fillableInvoiceAttributes = (new Invoice)->getFillable();
         $this->fillableInvoiceItemAttributes = (new InvoiceItem)->getFillable();
@@ -80,6 +81,13 @@ abstract class InvoiceFactory
     public function withOriginalBatchId(?string $batchId): static
     {
         $this->originalBatchId = $batchId;
+
+        // Creating the student id => invoice id mapping to
+        // preserve the original invoice uuids
+        if ($this->originalBatchId) {
+            $this->studentInvoiceMap = Invoice::batch($this->originalBatchId)
+                ->pluck('uuid', 'student_uuid');
+        }
 
         return $this;
     }
