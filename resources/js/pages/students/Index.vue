@@ -90,7 +90,7 @@
             />
           </td>
           <Td :lighter="false">
-            <Link :href="`/students/${student.id}`">{{ student.full_name }}</Link>
+            <TableLink :href="`/students/${student.id}`">{{ student.full_name }}</TableLink>
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
@@ -144,10 +144,12 @@ import PageProps from '@/mixins/PageProps'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import FadeIn from '@/components/transitions/FadeIn'
+import TableLink from '@/components/tables/TableLink'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    TableLink,
     FadeIn,
     SonarMenuItem,
     VerticalDotMenu,
