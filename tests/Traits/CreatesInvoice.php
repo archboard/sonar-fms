@@ -13,6 +13,7 @@ use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 trait CreatesInvoice
 {
@@ -123,12 +124,25 @@ trait CreatesInvoice
             ->refresh();
     }
 
-    public function createBatchInvoices(int $count = 2, array $invoiceAttributes = []): string
+    public function createInvoiceBatchRecord(): string
     {
         $batchId = $this->uuid();
+
+        DB::table('invoice_batches')
+            ->insert([
+                'uuid' => $batchId,
+                'created_at' => now()->toDateTimeString(),
+            ]);
+
+        return $batchId;
+    }
+
+    public function createBatchInvoices(int $count = 2, array $invoiceAttributes = []): string
+    {
+        $batchId = $this->createInvoiceBatchRecord();
         $attributes = array_merge([
             'batch_id' => $batchId,
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->uuid,
         ], $invoiceAttributes);
 
         /** @var Invoice $baseInvoice */
@@ -152,7 +166,7 @@ trait CreatesInvoice
                 $student = $this->createStudent();
                 $invoice = $baseInvoice->replicate();
                 $invoice->uuid = $this->uuid();
-                $invoice->student_id = $student->id;
+                $invoice->student_uuid = $student->uuid;
                 $invoice->save();
 
                 $baseItems->map(function (InvoiceItem $baseItem) use ($invoice) {

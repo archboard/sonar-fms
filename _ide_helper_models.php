@@ -12,6 +12,47 @@
 
 namespace App\Models{
 /**
+ * App\Models\Ability
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $title
+ * @property string|null $entity_id
+ * @property string|null $entity_type
+ * @property bool $only_owned
+ * @property array $options
+ * @property int|null $scope
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $identifier
+ * @property-read string $slug
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability byName($name, $strict = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability forModel($model, $strict = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability simpleAbility()
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereEntityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereEntityType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereOnlyOwned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereScope($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Ability whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperAbility extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Activity
  *
  * @mixin IdeHelperActivity
@@ -213,7 +254,7 @@ namespace App\Models{
  * @property string|null $import_id
  * @property int $tenant_id
  * @property int $school_id
- * @property string $student_uuid
+ * @property string|null $student_uuid
  * @property string $user_uuid
  * @property int|null $term_id
  * @property string $title
@@ -230,6 +271,7 @@ namespace App\Models{
  * @property bool $notify
  * @property Carbon|null $notify_at
  * @property Carbon|null $notified_at
+ * @property string|null $created_for
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $invoice_layout_id
@@ -303,6 +345,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereAvailableAt($value)
  * @method static Builder|Invoice whereBatchId($value)
  * @method static Builder|Invoice whereCreatedAt($value)
+ * @method static Builder|Invoice whereCreatedFor($value)
  * @method static Builder|Invoice whereDescription($value)
  * @method static Builder|Invoice whereDiscountTotal($value)
  * @method static Builder|Invoice whereDueAt($value)
@@ -754,6 +797,37 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Role
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $title
+ * @property int|null $level
+ * @property int|null $scope
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Ability[] $abilities
+ * @property-read int|null $abilities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereAssignedTo($model, ?array $keys = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereScope($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperRole extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Scholarship
  *
  * @mixin IdeHelperScholarship
@@ -934,6 +1008,7 @@ namespace App\Models{
  * @property-read mixed $full_name
  * @property-read mixed $grade_level_formatted
  * @property-read mixed $grade_level_short_formatted
+ * @property-read string $id
  * @property-read int $revenue
  * @property-read int $unpaid_invoices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
@@ -1157,12 +1232,13 @@ namespace App\Models{
  * @property int|null $guardian_id
  * @property bool $manages_tenancy
  * @property string $locale
- * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Ability[] $abilities
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Ability[] $abilities
  * @property-read int|null $abilities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $activeSchools
  * @property-read int|null $active_schools_count
  * @property-read Factory $date_factory
  * @property-read string $full_name
+ * @property-read string $id
  * @property-read mixed $invoice_selection
  * @property-read bool $is_school_admin
  * @property-read array $school_permissions
@@ -1176,15 +1252,11 @@ namespace App\Models{
  * @property-read int|null $invoices_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Silber\Bouncer\Database\Role[] $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property-read int|null $roles_count
  * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $selectedInvoices
- * @property-read int|null $selected_invoices_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $selectedStudents
- * @property-read int|null $selected_students_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\StudentSelection[] $studentSelections
  * @property-read int|null $student_selections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students

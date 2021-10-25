@@ -26,7 +26,7 @@ class InvoiceSelectionTest extends TestCase
     {
         $data = $invoices->map(fn (Invoice $invoice) => [
             'school_id' => $this->school->id,
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'invoice_uuid' => $invoice->uuid,
         ]);
 
@@ -60,7 +60,7 @@ class InvoiceSelectionTest extends TestCase
 
         $this->assertDatabaseHas('invoice_selections', [
             'school_id' => $this->school->id,
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'invoice_uuid' => $invoice->uuid,
         ]);
 

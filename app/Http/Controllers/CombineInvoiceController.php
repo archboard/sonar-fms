@@ -96,7 +96,7 @@ class CombineInvoiceController extends Controller
         );
         $assignedUsers = $invoice->users()->pluck('id');
         $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
-                $builder->whereIn('students.id', $selection->pluck('student_id'));
+                $builder->whereIn('students.uuid', $selection->pluck('student_uuid'));
             })
             ->orWhereIn('id', $invoice->users()->pluck('id'))
             ->orderBy('last_name')

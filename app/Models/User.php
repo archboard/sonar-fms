@@ -173,7 +173,7 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function getSelectedStudentsAttribute(): Collection
     {
-        return Student::join('student_selections', 'student_uuid', '=', 'students.id')
+        return Student::join('student_selections', 'student_uuid', '=', 'students.uuid')
             ->where('student_selections.school_id', $this->school_id)
             ->where('student_selections.user_uuid', $this->id)
             ->get();
@@ -183,7 +183,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         return $this->hasMany(InvoiceSelection::class)
             ->join('users', function (JoinClause $join) {
-                $join->on('invoice_selections.user_uuid', '=', 'users.id');
+                $join->on('invoice_selections.user_uuid', '=', 'users.uuid');
             })
             ->whereRaw('invoice_selections.school_id = users.school_id');
     }
@@ -414,7 +414,7 @@ class User extends Authenticatable implements HasLocalePreference
     public function getSelectionSuggestedUsers(): Collection
     {
         return static::whereHas('students', function (Builder $builder) {
-                $builder->whereIn('students.id', $this->selectedInvoices->pluck('student_id'));
+                $builder->whereIn('students.uuid', $this->selectedInvoices->pluck('student_uuid'));
             })
             ->orderBy('last_name')
             ->get();
