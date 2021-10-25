@@ -77,7 +77,7 @@ abstract class InvoiceFactory
         return $this;
     }
 
-    public function withOriginalBatchId(string $batchId): static
+    public function withOriginalBatchId(?string $batchId): static
     {
         $this->originalBatchId = $batchId;
 
@@ -169,7 +169,7 @@ abstract class InvoiceFactory
 
             DB::table('invoice_batches')
                 ->insert([
-                    'uuid' => $this->originalBatchId,
+                    'uuid' => $this->batchId,
                     'created_at' => $this->now,
                 ]);
 
