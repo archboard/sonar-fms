@@ -103,7 +103,7 @@ class InvoiceImportTest extends TestCase
     {
         $this->assignPermission('update', InvoiceImport::class);
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => '/tmp/file.csv',
         ]);
@@ -119,7 +119,7 @@ class InvoiceImportTest extends TestCase
 
         $originalPath = InvoiceImport::storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
         ]);
@@ -154,7 +154,7 @@ class InvoiceImportTest extends TestCase
 
         $originalPath = InvoiceImport::storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
         ]);
@@ -195,7 +195,7 @@ class InvoiceImportTest extends TestCase
             $this->school
         );
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 2,
@@ -267,7 +267,7 @@ class InvoiceImportTest extends TestCase
             $this->school
         );
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -338,7 +338,7 @@ class InvoiceImportTest extends TestCase
                 Term::factory()->make()
             );
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -477,7 +477,7 @@ class InvoiceImportTest extends TestCase
                 Term::factory()->make()
             );
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -550,7 +550,7 @@ class InvoiceImportTest extends TestCase
             $this->school
         );
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -642,7 +642,7 @@ class InvoiceImportTest extends TestCase
             $this->school
         );
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -705,7 +705,7 @@ class InvoiceImportTest extends TestCase
             $this->school
         );
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,
@@ -799,7 +799,7 @@ class InvoiceImportTest extends TestCase
 
         $firstItem = $this->uuid();
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 2,
@@ -1051,7 +1051,7 @@ class InvoiceImportTest extends TestCase
             'tax_items' => [],
         ];
         $import = InvoiceImport::create([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 2,
@@ -1103,7 +1103,7 @@ class InvoiceImportTest extends TestCase
         $itemId1 = $this->uuid();
         $itemId2 = $this->uuid();
         $import = InvoiceImport::make([
-            'user_id' => $this->user->id,
+            'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
             'heading_row' => 1,

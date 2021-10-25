@@ -33,7 +33,7 @@ class ConvertInvoiceToTemplateTest extends TestCase
 
         $this->assertEquals(Arr::except($invoice->asInvoiceTemplate(), 'students'), $template->template);
         $this->assertFalse($template->for_import);
-        $this->assertEquals($this->user->id, $template->user_id);
+        $this->assertEquals($this->user->id, $template->user_uuid);
         $this->assertEquals('My template', $template->name);
     }
 }

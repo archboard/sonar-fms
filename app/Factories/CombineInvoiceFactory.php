@@ -104,7 +104,7 @@ class CombineInvoiceFactory extends InvoiceFactory
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
         $this->invoiceAttributes['invoice_number'] = Invoice::generateInvoiceNumber($this->invoiceNumberPrefix);
-        $this->invoiceAttributes['user_id'] = $this->user->id;
+        $this->invoiceAttributes['user_uuid'] = $this->user->id;
         // Invoice date is tricky because it isn't a datetime, just a date
         // So we want to store it as the date the user thinks it is, since
         // we don't know the hour offset to convert it from UTC, so make it
@@ -237,7 +237,7 @@ class CombineInvoiceFactory extends InvoiceFactory
             ->insert(
                 array_map(
                     fn ($user) => [
-                        'user_id' => $user,
+                        'user_uuid' => $user,
                         'invoice_uuid' => $this->invoiceAttributes['uuid'],
                     ],
                     $this->validatedData['users']
