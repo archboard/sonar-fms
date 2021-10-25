@@ -47,7 +47,7 @@ class Student extends Model
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->whereIn('grade_level', $grades);
         })->when(isset($filters['ids']), function (Builder $builder) use ($filters) {
-            $builder->whereIn('id', $filters['ids']);
+            $builder->whereIn('uuid', $filters['ids']);
         });
 
         // Enrollment status
