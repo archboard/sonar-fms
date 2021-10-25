@@ -92,8 +92,9 @@ class InvoiceDraftTest extends TestCase
             ->assertSessionHas('success');
 
         // The original invoice should not exist
-        $this->assertDatabaseMissing('invoices', ['uuid' => $invoice->uuid]);
+        $this->assertDatabaseHas('invoices', ['uuid' => $invoice->uuid]);
         $this->assertEquals(1, $this->student->invoices()->count());
+        $this->assertEquals(2, $invoice->activities()->count());
     }
 
     public function test_cant_edit_batch_without_permission()

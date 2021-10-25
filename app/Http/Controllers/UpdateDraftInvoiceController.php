@@ -17,11 +17,10 @@ class UpdateDraftInvoiceController extends Controller
      */
     public function __invoke(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        $results = InvoiceFromRequestFactory::make($request)
+        $results = InvoiceFromRequestFactory::make($request, $invoice->batch_id)
             ->asDraft()
+            ->withUpdateActivityDescription()
             ->build();
-
-        $invoice->delete();
 
         return Invoice::successfullyUpdatedResponse($results);
     }
