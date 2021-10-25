@@ -61,9 +61,8 @@ class ChangeInvoiceStatusTest extends TestCase
         $invoice->refresh();
         $this->assertNotNull($invoice->voided_at);
 
-        /** @var Activity $activity */
-        $activity = Activity::latest()->with('causer')->first();
-        $this->assertEquals("Invoice voided by {$this->user->full_name}.", $activity->description);
+        $activity = Activity::latest()->with('causer')->get();
+        $this->assertTrue($activity->contains('description', "Invoice voided by {$this->user->full_name}."));
     }
 
     public function test_can_void_and_not_duplicate()
