@@ -30,8 +30,8 @@ class StudentSelectionInvoiceCreationTest extends TestCase
         $students = $this->school->students
             ->random($count);
         $selection = $students->map(fn (Student $student) => [
-                'user_id' => $this->user->id,
-                'student_id' => $student->id,
+                'user_uuid' => $this->user->id,
+                'student_uuid' => $student->id,
                 'school_id' => $this->school->id,
             ]);
 

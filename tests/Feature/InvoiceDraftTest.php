@@ -84,7 +84,7 @@ class InvoiceDraftTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->assignPermission('update', Invoice::class);
-        $invoice = $this->createInvoice(['published_at' => null, 'student_id' => $this->student->id]);
+        $invoice = $this->createInvoice(['published_at' => null, 'student_uuid' => $this->student->id]);
         $data = $this->generateInvoiceRequestAttributesForStudent($this->student);
 
         $this->put(route('invoices.update.draft', $invoice), $data)
@@ -138,7 +138,7 @@ class InvoiceDraftTest extends TestCase
 
         $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
         $newAttributes = $this->generateInvoiceRequestAttributes();
-        $students = Invoice::batch($batchId)->pluck('student_id');
+        $students = Invoice::batch($batchId)->pluck('student_uuid');
         $newAttributes['students'] = $students->toArray();
 
         $this->post(route('batches.draft', $batchId), $newAttributes)
@@ -146,7 +146,7 @@ class InvoiceDraftTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertDatabaseMissing('invoices', ['batch_id' => $batchId]);
-        $this->assertEquals($students->count(), Invoice::whereIn('student_id', $students)->unpublished()->count());
+        $this->assertEquals($students->count(), Invoice::whereIn('student_uuid', $students)->unpublished()->count());
     }
 
     public function test_can_update_unpublished_batch_draft_invoices()
@@ -154,7 +154,7 @@ class InvoiceDraftTest extends TestCase
         $this->assignPermission('update', Invoice::class);
 
         $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
-        $students = Invoice::batch($batchId)->pluck('student_id');
+        $students = Invoice::batch($batchId)->pluck('student_uuid');
         $student = Student::find($students->random());
 
         // Publish one of the invoices
@@ -170,7 +170,7 @@ class InvoiceDraftTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertEquals($batchId, $student->invoices()->latest()->first()->batch_id);
-        $this->assertEquals($students->count() - 1, Invoice::whereIn('student_id', $students)->unpublished()->count());
+        $this->assertEquals($students->count() - 1, Invoice::whereIn('student_uuid', $students)->unpublished()->count());
     }
 
     public function test_can_publish_batch_draft()
@@ -178,7 +178,7 @@ class InvoiceDraftTest extends TestCase
         $this->assignPermission('update', Invoice::class);
 
         $batchId = $this->createBatchInvoices(invoiceAttributes: ['published_at' => null]);
-        $students = Invoice::batch($batchId)->pluck('student_id');
+        $students = Invoice::batch($batchId)->pluck('student_uuid');
 
         $newAttributes = $this->generateInvoiceRequestAttributes();
         $newAttributes['students'] = $students->toArray();
@@ -188,6 +188,6 @@ class InvoiceDraftTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertEquals(0, Invoice::batch($batchId)->count());
-        $this->assertEquals($students->count(), Invoice::whereIn('student_id', $students)->published()->count());
+        $this->assertEquals($students->count(), Invoice::whereIn('student_uuid', $students)->published()->count());
     }
 }
