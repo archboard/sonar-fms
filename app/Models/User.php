@@ -154,7 +154,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         return $this->hasMany(StudentSelection::class)
             ->join('users', function (JoinClause $join) {
-                $join->on('student_selections.user_uuid', '=', 'users.id');
+                $join->on('student_selections.user_uuid', '=', 'users.uuid');
             })
             ->whereRaw('student_selections.school_id = users.school_id');
     }
