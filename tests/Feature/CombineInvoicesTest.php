@@ -99,6 +99,7 @@ class CombineInvoicesTest extends TestCase
 
     public function test_can_join_invoices_without_payment_schedules()
     {
+        $this->withoutExceptionHandling();
         Queue::fake();
 
         $this->assignPermission('create', Invoice::class);

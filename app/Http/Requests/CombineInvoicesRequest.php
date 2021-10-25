@@ -31,7 +31,7 @@ class CombineInvoicesRequest extends FormRequest
 
         return [
             'draft' => 'nullable|boolean',
-            'users' => 'required|array|min:1|exists:users,id',
+            'users' => 'required|array|min:1|exists:users,uuid',
             'title' => 'required',
             'description' => 'nullable',
             'due_at' => 'nullable|date',
