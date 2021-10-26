@@ -76,6 +76,7 @@ class Invoice extends Model
         'apply_tax_to_all_items',
         'relative_tax_rate',
         'invoice_number',
+        'is_parent',
     ];
 
     protected $casts = [
@@ -93,6 +94,7 @@ class Invoice extends Model
         'notified_at' => 'datetime',
         'available_at' => 'datetime',
         'published_at' => 'datetime',
+        'is_parent' => 'boolean',
     ];
 
     // These are the attributes/properties that are

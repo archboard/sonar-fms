@@ -55,6 +55,8 @@ class CombineInvoiceController extends Controller
         $results = CombineInvoiceFactory::make($request, $request->user()->selectedInvoices)
             ->build();
 
+        $request->user()->invoiceSelections()->delete();
+
         session()->flash('success', __('Invoices combined successfully.'));
 
         return redirect()->route('invoices.show', $results->first());
@@ -115,15 +117,11 @@ class CombineInvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        $request->invoiceUuid = $invoice->uuid;
-
         $results = CombineInvoiceFactory::make($request, $invoice->children)
+            ->setInvoiceUuid($invoice->uuid)
+            ->withOriginalBatchId($invoice->batch_id)
             ->withUpdateActivityDescription()
             ->build();
-
-        // Delete the original invoice
-        $invoice->migrateActivity()
-            ->delete();
 
         session()->flash('success', __('Invoice updated successfully.'));
 

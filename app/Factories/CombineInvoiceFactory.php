@@ -32,6 +32,12 @@ class CombineInvoiceFactory extends InvoiceFactory
     protected int $taxDue = 0;
     protected int $remainingBalance = 0;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->invoiceUuid = $this->uuid();
+    }
+
     public static function make(CombineInvoicesRequest $request, Collection $selection = null): static
     {
         return (new static)
@@ -53,6 +59,14 @@ class CombineInvoiceFactory extends InvoiceFactory
         return $this->setTotals()
             ->setInvoiceAttributes()
             ->setPaymentScheduleAttributes();
+    }
+
+    public function setInvoiceUuid(string $uuid): static
+    {
+        $this->invoiceUuid = $uuid;
+        $this->invoiceAttributes['uuid'] = $this->invoiceUuid;
+
+        return $this;
     }
 
     /**
@@ -99,12 +113,13 @@ class CombineInvoiceFactory extends InvoiceFactory
     protected function setInvoiceAttributes(): static
     {
         $this->invoiceAttributes = $this->cleanInvoiceAttributes($this->validatedData);
-        $this->invoiceAttributes['uuid'] = $this->uuid();
+        $this->invoiceAttributes['uuid'] = $this->invoiceUuid;
         $this->invoiceAttributes['batch_id'] = $this->batchId;
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
         $this->invoiceAttributes['invoice_number'] = Invoice::generateInvoiceNumber($this->invoiceNumberPrefix);
         $this->invoiceAttributes['user_uuid'] = $this->user->id;
+        $this->invoiceAttributes['is_parent'] = true;
         // Invoice date is tricky because it isn't a datetime, just a date
         // So we want to store it as the date the user thinks it is, since
         // we don't know the hour offset to convert it from UTC, so make it
@@ -146,7 +161,7 @@ class CombineInvoiceFactory extends InvoiceFactory
         foreach ($this->validatedData['payment_schedules'] as $item) {
             $scheduleUuid = $this->uuid();
             $item['uuid'] = $scheduleUuid;
-            $item['invoice_uuid'] = $this->invoiceAttributes['uuid'];
+            $item['invoice_uuid'] = $this->invoiceUuid;
             $item['batch_id'] = $this->batchId;
             $item['created_at'] = $this->now;
             $item['updated_at'] = $this->now;
@@ -159,7 +174,7 @@ class CombineInvoiceFactory extends InvoiceFactory
             collect($item['terms'])->each(function (array $item) use ($scheduleUuid) {
                 $item['uuid'] = $this->uuid();
                 $item['batch_id'] = $this->batchId;
-                $item['invoice_uuid'] = $this->invoiceAttributes['uuid'];
+                $item['invoice_uuid'] = $this->invoiceUuid;
                 $item['invoice_payment_schedule_uuid'] = $scheduleUuid;
                 $item['amount_due'] = $item['amount'];
                 $item['remaining_balance'] = $item['amount'];
@@ -225,12 +240,9 @@ class CombineInvoiceFactory extends InvoiceFactory
         // and match the published status of the parent
         Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
             ->update([
-                'parent_uuid' => $this->invoiceAttributes['uuid'],
+                'parent_uuid' => $this->invoiceUuid,
                 'published_at' => $publishedAt,
             ]);
-
-        // Then remove the user's invoice selection
-        $this->user->invoiceSelections()->delete();
 
         // Associate the users to this invoice
         DB::table('invoice_user')
@@ -238,7 +250,7 @@ class CombineInvoiceFactory extends InvoiceFactory
                 array_map(
                     fn ($user) => [
                         'user_uuid' => $user,
-                        'invoice_uuid' => $this->invoiceAttributes['uuid'],
+                        'invoice_uuid' => $this->invoiceUuid,
                     ],
                     $this->validatedData['users']
                 )

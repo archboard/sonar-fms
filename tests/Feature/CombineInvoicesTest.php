@@ -147,6 +147,7 @@ class CombineInvoicesTest extends TestCase
         $this->assertNotNull($invoice->invoice_date);
         $this->assertEquals(0, $invoice->invoicePaymentSchedules()->count());
         $this->assertEquals(1, $invoice->activities()->count());
+        $this->assertTrue($invoice->is_parent);
 
         Queue::assertPushed(SendNewInvoiceNotification::class);
     }
@@ -238,6 +239,7 @@ class CombineInvoicesTest extends TestCase
         $this->assertNotNull($invoice->published_at);
         $this->assertEquals(1, $invoice->activities()->count());
         $this->assertEquals(count($data['payment_schedules']), $invoice->invoicePaymentSchedules()->count());
+        $this->assertTrue($invoice->is_parent);
 
         foreach ($data['payment_schedules'] as $datum) {
             $amount = array_reduce(
@@ -336,12 +338,14 @@ class CombineInvoicesTest extends TestCase
         $this->assertEquals($this->selection->count(), $childInvoices->count());
         $invoice = Invoice::find($childInvoices->first()->parent_uuid);
         $this->assertNull($invoice->published_at);
+        $this->assertTrue($invoice->is_parent);
 
         Queue::assertNothingPushed();
     }
 
     public function test_can_update_draft_invoice()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('create', Invoice::class);
         $this->assignPermission('update', Invoice::class);
         $this->createSelection();
@@ -350,13 +354,14 @@ class CombineInvoicesTest extends TestCase
         $addedUser1 = $this->createUser();
         $addedUser2 = $this->createUser();
 
+        // Create the initial invoice
         $data = [
             'draft' => true,
             'users' => [$addedUser1->id, $addedUser2->id],
             'title' => $this->faker->words(asText: true),
             'description' => $this->faker->sentence(),
-            'available_at' => null,
-            'due_at' => null,
+            'available_at' => now()->format('Y-m-d\TH:i:s.v\Z'),
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
             'term_id' => null,
             'notify' => false,
             'payment_schedules' => [],
@@ -374,5 +379,35 @@ class CombineInvoicesTest extends TestCase
 
         $invoice = Invoice::find($childInvoices->first()->parent_uuid);
         $this->assertNull($invoice->published_at);
+
+        // Update it with the same students but different users
+        $data = [
+            'draft' => true,
+            'users' => [$addedUser2->id],
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->sentence(),
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'payment_schedules' => [],
+        ];
+
+        $this->put("/combine/{$invoice->uuid}", $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $invoice->refresh();
+        $this->assertEquals(1, $invoice->users()->count());
+        $this->assertEquals($addedUser2->uuid, $invoice->users()->first()->uuid);
+
+        $this->assertNull($invoice->available_at);
+        $this->assertNull($invoice->due_at);
+        $this->assertTrue(
+            Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
+                ->where('parent_uuid', $invoice->uuid)
+                ->exists()
+        );
+        $this->assertTrue($invoice->is_parent);
     }
 }

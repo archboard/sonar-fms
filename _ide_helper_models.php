@@ -14,6 +14,7 @@ namespace App\Models{
 /**
  * App\Models\Ability
  *
+ * @mixin IdeHelperAbility
  * @property string $id
  * @property string $name
  * @property string|null $title
@@ -46,7 +47,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Ability whereScope($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Ability whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Ability whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperAbility extends \Eloquent {}
 }
@@ -286,6 +286,7 @@ namespace App\Models{
  * @property bool $apply_tax_to_all_items
  * @property float|null $relative_tax_rate
  * @property string $invoice_number
+ * @property bool $is_parent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
@@ -354,6 +355,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereInvoiceDate($value)
  * @method static Builder|Invoice whereInvoiceLayoutId($value)
  * @method static Builder|Invoice whereInvoiceNumber($value)
+ * @method static Builder|Invoice whereIsParent($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
  * @method static Builder|Invoice whereNotifyAt($value)
@@ -799,6 +801,7 @@ namespace App\Models{
 /**
  * App\Models\Role
  *
+ * @mixin IdeHelperRole
  * @property string $id
  * @property string $name
  * @property string|null $title
@@ -821,7 +824,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereScope($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 	class IdeHelperRole extends \Eloquent {}
 }

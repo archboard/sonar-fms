@@ -8,8 +8,6 @@ use Illuminate\Validation\Rule;
 
 class CombineInvoicesRequest extends FormRequest
 {
-    public string $invoiceUuid;
-
     /**
      * Determine if the user is authorized to make this request.
      *
