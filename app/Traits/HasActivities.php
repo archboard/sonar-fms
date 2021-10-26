@@ -9,6 +9,7 @@ trait HasActivities
 {
     public function activities(): MorphMany
     {
-        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
+        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject')
+            ->orderBy('created_at', 'desc');
     }
 }

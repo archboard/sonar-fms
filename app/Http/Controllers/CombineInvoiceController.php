@@ -40,6 +40,8 @@ class CombineInvoiceController extends Controller
             'title' => $title,
             'selection' => InvoiceResource::collection($selection),
             'suggestedUsers' => UserResource::collection($user->getSelectionSuggestedUsers()),
+            'endpoint' => '/combine',
+            'method' => 'post',
         ])->withViewData(compact('title'));
     }
 
@@ -96,7 +98,7 @@ class CombineInvoiceController extends Controller
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms'
         );
-        $assignedUsers = $invoice->users()->pluck('id');
+        $assignedUsers = $invoice->users()->pluck('uuid');
         $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
                 $builder->whereIn('students.uuid', $selection->pluck('student_uuid'));
             })
@@ -110,6 +112,8 @@ class CombineInvoiceController extends Controller
             'assignedUsers' => $assignedUsers,
             'selection' => InvoiceResource::collection($selection),
             'suggestedUsers' => UserResource::collection($suggestedUsers),
+            'endpoint' => "/combine/{$invoice->uuid}",
+            'method' => 'put',
         ])->withViewData(compact('title'));
     }
 

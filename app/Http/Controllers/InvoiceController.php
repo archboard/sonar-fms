@@ -105,7 +105,13 @@ class InvoiceController extends Controller
     {
         $title = $invoice->title . ': ' . $invoice->invoice_number;
         $invoice->fullLoad()
-            ->load('activities', 'activities.causer');
+            ->load(
+                'activities',
+                'activities.causer',
+                'children',
+                'children.currency',
+                'children.student',
+            );
 
         $breadcrumbs = [
             [
@@ -126,7 +132,6 @@ class InvoiceController extends Controller
         return inertia('invoices/Show', [
             'title' => $title,
             'invoice' => $invoice->toResource(),
-            'student' => $invoice->student?->toResource(),
             'breadcrumbs' => $breadcrumbs,
             'permissions' => [
                 'invoices' => $user->getPermissions(Invoice::class),

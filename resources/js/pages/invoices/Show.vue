@@ -27,15 +27,15 @@
 
     <!-- Details for smaller screens -->
     <div class="xl:hidden grid grid-cols-4 gap-5 pb-6 mb-8 border-b border-gray-300 dark:border-gray-600">
-      <div>
+      <div v-if="invoice.student">
         <SidebarHeader>
           {{ __('Student') }}
         </SidebarHeader>
         <div class="mt-2 leading-8">
-          <Link :href="$route('students.show', student)">
-            {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
+          <Link :href="`/students/${invoice.student.uuid}`">
+            {{ invoice.student.full_name }} <span v-if="invoice.student.student_number">({{ invoice.student.student_number }})</span>
           </Link>
-          <HelpText class="mt-0 leading-0">{{ student.grade_level_formatted }}</HelpText>
+          <HelpText class="mt-0 leading-0">{{ invoice.student.grade_level_formatted }}</HelpText>
         </div>
       </div>
       <div>
@@ -105,15 +105,15 @@
 
       <!-- Sidebar for desktop -->
       <div class="hidden xl:block pl-8 space-y-6 divide-y divide-gray-300 dark:divide-gray-600">
-        <div>
+        <div v-if="invoice.student">
           <SidebarHeader>
             {{ __('Student') }}
           </SidebarHeader>
           <div class="mt-2 leading-8">
-            <Link :href="$route('students.show', student)">
-              {{ student.full_name }} <span v-if="student.student_number">({{ student.student_number }})</span>
+            <Link :href="`/students/${invoice.student.uuid}`">
+              {{ invoice.student.full_name }} <span v-if="invoice.student.student_number">({{ invoice.student.student_number }})</span>
             </Link>
-            <HelpText class="mt-0">{{ student.grade_level_formatted }}</HelpText>
+            <HelpText class="mt-0">{{ invoice.student.grade_level_formatted }}</HelpText>
           </div>
         </div>
         <div class="pt-6">
@@ -208,7 +208,10 @@ export default defineComponent({
   },
   props: {
     user: Object,
-    student: Object,
+    student: {
+      type: Object,
+      default: () => ({})
+    },
     invoice: Object,
     school: Object,
     permissions: Object,

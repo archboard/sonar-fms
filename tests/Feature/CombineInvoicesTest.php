@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\SendNewInvoiceNotification;
+use App\Models\Activity;
 use App\Models\Invoice;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\Term;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
@@ -59,6 +61,8 @@ class CombineInvoicesTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
                 ->has('selection')
+                ->has('endpoint')
+                ->has('method')
                 ->component('invoices/Combine')
             );
     }
@@ -409,6 +413,13 @@ class CombineInvoicesTest extends TestCase
                 ->exists()
         );
         $this->assertTrue($invoice->is_parent);
+
+        $invoice->activities->each(function (Activity $activity) {
+            $this->assertTrue(Str::contains($activity->description, [
+                'Created as a draft',
+                'updated the draft invoice',
+            ]));
+        });
     }
 
     public function test_can_update_draft_invoices_with_different_invoices_and_publish()
@@ -463,6 +474,18 @@ class CombineInvoicesTest extends TestCase
             'payment_schedules' => [],
         ];
 
+        $this->get("/combine/{$invoice->uuid}")
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('invoice')
+                ->has('assignedUsers')
+                ->has('suggestedUsers')
+                ->has('selection')
+                ->has('endpoint')
+                ->has('method')
+            );
+
         // This is to ensure that the original creation date is preserved
         sleep(2);
         $this->put("/combine/{$invoice->uuid}", $data)
@@ -483,5 +506,12 @@ class CombineInvoicesTest extends TestCase
         );
         $this->assertTrue($invoice->is_parent);
         $this->assertNotEquals($invoice->created_at->toDateTimeString(), $invoice->updated_at->toDateTimeString());
+
+        $invoice->activities->each(function (Activity $activity) {
+            $this->assertTrue(Str::contains($activity->description, [
+                'Created as a draft',
+                'updated and published the invoice',
+            ]));
+        });
     }
 }

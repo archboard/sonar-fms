@@ -42,6 +42,7 @@ class CombineInvoiceFactory extends InvoiceFactory
             $instance->setCreatedAt($invoice->created_at->toDateTimeString())
                 ->withOriginalBatchId($invoice->batch_id)
                 ->setInvoiceUuid($invoice->uuid)
+                ->withUpdateActivityDescription()
                 ->setSelection($invoice->children);
         }
 

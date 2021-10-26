@@ -81,11 +81,9 @@
           <Button type="button" @click.prevent="reviewing = true">
             {{ __('Review and combine') }}
           </Button>
-          <Button v-if="isNew" type="button" @click.prevent="saveAsDraft" color="white">
-            {{ __('Save as draft') }}
-          </Button>
-          <Button v-else type="button" @click.prevent="updateDraft" color="white">
-            {{ __('Update draft') }}
+          <Button type="button" @click.prevent="saveAsDraft" color="white">
+            <span v-if="isNew">{{ __('Save as draft') }}</span>
+            <span v-else>{{ __('Update draft') }}</span>
           </Button>
         </div>
       </FormMultipartWrapper>
@@ -175,6 +173,14 @@ export default defineComponent({
     assignedUsers: {
       type: Array,
       default: () => ([])
+    },
+    endpoint: {
+      type: String,
+      required: true,
+    },
+    method: {
+      type: String,
+      required: true,
     }
   },
 
@@ -204,17 +210,12 @@ export default defineComponent({
       })
     }
 
-    const combine = () => {
-      form.draft = false
-      form.post(`/combine`)
+    const combine = (asDraft = false) => {
+      form.draft = asDraft
+      form[props.method](props.endpoint)
     }
     const saveAsDraft = () => {
-      form.draft = true
-      form.post(`/combine`)
-    }
-    const updateDraft = () => {
-      form.draft = true
-      form.put(`/combine/${props.invoice.uuid}`)
+      combine(true)
     }
 
     const total = computed(
@@ -228,7 +229,6 @@ export default defineComponent({
       total,
       reviewing,
       saveAsDraft,
-      updateDraft,
       isNew,
     }
   }
