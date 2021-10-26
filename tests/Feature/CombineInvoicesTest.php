@@ -410,4 +410,78 @@ class CombineInvoicesTest extends TestCase
         );
         $this->assertTrue($invoice->is_parent);
     }
+
+    public function test_can_update_draft_invoices_with_different_invoices_and_publish()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+        $this->assignPermission('update', Invoice::class);
+        $this->createSelection();
+        $this->assertEquals($this->selection->count(), $this->user->invoiceSelections()->count());
+
+        $addedUser1 = $this->createUser();
+
+        // Create the initial invoice
+        $data = [
+            'draft' => true,
+            'users' => [$addedUser1->id],
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->sentence(),
+            'available_at' => now()->format('Y-m-d\TH:i:s.v\Z'),
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => null,
+            'notify' => false,
+            'payment_schedules' => [],
+        ];
+
+        $this->post(route('invoices.combine'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals(0, $this->user->invoiceSelections()->count());
+
+        $childInvoices = Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
+            ->whereNotNull('parent_uuid')
+            ->get();
+
+        $invoice = Invoice::find($childInvoices->first()->parent_uuid);
+        $this->assertNull($invoice->published_at);
+
+        // Remove one of the child invoices
+        $childInvoices->random()->update(['parent_uuid' => null]);
+
+        // Update it with the same students but different users
+        $data = [
+            'draft' => false,
+            'users' => [$addedUser1->id],
+            'title' => $this->faker->words(asText: true),
+            'description' => $this->faker->sentence(),
+            'available_at' => null,
+            'due_at' => null,
+            'term_id' => null,
+            'notify' => false,
+            'payment_schedules' => [],
+        ];
+
+        // This is to ensure that the original creation date is preserved
+        sleep(2);
+        $this->put("/combine/{$invoice->uuid}", $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $invoice->refresh();
+        $this->assertEquals(1, $invoice->users()->count());
+        $this->assertEquals($addedUser1->uuid, $invoice->users()->first()->uuid);
+
+        $this->assertNull($invoice->available_at);
+        $this->assertNull($invoice->due_at);
+        $this->assertNotNull($invoice->published_at);
+        $this->assertTrue(
+            Invoice::whereIn('uuid', $this->selection->pluck('uuid'))
+                ->where('parent_uuid', $invoice->uuid)
+                ->exists()
+        );
+        $this->assertTrue($invoice->is_parent);
+        $this->assertNotEquals($invoice->created_at->toDateTimeString(), $invoice->updated_at->toDateTimeString());
+    }
 }

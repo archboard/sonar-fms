@@ -52,7 +52,7 @@ class CombineInvoiceController extends Controller
      */
     public function store(CombineInvoicesRequest $request)
     {
-        $results = CombineInvoiceFactory::make($request, $request->user()->selectedInvoices)
+        $results = CombineInvoiceFactory::make($request)
             ->build();
 
         $request->user()->invoiceSelections()->delete();
@@ -117,10 +117,7 @@ class CombineInvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        $results = CombineInvoiceFactory::make($request, $invoice->children)
-            ->setInvoiceUuid($invoice->uuid)
-            ->withOriginalBatchId($invoice->batch_id)
-            ->withUpdateActivityDescription()
+        $results = CombineInvoiceFactory::make($request, $invoice)
             ->build();
 
         session()->flash('success', __('Invoice updated successfully.'));

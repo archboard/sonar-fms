@@ -31,18 +31,23 @@ class CombineInvoiceFactory extends InvoiceFactory
     protected int $discountTotal = 0;
     protected int $taxDue = 0;
     protected int $remainingBalance = 0;
+    protected ?string $createdAt = null;
 
-    public function __construct()
+    public static function make(CombineInvoicesRequest $request, ?Invoice $invoice = null): static
     {
-        parent::__construct();
-        $this->invoiceUuid = $this->uuid();
-    }
+        $instance = (new static)->setRequest($request);
+        $instance->invoiceUuid = $instance->uuid();
 
-    public static function make(CombineInvoicesRequest $request, Collection $selection = null): static
-    {
-        return (new static)
-            ->setSelection($selection)
-            ->setRequest($request);
+        if ($invoice) {
+            $instance->setCreatedAt($invoice->created_at->toDateTimeString())
+                ->withOriginalBatchId($invoice->batch_id)
+                ->setInvoiceUuid($invoice->uuid)
+                ->setSelection($invoice->children);
+        }
+
+        return $instance->setTotals()
+            ->setInvoiceAttributes()
+            ->setPaymentScheduleAttributes();
     }
 
     public function setRequest(CombineInvoicesRequest $request): static
@@ -56,15 +61,20 @@ class CombineInvoiceFactory extends InvoiceFactory
 
         ray('Validated data', $this->validatedData);
 
-        return $this->setTotals()
-            ->setInvoiceAttributes()
-            ->setPaymentScheduleAttributes();
+        return $this->setSelection($this->user->selectedInvoices);
     }
 
     public function setInvoiceUuid(string $uuid): static
     {
         $this->invoiceUuid = $uuid;
         $this->invoiceAttributes['uuid'] = $this->invoiceUuid;
+
+        return $this;
+    }
+
+    public function setCreatedAt(string $date): static
+    {
+        $this->createdAt = $date;
 
         return $this;
     }
@@ -140,7 +150,9 @@ class CombineInvoiceFactory extends InvoiceFactory
                 ->setTimezone(config('app.timezone'))
                 ->toDateTimeString()
             : null;
-        $this->invoiceAttributes['created_at'] = $this->now;
+        // Need to preserve this from the original invoice
+        ray($this->createdAt);
+        $this->invoiceAttributes['created_at'] = $this->createdAt ?: $this->now;
         $this->invoiceAttributes['updated_at'] = $this->now;
 
         $this->preTaxTotal = $this->calculateInvoicePreTaxTotal();
