@@ -30,6 +30,7 @@ class SchoolResource extends JsonResource
             'school_number' => $this->school_number,
             'tax_rate_formatted' => $this->tax_rate_formatted,
             'tax_rate_converted' => $this->tax_rate_converted,
+            'invoice_number_template' => $this->invoice_number_template,
             'currency' => new CurrencyResource($this->whenLoaded('currency')),
         ];
     }
