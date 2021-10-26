@@ -105,12 +105,10 @@ class InvoiceController extends Controller
     {
         $title = $invoice->title . ': ' . $invoice->invoice_number;
         $invoice->fullLoad()
+            ->loadChildren()
             ->load(
                 'activities',
                 'activities.causer',
-                'children',
-                'children.currency',
-                'children.student',
             );
 
         $breadcrumbs = [

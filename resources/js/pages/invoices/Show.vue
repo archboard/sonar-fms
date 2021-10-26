@@ -95,7 +95,8 @@
             </div>
           </dl>
 
-          <div class="py-5">
+          <div class="py-5 space-y-4">
+            <InvoiceDetails v-for="child in invoice.children" :key="child.uuid" :invoice="child" />
             <InvoiceDetails :invoice="invoice" />
           </div>
         </div>

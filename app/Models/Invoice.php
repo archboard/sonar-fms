@@ -398,6 +398,24 @@ class Invoice extends Model
         ]);
     }
 
+    public function loadChildren(): static
+    {
+        if (!$this->is_parent) {
+            return $this;
+        }
+
+        return $this->load([
+            'children',
+            'children.currency',
+            'children.student',
+            'children.school',
+            'children.invoiceItems.invoice.currency',
+            'children.invoiceScholarships.invoice.currency',
+            'children.invoicePaymentSchedules',
+            'children.invoicePaymentSchedules.invoicePaymentTerms',
+        ]);
+    }
+
     public static function calculateSubtotalFromItems(Collection $items)
     {
         return $items

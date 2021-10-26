@@ -41,6 +41,8 @@ class InvoiceResource extends JsonResource
             'past_due' => $this->past_due,
             'payment_made' => $this->payment_made,
             'student_uuid' => $this->student_uuid,
+            'is_parent' => $this->is_parent,
+            'parent_uuid' => $this->parent_uuid,
             'apply_tax' => $this->apply_tax,
             'use_school_tax_defaults' => $this->use_school_tax_defaults,
             'tax_due' => $this->tax_due,
