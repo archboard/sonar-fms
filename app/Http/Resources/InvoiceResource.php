@@ -53,7 +53,7 @@ class InvoiceResource extends JsonResource
             'tax_rate_converted' => $this->tax_rate_converted,
             'children_count' => $this->children_count,
             'student' => new StudentResource($this->whenLoaded('student')),
-            'students' => [$this->student_uuid],
+            'students' => StudentResource::collection($this->whenLoaded('students')),
             'school' => new SchoolResource($this->whenLoaded('school')),
             'items' => InvoiceItemResource::collection($this->whenLoaded('invoiceItems')),
             'scholarships' => InvoiceScholarshipResource::collection($this->whenLoaded('invoiceScholarships')),

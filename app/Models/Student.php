@@ -14,12 +14,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use NumberFormatter;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model
+class Student extends Model implements Searchable
 {
     use HasResource;
     use HasFactory;
@@ -222,5 +223,14 @@ class Student extends Model
         $this->users()->syncWithoutDetaching($users);
 
         return $users;
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->full_name,
+            route('students.show', $this)
+        );
     }
 }

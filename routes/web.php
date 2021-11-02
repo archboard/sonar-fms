@@ -52,6 +52,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/timezones', \App\Http\Controllers\GetTimezonesController::class)
             ->name('timezones');
 
+        Route::get('/search', \App\Http\Controllers\GlobalSearchController::class)
+            ->name('search');
+
         Route::get('/home', \App\Http\Controllers\HomeController::class)
             ->name('home');
 

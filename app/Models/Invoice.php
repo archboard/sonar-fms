@@ -24,11 +24,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @mixin IdeHelperInvoice
  */
-class Invoice extends Model
+class Invoice extends Model implements Searchable
 {
     use BelongsToTenant;
     use BelongsToSchool;
@@ -849,5 +851,14 @@ class Invoice extends Model
             ->update(['subject_id' => $uuid]);
 
         return $this;
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->invoice_number,
+            route('invoices.show', $this)
+        );
     }
 }
