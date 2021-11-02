@@ -28,10 +28,13 @@
           @if($invoice->children->isEmpty())
             <x-invoice-table :invoice="$invoice" :currency="$currency" />
           @else
-            @foreach($invoice->children as $child)
-              <x-invoice-table :invoice="$child" :currency="$currency" />
-            @endforeach
-            <x-invoice-table :invoice="$invoice" :currency="$currency" />
+            <x-invoice-table :invoice="$invoice" :currency="$currency">
+              <div class="bg-gray-50 p-6 rounded-2xl space-y-6 my-6">
+                @foreach($invoice->children as $child)
+                  <x-invoice-table :invoice="$child" :currency="$currency" />
+                @endforeach
+              </div>
+            </x-invoice-table>
           @endif
         @else
           <div class="ck-content flex items-start space-x-6">

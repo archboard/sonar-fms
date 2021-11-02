@@ -37,34 +37,38 @@
       <div class="mt-4 text-sm">{{ $invoice->description }}</div>
     @endif
 
-    <table class="w-full mt-4">
-      <thead>
-        <tr>
-          <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
-          <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
-          <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
-          <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($invoice->invoiceItems as $invoiceItem)
+    {{ $slot }}
+
+    @if(!$invoice->is_parent)
+      <table class="w-full mt-4">
+        <thead>
           <tr>
-            <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
-            <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
-            <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
-            <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount, $currency) }}</td>
+            <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
+            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
+            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
+            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
           </tr>
-        @endforeach
-        <tr>
-          <td class="font-bold text-left px-4 py-2 text-sm" colspan="3">
-            {{ __('Subtotal') }}
-          </td>
-          <td class="font-bold text-right px-4 py-2 text-sm">
-            {{ displayCurrency($invoice->subtotal, $currency) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @foreach($invoice->invoiceItems as $invoiceItem)
+            <tr>
+              <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
+              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
+              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
+              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount, $currency) }}</td>
+            </tr>
+          @endforeach
+          <tr>
+            <td class="font-bold text-left px-4 py-2 text-sm" colspan="3">
+              {{ __('Subtotal') }}
+            </td>
+            <td class="font-bold text-right px-4 py-2 text-sm">
+              {{ displayCurrency($invoice->subtotal, $currency) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    @endif
 
     @if($invoice->invoiceScholarships->isNotEmpty())
       <table class="w-full mt-4">
