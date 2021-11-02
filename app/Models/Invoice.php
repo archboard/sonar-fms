@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
@@ -11,7 +10,6 @@ use App\Traits\BelongsToUser;
 use App\Traits\HasActivities;
 use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
-use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Hidehalo\Nanoid\Client;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,13 +19,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @mixin IdeHelperInvoice
