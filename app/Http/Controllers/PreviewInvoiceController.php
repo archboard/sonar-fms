@@ -15,11 +15,7 @@ class PreviewInvoiceController extends Controller
      */
     public function __invoke(Request $request, Invoice $invoice)
     {
-        $invoice->load([
-            'invoiceScholarships.appliesTo',
-            'invoicePaymentSchedules.invoicePaymentTerms',
-            'invoiceTaxItems.invoiceItem',
-        ]);
+        $invoice->fullLoad()->loadChildren();
         $layout = $request->school()->getDefaultInvoiceLayout();
 
         $title = __('Invoice #:number', ['number' => $invoice->id]);
