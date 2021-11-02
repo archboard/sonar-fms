@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div v-if="showStudent" class="flex items-center justify-between">
+      <h3 class="font-bold text-lg mb-2 pt-2">{{ invoice.student.full_name }}</h3>
+      <span class="text-gray-500 dark:text-gray-400">{{ invoice.invoice_number }}</span>
+    </div>
     <Table>
       <Tbody>
         <tr
@@ -7,7 +11,7 @@
           :key="item.id"
         >
           <Td :lighter="false">
-            {{ item.name }} <XIcon class="w-4 h-4 inline-flex text-gray-500 dark:text-gray-400 mx-1" /> {{ item.quantity }}
+            {{ item.name }} <span v-if="item.quantity > 1"><XIcon class="w-4 h-4 inline-flex text-gray-500 dark:text-gray-400 mx-1"/> {{ item.quantity }}</span>
           </Td>
           <Td class="text-right">
             {{ item.amount_formatted }}
@@ -78,6 +82,10 @@ export default defineComponent({
 
   props: {
     invoice: Object,
+    showStudent: {
+      type: Boolean,
+      default: false
+    }
   },
 
   setup (props) {
