@@ -52,6 +52,11 @@ class UpdateInvoiceTest extends TestCase
             ->assertRedirect();
 
         $this->assertNotNull($this->invoice->refresh()->published_at);
+
+        $this->assertStringContainsString(
+            'Invoice published by',
+            $this->invoice->activities()->latest()->first()->description
+        );
     }
 
     public function test_cant_mark_invoice_as_republished()

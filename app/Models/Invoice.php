@@ -126,6 +126,13 @@ class Invoice extends Model
                     ->on($invoice)
                     ->log('Invoice voided by :user.');
             }
+
+            if ($invoice->isDirty('published_at')) {
+                // __('Invoice published by :user.')
+                activity()
+                    ->on($invoice)
+                    ->log('Invoice published by :user.');
+            }
         });
     }
 
