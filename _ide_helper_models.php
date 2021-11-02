@@ -323,6 +323,8 @@ namespace App\Models{
  * @property-read Invoice|null $parent
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Student|null $student
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students
+ * @property-read int|null $students_count
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\Term|null $term
  * @property-read \App\Models\User $user
