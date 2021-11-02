@@ -31,6 +31,7 @@
             @foreach($invoice->children as $child)
               <x-invoice-table :invoice="$child" :currency="$currency" />
             @endforeach
+            <x-invoice-table :invoice="$invoice" :currency="$currency" />
           @endif
         @else
           <div class="ck-content flex items-start space-x-6">
