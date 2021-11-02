@@ -2,7 +2,7 @@
   <div>
     <div v-if="showStudent" class="flex items-center justify-between">
       <h3 class="font-bold text-lg mb-2 pt-2">{{ invoice.student.full_name }}</h3>
-      <span class="text-gray-500 dark:text-gray-400">{{ invoice.invoice_number }}</span>
+      <InertiaLink class="text-gray-500 dark:text-gray-400 hover:underline" :href="`/invoices/${invoice.uuid}`">{{ invoice.invoice_number }}</InertiaLink>
     </div>
     <Table>
       <Tbody>

@@ -5,7 +5,7 @@
         <svg class="h-5 w-5" :class="iconColor" v-html="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"></svg>
       </div>
       <div class="ml-3">
-        <p class="text-sm font-medium" :class="textColor">
+        <p class="text-sm" :class="textColor">
           <slot/>
         </p>
       </div>

@@ -25,6 +25,10 @@
       {{ __('This invoice is void.') }}
     </Alert>
 
+    <Alert v-if="invoice.parent_uuid" level="warning" class="mb-4">
+      {{ __('This invoice is part of a combined invoice.') }} <InertiaLink :href="`/invoices/${invoice.parent_uuid}`" class="font-medium hover:underline">{{ __('View invoice.') }}</InertiaLink>
+    </Alert>
+
     <!-- Details for smaller screens -->
     <div class="xl:hidden grid grid-cols-4 gap-5 pb-6 mb-8 border-b border-gray-300 dark:border-gray-600">
       <div v-if="invoice.student">

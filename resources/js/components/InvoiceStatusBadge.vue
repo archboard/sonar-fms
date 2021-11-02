@@ -1,5 +1,5 @@
 <template>
-  <SolidBadge :color="invoice.status_color" :size="size">
+  <SolidBadge v-if="invoice.status_label" :color="invoice.status_color" :size="size">
     {{ invoice.status_label }}
   </SolidBadge>
 </template>

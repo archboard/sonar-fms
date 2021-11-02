@@ -347,6 +347,10 @@ class Invoice extends Model
 
     public function getStatusLabelAttribute(): string
     {
+        if ($this->parent_uuid) {
+            return '';
+        }
+
         if (!$this->published_at) {
             return __('Draft');
         }
