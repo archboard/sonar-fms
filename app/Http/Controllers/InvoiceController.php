@@ -114,12 +114,10 @@ class InvoiceController extends Controller
         $breadcrumbs = [
             [
                 'label' => __('Invoices'),
-                'route' => back()->getTargetUrl(),
+                'route' => route('invoices.index'),
             ],
             [
-                'label' => __('Invoice #:invoice_number', [
-                    'invoice_number' => $invoice->id,
-                ]),
+                'label' => $invoice->invoice_number,
                 'route' => route('invoices.show', $invoice),
             ]
         ];
