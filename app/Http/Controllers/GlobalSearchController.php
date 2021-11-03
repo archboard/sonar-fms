@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -31,6 +32,10 @@ class GlobalSearchController extends Controller
                     ->addSearchableAttribute('student_number')
                     ->orderBy('last_name')
                     ->orderBy('first_name');
+            })
+            ->registerModel(Fee::class, function (ModelSearchAspect $aspect) {
+                $aspect->addSearchableAttribute('name')
+                    ->with('currency');
             })
             ->limitAspectResults(10)
             ->search($request->input('s'))

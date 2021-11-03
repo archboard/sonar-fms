@@ -2,22 +2,28 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\ScopeToCurrentSchool;
 use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @mixin IdeHelperFee
  */
-class Fee extends Model
+class Fee extends Model implements Searchable
 {
     use HasFactory;
     use HasResource;
     use BelongsToTenant;
+    use BelongsToSchool;
+    use ScopeToCurrentSchool;
 
     protected $guarded = [];
 
@@ -49,13 +55,8 @@ class Fee extends Model
 
     public function getAmountFormattedAttribute()
     {
-        return Money::ofMinor($this->amount, $this->school->currency->code)
+        return Money::ofMinor($this->amount, $this->currency->code)
             ->formatTo(auth()->user()->locale ?? 'en');
-    }
-
-    public function school(): BelongsTo
-    {
-        return $this->belongsTo(School::class);
     }
 
     public function feeCategory(): BelongsTo
@@ -71,5 +72,14 @@ class Fee extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->name,
+            route('fees.index', ['edit' => $this->id])
+        );
     }
 }

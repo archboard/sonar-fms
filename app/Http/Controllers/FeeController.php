@@ -20,15 +20,12 @@ class FeeController extends Controller
      */
     public function index(Request $request)
     {
-        $fees = $request->school()
-            ->fees()
+        $fees = Fee::filter($request->all())
             ->with([
                 'feeCategory',
                 'department',
-//                'school',
-//                'school.currency',
+                'currency',
             ])
-            ->filter($request->all())
             ->paginate($request->input('perPage', 15));
         $title = __('Fees');
 

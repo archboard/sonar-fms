@@ -10,21 +10,34 @@
       <span>{{ result.title }}</span>
       <div
         v-if="result.type === 'invoices'"
-        class="flex items-center space-x-1 text-gray-600 text-sm"
+        class="flex items-center space-x-2"
         :class="{
             'text-gray-600 dark:text-gray-300': !active,
             'text-gray-100 dark:text-gray-200': active,
         }"
       >
         <InvoiceStatusBadge :invoice="result.searchable" />
-        <span>-</span>
-        <span>{{ result.searchable.amount_due_formatted }}</span>
-        <span>-</span>
-        <span>{{ result.searchable.student_list }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.amount_due_formatted }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.student_list }}</span>
+      </div>
+      <div
+        v-else-if="result.type === 'fees'"
+        class="space-x-2"
+        :class="{
+            'text-gray-600 dark:text-gray-300': !active,
+            'text-gray-100 dark:text-gray-200': active,
+        }"
+      >
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.amount_formatted }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="truncate text-sm">{{ result.searchable.description }}</span>
       </div>
       <div
         v-else-if="result.type === 'students'"
-        class="flex items-center space-x-1 text-sm"
+        class="flex items-center space-x-2 text-sm"
         :class="{
           'text-gray-600 dark:text-gray-300': !active,
           'text-gray-100 dark:text-gray-200': active,
@@ -60,10 +73,10 @@
             }"
           >{{ __('Not enrolled') }}</span>
         </div>
-        <span>-</span>
-        <span>{{ result.searchable.student_number }}</span>
-        <span>-</span>
-        <span>{{ result.searchable.grade_level_formatted }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.student_number }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.grade_level_formatted }}</span>
       </div>
     </div>
     <span class="inline-flex items-center font-mono text-xs py-0.5 px-1 border border-gray-200 dark:border-gray-500 rounded text-white bg-gray-500 dark:bg-gray-800">↵ Enter</span>

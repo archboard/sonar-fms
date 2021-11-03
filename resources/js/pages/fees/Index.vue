@@ -94,7 +94,7 @@
               {{ fee.description }}
             </HelpText>
           </Td>
-          <Td class="text-right">{{ displayCurrency(fee.amount) }}</Td>
+          <Td class="text-right">{{ fee.amount_formatted }}</Td>
           <Td>{{ fee.fee_category?.name }}</Td>
           <Td>{{ fee.department?.name }}</Td>
           <Td class="text-right space-x-2">
