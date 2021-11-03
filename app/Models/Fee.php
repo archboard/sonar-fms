@@ -79,7 +79,7 @@ class Fee extends Model implements Searchable
         return new SearchResult(
             $this,
             $this->name,
-            route('fees.index', ['edit' => $this->id])
+            route('fees.show', $this)
         );
     }
 }
