@@ -26,7 +26,7 @@
               {{ computedActionText }}
             </Button>
             <Button @click.prevent="close" type="button" color="white" class="text-sm">
-              Cancel
+              {{ __('Close') }}
             </Button>
           </slot>
         </div>
