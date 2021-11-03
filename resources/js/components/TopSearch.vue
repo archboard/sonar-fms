@@ -16,8 +16,8 @@
         @blur="focusingInput = false"
         @keydown.esc="searchResults = {}"
         @keypress.enter.prevent="goToPage"
-        @keyup.down.prevent="goToNext"
-        @keyup.up.prevent="goToPrev"
+        @keyup.down.prevent="goToResult(1)"
+        @keyup.up.prevent="goToResult(-1)"
       >
     </div>
 
@@ -140,25 +140,17 @@ export default defineComponent({
         Inertia.visit(currentItem.value)
       }
     }
-    const goToNext = () => {
+    const goToResult = (diff) => {
       if (currentIndex.value === -1) {
         return
       }
+      let nextIndex = currentIndex.value + diff
 
-      const nextIndex = currentIndex.value + 1 === itemsList.value.length
-        ? 0
-        : currentIndex.value + 1
-
-      currentItem.value = itemsList.value[nextIndex]
-    }
-    const goToPrev = () => {
-      if (currentIndex.value === -1) {
-        return
+      if (nextIndex === itemsList.value.length) {
+        nextIndex = 0
+      } else if (nextIndex === -1) {
+        nextIndex = itemsList.value.length - 1
       }
-
-      const nextIndex = currentIndex.value === 0
-        ? itemsList.value.length - 1
-        : currentIndex.value - 1
 
       currentItem.value = itemsList.value[nextIndex]
     }
@@ -173,8 +165,7 @@ export default defineComponent({
       currentItem,
       itemsList,
       goToPage,
-      goToNext,
-      goToPrev,
+      goToResult,
       showResults,
       hoveringSearch,
       focusingInput,
