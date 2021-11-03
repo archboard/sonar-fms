@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, inject, onMounted, ref } from 'vue'
 import handlesFilters from '@/composition/handlesFilters'
 import searchesItems from '@/composition/searchesItems'
 import Authenticated from '@/layouts/Authenticated'
@@ -139,6 +139,7 @@ import HelpText from '@/components/HelpText'
 import Button from '@/components/Button'
 import FeeFormModal from '@/components/modals/FeeFormModal'
 import displaysCurrency from '@/composition/displaysCurrency'
+import qs from 'qs'
 
 export default defineComponent({
   components: {
@@ -168,7 +169,7 @@ export default defineComponent({
     school: Object,
   },
 
-  setup () {
+  setup (props) {
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
@@ -183,11 +184,22 @@ export default defineComponent({
     }, $route('fees.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
+    const query = qs.parse(window.location.search.substr(1))
 
     const displayModal = (fee = {}) => {
       selectedFee.value = fee
       showModal.value = true
     }
+
+    onMounted(() => {
+      if (query.edit) {
+        const fee = props.fees.data.find(f => f.id === +query.edit)
+
+        if (fee) {
+          displayModal(fee)
+        }
+      }
+    })
 
     return {
       filters,
