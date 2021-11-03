@@ -25,6 +25,8 @@ Route::middleware(['self_hosted', 'can_install'])->group(function () {
 
 Route::post('/ps/webhook', \App\Http\Controllers\PowerSchoolWebhookController::class);
 
+Route::redirect('/.well-known/change-password', '/settings/personal');
+
 Route::middleware('tenant')->group(function () {
     Route::get('/', \App\Http\Controllers\IndexController::class);
 
