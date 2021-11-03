@@ -26,9 +26,9 @@
       <InputWrap>
         <Label for="enrolled">{{ __('Enrollment Status') }}</Label>
         <Select id="enrolled" v-model="localFilters.enrolled">
-          <option value="true">Enrolled</option>
-          <option value="false">Unenrolled</option>
-          <option value="all">Both enrolled and unenrolled</option>
+          <option value="true">{{ __('Enrolled') }}</option>
+          <option value="false">{{ __('Unenrolled') }}</option>
+          <option value="all">{{ __('Both enrolled and unenrolled') }}</option>
         </Select>
       </InputWrap>
     </div>

@@ -7,7 +7,9 @@ import debounce from 'lodash/debounce'
 
 export default (defaultFilters, route) => {
   const qsFilters = qs.parse(window.location.search.substr(1))
-  const filters = reactive(Object.assign({}, defaultFilters, qsFilters))
+  const filters = reactive(Object.assign({}, defaultFilters, {
+    ...qsFilters,
+  }))
 
   watch(filters, () => {
     const data = pickBy(pick(filters, Object.keys(defaultFilters)))

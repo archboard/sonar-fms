@@ -1,6 +1,6 @@
 <template>
   <Authenticated>
-    <div class="mb-6 flex space-x-4">
+    <div class="flex mb-2 space-x-4">
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
@@ -15,8 +15,17 @@
       </button>
     </div>
 
+    <div class="space-x-2 flex flex-wrap">
+      <FadeInGroup>
+        <DismissableBadge v-if="filters.enrolled !== true && filters.enrolled !== 'true'" @dismiss="filters.enrolled = true">
+          <span v-if="!filters.enrolled">{{ __('Unenrolled') }}</span>
+          <span v-else>{{ __('Both enrolled and unenrolled') }}</span>
+        </DismissableBadge>
+      </FadeInGroup>
+    </div>
+
     <FadeIn>
-      <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4 flex text-sm">
+      <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mt-4 flex text-sm">
         <span v-if="user.student_selection.length === 1">
           {{ __(':count student selected', { count: user.student_selection.length }) }}
         </span>
@@ -34,7 +43,7 @@
       </div>
     </FadeIn>
 
-    <Table>
+    <Table class="mt-6">
       <Thead>
         <tr>
           <th class="w-8 text-left pl-6">
@@ -89,8 +98,9 @@
               :id="`student_${student.id}`"
             />
           </td>
-          <Td :lighter="false">
+          <Td :lighter="false" class="space-x-2 flex items-center">
             <TableLink :href="`/students/${student.id}`">{{ student.full_name }}</TableLink>
+            <XCircleIcon v-if="!student.enrolled" class="h-5 w-5 text-yellow-500" :title="__('Not enrolled')" />
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
@@ -145,10 +155,14 @@ import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import FadeIn from '@/components/transitions/FadeIn'
 import TableLink from '@/components/tables/TableLink'
+import DismissableBadge from '@/components/DismissableBadge'
+import FadeInGroup from '@/components/transitions/FadeInGroup'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    FadeInGroup,
+    DismissableBadge,
     TableLink,
     FadeIn,
     SonarMenuItem,
