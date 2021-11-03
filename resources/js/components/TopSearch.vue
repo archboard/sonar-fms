@@ -1,5 +1,10 @@
 <template>
-  <form class="w-full flex md:ml-0 relative" @submit="doSearch" @mouseover="hoveringSearch = true" @mouseleave="hoveringSearch = false">
+  <form
+    class="w-full flex md:ml-0 relative"
+    @submit="doSearch"
+    @mouseover="hoveringSearch = true"
+    @mouseleave="hoveringSearch = false"
+  >
     <label for="search_field" class="sr-only">Search</label>
     <div class="relative w-full text-gray-400 focus-within:text-gray-600 dark:focus-within:text-gray-200">
       <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
@@ -33,13 +38,9 @@
               <li
                 v-for="result in results"
                 :key="result.url"
-                class="block rounded w-full px-3 py-1.5"
-                :class="{
-                  'bg-gradient-to-bl from-fuchsia-500 to-fuchsia-600 dark:from-fuchsia-600 dark:to-fuchsia-700 text-white': currentItem === result.url
-                }"
                 @mouseover="currentItem = result.url"
               >
-                <InertiaLink :href="result.url" class="block w-full">{{ result.title }}</InertiaLink>
+                <SearchResult :result="result" :active="currentItem === result.url" />
               </li>
             </ul>
           </div>
@@ -55,15 +56,13 @@ import debounce from 'lodash/debounce'
 import { SearchIcon } from '@heroicons/vue/outline'
 import DropIn from '@/components/transitions/DropIn'
 import { Inertia } from '@inertiajs/inertia'
-import clickaway from '@/directives/clickaway'
+import SearchResult from '@/components/SearchResult'
 
 export default defineComponent({
   components: {
+    SearchResult,
     DropIn,
-    SearchIcon
-  },
-  directives: {
-    clickaway,
+    SearchIcon,
   },
 
   setup () {

@@ -339,15 +339,11 @@ class Invoice extends Model implements Searchable
             return 'yellow';
         }
 
-        if ($this->past_due) {
+        if ($this->past_due || $this->voided_at) {
             return 'red';
         }
 
-        if (!$this->paid_at) {
-            return 'yellow';
-        }
-
-        return 'gray';
+        return 'yellow';
     }
 
     public function getStatusLabelAttribute(): string
@@ -405,6 +401,19 @@ class Invoice extends Model implements Searchable
         }
 
         return now() >= $this->available_at;
+    }
+
+    public function getStudentListAttribute(): string
+    {
+        if ($this->student_uuid && $this->relationLoaded('student')) {
+            return $this->student->full_name;
+        }
+
+        if (!$this->student_uuid && $this->relationLoaded('students')) {
+            return $this->students->pluck('full_name')->join(', ');
+        }
+
+        return '';
     }
 
     public function fullLoad(): static
@@ -857,7 +866,7 @@ class Invoice extends Model implements Searchable
     {
         return new SearchResult(
             $this,
-            $this->invoice_number,
+            "{$this->title}: {$this->invoice_number}",
             route('invoices.show', $this)
         );
     }

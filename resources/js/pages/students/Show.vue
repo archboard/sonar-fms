@@ -345,18 +345,18 @@
 <script>
 import { defineComponent, inject, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import Authenticated from '../../layouts/Authenticated'
+import Authenticated from '@/layouts/Authenticated'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import { CalculatorIcon } from '@heroicons/vue/solid'
 import dayjs from 'dayjs'
-import Spinner from '../../components/icons/spinner'
-import OutlineBadge from '../../components/OutlineBadge'
-import Button from '../../components/Button'
-import Textarea from '../../components/forms/Textarea'
-import StudentInvoiceSlideout from '../../components/slideouts/StudentInvoiceSlideout'
-import StudentInvoiceTable from '../../components/StudentInvoiceTable'
+import Spinner from '@/components/icons/spinner'
+import OutlineBadge from '@/components/OutlineBadge'
+import Button from '@/components/Button'
+import Textarea from '@/components/forms/Textarea'
+import StudentInvoiceSlideout from '@/components/slideouts/StudentInvoiceSlideout'
+import StudentInvoiceTable from '@/components/StudentInvoiceTable'
 import cloneDeep from 'lodash/cloneDeep'
-import displaysCurrency from '../../composition/displaysCurrency'
+import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   components: {

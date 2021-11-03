@@ -23,9 +23,15 @@ class GlobalSearchController extends Controller
             ->registerModel(Invoice::class, function (ModelSearchAspect $aspect) {
                 $aspect->addSearchableAttribute('invoice_number')
                     ->addSearchableAttribute('title')
-                    ->with('student');
+                    ->with('student', 'students', 'currency');
             })
-            ->registerModel(Student::class, 'first_name', 'last_name', 'student_number')
+            ->registerModel(Student::class, function (ModelSearchAspect $aspect) {
+                $aspect->addSearchableAttribute('first_name')
+                    ->addSearchableAttribute('last_name')
+                    ->addSearchableAttribute('student_number')
+                    ->orderBy('last_name')
+                    ->orderBy('first_name');
+            })
             ->limitAspectResults(10)
             ->search($request->input('s'))
             ->map(function (SearchResult $result) {
