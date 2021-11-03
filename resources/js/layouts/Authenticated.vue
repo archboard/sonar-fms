@@ -174,7 +174,7 @@
 
     <div class="flex flex-col justify-between w-0 flex-1 min-h-screen">
       <div
-        class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800"
+        class="relative z-30 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800"
         :class="{
           'shadow': props.breadcrumbs.length === 0
         }"
