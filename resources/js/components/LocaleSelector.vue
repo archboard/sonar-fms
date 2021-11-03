@@ -1,62 +1,32 @@
 <template>
-  <div>
-    <Listbox v-model="locale">
-      <div class="relative mt-1">
-        <SonarListboxButton class="text-white bg-primary-800 dark:bg-primary-600 border-0">
-          <span class="block truncate">{{ locales[locale] }}</span>
+  <div class="relative">
+    <select
+      v-model="locale"
+      class="block w-full pl-3 pr-10 py-2 text-sm text-white bg-primary-800 dark:bg-primary-600 bg-none border-0 focus:outline-none focus:ring focus:ring-fuchsia-500 rounded-md transition"
+    >
+      <option
+        v-for="(label, code) in locales"
+        :key="code"
+        :value="code"
+      >
+        {{ label }}
+      </option>
+    </select>
 
-          <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <SelectorIcon class="w-5 h-5 text-gray-200" aria-hidden="true" />
-          </span>
-        </SonarListboxButton>
-
-        <transition
-          leave-active-class="transition duration-100 ease-in"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-        >
-          <SonarListboxOptions>
-            <ListboxOption
-              v-slot="{ active, selected }"
-              v-for="(label, code) in locales"
-              :key="code"
-              :value="code"
-              as="template"
-            >
-              <SonarListboxOption :active="active" :selected="selected">
-                {{ label }}
-              </SonarListboxOption>
-            </ListboxOption>
-          </SonarListboxOptions>
-        </transition>
-      </div>
-    </Listbox>
+    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+      <SelectorIcon class="w-5 h-5 text-gray-200" aria-hidden="true" />
+    </span>
   </div>
 </template>
 
 <script>
 import { computed, inject, ref, watch } from 'vue'
-import {
-  Listbox,
-  ListboxLabel,
-  ListboxOption,
-} from '@headlessui/vue'
-import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
+import { SelectorIcon } from '@heroicons/vue/solid'
 import { usePage } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
-import SonarListboxButton from './forms/SonarListboxButton'
-import SonarListboxOptions from './forms/SonarListboxOptions'
-import SonarListboxOption from './forms/SonarListboxOption'
 
 export default {
   components: {
-    SonarListboxOption,
-    SonarListboxOptions,
-    SonarListboxButton,
-    Listbox,
-    ListboxLabel,
-    ListboxOption,
-    CheckIcon,
     SelectorIcon,
   },
 
@@ -66,7 +36,7 @@ export default {
     const locales = computed(() => props.value.locales)
     const locale = ref(props.value.locale)
 
-    watch(locale, (newVal, oldVal) => {
+    watch(locale, (newVal) => {
       Inertia.post($route('locale'), {
         locale: newVal,
       }, {
