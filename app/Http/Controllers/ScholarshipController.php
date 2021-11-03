@@ -22,9 +22,7 @@ class ScholarshipController extends Controller
     public function index(Request $request)
     {
         $title = __('Scholarships');
-        $scholarships = $request->school()
-            ->scholarships()
-            ->filter($request->all())
+        $scholarships = Scholarship::filter($request->all())
             ->paginate($request->input('perPage', 15));
 
         return inertia('scholarships/Index', [

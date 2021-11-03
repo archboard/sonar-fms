@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasAmountAttribute;
 use App\Traits\ScopeToCurrentSchool;
-use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +24,7 @@ class Fee extends Model implements Searchable
     use BelongsToTenant;
     use BelongsToSchool;
     use ScopeToCurrentSchool;
+    use HasAmountAttribute;
 
     protected $guarded = [];
 
@@ -51,12 +52,6 @@ class Fee extends Model implements Searchable
         $builder->orderBy($orderBy, $orderDir);
 
         $builder->orderBy('fees.name', $orderDir);
-    }
-
-    public function getAmountFormattedAttribute()
-    {
-        return Money::ofMinor($this->amount, $this->currency->code)
-            ->formatTo(auth()->user()->locale ?? 'en');
     }
 
     public function feeCategory(): BelongsTo

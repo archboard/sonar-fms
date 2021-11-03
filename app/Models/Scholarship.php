@@ -6,22 +6,28 @@ use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasAmountAttribute;
 use App\Traits\HasPercentageAttribute;
+use App\Traits\ScopeToCurrentSchool;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @mixin IdeHelperScholarship
  */
-class Scholarship extends Model
+class Scholarship extends Model implements Searchable
 {
     use HasFactory;
     use HasResource;
     use BelongsToTenant;
     use BelongsToSchool;
+    use ScopeToCurrentSchool;
     use HasPercentageAttribute;
+    use HasAmountAttribute;
 
     protected $guarded = [];
 
@@ -51,5 +57,14 @@ class Scholarship extends Model
             Least::class => __('Least'),
             Greatest::class => __('Greatest'),
         ];
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->name,
+            route('scholarships.show', $this)
+        );
     }
 }

@@ -36,6 +36,21 @@
         <span class="truncate text-sm">{{ result.searchable.description }}</span>
       </div>
       <div
+        v-else-if="result.type === 'scholarships'"
+        class="space-x-2"
+        :class="{
+            'text-gray-600 dark:text-gray-300': !active,
+            'text-gray-100 dark:text-gray-200': active,
+        }"
+      >
+        <span v-if="result.searchable.amount_formatted" aria-hidden="true">/</span>
+        <span v-if="result.searchable.amount_formatted" class="text-sm">{{ result.searchable.amount_formatted }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="text-sm">{{ result.searchable.percentage_formatted }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="truncate text-sm">{{ result.searchable.description }}</span>
+      </div>
+      <div
         v-else-if="result.type === 'students'"
         class="flex items-center space-x-2 text-sm"
         :class="{
