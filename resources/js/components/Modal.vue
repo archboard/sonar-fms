@@ -1,5 +1,5 @@
 <template>
-  <ModalWrapper :show="show">
+  <ModalWrapper :show="show" @close="close">
     <DropIn @after-leave="$emit('close')">
       <div v-if="show" ref="modal" :class="modalSize" class="w-full inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
         <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
