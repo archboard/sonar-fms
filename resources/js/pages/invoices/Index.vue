@@ -134,6 +134,12 @@
             </td>
           </template>
         </InvoiceTableRow>
+
+        <tr v-if="invoices.data.length === 0">
+          <Td colspan="6" class="text-center">
+            {{ __('No results.') }}
+          </Td>
+        </tr>
       </Tbody>
     </Table>
 
