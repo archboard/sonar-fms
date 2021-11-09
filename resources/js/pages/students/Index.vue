@@ -108,8 +108,8 @@
               />
             </div>
           </td>
-          <Td :lighter="false" class="space-x-2">
-            <div class="flex items-center">
+          <Td :lighter="false">
+            <div class="flex items-center space-x-2">
               <TableLink :href="`/students/${student.id}`">{{ student.full_name }}</TableLink>
               <XCircleIcon v-if="!student.enrolled" class="h-5 w-5 text-yellow-500" :title="__('Not enrolled')" />
             </div>
