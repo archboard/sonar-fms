@@ -15,11 +15,11 @@
       </button>
     </div>
 
-    <div class="space-x-2 flex flex-wrap">
+    <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
-        <DismissableBadge v-if="filters.enrolled !== true && filters.enrolled !== 'true'" @dismiss="filters.enrolled = true">
-          <span v-if="!filters.enrolled">{{ __('Unenrolled') }}</span>
-          <span v-else>{{ __('Both enrolled and unenrolled') }}</span>
+        <DismissableBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = true">
+          <span v-if="filters.status === 'withdrawn'">{{ __('Withdrawn/pre-registered') }}</span>
+          <span v-else>{{ __('Enrolled and withdrawn/pre-registered') }}</span>
         </DismissableBadge>
       </FadeInGroup>
     </div>
@@ -197,15 +197,19 @@ export default defineComponent({
     const showFilters = ref(false)
     const selectAll = ref(false)
     const { can } = checksPermissions(props.permissions)
-    const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
-      s: '',
-      perPage: 25,
-      page: 1,
-      orderBy: 'last_name',
-      orderDir: 'asc',
-      grades: [],
-      enrolled: true,
-    }, $route('students.index'))
+    const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters(
+      {
+        s: '',
+        perPage: 25,
+        page: 1,
+        orderBy: 'last_name',
+        orderDir: 'asc',
+        grades: [],
+        status: 'enrolled',
+      },
+      $route('students.index'),
+      {}
+    )
     const { searchTerm } = searchesItems(filters)
     const selectStudent = student => {
       nextTick(() => {

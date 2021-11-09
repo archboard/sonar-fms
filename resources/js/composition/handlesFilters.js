@@ -5,8 +5,26 @@ import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
 import debounce from 'lodash/debounce'
 
-export default (defaultFilters, route) => {
-  const qsFilters = qs.parse(window.location.search.substr(1))
+export default (defaultFilters, route, casts = {}) => {
+  const castValues = object => {
+    Object.keys(casts).forEach((key) => {
+      if (typeof object[key] !== 'undefined') {
+        const cast = casts[key].toLowerCase()
+
+        if (cast.includes('bool')) {
+          object[key] = !!(object[key] === true ||
+            object[key] === 1 ||
+            object[key] === '1' ||
+            object[key] === 'true')
+        } else if (cast.includes('int')) {
+          object[key] = +object[key]
+        }
+      }
+    })
+
+    return object
+  }
+  const qsFilters = castValues(qs.parse(window.location.search.substr(1)))
   const filters = reactive(Object.assign({}, defaultFilters, {
     ...qsFilters,
   }))

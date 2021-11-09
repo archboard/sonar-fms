@@ -52,10 +52,10 @@ class Student extends Model implements Searchable
         });
 
         // Enrollment status
-        $enrolled = $filters['enrolled'] ?? true;
+        $status = $filters['status'] ?? 'enrolled';
 
-        if ($enrolled !== 'all') {
-            $builder->where('enrolled', $enrolled);
+        if ($status !== 'all') {
+            $builder->where('enrolled', $status === 'enrolled');
         }
 
         $orderBy = $filters['orderBy'] ?? 'last_name';
