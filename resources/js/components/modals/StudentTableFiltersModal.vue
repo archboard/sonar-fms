@@ -36,14 +36,14 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from 'vue'
-import Modal from '../Modal'
-import InputWrap from '../forms/InputWrap'
-import Label from '../forms/Label'
-import Select from '../forms/Select'
-import Checkbox from '../forms/Checkbox'
-import CheckboxText from '../forms/CheckboxText'
-import CheckboxWrapper from '../forms/CheckboxWrapper'
+import { defineComponent, reactive } from 'vue'
+import Modal from '@/components/Modal'
+import InputWrap from '@/components/forms/InputWrap'
+import Label from '@/components/forms/Label'
+import Select from '@/components/forms/Select'
+import Checkbox from '@/components/forms/Checkbox'
+import CheckboxText from '@/components/forms/CheckboxText'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import displaysGrades from '@/composition/displaysGrades'
 
 export default defineComponent({
