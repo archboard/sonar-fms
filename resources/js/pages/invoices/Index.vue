@@ -25,9 +25,9 @@
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by number or title')" />
       </div>
-<!--      <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">-->
-<!--        <AdjustmentsIcon class="w-6 h-6" />-->
-<!--      </button>-->
+      <button @click.prevent="showFilters = true" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Filters')">
+        <AdjustmentsIcon class="w-6 h-6" />
+      </button>
       <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
         <XCircleIcon class="w-6 h-6" />
       </button>
@@ -158,6 +158,12 @@
     :invoice="convertInvoice"
     :endpoint="$route('invoices.convert', convertInvoice)"
   />
+  <InvoiceTableFilterModal
+    v-if="showFilters"
+    @close="showFilters = false"
+    @apply="applyFilters"
+    :filters="filters"
+  />
 </template>
 
 <script>
@@ -191,10 +197,12 @@ import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
 import FadeIn from '@/components/transitions/FadeIn'
+import InvoiceTableFilterModal from '@/components/modals/InvoiceTableFilterModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceTableFilterModal,
     FadeIn,
     InvoiceTableRow,
     ConvertInvoiceModal,
@@ -243,6 +251,7 @@ export default defineComponent({
       page: 1,
       orderBy: '',
       orderDir: '',
+      status: [],
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
