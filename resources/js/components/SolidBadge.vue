@@ -1,6 +1,6 @@
 <template>
   <span :class="[
-    'inline-flex items-center rounded-full font-medium whitespace-nowrap',
+    'inline-flex items-center rounded-lg font-medium whitespace-nowrap',
     badgeSize,
     badgeColor
   ]">
@@ -34,7 +34,7 @@ export default defineComponent({
       fuchsia: 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-100',
     }
     const sizes = {
-      base: 'px-2.5 py-0.5 text-xs',
+      base: 'px-2 py-0.5 text-xs',
       lg: 'px-3 py-0.5 text-sm',
     }
     const badgeColor = computed(() => colors[props.color] || colors.gray)
