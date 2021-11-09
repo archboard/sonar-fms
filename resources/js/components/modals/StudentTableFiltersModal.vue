@@ -19,7 +19,7 @@
         <div class="flex flex-wrap">
           <CheckboxWrapper class="w-1/6" v-for="grade in school.grade_levels">
             <Checkbox v-model:checked="localFilters.grades" :value="grade" />
-            <CheckboxText>{{ grade }}</CheckboxText>
+            <CheckboxText>{{ displayShortGrade(grade) }}</CheckboxText>
           </CheckboxWrapper>
         </div>
       </InputWrap>
@@ -44,6 +44,7 @@ import Select from '../forms/Select'
 import Checkbox from '../forms/Checkbox'
 import CheckboxText from '../forms/CheckboxText'
 import CheckboxWrapper from '../forms/CheckboxWrapper'
+import displaysGrades from '@/composition/displaysGrades'
 
 export default defineComponent({
   emits: ['close', 'apply'],
@@ -71,11 +72,13 @@ export default defineComponent({
       emit('apply', localFilters)
     }
     const localFilters = reactive(Object.assign({}, props.filters))
+    const { displayShortGrade } = displaysGrades()
 
     return {
       modalClosed,
       localFilters,
       applyFilters,
+      displayShortGrade,
     }
   }
 })

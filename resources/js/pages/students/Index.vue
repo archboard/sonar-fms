@@ -17,9 +17,17 @@
 
     <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
-        <DismissableBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = true">
+        <DismissableBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = 'enrolled'">
           <span v-if="filters.status === 'withdrawn'">{{ __('Withdrawn/pre-registered') }}</span>
           <span v-else>{{ __('Enrolled and withdrawn/pre-registered') }}</span>
+        </DismissableBadge>
+
+        <DismissableBadge
+          v-for="(grade, index) in filters.grades"
+          :key="grade"
+          @dismiss="filters.grades.splice(index, 1)"
+        >
+          {{ displayLongGrade(grade) }}
         </DismissableBadge>
       </FadeInGroup>
     </div>
@@ -157,6 +165,7 @@ import FadeIn from '@/components/transitions/FadeIn'
 import TableLink from '@/components/tables/TableLink'
 import DismissableBadge from '@/components/DismissableBadge'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
+import displaysGrades from '@/composition/displaysGrades'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -196,6 +205,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
+    const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters(
       {
@@ -242,6 +252,7 @@ export default defineComponent({
       selectAll,
       searchTerm,
       can,
+      displayLongGrade,
     }
   }
 })
