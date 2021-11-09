@@ -99,16 +99,20 @@
           :key="student.id"
         >
           <td class="pl-6 py-4 text-sm">
-            <Checkbox
-              v-model:checked="user.student_selection"
-              @change="selectStudent(student)"
-              :value="student.id"
-              :id="`student_${student.id}`"
-            />
+            <div class="flex items-center justify-center">
+              <Checkbox
+                v-model:checked="user.student_selection"
+                @change="selectStudent(student)"
+                :value="student.id"
+                :id="`student_${student.id}`"
+              />
+            </div>
           </td>
-          <Td :lighter="false" class="space-x-2 flex items-center">
-            <TableLink :href="`/students/${student.id}`">{{ student.full_name }}</TableLink>
-            <XCircleIcon v-if="!student.enrolled" class="h-5 w-5 text-yellow-500" :title="__('Not enrolled')" />
+          <Td :lighter="false" class="space-x-2">
+            <div class="flex items-center">
+              <TableLink :href="`/students/${student.id}`">{{ student.full_name }}</TableLink>
+              <XCircleIcon v-if="!student.enrolled" class="h-5 w-5 text-yellow-500" :title="__('Not enrolled')" />
+            </div>
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
