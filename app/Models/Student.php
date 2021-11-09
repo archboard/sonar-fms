@@ -118,7 +118,7 @@ class Student extends Model implements Searchable
             return __('K');
         }
 
-        return __('PK:age', ['age' => 5 - $this->grade_level]);
+        return __('PK:age', ['age' => 5 + $this->grade_level]);
     }
 
     public function getGradeLevelFormattedAttribute()
@@ -131,7 +131,7 @@ class Student extends Model implements Searchable
             return __('Kindergarten');
         }
 
-        return __('Pre-Kindergarten age :age', ['age' => 5 - $this->grade_level]);
+        return __('Pre-Kindergarten age :age', ['age' => 5 + $this->grade_level]);
     }
 
     public function sections(): BelongsToMany
