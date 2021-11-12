@@ -5,8 +5,8 @@
       <span class="whitespace-nowrap">{{ invoice.invoice_number }}</span>
     </Td>
     <Td :lighter="false">
-      <div class="flex items-center space-x-1">
-        <TableLink :href="$route('invoices.show', invoice)">
+      <div class="flex items-center space-x-1.5">
+        <TableLink :href="$route('invoices.show', invoice)" class="whitespace-nowrap">
           {{ invoice.title }}
         </TableLink>
         <InvoiceStatusBadge :invoice="invoice" size="sm" />
@@ -21,7 +21,7 @@
         v-for="(student, index) in invoice.students"
         :key="student.uuid"
       >
-        <TableLink :href="`/students/${student.uuid}`">
+        <TableLink :href="`/students/${student.uuid}`" class="whitespace-nowrap">
           {{ student.full_name }}
         </TableLink><span v-if="index !== invoice.students.length - 1">, </span>
       </template>
