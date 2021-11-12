@@ -156,19 +156,28 @@ class Invoice extends Model implements Searchable
 
             $builder->where(function (Builder $builder) use ($statuses) {
                 if (in_array('unpaid', $statuses)) {
-                    $builder->orWhereNull('paid_at');
+                    $builder->orWhere(function (Builder $builder) {
+                        $builder->whereNull('paid_at')
+                            ->whereNull('voided_at');
+                    });
                 }
                 if (in_array('paid', $statuses)) {
                     $builder->orWhereNotNull('paid_at');
                 }
                 if (in_array('published', $statuses)) {
-                    $builder->orWhereNotNull('published_at');
+                    $builder->orWhere(function (Builder $builder) {
+                        $builder->whereNotNull('published_at')
+                            ->whereNull('voided_at');
+                    });
                 }
                 if (in_array('draft', $statuses)) {
                     $builder->orWhereNull('published_at');
                 }
                 if (in_array('past', $statuses)) {
-                    $builder->orWhere('due_at', '<', now());
+                    $builder->orWhere(function (Builder $builder) {
+                        $builder->where('due_at', '<', now())
+                            ->whereNull('voided_at');
+                    });
                 }
                 if (in_array('void', $statuses)) {
                     $builder->orWhereNotNull('voided_at');
