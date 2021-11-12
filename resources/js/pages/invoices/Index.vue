@@ -35,21 +35,21 @@
 
     <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
-        <DismissableBadge
+        <DismissibleBadge
           v-for="(status, index) in filters.status"
           :key="status"
           @dismiss="filters.status.splice(index, 1)"
         >
           {{ statuses[status] }}
-        </DismissableBadge>
+        </DismissibleBadge>
 
-        <DismissableBadge
+        <DismissibleBadge
           v-for="(grade, index) in filters.grades"
           :key="grade"
           @dismiss="filters.grades.splice(index, 1)"
         >
           {{ displayLongGrade(grade) }}
-        </DismissableBadge>
+        </DismissibleBadge>
       </FadeInGroup>
     </div>
 
@@ -219,14 +219,14 @@ import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
 import FadeIn from '@/components/transitions/FadeIn'
 import InvoiceTableFilterModal from '@/components/modals/InvoiceTableFilterModal'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
-import DismissableBadge from '@/components/DismissableBadge'
+import DismissibleBadge from '@/components/DismissibleBadge'
 import invoiceStatuses from '@/composition/invoiceStatuses'
 import displaysGrades from '@/composition/displaysGrades'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
-    DismissableBadge,
+    DismissibleBadge,
     FadeInGroup,
     InvoiceTableFilterModal,
     FadeIn,

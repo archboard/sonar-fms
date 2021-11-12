@@ -17,18 +17,18 @@
 
     <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
-        <DismissableBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = 'enrolled'">
+        <DismissibleBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = 'enrolled'">
           <span v-if="filters.status === 'withdrawn'">{{ __('Not enrolled') }}</span>
           <span v-else>{{ __('Enrolled and not enrolled') }}</span>
-        </DismissableBadge>
+        </DismissibleBadge>
 
-        <DismissableBadge
+        <DismissibleBadge
           v-for="(grade, index) in filters.grades"
           :key="grade"
           @dismiss="filters.grades.splice(index, 1)"
         >
           {{ displayLongGrade(grade) }}
-        </DismissableBadge>
+        </DismissibleBadge>
       </FadeInGroup>
     </div>
 
@@ -167,7 +167,7 @@ import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import FadeIn from '@/components/transitions/FadeIn'
 import TableLink from '@/components/tables/TableLink'
-import DismissableBadge from '@/components/DismissableBadge'
+import DismissibleBadge from '@/components/DismissibleBadge'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysGrades from '@/composition/displaysGrades'
 
@@ -175,7 +175,7 @@ export default defineComponent({
   mixins: [PageProps],
   components: {
     FadeInGroup,
-    DismissableBadge,
+    DismissibleBadge,
     TableLink,
     FadeIn,
     SonarMenuItem,
