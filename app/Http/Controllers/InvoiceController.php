@@ -32,6 +32,7 @@ class InvoiceController extends Controller
             ->notAChild()
             ->with([
                 'student',
+                'students',
                 'school',
                 'currency',
             ])
