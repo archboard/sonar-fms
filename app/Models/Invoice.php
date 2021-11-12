@@ -183,6 +183,15 @@ class Invoice extends Model implements Searchable
                     $builder->orWhereNotNull('voided_at');
                 }
             });
+        })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
+            $builder->where(function (Builder $builder) use ($grades) {
+                $gradeQuery = function (Builder $builder) use ($grades) {
+                    $builder->whereIn('grade_level', $grades);
+                };
+
+                $builder->whereHas('student', $gradeQuery)
+                    ->orWhereHas('students', $gradeQuery);
+            });
         });
 
         $orderBy = $filters['orderBy'] ?? 'invoices.created_at';
