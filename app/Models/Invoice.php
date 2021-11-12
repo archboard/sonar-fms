@@ -313,7 +313,7 @@ class Invoice extends Model implements Searchable
             'uuid',
             'uuid',
             'student_uuid'
-        );
+        )->distinct();
     }
 
     public function getIsVoidAttribute(): bool
