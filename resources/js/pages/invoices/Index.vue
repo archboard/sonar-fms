@@ -35,6 +35,13 @@
 
     <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
+        <DismissibleBadge v-if="filters.date_start" @dismiss="filters.date_start = null">
+          {{ __('After :date', { date: displayDate(filters.date_start, `MMM D, YYYY`) }) }}
+        </DismissibleBadge>
+        <DismissibleBadge v-if="filters.date_end" @dismiss="filters.date_end = null">
+          {{ __('Before :date', { date: displayDate(filters.date_end, `MMM D, YYYY`) }) }}
+        </DismissibleBadge>
+
         <DismissibleBadge
           v-for="(status, index) in filters.status"
           :key="status"
@@ -222,6 +229,7 @@ import FadeInGroup from '@/components/transitions/FadeInGroup'
 import DismissibleBadge from '@/components/DismissibleBadge'
 import invoiceStatuses from '@/composition/invoiceStatuses'
 import displaysGrades from '@/composition/displaysGrades'
+import displaysDate from '@/composition/displaysDate'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -279,10 +287,13 @@ export default defineComponent({
       orderDir: '',
       status: [],
       grades: [],
+      date_start: null,
+      date_end: null,
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
     const { displayLongGrade } = displaysGrades()
+    const { displayDate } = displaysDate()
     const { statuses } = invoiceStatuses()
 
     // Selection
@@ -335,6 +346,7 @@ export default defineComponent({
       clearSelection,
       statuses,
       displayLongGrade,
+      displayDate,
     }
   }
 })

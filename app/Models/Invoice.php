@@ -24,6 +24,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use JamesMills\LaravelTimezone\Facades\Timezone;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -192,6 +193,14 @@ class Invoice extends Model implements Searchable
                 $builder->whereHas('student', $gradeQuery)
                     ->orWhereHas('students', $gradeQuery);
             });
+        })->when($filters['date_start'] ?? null, function (Builder $builder, $date) {
+            $parsed = Timezone::convertToLocal(Carbon::parse($date), 'Y-m-d');
+
+            $builder->where('invoice_date', '>=', $parsed);
+        })->when($filters['date_end'] ?? null, function (Builder $builder, $date) {
+            $parsed = Timezone::convertToLocal(Carbon::parse($date), 'Y-m-d');
+
+            $builder->where('invoice_date', '<=', $parsed);
         });
 
         $orderBy = $filters['orderBy'] ?? 'invoices.created_at';

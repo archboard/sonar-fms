@@ -15,6 +15,25 @@
         </Select>
       </InputWrap>
 
+      <div class="grid grid-cols-2 gap-4">
+        <InputWrap>
+          <Label for="date_start">{{ __('Invoice date start') }}</Label>
+          <DatePicker
+            v-model="localFilters.date_start"
+            id="date_start"
+            mode="date"
+          />
+        </InputWrap>
+        <InputWrap>
+          <Label for="date_end">{{ __('Invoice date end') }}</Label>
+          <DatePicker
+            v-model="localFilters.date_end"
+            id="date_end"
+            mode="date"
+          />
+        </InputWrap>
+      </div>
+
       <InputWrap>
         <Label>{{ __('Status') }}</Label>
         <div class="grid grid-cols-3 gap-2">
@@ -50,6 +69,7 @@ import Select from '@/components/forms/Select'
 import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
+import DatePicker from '@/components/forms/DatePicker'
 import displaysGrades from '@/composition/displaysGrades'
 import invoiceStatuses from '@/composition/invoiceStatuses'
 import useSchool from '@/composition/useSchool'
@@ -63,7 +83,8 @@ export default defineComponent({
     Select,
     Label,
     InputWrap,
-    Modal
+    Modal,
+    DatePicker,
   },
 
   props: {
