@@ -1,7 +1,7 @@
 <template>
   <ModalWrapper :show="show" @close="close">
     <DropIn @after-leave="$emit('close')">
-      <div v-if="show" ref="modal" :class="modalSize" class="w-full inline-block align-middle bg-white dark:bg-gray-600 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+      <div v-if="show" ref="modal" :class="modalSize" class="w-full inline-block align-middle bg-white dark:bg-gray-600 rounded-2xl text-left shadow-xl transform transition-all sm:my-8" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
         <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-3">
           <button @click.prevent="close" type="button" class="bg-white dark:bg-gray-600 rounded-full text-gray-400 hover:text-gray-500 focus:bg-gray-50 focus:outline-none focus:ring focus:ring-gray-300 dark:focus:ring-gray-500 transition ease-in-out">
             <span class="sr-only">Close</span>
@@ -20,7 +20,7 @@
             </div>
           </div>
         </div>
-        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse">
+        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse rounded-b-2xl">
           <slot name="actions">
             <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
               {{ computedActionText }}
