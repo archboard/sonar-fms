@@ -34,30 +34,7 @@
     </div>
 
     <div class="space-x-2 pt-1 flex flex-wrap">
-      <FadeInGroup>
-        <DismissibleBadge v-if="filters.date_start" @dismiss="filters.date_start = null">
-          {{ __('After :date', { date: displayDate(filters.date_start, `MMM D, YYYY`) }) }}
-        </DismissibleBadge>
-        <DismissibleBadge v-if="filters.date_end" @dismiss="filters.date_end = null">
-          {{ __('Before :date', { date: displayDate(filters.date_end, `MMM D, YYYY`) }) }}
-        </DismissibleBadge>
-
-        <DismissibleBadge
-          v-for="(status, index) in filters.status"
-          :key="status"
-          @dismiss="filters.status.splice(index, 1)"
-        >
-          {{ statuses[status] }}
-        </DismissibleBadge>
-
-        <DismissibleBadge
-          v-for="(grade, index) in filters.grades"
-          :key="grade"
-          @dismiss="filters.grades.splice(index, 1)"
-        >
-          {{ displayLongGrade(grade) }}
-        </DismissibleBadge>
-      </FadeInGroup>
+      <InvoiceDismissibleBadges :filters="filters" />
     </div>
 
     <FadeIn>
@@ -225,17 +202,14 @@ import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
 import FadeIn from '@/components/transitions/FadeIn'
 import InvoiceTableFilterModal from '@/components/modals/InvoiceTableFilterModal'
-import FadeInGroup from '@/components/transitions/FadeInGroup'
 import DismissibleBadge from '@/components/DismissibleBadge'
-import invoiceStatuses from '@/composition/invoiceStatuses'
-import displaysGrades from '@/composition/displaysGrades'
-import displaysDate from '@/composition/displaysDate'
+import InvoiceDismissibleBadges from '@/components/InvoiceDismissibleBadges'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceDismissibleBadges,
     DismissibleBadge,
-    FadeInGroup,
     InvoiceTableFilterModal,
     FadeIn,
     InvoiceTableRow,
@@ -292,9 +266,6 @@ export default defineComponent({
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
-    const { displayLongGrade } = displaysGrades()
-    const { displayDate } = displaysDate()
-    const { statuses } = invoiceStatuses()
 
     // Selection
     const selectInvoice = invoice => {
@@ -344,9 +315,6 @@ export default defineComponent({
       selectAll,
       selectInvoice,
       clearSelection,
-      statuses,
-      displayLongGrade,
-      displayDate,
     }
   }
 })
