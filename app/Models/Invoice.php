@@ -198,7 +198,10 @@ class Invoice extends Model implements Searchable
         $orderDir = $filters['orderDir'] ?? 'desc';
 
         $builder->orderBy($orderBy, $orderDir);
-        $builder->orderBy('invoices.title', $orderDir);
+
+        if ($orderBy !== 'title') {
+            $builder->orderBy('invoices.title');
+        }
     }
 
     public function scopeIsNotVoid(Builder $builder)
