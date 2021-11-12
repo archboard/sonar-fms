@@ -16,8 +16,8 @@
       </InputWrap>
       <InputWrap>
         <Label>{{ __('Grade levels') }}</Label>
-        <div class="flex flex-wrap">
-          <CheckboxWrapper class="w-1/6" v-for="grade in school.grade_levels">
+        <div class="grid grid-cols-6 gap-2">
+          <CheckboxWrapper v-for="grade in school.grade_levels">
             <Checkbox v-model:checked="localFilters.grades" :value="grade" />
             <CheckboxText>{{ displayShortGrade(grade) }}</CheckboxText>
           </CheckboxWrapper>
