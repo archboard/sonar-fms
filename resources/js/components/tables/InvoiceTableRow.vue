@@ -6,16 +6,25 @@
     </Td>
     <Td :lighter="false">
       <div class="flex items-center space-x-1">
-        <InertiaLink :href="$route('invoices.show', invoice)" class="hover:underline">
+        <TableLink :href="$route('invoices.show', invoice)">
           {{ invoice.title }}
-        </InertiaLink>
+        </TableLink>
         <InvoiceStatusBadge :invoice="invoice" size="sm" />
       </div>
     </Td>
     <Td :lighter="false" v-if="can('students.viewAny') && showStudent">
-      <InertiaLink v-if="invoice.student" :href="$route('students.show', invoice.student)" class="hover:underline">
+      <InertiaLink v-if="invoice.student" :href="`/students/${invoice.student_uuid}`" class="hover:underline">
         {{ invoice.student.full_name }}
       </InertiaLink>
+
+      <template
+        v-for="(student, index) in invoice.students"
+        :key="student.uuid"
+      >
+        <TableLink :href="`/students/${student.uuid}`">
+          {{ student.full_name }}
+        </TableLink><span v-if="index !== invoice.students.length - 1">, </span>
+      </template>
     </Td>
 <!--    <Td class="text-right">{{ invoice.amount_due_formatted }}</Td>-->
     <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
@@ -39,9 +48,11 @@ import Td from '@/components/tables/Td'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import checksPermissions from '@/composition/checksPermissions'
+import TableLink from '@/components/tables/TableLink'
 
 export default defineComponent({
   components: {
+    TableLink,
     InvoiceActionItems,
     VerticalDotMenu,
     Td,

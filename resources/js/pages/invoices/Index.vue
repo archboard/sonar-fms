@@ -18,7 +18,7 @@
       </Dropdown>
     </template>
 
-    <div class="mb-6 flex space-x-4">
+    <div class="mb-2 flex space-x-4">
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
@@ -31,6 +31,26 @@
       <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
         <XCircleIcon class="w-6 h-6" />
       </button>
+    </div>
+
+    <div class="space-x-2 pt-1 flex flex-wrap">
+      <FadeInGroup>
+        <DismissableBadge
+          v-for="(status, index) in filters.status"
+          :key="status"
+          @dismiss="filters.status.splice(index, 1)"
+        >
+          {{ statuses[status] }}
+        </DismissableBadge>
+
+        <DismissableBadge
+          v-for="(grade, index) in filters.grades"
+          :key="grade"
+          @dismiss="filters.grades.splice(index, 1)"
+        >
+          {{ displayLongGrade(grade) }}
+        </DismissableBadge>
+      </FadeInGroup>
     </div>
 
     <FadeIn>
@@ -52,7 +72,7 @@
       </div>
     </FadeIn>
 
-    <Table>
+    <Table class="mt-6">
       <Thead>
         <tr>
           <th class="w-8 text-left pl-6">
@@ -198,10 +218,16 @@ import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
 import FadeIn from '@/components/transitions/FadeIn'
 import InvoiceTableFilterModal from '@/components/modals/InvoiceTableFilterModal'
+import FadeInGroup from '@/components/transitions/FadeInGroup'
+import DismissableBadge from '@/components/DismissableBadge'
+import invoiceStatuses from '@/composition/invoiceStatuses'
+import displaysGrades from '@/composition/displaysGrades'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    DismissableBadge,
+    FadeInGroup,
     InvoiceTableFilterModal,
     FadeIn,
     InvoiceTableRow,
@@ -252,9 +278,12 @@ export default defineComponent({
       orderBy: '',
       orderDir: '',
       status: [],
+      grades: [],
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
+    const { displayLongGrade } = displaysGrades()
+    const { statuses } = invoiceStatuses()
 
     // Selection
     const selectInvoice = invoice => {
@@ -304,6 +333,8 @@ export default defineComponent({
       selectAll,
       selectInvoice,
       clearSelection,
+      statuses,
+      displayLongGrade,
     }
   }
 })

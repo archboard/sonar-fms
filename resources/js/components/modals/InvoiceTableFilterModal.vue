@@ -14,32 +14,26 @@
           <option value="100">100</option>
         </Select>
       </InputWrap>
+
       <InputWrap>
         <Label>{{ __('Status') }}</Label>
         <div class="grid grid-cols-3 gap-2">
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="unpaid" />
-            <CheckboxText>{{ __('Unpaid') }}</CheckboxText>
+          <CheckboxWrapper
+            v-for="(label, key) in statuses"
+            :key="key"
+          >
+            <Checkbox v-model:checked="localFilters.status" :value="key" />
+            <CheckboxText>{{ label }}</CheckboxText>
           </CheckboxWrapper>
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="paid" />
-            <CheckboxText>{{ __('Paid') }}</CheckboxText>
-          </CheckboxWrapper>
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="past" />
-            <CheckboxText>{{ __('Past due') }}</CheckboxText>
-          </CheckboxWrapper>
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="published" />
-            <CheckboxText>{{ __('Published') }}</CheckboxText>
-          </CheckboxWrapper>
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="draft" />
-            <CheckboxText>{{ __('Draft') }}</CheckboxText>
-          </CheckboxWrapper>
-          <CheckboxWrapper>
-            <Checkbox v-model:checked="localFilters.status" value="void" />
-            <CheckboxText>{{ __('Void') }}</CheckboxText>
+        </div>
+      </InputWrap>
+
+      <InputWrap>
+        <Label>{{ __('Grade levels') }}</Label>
+        <div class="grid grid-cols-6 gap-2">
+          <CheckboxWrapper v-for="grade in school.grade_levels">
+            <Checkbox v-model:checked="localFilters.grades" :value="grade" />
+            <CheckboxText>{{ displayShortGrade(grade) }}</CheckboxText>
           </CheckboxWrapper>
         </div>
       </InputWrap>
@@ -57,6 +51,8 @@ import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import displaysGrades from '@/composition/displaysGrades'
+import invoiceStatuses from '@/composition/invoiceStatuses'
+import useSchool from '@/composition/useSchool'
 
 export default defineComponent({
   emits: ['close', 'apply'],
@@ -84,12 +80,16 @@ export default defineComponent({
     }
     const localFilters = reactive(Object.assign({}, props.filters))
     const { displayShortGrade } = displaysGrades()
+    const { statuses } = invoiceStatuses()
+    const { school } = useSchool()
 
     return {
       modalClosed,
       localFilters,
       applyFilters,
       displayShortGrade,
+      statuses,
+      school,
     }
   }
 })
