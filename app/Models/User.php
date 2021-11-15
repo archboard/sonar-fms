@@ -486,7 +486,7 @@ class User extends Authenticatable implements HasLocalePreference
                 ],
                 [
                     'model' => FeeCategory::class,
-                    'label' => __('Fee Categories'),
+                    'label' => __('Fee categories'),
                     'permissions' => [
                         [
                             'permission' => 'viewAny',
@@ -616,7 +616,7 @@ class User extends Authenticatable implements HasLocalePreference
                 ],
                 [
                     'model' => InvoiceImport::class,
-                    'label' => __('Invoice Imports'),
+                    'label' => __('Invoice imports'),
                     'permissions' => [
                         [
                             'permission' => 'viewAny',
@@ -647,7 +647,7 @@ class User extends Authenticatable implements HasLocalePreference
                 ],
                 [
                     'model' => InvoiceLayout::class,
-                    'label' => __('Invoice Layouts'),
+                    'label' => __('Invoice layouts'),
                     'permissions' => [
                         [
                             'permission' => 'viewAny',
@@ -673,7 +673,7 @@ class User extends Authenticatable implements HasLocalePreference
                 ],
                 [
                     'model' => PaymentMethod::class,
-                    'label' => __('Payment Methods'),
+                    'label' => __('Payment methods'),
                     'permissions' => [
                         [
                             'permission' => 'viewAny',
