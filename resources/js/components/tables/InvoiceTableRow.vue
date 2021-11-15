@@ -9,7 +9,7 @@
     </Td>
     <Td :lighter="false">
       <div class="flex items-center space-x-1.5">
-        <TableLink :href="$route('invoices.show', invoice)" class="whitespace-nowrap">
+        <TableLink :href="`/invoices/${invoice.uuid}`" class="whitespace-nowrap">
           {{ invoice.title }}
         </TableLink>
         <InvoiceStatusBadge :invoice="invoice" size="sm" />
