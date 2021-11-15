@@ -1,5 +1,5 @@
 <template>
-  <span class="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700 shadow">
+  <span class="inline-flex items-center py-0.5 pl-2 pr-0.5 my-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700 shadow">
     <slot />
 
     <button type="button" @click.prevent="$emit('dismiss')" class="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none focus:bg-primary-500 focus:text-white">
