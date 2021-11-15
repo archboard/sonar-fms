@@ -214,6 +214,8 @@ Route::middleware('tenant')->group(function () {
                             Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
                                 ->name('download');
                         });
+
+                        Route::resource('payments', \App\Http\Controllers\InvoicePaymentController::class);
                     });
 
                 Route::get('/payments', \App\Http\Controllers\ListInvoicePaymentController::class)
