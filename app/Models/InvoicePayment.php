@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasAmountAttribute;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ class InvoicePayment extends Model
     use BelongsToTenant;
     use BelongsToSchool;
     use BelongsToInvoice;
+    use HasAmountAttribute;
 
     protected $guarded = [];
 
@@ -58,17 +60,5 @@ class InvoicePayment extends Model
     public function madeBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'made_by', 'id');
-    }
-
-    public function getAmountFormattedAttribute(): ?string
-    {
-        if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
-        ) {
-            return null;
-        }
-
-        return displayCurrency($this->amount, $this->invoice->currency);
     }
 }
