@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Fee;
 use App\Models\Invoice;
+use App\Models\InvoicePayment;
 use App\Models\Scholarship;
 use App\Models\School;
 use App\Models\Student;
@@ -111,12 +112,21 @@ class HandleInertiaRequests extends Middleware
                     ];
                 }
 
+                if ($user->can('viewAny', InvoicePayment::class)) {
+                    $links[] = [
+                        'label' => __('Payments'),
+                        'route' => route('payments.index'),
+                        'active' => $request->routeIs('payments.*'),
+                        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />',
+                    ];
+                }
+
                 if ($user->can('viewAny', Fee::class)) {
                     $links[] = [
                         'label' => __('Fees'),
                         'route' => route('fees.index'),
                         'active' => $request->routeIs('fees.*'),
-                        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>',
+                        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
                     ];
                 }
 
