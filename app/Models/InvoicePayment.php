@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use JamesMills\LaravelTimezone\Facades\Timezone;
 
 /**
  * @mixin IdeHelperInvoicePayment
@@ -39,6 +40,15 @@ class InvoicePayment extends Model
         $orderDir = $filters['orderDir'] ?? 'desc';
         $builder->orderBy($filters['orderBy'] ?? 'paid_at', $orderDir)
             ->orderBy('created_at', $orderDir);
+    }
+
+    public function getPaidAtFormattedAttribute(): string
+    {
+        if (!$this->paid_at) {
+            return '';
+        }
+
+        return Timezone::convertToLocal($this->paid_at, 'F j, Y');
     }
 
     public function invoicePaymentTerm(): BelongsTo

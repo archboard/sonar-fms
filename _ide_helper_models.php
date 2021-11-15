@@ -193,9 +193,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Course|null $course
+ * @property-read \App\Models\Currency|null $currency
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\FeeCategory|null $feeCategory
- * @property-read mixed $amount_formatted
+ * @property-read string $amount_formatted
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\FeeFactory factory(...$parameters)
@@ -216,7 +217,7 @@ namespace App\Models{
  * @method static Builder|Fee whereTenantId($value)
  * @method static Builder|Fee whereUpdatedAt($value)
  */
-	class IdeHelperFee extends \Eloquent {}
+	class IdeHelperFee extends \Eloquent implements \Spatie\Searchable\Searchable {}
 }
 
 namespace App\Models{
@@ -302,6 +303,7 @@ namespace App\Models{
  * @property-read string|null $remaining_balance_formatted
  * @property-read string $status_color
  * @property-read string $status_label
+ * @property-read string $student_list
  * @property-read string|null $subtotal_formatted
  * @property-read string|null $tax_due_formatted
  * @property-read mixed $tax_rate_converted
@@ -382,7 +384,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereUuid($value)
  * @method static Builder|Invoice whereVoidedAt($value)
  */
-	class IdeHelperInvoice extends \Eloquent {}
+	class IdeHelperInvoice extends \Eloquent implements \Spatie\Searchable\Searchable {}
 }
 
 namespace App\Models{
@@ -536,7 +538,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Currency|null $currency
- * @property-read string|null $amount_formatted
+ * @property-read string $amount_formatted
+ * @property-read string $paid_at_formatted
  * @property-read \App\Models\Invoice $invoice
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
  * @property-read \App\Models\InvoicePaymentTerm|null $invoicePaymentTerm
@@ -545,21 +548,22 @@ namespace App\Models{
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @method static \Database\Factories\InvoicePaymentFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment query()
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereInvoicePaymentTermUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereInvoiceUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereMadeBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment wherePaidAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment wherePaymentMethodId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereRecordedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereSchoolId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InvoicePayment whereUpdatedAt($value)
+ * @method static Builder|InvoicePayment filter(array $filters)
+ * @method static Builder|InvoicePayment newModelQuery()
+ * @method static Builder|InvoicePayment newQuery()
+ * @method static Builder|InvoicePayment query()
+ * @method static Builder|InvoicePayment whereAmount($value)
+ * @method static Builder|InvoicePayment whereCreatedAt($value)
+ * @method static Builder|InvoicePayment whereId($value)
+ * @method static Builder|InvoicePayment whereInvoicePaymentTermUuid($value)
+ * @method static Builder|InvoicePayment whereInvoiceUuid($value)
+ * @method static Builder|InvoicePayment whereMadeBy($value)
+ * @method static Builder|InvoicePayment wherePaidAt($value)
+ * @method static Builder|InvoicePayment wherePaymentMethodId($value)
+ * @method static Builder|InvoicePayment whereRecordedBy($value)
+ * @method static Builder|InvoicePayment whereSchoolId($value)
+ * @method static Builder|InvoicePayment whereTenantId($value)
+ * @method static Builder|InvoicePayment whereUpdatedAt($value)
  */
 	class IdeHelperInvoicePayment extends \Eloquent {}
 }
@@ -846,6 +850,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Currency|null $currency
+ * @property-read string $amount_formatted
  * @property-read mixed $percentage_converted
  * @property-read mixed $percentage_formatted
  * @property-read \App\Models\School $school
@@ -866,7 +871,7 @@ namespace App\Models{
  * @method static Builder|Scholarship whereTenantId($value)
  * @method static Builder|Scholarship whereUpdatedAt($value)
  */
-	class IdeHelperScholarship extends \Eloquent {}
+	class IdeHelperScholarship extends \Eloquent implements \Spatie\Searchable\Searchable {}
 }
 
 namespace App\Models{
@@ -1051,7 +1056,7 @@ namespace App\Models{
  * @method static Builder|Student whereUpdatedAt($value)
  * @method static Builder|Student whereUuid($value)
  */
-	class IdeHelperStudent extends \Eloquent {}
+	class IdeHelperStudent extends \Eloquent implements \Spatie\Searchable\Searchable {}
 }
 
 namespace App\Models{

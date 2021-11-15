@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoicePaymentResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class InvoicePaymentController extends Controller
@@ -16,11 +19,30 @@ class InvoicePaymentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function index(Invoice $invoice)
+    public function index(Request $request)
     {
-        //
+        /** @var User $user */
+        $user = $request->user();
+        $title = __('Payments');
+        $payments = InvoicePayment::filter($request->all())
+            ->with('invoice', 'currency')
+            ->paginate($request->input('perPage', 25));
+
+        return inertia('payments/Index', [
+            'title' => $title,
+            'payments' => InvoicePaymentResource::collection($payments),
+            'permissions' => [
+                'invoices' => [
+                    'viewAny' => $user->can('viewAny', Invoice::class),
+                ],
+                'students' => [
+                    'viewAny' => $user->can('viewAny', Student::class),
+                ],
+                'payments' => $user->getPermissions(Student::class),
+            ],
+        ])->withViewData(compact('title'));
     }
 
     /**

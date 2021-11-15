@@ -1,11 +1,29 @@
 <template>
   <Authenticated>
+    <template #actions>
+      <Dropdown
+        size="sm"
+        :menu-items="[
+          {
+            label: __('By hand'),
+            route: `/payments/create`,
+          },
+          {
+            label: __('From import'),
+            route: `/payments/import`,
+          },
+        ]"
+      >
+        {{ __('Record payment') }}
+      </Dropdown>
+    </template>
+
     <div class="flex mb-2 space-x-4">
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
         </div>
-        <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by name, email or student number')" />
+        <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by invoice or student')" />
       </div>
 
       <FilterButton @click.prevent="showFilters = true" />
@@ -55,75 +73,93 @@
             <Checkbox v-model:checked="selectAll" />
           </th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('last_name')">
+            {{ __('#') }}
+          </Th>
+          <Th>
+            <div class="flex items-center cursor-pointer" @click="sortColumn('title')">
               <span>
-                {{ __('Name') }}
+                {{ __('Invoice title') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'last_name' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'title' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'title' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('student_number')">
+            <div class="flex items-center cursor-pointer" @click="sortColumn('paid_at')">
               <span>
-                {{ __('Student number') }}
+                {{ __('Date') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'student_number' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'paid_at' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'paid_at' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
           <Th>
-            <div class="flex items-center cursor-pointer" @click="sortColumn('grade_level')">
+            <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('amount')">
               <span>
-                {{ __('Grade') }}
+                {{ __('Amount') }}
               </span>
               <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'grade_level' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortAscendingIcon v-if="filters.orderBy === 'amount' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'amount' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
+          </Th>
+          <Th>
+            {{ __('Made by') }}
           </Th>
           <th></th>
         </tr>
       </Thead>
       <Tbody>
         <tr
-          v-for="(payment, index) in payments.data"
+          v-for="payment in payments.data"
           :key="payment.id"
         >
           <td class="pl-6 py-4 text-sm">
             <div class="flex items-center justify-center">
-              <Checkbox
-                v-model:checked="user.student_selection"
-                @change="selectStudent(payment)"
-                :value="payment.id"
-                :id="`student_${payment.id}`"
-              />
+<!--              <Checkbox-->
+<!--                v-model:checked="user.student_selection"-->
+<!--                @change="selectStudent(payment)"-->
+<!--                :value="payment.id"-->
+<!--                :id="`student_${payment.id}`"-->
+<!--              />-->
             </div>
           </td>
-          <Td :lighter="false">
-            <div class="flex items-center space-x-2">
-              <TableLink :href="`/students/${payment.id}`">{{ payment.full_name }}</TableLink>
-              <XCircleIcon v-if="!payment.enrolled" class="h-5 w-5 text-yellow-500" :title="__('Not enrolled')" />
-            </div>
+          <Td>
+            <span class="whitespace-nowrap flex items-center space-x-2">
+              <span>{{ payment.invoice.invoice_number }}</span>
+              <CollectionIcon v-if="payment.invoice.is_parent" class="w-4 h-4" />
+            </span>
           </Td>
-          <Td>{{ payment.student_number }}</Td>
-          <Td>{{ payment.grade_level_short_formatted }}</Td>
+          <Td :lighter="false">
+            <TableLink :href="`/invoices/${payment.invoice.uuid}`" class="whitespace-nowrap">
+              {{ payment.invoice.title }}
+            </TableLink>
+            <InvoiceStatusBadge :invoice="payment.invoice" size="sm" />
+          </Td>
+          <Td>{{ payment.paid_at_formatted }}</Td>
+          <Td class="text-right">{{ payment.amount_formatted }}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${payment.id}`">
-                  {{ __('View') }}
+                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
+                  {{ __('View invoice') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', payment)">
-                  {{ __('New invoice') }}
+                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${payment.invoice.student_uuid}`">
+                  {{ __('View student') }}
                 </SonarMenuItem>
               </div>
             </VerticalDotMenu>
+          </Td>
+        </tr>
+
+        <tr v-if="payments.data.length === 0">
+          <Td colspan="7" class="text-center">
+            {{ __('No results.') }}
           </Td>
         </tr>
       </Tbody>
@@ -155,7 +191,7 @@ import Td from '@/components/tables/Td'
 import Checkbox from '@/components/forms/Checkbox'
 import Pagination from '@/components/tables/Pagination'
 import Input from '@/components/forms/Input'
-import { SearchIcon, SortAscendingIcon, SortDescendingIcon, XCircleIcon } from '@heroicons/vue/outline'
+import { SearchIcon, SortAscendingIcon, SortDescendingIcon, XCircleIcon, CollectionIcon } from '@heroicons/vue/outline'
 import StudentTableFiltersModal from '@/components/modals/StudentTableFiltersModal'
 import Link from '@/components/Link'
 import checksPermissions from '@/composition/checksPermissions'
@@ -169,10 +205,14 @@ import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysGrades from '@/composition/displaysGrades'
 import FilterButton from '@/components/FilterButton'
 import ClearFilterButton from '@/components/ClearFilterButton'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import Dropdown from '@/components/forms/Dropdown'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    Dropdown,
+    InvoiceStatusBadge,
     ClearFilterButton,
     FilterButton,
     FadeInGroup,
@@ -187,6 +227,7 @@ export default defineComponent({
     Input,
     SortDescendingIcon,
     SortAscendingIcon,
+    CollectionIcon,
     Pagination,
     Checkbox,
     Td,
