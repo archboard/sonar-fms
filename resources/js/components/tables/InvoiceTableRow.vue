@@ -1,8 +1,11 @@
 <template>
   <tr>
     <slot name="prepend" />
-    <Td class="">
-      <span class="whitespace-nowrap">{{ invoice.invoice_number }}</span>
+    <Td>
+      <span class="whitespace-nowrap flex items-center space-x-2">
+        <span>{{ invoice.invoice_number }}</span>
+        <CollectionIcon v-if="invoice.is_parent" class="w-4 h-4" />
+      </span>
     </Td>
     <Td :lighter="false">
       <div class="flex items-center space-x-1.5">
@@ -49,6 +52,7 @@ import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import checksPermissions from '@/composition/checksPermissions'
 import TableLink from '@/components/tables/TableLink'
+import { CollectionIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({
   components: {
@@ -57,6 +61,7 @@ export default defineComponent({
     VerticalDotMenu,
     Td,
     InvoiceStatusBadge,
+    CollectionIcon,
   },
   props: {
     invoice: Object,
