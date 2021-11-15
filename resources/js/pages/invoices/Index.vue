@@ -34,7 +34,7 @@
     </div>
 
     <FadeIn>
-      <div v-if="user.invoice_selection.length > 0" class="text-gray-500 dark:text-gray-300 mb-4 flex text-sm">
+      <div v-if="user.invoice_selection.length > 0" class="text-gray-500 dark:text-gray-300 mt-4 -mb-2 flex text-sm">
         <span v-if="user.invoice_selection.length === 1">
           {{ __(':count invoice selected', { count: user.invoice_selection.length }) }}
         </span>

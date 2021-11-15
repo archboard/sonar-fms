@@ -30,7 +30,7 @@
     </div>
 
     <FadeIn>
-      <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mt-4 flex text-sm">
+      <div v-if="user.student_selection.length > 0" class="text-gray-500 dark:text-gray-300 mt-4 -mb-2 flex text-sm">
         <span v-if="user.student_selection.length === 1">
           {{ __(':count student selected', { count: user.student_selection.length }) }}
         </span>
