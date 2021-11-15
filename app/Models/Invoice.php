@@ -201,6 +201,10 @@ class Invoice extends Model implements Searchable
             $parsed = Timezone::convertToLocal(Carbon::parse($date), 'Y-m-d');
 
             $builder->where('invoice_date', '<=', $parsed);
+        })->when($filters['due_start'] ?? null, function (Builder $builder, $date) {
+            $builder->where('due_at', '>=', $date);
+        })->when($filters['due_end'] ?? null, function (Builder $builder, $date) {
+            $builder->where('invoice_date', '<=', $date);
         });
 
         $orderBy = $filters['orderBy'] ?? 'invoices.created_at';

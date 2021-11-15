@@ -263,6 +263,8 @@ export default defineComponent({
       grades: [],
       date_start: null,
       date_end: null,
+      due_start: null,
+      due_end: null,
     }, $route('invoices.index'))
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()

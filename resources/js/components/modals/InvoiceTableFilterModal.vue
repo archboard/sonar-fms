@@ -34,6 +34,25 @@
         </InputWrap>
       </div>
 
+      <div class="grid grid-cols-2 gap-4">
+        <InputWrap>
+          <Label for="due_start">{{ __('Due date start') }}</Label>
+          <DatePicker
+            v-model="localFilters.due_start"
+            id="due_start"
+            mode="date"
+          />
+        </InputWrap>
+        <InputWrap>
+          <Label for="due_end">{{ __('Due date end') }}</Label>
+          <DatePicker
+            v-model="localFilters.due_end"
+            id="due_end"
+            mode="date"
+          />
+        </InputWrap>
+      </div>
+
       <InputWrap>
         <Label>{{ __('Status') }}</Label>
         <div class="grid grid-cols-3 gap-2">

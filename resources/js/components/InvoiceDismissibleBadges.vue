@@ -7,6 +7,13 @@
       {{ __('Before :date', { date: displayDate(filters.date_end, `MMM D, YYYY`) }) }}
     </DismissibleBadge>
 
+    <DismissibleBadge v-if="filters.due_start" @dismiss="filters.due_start = null">
+      {{ __('Due after :date', { date: displayDate(filters.due_start, `MMM D, YYYY`) }) }}
+    </DismissibleBadge>
+    <DismissibleBadge v-if="filters.due_end" @dismiss="filters.due_end = null">
+      {{ __('Due before :date', { date: displayDate(filters.due_end, `MMM D, YYYY`) }) }}
+    </DismissibleBadge>
+
     <DismissibleBadge
       v-for="(status, index) in filters.status"
       :key="status"
@@ -26,7 +33,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import DismissibleBadge from '@/components/DismissibleBadge'
 import invoiceStatuses from '@/composition/invoiceStatuses'
