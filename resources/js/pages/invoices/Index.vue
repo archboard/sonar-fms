@@ -25,12 +25,8 @@
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by number or title')" />
       </div>
-
       <FilterButton @click.prevent="showFilters = true" />
-
-      <button @click.prevent="resetFilters" class="w-auto bg-white border border-gray-300 dark:border-gray-900 dark:focus:border-primary-500 dark:bg-gray-700 rounded-md px-4 shadow focus:outline-none transition hover:ring hover:ring-primary-500 hover:ring-opacity-50 focus:ring focus:ring-offset-primary-500 focus:ring-primary-500" :title="__('Reset filters')">
-        <XCircleIcon class="w-6 h-6" />
-      </button>
+      <ClearFilterButton @click.prevent="resetFilters" />
     </div>
 
     <div class="space-x-2 pt-1 flex flex-wrap">
@@ -205,10 +201,12 @@ import InvoiceTableFilterModal from '@/components/modals/InvoiceTableFilterModal
 import DismissibleBadge from '@/components/DismissibleBadge'
 import InvoiceDismissibleBadges from '@/components/InvoiceDismissibleBadges'
 import FilterButton from '@/components/FilterButton'
+import ClearFilterButton from '@/components/ClearFilterButton'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ClearFilterButton,
     FilterButton,
     InvoiceDismissibleBadges,
     DismissibleBadge,
