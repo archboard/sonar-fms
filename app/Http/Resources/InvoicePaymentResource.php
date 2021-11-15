@@ -23,6 +23,7 @@ class InvoicePaymentResource extends JsonResource
             'made_by' => new UserResource($this->whenLoaded($this->madeBy)),
             'paymentTerm' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentTerm')),
             'schedule' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentSchedule')),
+            'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
         ];
     }
 }

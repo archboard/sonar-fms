@@ -216,6 +216,9 @@ Route::middleware('tenant')->group(function () {
                         });
                     });
 
+                Route::get('/payments', \App\Http\Controllers\ListInvoicePaymentController::class)
+                    ->name('payments.index');
+
                 Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
                     ->except('create', 'edit');
 

@@ -6,7 +6,9 @@ use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasAmountAttribute;
+use App\Traits\ScopeToCurrentSchool;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +25,7 @@ class InvoicePayment extends Model
     use BelongsToSchool;
     use BelongsToInvoice;
     use HasAmountAttribute;
+    use ScopeToCurrentSchool;
 
     protected $guarded = [];
 
@@ -30,6 +33,13 @@ class InvoicePayment extends Model
         'paid_at' => 'datetime',
         'amount' => 'int',
     ];
+
+    public function scopeFilter(Builder $builder, array $filters)
+    {
+        $orderDir = $filters['orderDir'] ?? 'desc';
+        $builder->orderBy($filters['orderBy'] ?? 'paid_at', $orderDir)
+            ->orderBy('created_at', $orderDir);
+    }
 
     public function invoicePaymentTerm(): BelongsTo
     {
