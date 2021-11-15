@@ -162,6 +162,10 @@ Route::middleware('tenant')->group(function () {
                 Route::post('/invoices/draft', \App\Http\Controllers\SaveInvoiceAsDraftController::class)
                     ->name('invoices.store.draft');
 
+                Route::get('/search/invoices', \App\Http\Controllers\InvoiceSearchController::class)
+                    ->name('invoices.search');
+                Route::post('/search/students', \App\Http\Controllers\InvoiceSearchController::class);
+
                 Route::middleware('invoice_unpublished')
                     ->put('/invoices/draft/{invoice}', \App\Http\Controllers\UpdateDraftInvoiceController::class)
                     ->name('invoices.update.draft');
