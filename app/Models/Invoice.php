@@ -142,7 +142,14 @@ class Invoice extends Model implements Searchable
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
             $builder->where(function (Builder $builder) use ($search) {
                 $builder->where('id', 'ilike', "{$search}%")
-                    ->orWhere('title', 'ilike', "%{$search}%");
+                    ->orWhere('title', 'ilike', "%{$search}%")
+                    ->orWhere('invoice_number', 'ilike', "%{$search}%")
+                    ->orWhereHas('student', function (Builder $builder) use ($search) {
+                        $builder->filter(['s' => $search]);
+                    })
+                    ->orWhereHas('students', function (Builder $builder) use ($search) {
+                        $builder->filter(['s' => $search]);
+                    });
             });
         })->when($filters['batch_id'] ?? null, function (Builder $builder, $batchId) {
             $builder->where('batch_id', $batchId);
