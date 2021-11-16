@@ -8,6 +8,7 @@ use App\PaymentMethods\Cash;
 use App\PaymentMethods\PaymentMethodDriver;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\ScopeToCurrentSchool;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ class PaymentMethod extends Model
     use HasResource;
     use BelongsToTenant;
     use BelongsToSchool;
+    use ScopeToCurrentSchool;
 
     protected $guarded = [];
 
