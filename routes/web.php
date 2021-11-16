@@ -266,6 +266,9 @@ Route::middleware('tenant')->group(function () {
                     ->name('users.schools');
                 Route::put('/users/{user}/schools', [\App\Http\Controllers\UserSchoolController::class, 'update']);
 
+                Route::post('/search/users', \App\Http\Controllers\UserSearchController::class)
+                    ->name('users.search');
+
                 /**
                  * Payment methods
                  */
