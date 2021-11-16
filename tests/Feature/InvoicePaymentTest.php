@@ -42,6 +42,7 @@ class InvoicePaymentTest extends TestCase
                 ->has('paymentMethods')
                 ->has('breadcrumbs')
                 ->has('invoice')
+                ->has('paidBy')
                 ->component('payments/Create')
             );
     }
