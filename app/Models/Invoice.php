@@ -9,6 +9,7 @@ use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
 use App\Traits\HasActivities;
 use App\Traits\HasTaxRateAttribute;
+use App\Traits\ScopeToCurrentSchool;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Hidehalo\Nanoid\Client;
@@ -41,6 +42,7 @@ class Invoice extends Model implements Searchable
     use HasResource;
     use HasTaxRateAttribute;
     use HasActivities;
+    use ScopeToCurrentSchool;
 
     public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
