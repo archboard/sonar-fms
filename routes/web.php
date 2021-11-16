@@ -164,7 +164,7 @@ Route::middleware('tenant')->group(function () {
 
                 Route::get('/search/invoices', \App\Http\Controllers\InvoiceSearchController::class)
                     ->name('invoices.search');
-                Route::post('/search/students', \App\Http\Controllers\InvoiceSearchController::class);
+                Route::post('/search/invoices', \App\Http\Controllers\InvoiceSearchController::class);
 
                 Route::middleware('invoice_unpublished')
                     ->put('/invoices/draft/{invoice}', \App\Http\Controllers\UpdateDraftInvoiceController::class)
