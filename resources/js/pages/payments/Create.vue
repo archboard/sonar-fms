@@ -40,10 +40,12 @@
           <Button type="submit" :loading="form.processing">
             {{ __('Save') }}
           </Button>
+          <Button is="InertiaLink" href="/payments" color="white">
+            {{ __('Cancel') }}
+          </Button>
         </CardAction>
       </CardWrapper>
     </form>
-    <pre>{{ form }}</pre>
   </Authenticated>
 </template>
 
@@ -104,7 +106,7 @@ export default defineComponent({
       form.transform(data => ({
           ...data,
           invoice_uuid: selectedInvoice.value.uuid,
-          maid_by: selectedUser?.id,
+          maid_by: selectedUser.value?.id,
         }))
         .post('/payments')
     }

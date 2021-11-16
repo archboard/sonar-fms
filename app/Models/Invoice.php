@@ -938,4 +938,29 @@ class Invoice extends Model implements Searchable
             route('invoices.show', $this)
         );
     }
+
+    public function recordPayment(InvoicePayment $payment): static
+    {
+        // __(':user recorded a payment of :amount')
+        // __(':user recorded a payment of :amount made by :made_by')
+        $description = $payment->made_by
+            ? ':user recorded a payment of :amount made by :made_by'
+            : ':user recorded a payment of :amount';
+
+        activity()
+            ->on($this)
+            ->withProperties([
+                'amount' => $payment->amount_formatted,
+                'made_by' => optional($payment->madeBy)->full_name,
+            ])
+            ->log($description);
+
+        $amountDue = $this->amount_due - $payment->amount;
+
+        $this->update([
+            'amount_due' => $amountDue < 0 ? 0 : $amountDue,
+        ]);
+
+        return $this;
+    }
 }

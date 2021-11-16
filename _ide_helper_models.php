@@ -1017,7 +1017,7 @@ namespace App\Models{
  * @property-read mixed $full_name
  * @property-read mixed $grade_level_formatted
  * @property-read mixed $grade_level_short_formatted
- * @property-read string $id
+ * @property-read string|null $id
  * @property-read int $revenue
  * @property-read int $unpaid_invoices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $guardians
@@ -1247,7 +1247,7 @@ namespace App\Models{
  * @property-read int|null $active_schools_count
  * @property-read Factory $date_factory
  * @property-read string $full_name
- * @property-read string $id
+ * @property-read string|null $id
  * @property-read mixed $invoice_selection
  * @property-read bool $is_school_admin
  * @property-read array $school_permissions
@@ -1266,6 +1266,10 @@ namespace App\Models{
  * @property-read \App\Models\School|null $school
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\School[] $schools
  * @property-read int|null $schools_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $selectedInvoices
+ * @property-read int|null $selected_invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $selectedStudents
+ * @property-read int|null $selected_students_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\StudentSelection[] $studentSelections
  * @property-read int|null $student_selections_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Student[] $students

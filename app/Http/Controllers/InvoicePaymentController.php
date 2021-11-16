@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Models\Invoice;
@@ -10,6 +11,7 @@ use App\Models\PaymentMethod;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InvoicePaymentController extends Controller
 {
@@ -88,11 +90,21 @@ class InvoicePaymentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request, Invoice $invoice)
+    public function store(CreateInvoicePaymentRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['tenant_id'] = $request->tenant()->id;
+        $data['school_id'] = $request->school()->id;
+        $data['recorded_by'] = $request->id();
+
+        $payment = InvoicePayment::create($data);
+        $payment->invoice->recordPayment($payment);
+
+        session()->flash('success', __('Payment recorded successfully.'));
+
+        return redirect()->route('invoices.show', $payment->invoice);
     }
 
     /**

@@ -3,14 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\InvoicePayment;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
+use Tests\Traits\CreatesInvoice;
 
 class InvoicePaymentTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesInvoice;
 
     protected bool $signIn = true;
 
@@ -45,5 +48,58 @@ class InvoicePaymentTest extends TestCase
                 ->has('paidBy')
                 ->component('payments/Create')
             );
+    }
+
+    public function test_can_save_payment_to_invoice()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $invoice = $this->createInvoice();
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $data = [
+            'invoice_uuid' => $invoice->uuid,
+            'payment_method_id' => null,
+            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'amount' => round($invoice->amount_due / 2),
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals(1, $invoice->invoicePayments()->count());
+        $this->assertDatabaseHas('invoice_payments', [
+            'tenant_id' => $this->tenant->id,
+            'school_id' => $this->school->id,
+            'invoice_uuid' => $invoice->uuid,
+            'amount' => $data['amount'],
+            'paid_at' => $date->toDateTimeString(),
+        ]);
+        $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->amount_due);
+    }
+
+    public function test_cant_save_payment_with_invalid_amount()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $invoice = $this->createInvoice();
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $data = [
+            'invoice_uuid' => $invoice->uuid,
+            'payment_method_id' => null,
+            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'amount' => $invoice->amount_due + 10,
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHasErrors(['amount']);
     }
 }

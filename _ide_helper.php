@@ -11208,6 +11208,16 @@
         {
                         return \Illuminate\Http\Request::wantsInertia();
         }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function id()
+        {
+                        return \Illuminate\Http\Request::id();
+        }
          
     }
             /**
@@ -16941,6 +16951,16 @@
         public static function wantsInertia()
         {
                         return \Illuminate\Http\Request::wantsInertia();
+        }
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function id()
+        {
+                        return \Illuminate\Http\Request::id();
         }
          
     }
