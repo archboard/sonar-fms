@@ -23,7 +23,7 @@
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
         </div>
-        <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by number or title')" />
+        <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search for invoice by title, number or student')" />
       </div>
       <FilterButton @click.prevent="showFilters = true" />
       <ClearFilterButton @click.prevent="resetFilters" />
