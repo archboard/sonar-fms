@@ -11,7 +11,7 @@
 
     <DropIn>
       <div v-if="showOptions" class="absolute z-20 w-full top-full">
-        <div class="mt-2 bg-gray-100 dark:bg-gray-700 space-y-4 rounded-lg shadow-lg p-3 overflow-hidden">
+        <div class="mt-2 bg-gray-100 dark:bg-gray-700 space-y-4 rounded-lg shadow-lg p-3 overflow-y-auto max-h-64">
           <ul class="space-y-1">
             <li
               v-for="(item, index) in items"

@@ -2,7 +2,7 @@
   <Typeahead
     v-model="invoiceDisplay"
     :items="invoiceOptions"
-    :placeholder="__('Search for invoice by title, number or student')"
+    :placeholder="__('Search by name or email')"
     @selected="invoiceSelected"
     @blur="onBlur"
   >
@@ -14,20 +14,7 @@
         }"
       >
         <div class="flex items-center space-x-2">
-          <span>{{ item.title }} ({{ item.invoice_number }})</span>
-          <div
-            class="flex items-center space-x-2"
-            :class="{
-                'text-gray-600 dark:text-gray-300': !active,
-                'text-gray-100 dark:text-gray-200': active,
-            }"
-          >
-            <InvoiceStatusBadge :invoice="item" />
-            <span aria-hidden="true">/</span>
-            <span class="text-sm">{{ item.amount_due_formatted }}</span>
-            <span aria-hidden="true">/</span>
-            <span class="text-sm">{{ item.student_list }}</span>
-          </div>
+          <span>{{ item.full_name }}</span>
         </div>
       </div>
     </template>
@@ -60,11 +47,11 @@ export default defineComponent({
     const $http = inject('$http')
     const { localValue } = hasModelValue(props, emit)
     const searchTerm = ref('')
-    const selectedInvoice = ref(cloneDeep(localValue.value))
+    const selectedUser = ref(cloneDeep(localValue.value))
     const invoiceOptions = ref([])
     const invoiceDisplay = computed({
-      get: () => (!searchTerm.value && selectedInvoice.value.uuid)
-          ? `${selectedInvoice.value.title} (${selectedInvoice.value.invoice_number})`
+      get: () => (!searchTerm.value && selectedUser.value.id)
+          ? selectedUser.value.full_name
           : searchTerm.value,
       set: value => {
         searchTerm.value = value
@@ -74,16 +61,15 @@ export default defineComponent({
       nextTick(() => {
         searchTerm.value = ''
 
-        const invoice = item || {}
-
-        selectedInvoice.value = invoice
-        localValue.value = invoice
+        const user = item || {}
+        selectedUser.value = user
+        localValue.value = user
       })
     }
     const onBlur = () => {
       // If there isn't a search value on blur,
       // assume that the value is cleared out
-      // so we need to remove the value
+      // and we need to remove the value
       if (!searchTerm.value) {
         localValue.value = {}
       }
@@ -95,9 +81,8 @@ export default defineComponent({
         return
       }
 
-      const { data } = await $http.post('/search/invoices', {
+      const { data } = await $http.post('/search/users', {
         s: value,
-        status: ['unpaid', 'published'],
       })
 
       invoiceOptions.value = data

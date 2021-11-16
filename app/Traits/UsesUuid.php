@@ -40,7 +40,7 @@ trait UsesUuid
         return false;
     }
 
-    public function getIdAttribute(): string
+    public function getIdAttribute(): ?string
     {
         return $this->uuid;
     }

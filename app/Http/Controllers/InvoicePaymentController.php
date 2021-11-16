@@ -71,12 +71,16 @@ class InvoicePaymentController extends Controller
                 ->with('student', 'students')
                 ->first()
             : new Invoice;
+        $paidBy = $request->has('user_id')
+            ? User::find($request->input('user_id'))
+            : new User;
 
         return inertia('payments/Create', [
             'title' => $title,
             'paymentMethods' => PaymentMethodResource::collection($paymentMethods),
             'breadcrumbs' => $breadcrumbs,
             'invoice' => $invoice->toResource(),
+            'paidBy' => $paidBy->toResource(),
         ])->withViewData(compact('title'));
     }
 
