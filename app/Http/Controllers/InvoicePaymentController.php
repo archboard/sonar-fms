@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoicePaymentResource;
+use App\Http\Resources\PaymentMethodResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\PaymentMethod;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,11 +50,34 @@ class InvoicePaymentController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function create(Invoice $invoice)
+    public function create(Request $request)
     {
-        //
+        $title = __('Record payment');
+        $paymentMethods = PaymentMethod::orderBy('driver')->get();
+        $breadcrumbs = [
+            [
+                'label' => __('Payments'),
+                'route' => route('payments.index'),
+            ],
+            [
+                'label' => __('Record payment'),
+                'route' => route('payments.create'),
+            ],
+        ];
+        $invoice = $request->has('invoice_uuid')
+            ? Invoice::where('uuid', $request->get('invoice_uuid'))
+                ->with('student', 'students')
+                ->first()
+            : new Invoice;
+
+        return inertia('payments/Create', [
+            'title' => $title,
+            'paymentMethods' => PaymentMethodResource::collection($paymentMethods),
+            'breadcrumbs' => $breadcrumbs,
+            'invoice' => $invoice->toResource(),
+        ])->withViewData(compact('title'));
     }
 
     /**

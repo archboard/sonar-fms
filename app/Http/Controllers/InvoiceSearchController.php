@@ -25,7 +25,8 @@ class InvoiceSearchController extends Controller
                 'currency',
             ])
             ->filter($request->all())
-            ->limit(25);
+            ->limit(25)
+            ->get();
 
         return InvoiceResource::collection($invoices);
     }

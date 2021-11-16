@@ -31,4 +31,18 @@ class InvoicePaymentTest extends TestCase
                 ->component('payments/Index')
             );
     }
+
+    public function test_can_access_create_page()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $this->get('/payments/create')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('paymentMethods')
+                ->has('breadcrumbs')
+                ->has('invoice')
+                ->component('payments/Create')
+            );
+    }
 }
