@@ -7,6 +7,7 @@ use App\Http\Requests\CreateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
+use App\Models\InvoicePayment;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -48,6 +49,9 @@ class InvoiceController extends Controller
             'permissions' => [
                 'invoices' => $user->getPermissions(Invoice::class),
                 'students' => $user->getPermissions(Student::class),
+                'payments' => [
+                    'create' => $user->can('create', InvoicePayment::class),
+                ],
             ],
         ])->withViewData(compact('title'));
     }
@@ -131,6 +135,9 @@ class InvoiceController extends Controller
             'permissions' => [
                 'invoices' => $user->getPermissions(Invoice::class),
                 'students' => $user->getPermissions(Student::class),
+                'payments' => [
+                    'create' => $user->can('create', InvoicePayment::class),
+                ],
             ],
         ])->withViewData(compact('title'));
     }

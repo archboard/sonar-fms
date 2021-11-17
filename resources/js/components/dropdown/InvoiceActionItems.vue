@@ -15,6 +15,9 @@
     <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
       {{ __('Publish') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('payments.create') && invoice.amount_due > 0 && !invoice.is_void && invoice.published_at" is="inertia-link" :href="`/payments/create?invoice_uuid=${invoice.uuid}`">
+      {{ __('Record payment') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="$route('students.show', invoice.student)">
       {{ __('View student') }}
     </SonarMenuItem>
