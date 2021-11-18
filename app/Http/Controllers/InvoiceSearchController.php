@@ -23,6 +23,7 @@ class InvoiceSearchController extends Controller
                 'student',
                 'students',
                 'currency',
+                'invoicePaymentSchedules.invoicePaymentTerms',
             ])
             ->filter($request->all())
             ->limit(25)
