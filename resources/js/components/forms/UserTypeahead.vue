@@ -1,9 +1,9 @@
 <template>
   <Typeahead
-    v-model="invoiceDisplay"
-    :items="invoiceOptions"
+    v-model="userDisplay"
+    :items="users"
     :placeholder="__('Search by name or email')"
-    @selected="invoiceSelected"
+    @selected="userSelected"
     @blur="onBlur"
   >
     <template v-slot:item="{ item, active }">
@@ -48,8 +48,8 @@ export default defineComponent({
     const { localValue } = hasModelValue(props, emit)
     const searchTerm = ref('')
     const selectedUser = ref(cloneDeep(localValue.value))
-    const invoiceOptions = ref([])
-    const invoiceDisplay = computed({
+    const users = ref([])
+    const userDisplay = computed({
       get: () => (!searchTerm.value && selectedUser.value.id)
           ? selectedUser.value.full_name
           : searchTerm.value,
@@ -57,7 +57,7 @@ export default defineComponent({
         searchTerm.value = value
       }
     })
-    const invoiceSelected = item => {
+    const userSelected = item => {
       nextTick(() => {
         searchTerm.value = ''
 
@@ -77,7 +77,7 @@ export default defineComponent({
 
     watch(searchTerm, debounce(async value => {
       if (!value) {
-        invoiceOptions.value = []
+        users.value = []
         return
       }
 
@@ -85,14 +85,14 @@ export default defineComponent({
         s: value,
       })
 
-      invoiceOptions.value = data
+      users.value = data
     }, 500))
 
     return {
       searchTerm,
-      invoiceOptions,
-      invoiceDisplay,
-      invoiceSelected,
+      users,
+      userDisplay,
+      userSelected,
       onBlur,
     }
   }
