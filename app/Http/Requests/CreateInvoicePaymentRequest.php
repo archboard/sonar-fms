@@ -48,7 +48,7 @@ class CreateInvoicePaymentRequest extends FormRequest
             ],
             'made_by' => [
                 'nullable',
-                Rule::exists('users', 'id')
+                Rule::exists('users', 'uuid')
                     ->where('tenant_id', $this->tenant()->id),
             ],
             'invoice_payment_term_uuid' => [
