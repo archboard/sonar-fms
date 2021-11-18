@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
+use App\Traits\HasAmountAttribute;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class InvoicePaymentTerm extends Model
     use HasFactory;
     use BelongsToInvoice;
     use HasResource;
+    use HasAmountAttribute;
 
     protected $fillable = [
         'uuid',

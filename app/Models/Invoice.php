@@ -952,7 +952,7 @@ class Invoice extends Model implements Searchable
         $description = $payment->made_by
             ? ':user recorded a payment of :amount made by :made_by'
             : ':user recorded a payment of :amount';
-        $payment->load('currency');
+        $payment->setRelation('currency', $this->currency);
 
         activity()
             ->on($this)
