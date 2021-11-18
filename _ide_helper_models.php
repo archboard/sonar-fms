@@ -288,6 +288,7 @@ namespace App\Models{
  * @property float|null $relative_tax_rate
  * @property string $invoice_number
  * @property bool $is_parent
+ * @property string|null $invoice_payment_schedule_uuid
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
@@ -312,6 +313,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
  * @property-read \App\Models\InvoiceLayout|null $invoiceLayout
+ * @property-read \App\Models\InvoicePaymentSchedule $invoicePaymentSchedule
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentSchedule[] $invoicePaymentSchedules
  * @property-read int|null $invoice_payment_schedules_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
@@ -359,6 +361,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereInvoiceDate($value)
  * @method static Builder|Invoice whereInvoiceLayoutId($value)
  * @method static Builder|Invoice whereInvoiceNumber($value)
+ * @method static Builder|Invoice whereInvoicePaymentScheduleUuid($value)
  * @method static Builder|Invoice whereIsParent($value)
  * @method static Builder|Invoice whereNotifiedAt($value)
  * @method static Builder|Invoice whereNotify($value)
@@ -614,6 +617,7 @@ namespace App\Models{
  * @property bool $notify
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $amount_formatted
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
  * @method static \Database\Factories\InvoicePaymentTermFactory factory(...$parameters)
