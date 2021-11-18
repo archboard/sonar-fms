@@ -132,6 +132,7 @@ import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import AddThingButton from '@/components/forms/AddThingButton'
 import PercentInput from '@/components/forms/PercentInput'
+import fetchesResolutionStrategies from '@/composition/fetchesResolutionStrategies'
 
 export default defineComponent({
   components: {
@@ -152,6 +153,7 @@ export default defineComponent({
       addScholarship,
       scholarshipSelected
     } = invoiceScholarshipForm(props.form)
+    const { strategies } = fetchesResolutionStrategies()
 
     return {
       localValue,
@@ -161,6 +163,7 @@ export default defineComponent({
       getItemDiscount,
       addScholarship,
       scholarshipSelected,
+      strategies,
     }
   }
 })
