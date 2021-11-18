@@ -586,7 +586,9 @@ class Invoice extends Model implements Searchable
     {
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
-        $paid = 0;
+        $paid = $this->invoicePayments->reduce(function (int $total, InvoicePayment $payment) {
+            return $total + $payment->amount;
+        }, 0);
 
         $this->remaining_balance = $this->amount_due - $paid;
         $this->paid_at = $this->remaining_balance < 0
@@ -618,7 +620,7 @@ class Invoice extends Model implements Searchable
         return $this;
     }
 
-    public function cacheCalculations()
+    public function cacheCalculations(): static
     {
         // Cache all items
         $this->invoiceItems->each(function (InvoiceItem $item) {
@@ -633,7 +635,10 @@ class Invoice extends Model implements Searchable
             $scholarship->setAmount()->save();
         });
 
-        $this->setCalculatedAttributes()->save();
+        $this->setCalculatedAttributes()
+            ->save();
+
+        return $this;
     }
 
     public function queueNotification(Carbon $notifyAt): static
@@ -670,96 +675,6 @@ class Invoice extends Model implements Searchable
             'notify_at' => null,
             'notified_at' => null,
         ]);
-
-        return $this;
-    }
-
-    public function updateFromRequest(UpdateInvoiceRequest $request): static
-    {
-        DB::transaction(function () use ($request) {
-            $data = $request->validated();
-
-            $school = $request->school();
-
-            $existingItems = $this->invoiceItems->keyBy('id');
-            $existingScholarshipItems = $this->invoiceScholarships->keyBy('id');
-
-            // Contains the submitted items for the invoice
-            $items = collect($data['items']);
-
-            // Delete items that aren't present on the request
-            $missingItems = $this->invoiceItems
-                ->filter(fn ($item) => !$items->contains('id', $item->id));
-
-            if ($missingItems->isNotEmpty()) {
-                $this->invoiceItems()
-                    ->whereIn('id', $missingItems->pluck('id'))
-                    ->delete();
-            }
-
-            // Update the items
-            $fees = $school->fees->keyBy('id');
-            $newItems = $items
-                ->reduce(function (array $newItems, $item) use ($existingItems, $fees) {
-                    if ($existingItem = $existingItems->get($item['id'])) {
-                        $existingItem->update($item);
-                        return $newItems;
-                    }
-
-                    $newItems[] = InvoiceItem::generateAttributesForInsert(
-                        $this->uuid,
-                        $item,
-                        $fees
-                    );
-
-                    return $newItems;
-                }, []);
-
-            if (!empty($newItems)) {
-                DB::table('invoice_items')
-                    ->insert($newItems);
-            }
-
-            $scholarshipItems = collect($data['scholarships']);
-
-            // Delete scholarships not present in the request
-            $missingScholarships = $this->invoiceScholarships
-                ->filter(fn ($item) => !$scholarshipItems->contains('id', $item->id));
-
-            if ($missingScholarships->isNotEmpty()) {
-                $this->invoiceScholarships()
-                    ->whereIn('id', $missingScholarships->pluck('id'))
-                    ->delete();
-            }
-
-            // Update the scholarships
-            $scholarships = $school->scholarships->keyBy('id');
-            $newScholarshipItems = $scholarshipItems
-                ->reduce(function (array $newItems, array $item) use ($existingScholarshipItems, $scholarships) {
-                    if ($existingItem = $existingScholarshipItems->get($item['id'])) {
-                        $existingItem->update($item);
-                        return $newItems;
-                    }
-
-                    $newItems[] = InvoiceScholarship::generateAttributesForInsert(
-                        $this->uuid,
-                        $item,
-                        $scholarships
-                    );
-
-                    return $newItems;
-                }, []);
-
-            if (!empty($newScholarshipItems)) {
-                DB::table('invoice_scholarships')
-                    ->insert($newScholarshipItems);
-            }
-
-            $this->unsetRelations();
-            $this->setCalculatedAttributes()
-                ->forceFill(Arr::except($data, ['items', 'scholarships']))
-                ->save();
-        });
 
         return $this;
     }
@@ -962,7 +877,7 @@ class Invoice extends Model implements Searchable
             ])
             ->log($description);
 
-        $amountDue = $this->amount_due - $payment->amount;
+        $amountDue = $this->remaining_balance - $payment->amount;
 
         $this->update([
             'amount_due' => $amountDue < 0 ? 0 : $amountDue,

@@ -44,7 +44,7 @@ class CreateInvoicePaymentRequest extends FormRequest
                 'required',
                 'integer',
                 'min:1',
-                'max:' . $invoice->amount_due,
+                'max:' . $invoice->remaining_balance,
             ],
             'made_by' => [
                 'nullable',

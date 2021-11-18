@@ -211,6 +211,9 @@ Route::middleware('tenant')->group(function () {
                         Route::put('publish', \App\Http\Controllers\PublishInvoiceController::class)
                             ->name('publish');
 
+                        Route::put('calculate', \App\Http\Controllers\RecacheInvoiceController::class)
+                            ->name('calculate');
+
                         Route::middleware('needs_layout')->group(function () {
                             Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
                                 ->name('preview');

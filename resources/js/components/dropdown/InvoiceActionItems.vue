@@ -24,6 +24,9 @@
     <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
       {{ __('New invoice for student') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="`/invoices/${invoice.uuid}/calculate`" as="button" method="put" preserve-scroll>
+      {{ __('Recalculate balances') }}
+    </SonarMenuItem>
   </div>
   <div class="p-1">
     <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.preview', invoice)" target="_blank">
