@@ -10,6 +10,29 @@
               <HelpText>{{ __('This is the invoice for which you are recording a payment.') }}</HelpText>
             </InputWrap>
 
+            <FadeIn>
+              <InputWrap v-if="selectedInvoice.payment_schedules && selectedInvoice.payment_schedules.length > 0" :error="form.errors.invoice_payment_term_uuid">
+                <Label for="invoice_payment_term_uuid">{{ __('Payment term') }}</Label>
+                <Select v-model="form.invoice_payment_term_uuid" id="invoice_payment_term_uuid">
+                  <option :value="null">{{ __('N/A') }}</option>
+                  <optgroup
+                    v-for="schedule in selectedInvoice.payment_schedules"
+                    :key="schedule.id"
+                    :label="__(':count payments', { count: schedule.terms.length })"
+                  >
+                    <option
+                      v-for="term in schedule.terms"
+                      :key="term.uuid"
+                      :value="term.uuid"
+                    >
+                      {{ __(':amount due on :date', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date') }) }}
+                    </option>
+                  </optgroup>
+                </Select>
+                <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
+              </InputWrap>
+            </FadeIn>
+
             <InputWrap :error="form.errors.payment_method_id">
               <Label for="payment_method_id">{{ __('Payment method') }}</Label>
               <Select v-model="form.payment_method_id" id="payment_method_id">
@@ -27,6 +50,8 @@
             <InputWrap :error="form.errors.amount">
               <Label for="amount">{{ __('Amount') }} <Req /></Label>
               <CurrencyInput v-model="form.amount" id="amount" />
+              <HelpText v-if="selectedTerm.uuid">{{ __('The remaining balance for the selected term is :amount.', { amount: displayCurrency(selectedTerm.amount) }) }}</HelpText>
+              <HelpText v-else-if="selectedInvoice.remaining_balance_formatted">{{ __('The remaining balance is :amount.', { amount: selectedInvoice.remaining_balance_formatted }) }}</HelpText>
             </InputWrap>
 
             <InputWrap :error="form.errors.made_by">
@@ -50,7 +75,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import { useForm } from '@inertiajs/inertia-vue3'
 import CardWrapper from '@/components/CardWrapper'
@@ -68,9 +93,14 @@ import Link from '@/components/Link'
 import Req from '@/components/forms/Req'
 import CurrencyInput from '@/components/forms/CurrencyInput'
 import UserTypeahead from '@/components/forms/UserTypeahead'
+import FadeIn from '@/components/transitions/FadeIn'
+import displaysDate from '@/composition/displaysDate'
+import displaysCurrency from '@/composition/displaysCurrency'
+import isEmpty from 'lodash/isEmpty'
 
 export default defineComponent({
   components: {
+    FadeIn,
     UserTypeahead,
     CurrencyInput,
     Req,
@@ -97,6 +127,7 @@ export default defineComponent({
   setup (props) {
     const form = useForm({
       invoice_uuid: props.invoice?.uuid,
+      invoice_payment_term_uuid: null,
       payment_method_id: null,
       paid_at: new Date,
       amount: null,
@@ -106,18 +137,42 @@ export default defineComponent({
       form.transform(data => ({
           ...data,
           invoice_uuid: selectedInvoice.value.uuid,
-          maid_by: selectedUser.value?.id,
+          made_by: selectedUser.value?.uuid,
         }))
         .post('/payments')
     }
     const selectedInvoice = ref(props.invoice)
     const selectedUser = ref(props.paidBy)
+    const selectedTerm = computed(() => {
+      if (!form.invoice_payment_term_uuid || !selectedInvoice.value.payment_schedules) {
+        return {}
+      }
+
+      return selectedInvoice.value.payment_schedules.reduce((obj, sch) => {
+        if (!isEmpty(obj)) {
+          return obj
+        }
+
+        const term = sch.terms.find(term => term.uuid === form.invoice_payment_term_uuid)
+
+        if (term) {
+          obj = term
+        }
+
+        return obj
+      }, {})
+    })
+    const { displayDate } = displaysDate()
+    const { displayCurrency } = displaysCurrency()
 
     return {
       form,
       save,
       selectedInvoice,
       selectedUser,
+      displayDate,
+      displayCurrency,
+      selectedTerm,
     }
   }
 })
