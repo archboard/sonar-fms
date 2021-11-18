@@ -79,6 +79,7 @@ class Invoice extends Model implements Searchable
         'relative_tax_rate',
         'invoice_number',
         'is_parent',
+        'invoice_payment_schedule_uuid',
     ];
 
     protected $casts = [
@@ -326,6 +327,11 @@ class Invoice extends Model implements Searchable
         return $this->belongsToMany(User::class);
     }
 
+    public function invoicePaymentSchedule(): BelongsTo
+    {
+        return $this->belongsTo(InvoicePaymentSchedule::class);
+    }
+
     public function students(): HasManyThrough
     {
         return $this->hasManyThrough(
@@ -493,8 +499,10 @@ class Invoice extends Model implements Searchable
             'currency',
             'invoiceItems.invoice.currency',
             'invoiceScholarships.invoice.currency',
+            'invoicePaymentSchedule',
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms',
+            'invoicePayments',
         ];
     }
 
