@@ -39,7 +39,7 @@
                 <option :value="null">{{ __('N/A') }}</option>
                 <option v-for="method in paymentMethods" :key="method.id" :value="method.id">{{ method.name }}</option>
               </Select>
-              <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
+              <HelpText>{{ __("Setting a payment term will set the invoice's remaining balance based on the payment schedule's total amount.") }}</HelpText>
             </InputWrap>
 
             <InputWrap :error="form.errors.paid_at">
@@ -50,7 +50,7 @@
             <InputWrap :error="form.errors.amount">
               <Label for="amount">{{ __('Amount') }} <Req /></Label>
               <CurrencyInput v-model="form.amount" id="amount" />
-              <HelpText v-if="selectedTerm.uuid">{{ __('The remaining balance for the selected term is :amount.', { amount: displayCurrency(selectedTerm.amount) }) }}</HelpText>
+              <HelpText v-if="selectedTerm.uuid">{{ __('The remaining balance for the selected term is :amount.', { amount: displayCurrency(selectedTerm.remaining_balance) }) }}</HelpText>
               <HelpText v-else-if="selectedInvoice.remaining_balance_formatted">{{ __('The remaining balance is :amount.', { amount: selectedInvoice.remaining_balance_formatted }) }}</HelpText>
             </InputWrap>
 
@@ -137,7 +137,7 @@ export default defineComponent({
       form.transform(data => ({
           ...data,
           invoice_uuid: selectedInvoice.value.uuid,
-          made_by: selectedUser.value?.uuid,
+          made_by: selectedUser.value?.id,
         }))
         .post('/payments')
     }
