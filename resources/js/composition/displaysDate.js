@@ -12,6 +12,7 @@ export default () => {
   const formats = {
     full: 'MMMM D, YYYY h:mma',
     abbr: 'MMM D, YYYY h:mma',
+    abbr_date: 'MMM D, YYYY',
   }
 
   const getDate = (date) => dayjs(date).tz(timezone.value)
