@@ -484,17 +484,23 @@ class Invoice extends Model implements Searchable
         return '';
     }
 
-    public function fullLoad(): static
+    public static function getFullLoadRelationships(): array
     {
-        return $this->load([
+        return [
             'student',
+            'students',
             'school',
             'currency',
             'invoiceItems.invoice.currency',
             'invoiceScholarships.invoice.currency',
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms',
-        ]);
+        ];
+    }
+
+    public function fullLoad(): static
+    {
+        return $this->load(static::getFullLoadRelationships());
     }
 
     public function loadChildren(): static
@@ -946,6 +952,7 @@ class Invoice extends Model implements Searchable
         $description = $payment->made_by
             ? ':user recorded a payment of :amount made by :made_by'
             : ':user recorded a payment of :amount';
+        $payment->load('currency');
 
         activity()
             ->on($this)
