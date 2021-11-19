@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\InvoicePayment;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
@@ -79,7 +77,7 @@ class InvoicePaymentTest extends TestCase
             'amount' => $data['amount'],
             'paid_at' => $date->toDateTimeString(),
         ]);
-        $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->amount_due);
+        $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);
     }
 
     public function test_cant_save_payment_with_invalid_amount()
