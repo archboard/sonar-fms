@@ -60,7 +60,7 @@
                   <FadeInGroup>
                     <InputWrap v-if="form.collect_tax" :error="form.errors.tax_rate">
                       <Label for="tax_rate" :required="true">{{ __('Tax rate') }}</Label>
-                      <Input v-model="form.tax_rate" id="tax_rate" />
+                      <PercentInput v-model="form.tax_rate" id="tax_rate" />
                       <HelpText>
                         {{ __('This is the tax rate collected on invoices. The amount due will reflect this tax rate.') }}
                       </HelpText>
@@ -164,10 +164,12 @@ import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import PageProps from '@/mixins/PageProps'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysDate from '@/composition/displaysDate'
+import PercentInput from '@/components/forms/PercentInput'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    PercentInput,
     FadeInGroup,
     CheckboxWrapper,
     Timezone,
