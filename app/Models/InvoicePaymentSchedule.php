@@ -40,15 +40,15 @@ class InvoicePaymentSchedule extends Model
 
     public function invoicePaymentTerms(): HasMany
     {
-        return $this->hasMany(InvoicePaymentTerm::class, 'invoice_payment_schedule_uuid', 'uuid');
+        return $this->hasMany(InvoicePaymentTerm::class, 'invoice_payment_schedule_uuid', 'uuid')
+            ->orderBy('due_at');
     }
 
     public function setAmount(): static
     {
         $this->amount = $this->invoicePaymentTerms
             ->reduce(
-                fn (int $total, InvoicePaymentTerm $term) => $total + $term->amount,
-                0
+                fn (int $total, InvoicePaymentTerm $term) => $total + $term->amount, 0
             );
 
         return $this;

@@ -592,13 +592,22 @@ class Invoice extends Model implements Searchable
 
     public function setRemainingBalance(): static
     {
+        $amountDue = $this->amount_due;
+
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
-        $paid = $this->invoicePayments->reduce(function (int $total, InvoicePayment $payment) {
-            return $total + $payment->amount;
-        }, 0);
+        $paid = $this->invoicePayments->reduce(
+            fn (int $total, InvoicePayment $payment) => $total + $payment->amount, 0
+        );
 
-        $this->remaining_balance = $this->amount_due - $paid;
+        // If the invoice has a schedule, use its amount
+        // as the invoice's amount due, which may be more than
+        // the invoice's base amount due (likely)
+        if ($this->invoice_payment_schedule_uuid) {
+            $amountDue = $this->invoicePaymentSchedule->amount;
+        }
+
+        $this->remaining_balance = $amountDue - $paid;
         $this->paid_at = $this->remaining_balance < 0
             ? now()
             : null;
@@ -868,28 +877,76 @@ class Invoice extends Model implements Searchable
         );
     }
 
-    public function recordPayment(InvoicePayment $payment): static
+    public function recordPayment(InvoicePayment $payment, bool $log = true, bool $save = true): static
     {
-        // __(':user recorded a payment of :amount')
-        // __(':user recorded a payment of :amount made by :made_by')
-        $description = $payment->made_by
-            ? ':user recorded a payment of :amount made by :made_by'
-            : ':user recorded a payment of :amount';
-        $payment->setRelation('currency', $this->currency);
+        if ($log) {
+            // __(':user recorded a payment of :amount')
+            // __(':user recorded a payment of :amount made by :made_by')
+            $description = $payment->made_by
+                ? ':user recorded a payment of :amount made by :made_by'
+                : ':user recorded a payment of :amount';
+            $payment->setRelation('currency', $this->currency);
+            $scheduleUuid = null;
 
-        activity()
-            ->on($this)
-            ->withProperties([
-                'amount' => $payment->amount_formatted,
-                'made_by' => optional($payment->madeBy)->full_name,
-            ])
-            ->log($description);
+            activity()
+                ->on($this)
+                ->withProperties([
+                    'amount' => $payment->amount_formatted,
+                    'made_by' => optional($payment->madeBy)->full_name,
+                ])
+                ->log($description);
+        }
 
-        $amountDue = $this->remaining_balance - $payment->amount;
+        // If the payment associated a term
+        // set the invoice's schedule to the term's
+        if ($payment->invoice_payment_term_uuid) {
+            $scheduleUuid = $payment->invoicePaymentTerm->invoice_payment_schedule_uuid;
+        }
 
-        $this->update([
-            'amount_due' => $amountDue < 0 ? 0 : $amountDue,
+        // Load all the payment schedules to automatically distribute the
+        // payment across all the terms
+        if (!$this->relationLoaded('invoicePaymentSchedules')) {
+            $this->load('invoicePaymentSchedules', 'invoicePaymentSchedules.invoicePaymentTerms');
+        }
+
+        // Use the payment and update all the terms' remaining balances
+        // as if it was being applied to each payment schedule's terms
+        foreach ($this->invoicePaymentSchedules as $schedule) {
+            // Each schedule has its own amount due, since it's likely different
+            // from the base amount due. We need to apply this payment to each
+            // schedule and its terms
+            $remainingSchedulePayment = $payment->amount;
+
+            foreach ($schedule->invoicePaymentTerms as $term) {
+                if ($term->remaining_balance === 0) {
+                    continue;
+                }
+
+                // Stop iterating if there's no more payment
+                // to distribute to the terms
+                if ($remainingSchedulePayment <= 0) {
+                    break;
+                }
+
+                $originalRemainingBalance = $term->remaining_balance;
+                $remainingTermBalance = $term->remaining_balance - $remainingSchedulePayment;
+
+                $term->update([
+                    'remaining_balance' => $remainingTermBalance < 0 ? 0 : $remainingTermBalance,
+                ]);
+
+                $remainingSchedulePayment -= abs($term->remaining_balance - $originalRemainingBalance);
+            }
+        }
+
+        $this->forceFill([
+            'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
+            'remaining_balance' => $this->remaining_balance - $payment->amount,
         ]);
+
+        if ($save) {
+            $this->save();
+        }
 
         return $this;
     }

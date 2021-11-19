@@ -113,14 +113,20 @@ trait CreatesInvoice
                 $scholarship->setAmount()->save();
             });
 
+        $invoice->setCalculatedAttributes(true)
+            ->refresh();
 
         InvoicePaymentSchedule::factory()
             ->count($this->faker->numberBetween(0, 3))
             ->make(['invoice_uuid' => $invoice->uuid])
-            ->each(function (InvoicePaymentSchedule $schedule) {
+            ->each(function (InvoicePaymentSchedule $schedule) use ($invoice) {
+                $termCount = $this->faker->numberBetween(2, 5);
+                $amountDue = round($invoice->amount_due / $termCount);
                 $terms = InvoicePaymentTerm::factory()
-                    ->count($this->faker->numberBetween(1, 5))
+                    ->count($termCount)
                     ->make([
+                        'amount_due' => $amountDue,
+                        'remaining_balance' => $amountDue,
                         'invoice_uuid' => $schedule->invoice_uuid,
                         'invoice_payment_schedule_uuid' => $schedule['uuid'],
                     ]);
@@ -131,8 +137,7 @@ trait CreatesInvoice
                 $terms->each(fn ($term) => $term->save());
             });
 
-        return $invoice->setCalculatedAttributes(true)
-            ->refresh();
+        return $invoice;
     }
 
     public function createInvoiceBatchRecord(): string

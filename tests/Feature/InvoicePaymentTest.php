@@ -48,8 +48,9 @@ class InvoicePaymentTest extends TestCase
             );
     }
 
-    public function test_can_save_payment_to_invoice()
+    public function test_can_save_payment_to_invoice_without_associating_term()
     {
+        $this->withoutExceptionHandling();
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
@@ -69,6 +70,7 @@ class InvoicePaymentTest extends TestCase
             ->assertSessionHas('success')
             ->assertRedirect();
 
+        $invoice->refresh();
         $this->assertEquals(1, $invoice->invoicePayments()->count());
         $this->assertDatabaseHas('invoice_payments', [
             'tenant_id' => $this->tenant->id,
