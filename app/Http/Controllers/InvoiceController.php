@@ -28,7 +28,9 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $title = __('Invoices');
-        $invoices = Invoice::notAChild()
+        $invoices = $request->school()
+            ->invoices()
+            ->notAChild()
             ->with([
                 'student',
                 'students',

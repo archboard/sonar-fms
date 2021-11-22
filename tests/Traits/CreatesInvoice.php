@@ -8,6 +8,7 @@ use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\InvoiceSelection;
+use App\Models\School;
 use App\Models\Student;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;

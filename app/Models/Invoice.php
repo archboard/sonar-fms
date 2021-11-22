@@ -42,7 +42,6 @@ class Invoice extends Model implements Searchable
     use HasResource;
     use HasTaxRateAttribute;
     use HasActivities;
-    use ScopeToCurrentSchool;
 
     public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
