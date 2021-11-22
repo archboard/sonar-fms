@@ -104,7 +104,7 @@ class Student extends Model implements Searchable
         return $this->invoices()
             ->isNotVoid()
             ->published()
-            ->paid()
+            ->paymentMade()
             ->sum('pre_tax_subtotal');
     }
 

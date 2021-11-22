@@ -289,6 +289,7 @@ namespace App\Models{
  * @property string $invoice_number
  * @property bool $is_parent
  * @property string|null $invoice_payment_schedule_uuid
+ * @property int $total_paid
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Invoice[] $children
@@ -342,6 +343,7 @@ namespace App\Models{
  * @method static Builder|Invoice newQuery()
  * @method static Builder|Invoice notAChild()
  * @method static Builder|Invoice paid()
+ * @method static Builder|Invoice paymentMade()
  * @method static Builder|Invoice published()
  * @method static Builder|Invoice query()
  * @method static Builder|Invoice unpaid()
@@ -381,6 +383,7 @@ namespace App\Models{
  * @method static Builder|Invoice whereTenantId($value)
  * @method static Builder|Invoice whereTermId($value)
  * @method static Builder|Invoice whereTitle($value)
+ * @method static Builder|Invoice whereTotalPaid($value)
  * @method static Builder|Invoice whereUpdatedAt($value)
  * @method static Builder|Invoice whereUseSchoolTaxDefaults($value)
  * @method static Builder|Invoice whereUserUuid($value)
@@ -618,6 +621,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string $amount_formatted
+ * @property-read string|null $id
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
  * @method static \Database\Factories\InvoicePaymentTermFactory factory(...$parameters)

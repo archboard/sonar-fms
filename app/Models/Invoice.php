@@ -80,6 +80,7 @@ class Invoice extends Model implements Searchable
         'invoice_number',
         'is_parent',
         'invoice_payment_schedule_uuid',
+        'total_paid',
     ];
 
     protected $casts = [
@@ -98,6 +99,9 @@ class Invoice extends Model implements Searchable
         'available_at' => 'datetime',
         'published_at' => 'datetime',
         'is_parent' => 'boolean',
+        'total_paid' => 'int',
+        'amount_due' => 'int',
+        'remaining_balance' => 'int',
     ];
 
     // These are the attributes/properties that are
@@ -240,6 +244,11 @@ class Invoice extends Model implements Searchable
     public function scopePaid(Builder $builder)
     {
         $builder->whereNotNull('paid_at');
+    }
+
+    public function scopePaymentMade(Builder $builder)
+    {
+        $builder->where('invoices.amount_due', '!=', DB::raw('invoices.remaining_balance'));
     }
 
     public function scopeUnpublished(Builder $builder)
@@ -596,7 +605,7 @@ class Invoice extends Model implements Searchable
 
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
-        $paid = $this->invoicePayments->reduce(
+        $this->total_paid = $this->invoicePayments->reduce(
             fn (int $total, InvoicePayment $payment) => $total + $payment->amount, 0
         );
 
@@ -607,8 +616,8 @@ class Invoice extends Model implements Searchable
             $amountDue = $this->invoicePaymentSchedule->amount;
         }
 
-        $this->remaining_balance = $amountDue - $paid;
-        $this->paid_at = $this->remaining_balance < 0
+        $this->remaining_balance = $amountDue - $this->total_paid;
+        $this->paid_at = $this->remaining_balance <= 0
             ? now()
             : null;
 
@@ -905,6 +914,7 @@ class Invoice extends Model implements Searchable
 
         $this->distributePaymentToTerms($payment)
             ->forceFill([
+                'total_paid' => $this->total_paid + $payment->amount,
                 'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
                 'remaining_balance' => $this->remaining_balance - $payment->amount,
             ]);
