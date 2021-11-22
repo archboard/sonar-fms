@@ -30,7 +30,7 @@
                     </option>
                   </optgroup>
                 </Select>
-                <HelpText>{{ __("Setting a payment term will set the invoice's remaining balance based on the payment schedule's total amount.") }}</HelpText>
+                <HelpText>{{ __("Setting a payment term will use the term's schedule's total for invoice's total when calculating the remaining balance.") }}</HelpText>
               </InputWrap>
             </FadeIn>
 
