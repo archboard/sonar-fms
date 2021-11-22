@@ -83,6 +83,49 @@ class InvoicePaymentTest extends TestCase
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);
     }
 
+    public function test_can_save_payment_to_invoice_with_associating_term()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $invoice = $this->createInvoice();
+        $this->seedPaymentSchedules($invoice, 1);
+        /** @var InvoicePaymentTerm $term */
+        $term = $invoice->invoicePaymentTerms()->first();
+
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $data = [
+            'invoice_uuid' => $invoice->uuid,
+            'payment_method_id' => null,
+            'invoice_payment_term_uuid' => $term->uuid,
+            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'amount' => (int) round($invoice->amount_due / 2),
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $invoice->refresh();
+        $this->assertEquals(1, $invoice->invoicePayments()->count());
+        $this->assertDatabaseHas('invoice_payments', [
+            'tenant_id' => $this->tenant->id,
+            'school_id' => $this->school->id,
+            'invoice_uuid' => $invoice->uuid,
+            'amount' => $data['amount'],
+            'paid_at' => $date->toDateTimeString(),
+            'invoice_payment_term_uuid' => $term->uuid,
+        ]);
+
+        // The "amount due" that will be referenced is the schedule's amount due, not the invoice's
+        $this->assertEquals($term->invoicePaymentSchedule->amount - $data['amount'], $invoice->remaining_balance);
+        $this->assertEquals($term->invoice_payment_schedule_uuid, $invoice->invoice_payment_schedule_uuid);
+    }
+
     public function test_cant_save_payment_with_invalid_amount()
     {
         $this->assignPermission('create', InvoicePayment::class);

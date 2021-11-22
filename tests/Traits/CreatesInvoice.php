@@ -121,7 +121,7 @@ trait CreatesInvoice
         return $invoice;
     }
 
-    protected function seedPaymentSchedules(Invoice $invoice, int $schedules): Invoice
+    protected function seedPaymentSchedules(Invoice $invoice, int $schedules = 2): Invoice
     {
         $invoice->invoicePaymentSchedules()->delete();
 
@@ -134,10 +134,11 @@ trait CreatesInvoice
                 $terms = InvoicePaymentTerm::factory()
                     ->count($termCount)
                     ->make([
+                        'amount' => $amountDue,
                         'amount_due' => $amountDue,
                         'remaining_balance' => $amountDue,
                         'invoice_uuid' => $schedule->invoice_uuid,
-                        'invoice_payment_schedule_uuid' => $schedule['uuid'],
+                        'invoice_payment_schedule_uuid' => $schedule->uuid,
                     ]);
 
                 $schedule->setRelation('invoicePaymentTerms', $terms);
@@ -245,5 +246,34 @@ trait CreatesInvoice
                 'school_id' => $this->school->id,
                 'invoice_uuid' => $invoice->uuid
             ]);
+    }
+
+    protected function createCombinedInvoice(int $count = 3): Invoice
+    {
+        $parentInvoice = $this->createInvoice([
+            'student_uuid' => null,
+            'is_parent' => true
+        ]);
+
+        $children = Collection::times($count)
+            ->map(fn () => $this->createInvoice(['parent_uuid' => $parentInvoice->uuid]));
+
+        // Parent invoices don't have items or scholarships,
+        // but they do have payment schedules
+        $parentInvoice->invoiceItems()->delete();
+        $parentInvoice->invoiceScholarships()->delete();
+        $this->seedPaymentSchedules($parentInvoice);
+        $parentInvoice->setCalculatedAttributes(true);
+
+        // Make sure everything reconciles correctly
+        $this->assertEquals($children->sum('amount_due'), $parentInvoice->amount_due);
+        $this->assertEquals($children->sum('remaining_balance'), $parentInvoice->remaining_balance);
+        $this->assertEquals($children->sum('pre_tax_subtotal'), $parentInvoice->pre_tax_subtotal);
+        $this->assertEquals($children->sum('tax_due'), $parentInvoice->tax_due);
+        $this->assertEquals($children->sum('subtotal'), $parentInvoice->subtotal);
+        $this->assertEquals($children->sum('discount_total'), $parentInvoice->discount_total);
+        $this->assertEquals($children->sum('total_paid'), $parentInvoice->total_paid);
+
+        return $parentInvoice->refresh();
     }
 }

@@ -462,7 +462,7 @@ class Invoice extends Model implements Searchable
         return __('Unpaid');
     }
 
-    public function getIdAttribute($id)
+    public function getIdAttribute($id): string
     {
         return $this->invoice_number;
     }
@@ -512,6 +512,7 @@ class Invoice extends Model implements Searchable
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms',
             'invoicePayments',
+            'children',
         ];
     }
 
@@ -548,13 +549,21 @@ class Invoice extends Model implements Searchable
 
     public function setSubtotal(): static
     {
-        $this->subtotal = static::calculateSubtotalFromItems($this->invoiceItems);
+        $this->subtotal = $this->is_parent
+            ? $this->children->sum('subtotal')
+            : static::calculateSubtotalFromItems($this->invoiceItems);
 
         return $this;
     }
 
     public function setDiscountTotal(): static
     {
+        if ($this->is_parent) {
+            $this->discount_total = $this->children->sum('discount_total');
+
+            return $this;
+        }
+
         $discount = $this->invoiceScholarships
             ->reduce(function (int $total, InvoiceScholarship $scholarship) {
                 return $total + $scholarship->calculateAmount();
@@ -569,17 +578,27 @@ class Invoice extends Model implements Searchable
 
     public function setPreTaxSubtotal(): static
     {
+        if ($this->is_parent) {
+            $this->pre_tax_subtotal = $this->children->sum('pre_tax_subtotal');
+
+            return $this;
+        }
+
         $subtotal = $this->subtotal - $this->discount_total;
 
-        $this->pre_tax_subtotal = $subtotal < 0
-            ? 0
-            : $subtotal;
+        $this->pre_tax_subtotal = max($subtotal, 0);
 
         return $this;
     }
 
     public function setTaxDue(): static
     {
+        if ($this->is_parent) {
+            $this->tax_due = $this->children->sum('tax_due');
+
+            return $this;
+        }
+
         $this->tax_due = 0;
 
         if (
@@ -594,7 +613,9 @@ class Invoice extends Model implements Searchable
 
     public function setAmountDue(): static
     {
-        $this->amount_due = $this->pre_tax_subtotal + $this->tax_due;
+        $this->amount_due = $this->is_parent
+            ? $this->children->sum('amount_due')
+            : $this->pre_tax_subtotal + $this->tax_due;
 
         return $this;
     }
@@ -624,14 +645,17 @@ class Invoice extends Model implements Searchable
         return $this;
     }
 
-    /**
-     * Sets the amount due, remaining balance, and paid time stamp.
-     * Does not save in the database.
-     *
-     * @return $this
-     */
     public function setCalculatedAttributes(bool $save = false): static
     {
+        // If this is a parent invoice, recalculate all the children
+        // invoices before recalculating this one
+        if ($this->is_parent) {
+            $this->loadChildren()
+                ->children->each(function (Invoice $invoice) use ($save) {
+                    $invoice->setCalculatedAttributes($save);
+                });
+        }
+
         $this->setSubtotal()
             ->setDiscountTotal()
             ->setPreTaxSubtotal()
@@ -984,7 +1008,7 @@ class Invoice extends Model implements Searchable
                 $remainingTermBalance = $term->remaining_balance - $remainingSchedulePayment;
 
                 $term->fill([
-                    'remaining_balance' => $remainingTermBalance < 0 ? 0 : $remainingTermBalance,
+                    'remaining_balance' => max($remainingTermBalance, 0),
                 ]);
 
                 if ($save) {

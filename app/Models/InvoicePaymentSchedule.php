@@ -46,10 +46,7 @@ class InvoicePaymentSchedule extends Model
 
     public function setAmount(): static
     {
-        $this->amount = $this->invoicePaymentTerms
-            ->reduce(
-                fn (int $total, InvoicePaymentTerm $term) => $total + $term->amount, 0
-            );
+        $this->amount = $this->invoicePaymentTerms->sum('amount_due');
 
         return $this;
     }

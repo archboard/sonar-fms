@@ -104,11 +104,11 @@ class CombineInvoiceFactory extends InvoiceFactory
     protected function setTotals(): static
     {
         $this->selection->each(function (Invoice $invoice) {
-            $this->preTaxTotal = $this->preTaxTotal + $invoice->pre_tax_subtotal;
-            $this->subtotal = $this->subtotal + $invoice->subtotal;
-            $this->discountTotal = $this->discountTotal + $invoice->discount_total;
-            $this->taxDue = $this->taxDue + $invoice->tax_due;
-            $this->remainingBalance = $this->remainingBalance + $invoice->remaining_balance;
+            $this->preTaxTotal += $invoice->pre_tax_subtotal;
+            $this->subtotal += $invoice->subtotal;
+            $this->discountTotal += $invoice->discount_total;
+            $this->taxDue += $invoice->tax_due;
+            $this->remainingBalance += $invoice->remaining_balance;
         });
 
         return $this;
@@ -212,9 +212,7 @@ class CombineInvoiceFactory extends InvoiceFactory
     {
         $total = $this->subtotal - $this->discountTotal;
 
-        return $total > 0
-            ? $total
-            : 0;
+        return max($total, 0);
     }
 
     protected function setInvoiceTotalsAttributes(): static
