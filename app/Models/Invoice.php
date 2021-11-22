@@ -916,8 +916,16 @@ class Invoice extends Model implements Searchable
         return $this;
     }
 
-    public function distributePaymentsToTerms(): static
+    public function distributePaymentsToTerms(bool $reset = false): static
     {
+        // If we're resetting, set the remaining balance
+        // of all the terms to the original amount due,
+        // as if no payment had been made
+        if ($reset) {
+            $this->invoicePaymentTerms()
+                ->update(['remaining_balance' => DB::raw('invoice_payment_terms.amount_due')]);
+        }
+
         $this->load('invoicePayments');
 
         foreach ($this->invoicePayments as $payment) {
