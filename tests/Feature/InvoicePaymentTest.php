@@ -120,7 +120,12 @@ class InvoicePaymentTest extends TestCase
             );
         $totalPaid = $paymentAmount * $payments->count();
 
-        $invoice->distributePaymentsToTerms();
+        $invoice->distributePaymentsToTerms()
+            ->setRemainingBalance()
+            ->save();
+
+        $this->assertEquals($totalPaid, $invoice->total_paid);
+        $this->assertEquals($totalPaid, $invoice->student->revenue);
 
         foreach ($invoice->invoicePaymentSchedules as $schedule) {
             $paidToSchedule = $schedule->invoicePaymentTerms

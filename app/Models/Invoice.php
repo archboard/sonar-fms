@@ -914,10 +914,9 @@ class Invoice extends Model implements Searchable
 
         $this->distributePaymentToTerms($payment)
             ->forceFill([
-                'total_paid' => $this->total_paid + $payment->amount,
                 'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
-                'remaining_balance' => $this->remaining_balance - $payment->amount,
-            ]);
+            ])
+            ->setRemainingBalance();
 
         if ($save) {
             $this->save();
@@ -939,7 +938,7 @@ class Invoice extends Model implements Searchable
         $this->load('invoicePayments');
 
         foreach ($this->invoicePayments as $payment) {
-            $this->distributePaymentToTerms($payment);
+            $this->distributePaymentToTerms($payment, false);
         }
 
         // Save after all the payments processed
@@ -947,7 +946,6 @@ class Invoice extends Model implements Searchable
             ->each(function (InvoicePaymentSchedule $schedule) {
                 $schedule->invoicePaymentTerms
                     ->each(function (InvoicePaymentTerm $term) {
-                        ray($term->amount_due, $term->remaining_balance);
                         $term->save();
                     });
             });
