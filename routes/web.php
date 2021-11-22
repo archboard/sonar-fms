@@ -214,6 +214,9 @@ Route::middleware('tenant')->group(function () {
                         Route::put('calculate', \App\Http\Controllers\RecacheInvoiceController::class)
                             ->name('calculate');
 
+                        Route::post('distribute', \App\Http\Controllers\DistributeInvoicePaymentsController::class)
+                            ->name('distribute');
+
                         Route::middleware('needs_layout')->group(function () {
                             Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
                                 ->name('preview');
