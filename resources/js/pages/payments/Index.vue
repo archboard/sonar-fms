@@ -69,9 +69,9 @@
     <Table class="mt-6">
       <Thead>
         <tr>
-          <th class="w-8 text-left pl-6">
-            <Checkbox v-model:checked="selectAll" />
-          </th>
+<!--          <th class="w-8 text-left pl-6">-->
+<!--            <Checkbox v-model:checked="selectAll" />-->
+<!--          </th>-->
           <Th>
             {{ __('#') }}
           </Th>
@@ -102,14 +102,11 @@
               <span>
                 {{ __('Amount') }}
               </span>
-              <span class="relative h-4 w-4 ml-2">
+              <span v-if="filters.orderBy === 'amount'" class="relative h-4 w-4 ml-2">
                 <SortAscendingIcon v-if="filters.orderBy === 'amount' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
                 <SortDescendingIcon v-if="filters.orderBy === 'amount' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
-          </Th>
-          <Th>
-            {{ __('Made by') }}
           </Th>
           <th></th>
         </tr>
@@ -119,23 +116,23 @@
           v-for="payment in payments.data"
           :key="payment.id"
         >
-          <td class="pl-6 py-4 text-sm">
-            <div class="flex items-center justify-center">
+<!--          <td class="pl-6 py-4 text-sm">-->
+<!--            <div class="flex items-center justify-center">-->
 <!--              <Checkbox-->
 <!--                v-model:checked="user.student_selection"-->
 <!--                @change="selectStudent(payment)"-->
 <!--                :value="payment.id"-->
 <!--                :id="`student_${payment.id}`"-->
 <!--              />-->
-            </div>
-          </td>
+<!--            </div>-->
+<!--          </td>-->
           <Td>
             <span class="whitespace-nowrap flex items-center space-x-2">
               <span>{{ payment.invoice.invoice_number }}</span>
               <CollectionIcon v-if="payment.invoice.is_parent" class="w-4 h-4" />
             </span>
           </Td>
-          <Td :lighter="false">
+          <Td :lighter="false" class="space-x-2">
             <TableLink :href="`/invoices/${payment.invoice.uuid}`" class="whitespace-nowrap">
               {{ payment.invoice.title }}
             </TableLink>
