@@ -903,6 +903,42 @@ class Invoice extends Model implements Searchable
             $scheduleUuid = $payment->invoicePaymentTerm->invoice_payment_schedule_uuid;
         }
 
+        $this->distributePaymentToTerms($payment)
+            ->forceFill([
+                'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
+                'remaining_balance' => $this->remaining_balance - $payment->amount,
+            ]);
+
+        if ($save) {
+            $this->save();
+        }
+
+        return $this;
+    }
+
+    public function distributePaymentsToTerms(): static
+    {
+        $this->load('invoicePayments');
+
+        foreach ($this->invoicePayments as $payment) {
+            $this->distributePaymentToTerms($payment);
+        }
+
+        // Save after all the payments processed
+        $this->invoicePaymentSchedules
+            ->each(function (InvoicePaymentSchedule $schedule) {
+                $schedule->invoicePaymentTerms
+                    ->each(function (InvoicePaymentTerm $term) {
+                        ray($term->amount_due, $term->remaining_balance);
+                        $term->save();
+                    });
+            });
+
+        return $this;
+    }
+
+    public function distributePaymentToTerms(InvoicePayment $payment, bool $save = true): static
+    {
         // Load all the payment schedules to automatically distribute the
         // payment across all the terms
         if (!$this->relationLoaded('invoicePaymentSchedules')) {
@@ -931,21 +967,16 @@ class Invoice extends Model implements Searchable
                 $originalRemainingBalance = $term->remaining_balance;
                 $remainingTermBalance = $term->remaining_balance - $remainingSchedulePayment;
 
-                $term->update([
+                $term->fill([
                     'remaining_balance' => $remainingTermBalance < 0 ? 0 : $remainingTermBalance,
                 ]);
 
+                if ($save) {
+                    $term->save();
+                }
+
                 $remainingSchedulePayment -= abs($term->remaining_balance - $originalRemainingBalance);
             }
-        }
-
-        $this->forceFill([
-            'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
-            'remaining_balance' => $this->remaining_balance - $payment->amount,
-        ]);
-
-        if ($save) {
-            $this->save();
         }
 
         return $this;

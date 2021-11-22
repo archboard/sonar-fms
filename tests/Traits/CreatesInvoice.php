@@ -116,12 +116,21 @@ trait CreatesInvoice
         $invoice->setCalculatedAttributes(true)
             ->refresh();
 
+        $this->seedPaymentSchedules($invoice, $this->faker->numberBetween(0, 3));
+
+        return $invoice;
+    }
+
+    protected function seedPaymentSchedules(Invoice $invoice, int $schedules): Invoice
+    {
+        $invoice->invoicePaymentSchedules()->delete();
+
         InvoicePaymentSchedule::factory()
-            ->count($this->faker->numberBetween(0, 3))
+            ->count($schedules)
             ->make(['invoice_uuid' => $invoice->uuid])
             ->each(function (InvoicePaymentSchedule $schedule) use ($invoice) {
                 $termCount = $this->faker->numberBetween(2, 5);
-                $amountDue = round($invoice->amount_due / $termCount);
+                $amountDue = (int) round($invoice->amount_due / $termCount);
                 $terms = InvoicePaymentTerm::factory()
                     ->count($termCount)
                     ->make([

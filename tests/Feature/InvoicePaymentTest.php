@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\InvoicePayment;
+use App\Models\InvoicePaymentTerm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
@@ -101,5 +102,31 @@ class InvoicePaymentTest extends TestCase
 
         $this->post(route('payments.store'), $data)
             ->assertSessionHasErrors(['amount']);
+    }
+
+    public function test_can_distribute_payment_across_terms_correctly()
+    {
+        $invoice = $this->createInvoice()->refresh();
+        $this->seedPaymentSchedules($invoice, 2);
+        $paymentAmount = (int) round($invoice->amount_due / 3);
+        $payments = $invoice->invoicePayments()
+            ->saveMany(
+                InvoicePayment::factory()
+                    ->count(2)
+                    ->make([
+                        'amount' => $paymentAmount,
+                        'recorded_by' => $this->user->uuid,
+                    ])
+            );
+        $totalPaid = $paymentAmount * $payments->count();
+
+        $invoice->distributePaymentsToTerms();
+
+        foreach ($invoice->invoicePaymentSchedules as $schedule) {
+            $paidToSchedule = $schedule->invoicePaymentTerms
+                ->reduce(fn (int $total, InvoicePaymentTerm $term) => $total + $term->amount_due - $term->remaining_balance, 0);
+
+            $this->assertEquals($totalPaid, $paidToSchedule);
+        }
     }
 }
