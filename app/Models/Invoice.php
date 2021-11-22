@@ -338,7 +338,7 @@ class Invoice extends Model implements Searchable
 
     public function invoicePaymentSchedule(): BelongsTo
     {
-        return $this->belongsTo(InvoicePaymentSchedule::class);
+        return $this->belongsTo(InvoicePaymentSchedule::class, 'invoice_payment_schedule_uuid', 'uuid');
     }
 
     public function students(): HasManyThrough
