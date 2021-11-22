@@ -601,8 +601,8 @@ class Invoice extends Model implements Searchable
         );
 
         // If the invoice has a schedule, use its amount
-        // as the invoice's amount due, which may be more than
-        // the invoice's base amount due (likely)
+        // as the invoice's amount due, which may be different
+        // from the invoice's base amount due (likely)
         if ($this->invoice_payment_schedule_uuid) {
             $amountDue = $this->invoicePaymentSchedule->amount;
         }
