@@ -74,11 +74,11 @@ class InvoicePayment extends Model
 
     public function recordedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recorded_by', 'id');
+        return $this->belongsTo(User::class, 'recorded_by', 'uuid');
     }
 
     public function madeBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'made_by', 'id');
+        return $this->belongsTo(User::class, 'made_by', 'uuid');
     }
 }
