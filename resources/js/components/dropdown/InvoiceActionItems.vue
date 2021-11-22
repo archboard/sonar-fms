@@ -1,22 +1,7 @@
 <template>
   <div class="p-1">
     <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="$route('invoices.show', invoice)">
-      {{ __('View') }}
-    </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.update') && !invoice.is_void && invoice.published_at" @click.prevent="$emit('editStatus')">
-      {{ __('Change status') }}
-    </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.edit', invoice)">
-      {{ __('Edit') }}
-    </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('batches.edit', invoice.batch_id)">
-      {{ __('Edit batch') }}
-    </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.update') && !invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
-      {{ __('Publish') }}
-    </SonarMenuItem>
-    <SonarMenuItem v-if="can('payments.create') && invoice.amount_due > 0 && !invoice.is_void && invoice.published_at" is="inertia-link" :href="`/payments/create?invoice_uuid=${invoice.uuid}`">
-      {{ __('Record payment') }}
+      {{ __('View invoice') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="$route('students.show', invoice.student)">
       {{ __('View student') }}
@@ -24,8 +9,30 @@
     <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
       {{ __('New invoice for student') }}
     </SonarMenuItem>
+  </div>
+  <div v-if="can('invoices.update')" class="p-1">
+    <SonarMenuItem v-if="!invoice.is_void && invoice.published_at" @click.prevent="$emit('editStatus')">
+      {{ __('Change status') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('invoices.edit', invoice)">
+      {{ __('Edit') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('batches.edit', invoice.batch_id)">
+      {{ __('Edit batch') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
+      {{ __('Publish') }}
+    </SonarMenuItem>
+  </div>
+  <div v-if="canAny('payments.create', 'invoices.update')" class="p-1">
+    <SonarMenuItem v-if="can('payments.create') && invoice.amount_due > 0 && !invoice.is_void && invoice.published_at" is="inertia-link" :href="`/payments/create?invoice_uuid=${invoice.uuid}`">
+      {{ __('Record payment') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="`/invoices/${invoice.uuid}/calculate`" as="button" method="put" preserve-scroll>
       {{ __('Recalculate balances') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="`/invoices/${invoice.uuid}/distribute`" as="button" method="post" preserve-scroll>
+      {{ __('Redistribute payments') }}
     </SonarMenuItem>
   </div>
   <div class="p-1">
