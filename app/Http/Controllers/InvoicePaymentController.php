@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
+use App\Http\Resources\PaymentMethodDriverResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
@@ -57,7 +58,7 @@ class InvoicePaymentController extends Controller
     public function create(Request $request)
     {
         $title = __('Record payment');
-        $paymentMethods = PaymentMethod::orderBy('driver')->get();
+        $paymentMethods = $request->school()->getPaymentMethods();
         $breadcrumbs = [
             [
                 'label' => __('Payments'),
@@ -79,7 +80,7 @@ class InvoicePaymentController extends Controller
 
         return inertia('payments/Create', [
             'title' => $title,
-            'paymentMethods' => PaymentMethodResource::collection($paymentMethods),
+            'paymentMethods' => PaymentMethodDriverResource::collection($paymentMethods),
             'breadcrumbs' => $breadcrumbs,
             'invoice' => $invoice->toResource(),
             'paidBy' => $paidBy->toResource(),

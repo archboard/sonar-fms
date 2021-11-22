@@ -156,4 +156,9 @@ class School extends Model
 
         return null;
     }
+
+    public function getPaymentMethods(): array
+    {
+        return PaymentMethod::getListForSchool($this);
+    }
 }

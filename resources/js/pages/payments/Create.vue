@@ -37,7 +37,7 @@
               <Label for="payment_method_id">{{ __('Payment method') }}</Label>
               <Select v-model="form.payment_method_id" id="payment_method_id">
                 <option :value="null">{{ __('N/A') }}</option>
-                <option v-for="method in paymentMethods" :key="method.id" :value="method.id">{{ method.name }}</option>
+                <option v-for="(driver, name) in paymentMethods" :key="name" :value="driver.payment_method.id">{{ driver.label }}</option>
               </Select>
               <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
             </InputWrap>
@@ -119,7 +119,7 @@ export default defineComponent({
     Label,
   },
   props: {
-    paymentMethods: Array,
+    paymentMethods: Object,
     invoice: Object,
     paidBy: Object,
   },

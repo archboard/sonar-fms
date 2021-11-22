@@ -98,7 +98,9 @@ class PaymentMethod extends Model
     public static function getListForSchool(School $school): array
     {
         $paymentMethods = $school
-            ->paymentMethods
+            ->paymentMethods()
+            ->orderBy('driver')
+            ->get()
             ->keyBy('driver');
 
         return array_map(
