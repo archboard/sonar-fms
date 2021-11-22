@@ -24,8 +24,9 @@
                       v-for="term in schedule.terms"
                       :key="term.uuid"
                       :value="term.uuid"
+                      :disabled="term.remaining_balance <= 0"
                     >
-                      {{ __(':amount due on :date', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date') }) }}
+                      {{ __(':amount due on :date (:remaining remaining)', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date'), remaining: displayCurrency(term.remaining_balance) }) }}
                     </option>
                   </optgroup>
                 </Select>
