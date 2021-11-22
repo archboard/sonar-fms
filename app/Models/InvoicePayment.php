@@ -48,7 +48,7 @@ class InvoicePayment extends Model
             return '';
         }
 
-        return Timezone::convertToLocal($this->paid_at, 'F j, Y');
+        return Timezone::convertToLocal($this->paid_at, 'M j, Y');
     }
 
     public function invoicePaymentTerm(): BelongsTo
