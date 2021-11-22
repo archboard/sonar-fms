@@ -29,7 +29,7 @@
                     </option>
                   </optgroup>
                 </Select>
-                <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
+                <HelpText>{{ __("Setting a payment term will set the invoice's remaining balance based on the payment schedule's total amount.") }}</HelpText>
               </InputWrap>
             </FadeIn>
 
@@ -39,7 +39,7 @@
                 <option :value="null">{{ __('N/A') }}</option>
                 <option v-for="method in paymentMethods" :key="method.id" :value="method.id">{{ method.name }}</option>
               </Select>
-              <HelpText>{{ __("Setting a payment term will set the invoice's remaining balance based on the payment schedule's total amount.") }}</HelpText>
+              <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
             </InputWrap>
 
             <InputWrap :error="form.errors.paid_at">
