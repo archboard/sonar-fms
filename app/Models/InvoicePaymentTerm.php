@@ -50,11 +50,6 @@ class InvoicePaymentTerm extends Model
         'due_at',
     ];
 
-    public function getIncrementing(): bool
-    {
-        return false;
-    }
-
     public function invoicePaymentSchedule(): BelongsTo
     {
         return $this->belongsTo(InvoicePaymentSchedule::class, 'invoice_payment_schedule_uuid', 'uuid');
