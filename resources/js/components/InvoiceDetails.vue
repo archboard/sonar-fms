@@ -61,19 +61,59 @@
         </tr>
       </Tbody>
     </Table>
+
+    <section v-if="paymentSchedules.length > 0" class="mt-6">
+      <div class="divide-y divide-gray-300 dark:divide-gray-600">
+        <div class="pb-4">
+          <h2 id="activity-title" class="text-lg font-medium">{{ __('Payment schedules') }}</h2>
+        </div>
+        <div class="pt-6">
+          <Alert v-if="invoice.parent" class="mb-4">
+            {{ __("This is the combined invoice's payment schedule.") }}
+          </Alert>
+
+          <div class="space-y-6">
+            <div v-for="schedule in paymentSchedules" :key="schedule.uuid">
+              <h3 class="font-medium mb-2">
+                {{ __(':number payments (:total_price)', { number: schedule.terms.length, total_price: displayCurrency(schedule.amount) }) }}
+              </h3>
+
+              <div class="flex items-start space-x-4">
+                <CardWrapper v-for="(term, termIndex) in schedule.terms" :key="term.uuid" class="flex-0">
+                  <CardPadding>
+                    <h4 class="font-medium">{{ __('Payment :number', { number: termIndex + 1 }) }}</h4>
+                    <span v-if="term.due_at">{{ __(':amount due by :date', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date') }) }}</span>
+                    <span v-else>{{ displayCurrency(term.amount) }}</span>
+                  </CardPadding>
+                </CardWrapper>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
-import Td from './tables/Td'
-import Tbody from './tables/Tbody'
-import Table from './tables/Table'
-import displaysCurrency from '../composition/displaysCurrency'
+import { computed, defineComponent } from 'vue'
+import Td from '@/components/tables/Td'
+import Tbody from '@/components/tables/Tbody'
+import Table from '@/components/tables/Table'
+import displaysCurrency from '@/composition/displaysCurrency'
+import displaysDate from '@/composition/displaysDate'
 import { XIcon } from '@heroicons/vue/solid'
+import Alert from '@/components/Alert'
+import CardWrapper from '@/components/CardWrapper'
+import CardPadding from '@/components/CardPadding'
+import CardHeader from '@/components/CardHeader'
 
 export default defineComponent({
   components: {
+    CardHeader,
+    CardPadding,
+    CardWrapper,
+    Alert,
     Table,
     Tbody,
     Td,
@@ -90,15 +130,23 @@ export default defineComponent({
 
   setup (props) {
     const { displayCurrency } = displaysCurrency()
+    const { displayDate } = displaysDate()
     const subTotal = computed(() => {
       return props.invoice.items.reduce((total, item) => {
         return total + (item.amount_per_unit * item.quantity)
       }, 0)
     })
+    const paymentSchedules = computed(() => {
+      return props.invoice.parent
+        ? props.invoice.parent.payment_schedules
+        : (props.invoice.payment_schedules || [])
+    })
 
     return {
       subTotal,
       displayCurrency,
+      displayDate,
+      paymentSchedules,
     }
   }
 })
