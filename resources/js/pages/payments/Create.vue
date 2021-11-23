@@ -4,11 +4,19 @@
       <CardWrapper>
         <CardPadding>
           <Fieldset>
-            <InputWrap :error="form.errors.invoice_uuid">
-              <Label for="invoice_uuid">{{ __('Invoice') }} <Req /></Label>
-              <InvoiceTypeahead v-model="selectedInvoice" id="invoice_uuid" />
-              <HelpText>{{ __('This is the invoice for which you are recording a payment.') }}</HelpText>
-            </InputWrap>
+            <div>
+              <FadeIn>
+                <Alert v-if="selectedInvoice.parent" level="warning" class="mb-4">
+                  {{ __('This invoice is part of the combined invoice :invoice. This payment will also be recorded for that invoice.', { invoice: `${selectedInvoice.parent.title} (${selectedInvoice.parent.invoice_number})` }) }}
+                </Alert>
+              </FadeIn>
+
+              <InputWrap :error="form.errors.invoice_uuid">
+                <Label for="invoice_uuid">{{ __('Invoice') }} <Req /></Label>
+                <InvoiceTypeahead v-model="selectedInvoice" id="invoice_uuid" />
+                <HelpText>{{ __('This is the invoice for which you are recording a payment.') }}</HelpText>
+              </InputWrap>
+            </div>
 
             <FadeIn>
               <InputWrap v-if="selectedInvoice.payment_schedules && selectedInvoice.payment_schedules.length > 0" :error="form.errors.invoice_payment_term_uuid">
@@ -98,9 +106,11 @@ import FadeIn from '@/components/transitions/FadeIn'
 import displaysDate from '@/composition/displaysDate'
 import displaysCurrency from '@/composition/displaysCurrency'
 import isEmpty from 'lodash/isEmpty'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   components: {
+    Alert,
     FadeIn,
     UserTypeahead,
     CurrencyInput,
