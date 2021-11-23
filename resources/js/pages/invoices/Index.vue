@@ -121,8 +121,8 @@
           v-for="invoice in invoices.data"
           :key="invoice.id"
           :invoice="invoice"
-          @edit-status="editInvoice"
-          @convert-to-template="useAsTemplate"
+          @edit-status="editInvoice(invoice)"
+          @convert-to-template="useAsTemplate(invoice)"
         >
           <template #prepend>
             <td class="pl-6 py-4 text-sm">
@@ -148,15 +148,15 @@
   </Authenticated>
 
   <InvoiceStatusModal
-    v-if="can('invoices.update') && selectedInvoice.id"
+    v-if="can('invoices.update') && selectedInvoice.uuid"
     @close="selectedInvoice = {}"
     :invoice="selectedInvoice"
   />
   <ConvertInvoiceModal
-    v-if="convertInvoice.id"
+    v-if="convertInvoice.uuid"
     @close="convertInvoice = {}"
     :invoice="convertInvoice"
-    :endpoint="$route('invoices.convert', convertInvoice)"
+    :endpoint="`/invoices/${convertInvoice.uuid}/convert`"
   />
   <InvoiceTableFilterModal
     v-if="showFilters"
