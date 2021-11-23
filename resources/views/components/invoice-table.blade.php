@@ -177,7 +177,7 @@
                   @foreach($paymentSchedule->invoicePaymentTerms as $term)
                     <div class="flex-0 w-full border p-4">
                       @if($term->due_at)
-                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->setTimezone($invoice->school->timezone)->format('F j, Y H:i')]) }}
+                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->setTimezone($invoice->school->timezone)->format('F j, Y')]) }}
                       @else
                         {{ displayCurrency($term->amount_due, $currency) }}
                       @endif
