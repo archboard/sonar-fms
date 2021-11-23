@@ -63,7 +63,7 @@ export default defineComponent({
     const selectedInvoice = ref(cloneDeep(localValue.value))
     const invoiceOptions = ref([])
     const invoiceDisplay = computed({
-      get: () => (!searchTerm.value && selectedInvoice.value.uuid)
+      get: () => selectedInvoice.value.uuid
           ? `${selectedInvoice.value.title} (${selectedInvoice.value.invoice_number})`
           : searchTerm.value,
       set: value => {
@@ -72,8 +72,6 @@ export default defineComponent({
     })
     const invoiceSelected = item => {
       nextTick(() => {
-        searchTerm.value = ''
-
         const invoice = item || {}
 
         selectedInvoice.value = invoice
