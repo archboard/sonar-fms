@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\School;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 class InvoiceFactory extends Factory
@@ -32,6 +33,7 @@ class InvoiceFactory extends Factory
             'uuid' => (string) Uuid::uuid4(),
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
+            'invoice_number' => strtoupper(Str::random()),
             'invoice_date' => now(),
             'student_uuid' => $school->students()
                 ->inRandomOrder()
