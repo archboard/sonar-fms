@@ -512,6 +512,8 @@ class Invoice extends Model implements Searchable
             'invoicePaymentSchedules.invoicePaymentTerms',
             'invoicePayments',
             'children',
+            'parent',
+            'parent.invoicePaymentSchedules.invoicePaymentTerms',
         ];
     }
 
@@ -527,7 +529,6 @@ class Invoice extends Model implements Searchable
         }
 
         return $this->load([
-            'parent',
             'children.currency',
             'children.student',
             'children.school',
