@@ -3,7 +3,7 @@
     <div>
       <div class="divide-y divide-gray-300 dark:divide-gray-600">
         <div class="pb-4">
-          <h2 id="activity-title" class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Activity') }}</h2>
+          <h2 id="activity-title" class="text-lg font-medium">{{ __('Activity') }}</h2>
         </div>
         <div class="pt-6">
           <!-- Activity feed-->
