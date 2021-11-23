@@ -26,7 +26,6 @@ class InvoicePayment extends Model
     use BelongsToSchool;
     use BelongsToInvoice;
     use HasAmountAttribute;
-    use ScopeToCurrentSchool;
 
     protected $guarded = [];
 

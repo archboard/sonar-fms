@@ -110,6 +110,11 @@ class School extends Model
             ->orderBy('driver');
     }
 
+    public function invoicePayments(): HasMany
+    {
+        return $this->hasMany(InvoicePayment::class);
+    }
+
     public function getInvoiceNumberPrefix(?User $user = null): string
     {
         if (!$this->invoice_number_template) {

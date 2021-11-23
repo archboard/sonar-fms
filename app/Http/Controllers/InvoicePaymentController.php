@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
 use App\Http\Resources\PaymentMethodDriverResource;
-use App\Http\Resources\PaymentMethodResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
-use App\Models\PaymentMethod;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class InvoicePaymentController extends Controller
 {
@@ -31,7 +28,9 @@ class InvoicePaymentController extends Controller
         /** @var User $user */
         $user = $request->user();
         $title = __('Payments');
-        $payments = InvoicePayment::filter($request->all())
+        $payments = $request->school()
+            ->invoicePayments()
+            ->filter($request->all())
             ->with('invoice', 'currency')
             ->paginate($request->input('perPage', 25));
 
