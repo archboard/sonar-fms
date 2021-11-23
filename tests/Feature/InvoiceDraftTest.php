@@ -85,15 +85,18 @@ class InvoiceDraftTest extends TestCase
         $this->withoutExceptionHandling();
         $this->assignPermission('update', Invoice::class);
         $invoice = $this->createInvoice(['published_at' => null, 'student_uuid' => $this->student->id]);
+        $originalAttributes = $invoice->getAttributes();
         $data = $this->generateInvoiceRequestAttributesForStudent($this->student);
 
         $this->put(route('invoices.update.draft', $invoice), $data)
             ->assertRedirect()
             ->assertSessionHas('success');
 
+        $invoice->refresh();
         $this->assertDatabaseHas('invoices', ['uuid' => $invoice->uuid]);
         $this->assertEquals(1, $this->student->invoices()->count());
         $this->assertTrue($invoice->activities()->count() > 1);
+        $this->assertEquals($originalAttributes['invoice_number'], $invoice->invoice_number);
     }
 
     public function test_cant_edit_batch_without_permission()
