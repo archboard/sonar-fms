@@ -210,6 +210,8 @@ class InvoicePaymentTest extends TestCase
         $parent->refresh();
         $this->assertEquals($child->amount_due - $data['amount'], $child->remaining_balance);
         $this->assertEquals($parent->amount_due - $data['amount'], $parent->remaining_balance);
+        $this->assertEquals($data['amount'], $child->total_paid);
+        $this->assertEquals($data['amount'], $parent->total_paid);
 
         $this->assertTrue(
             $child->activities->some(fn ($a) => Str::contains($a->description, 'recorded a payment'))
