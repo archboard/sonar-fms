@@ -625,7 +625,7 @@ class Invoice extends Model implements Searchable
 
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
-        $this->total_paid = $this->invoicePayments->sum('amount');
+        $this->total_paid = $this->getTotalPaid();
 
         // If the invoice has a schedule, use its amount
         // as the invoice's amount due, which may be different
@@ -640,6 +640,28 @@ class Invoice extends Model implements Searchable
             : null;
 
         return $this;
+    }
+
+    public function getTotalPaid(): int
+    {
+        $paymentsSum = $this->invoicePayments->sum('amount');
+
+        // If this isn't the parent of a combined invoice
+        // just return the sum of all the payments
+        if (!$this->is_parent) {
+            return $paymentsSum;
+        }
+
+        // Eager load any payments for the children
+        $this->load('children.invoicePayments');
+
+        // Add all the payments made to this invoice
+        // and any child invoices since they could be
+        // recorded independently of the parent
+        return $paymentsSum +
+            $this->children->reduce(function (int $total, Invoice $child) {
+                return $total + $child->invoicePayments->sum('amount');
+            }, 0);
     }
 
     public function setCalculatedAttributes(bool $save = false): static
