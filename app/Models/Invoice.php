@@ -906,12 +906,6 @@ class Invoice extends Model implements Searchable
         return $prefix . $id;
     }
 
-    /**
-     * Saves the
-     *
-     * @param string $uuid
-     * @return $this
-     */
     public function migrateActivity(string $uuid): static
     {
         $this->activities()
