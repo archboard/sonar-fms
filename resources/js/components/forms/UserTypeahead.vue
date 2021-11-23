@@ -50,7 +50,7 @@ export default defineComponent({
     const selectedUser = ref(cloneDeep(localValue.value))
     const users = ref([])
     const userDisplay = computed({
-      get: () => (!searchTerm.value && selectedUser.value.id)
+      get: () => !selectedUser.value.id
           ? selectedUser.value.full_name
           : searchTerm.value,
       set: value => {
@@ -59,8 +59,6 @@ export default defineComponent({
     })
     const userSelected = item => {
       nextTick(() => {
-        searchTerm.value = ''
-
         const user = item || {}
         selectedUser.value = user
         localValue.value = user
