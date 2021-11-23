@@ -923,25 +923,12 @@ class Invoice extends Model implements Searchable
         );
     }
 
-    public function recordPayment(InvoicePayment $payment, bool $log = true, bool $save = true): static
+    public function recordPayment(InvoicePayment $payment, bool $log = true): static
     {
-        if ($log) {
-            // __(':user recorded a payment of :amount')
-            // __(':user recorded a payment of :amount made by :made_by')
-            $description = $payment->made_by
-                ? ':user recorded a payment of :amount made by :made_by'
-                : ':user recorded a payment of :amount';
-            $payment->setRelation('currency', $this->currency);
-            $scheduleUuid = null;
-
-            activity()
-                ->on($this)
-                ->withProperties([
-                    'amount' => $payment->amount_formatted,
-                    'made_by' => optional($payment->madeBy)->full_name,
-                ])
-                ->log($description);
-        }
+        // Some actions need to be applied to only the parent
+        // so if this has a parent, use it. Otherwise,
+        // just use the original invoice instance
+        $parent = $this->parent_uuid ? $this->parent : $this;
 
         // If the payment associated a term
         // set the invoice's schedule to the term's
@@ -949,14 +936,21 @@ class Invoice extends Model implements Searchable
             $scheduleUuid = $payment->invoicePaymentTerm->invoice_payment_schedule_uuid;
         }
 
-        $this->distributePaymentToTerms($payment)
+        if ($this->parent_uuid) {
+            $this->setRemainingBalance()
+                ->save();
+        }
+
+        // Only parent invoices should distribute to terms
+        $parent->distributePaymentToTerms($payment)
             ->forceFill([
                 'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
             ])
-            ->setRemainingBalance();
+            ->setRemainingBalance()
+            ->save();
 
-        if ($save) {
-            $this->save();
+        if ($log) {
+            $this->logPayment($payment);
         }
 
         return $this;
@@ -1030,6 +1024,42 @@ class Invoice extends Model implements Searchable
 
                 $remainingSchedulePayment -= abs($term->remaining_balance - $originalRemainingBalance);
             }
+        }
+
+        return $this;
+    }
+
+    public function logPayment(InvoicePayment $payment): static
+    {
+        // __(':user recorded a payment of :amount')
+        // __(':user recorded a payment of :amount made by :made_by')
+        $description = $payment->made_by
+            ? ':user recorded a payment of :amount made by :made_by'
+            : ':user recorded a payment of :amount';
+        $payment->setRelation('currency', $this->currency);
+        $properties = [
+            'amount' => $payment->amount_formatted,
+            'made_by' => optional($payment->madeBy)->full_name,
+            'invoice_number' => $this->invoice_number,
+        ];
+
+        activity()
+            ->on($this)
+            ->withProperties($properties)
+            ->log($description);
+
+        // If this is a child invoice, log details to the parent invoice
+        if ($this->parent_uuid) {
+            // __(':user recorded a payment of :amount made to :invoice_number')
+            // __(':user recorded a payment of :amount made to :invoice_number by :made_by')
+            $description = $payment->made_by
+                ? ':user recorded a payment of :amount made to :invoice_number by :made_by'
+                : ':user recorded a payment of :amount made to :invoice_number';
+
+            activity()
+                ->on($this->parent)
+                ->withProperties($properties)
+                ->log($description);
         }
 
         return $this;

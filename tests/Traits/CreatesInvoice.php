@@ -12,6 +12,7 @@ use App\Models\School;
 use App\Models\Student;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -276,5 +277,10 @@ trait CreatesInvoice
         $this->assertEquals($children->sum('total_paid'), $parentInvoice->total_paid);
 
         return $parentInvoice->refresh();
+    }
+
+    protected function getDateForInvoice(Carbon $date): string
+    {
+        return $date->format('Y-m-d\TH:i:s.v\Z');
     }
 }

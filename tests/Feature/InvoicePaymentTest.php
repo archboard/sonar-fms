@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
@@ -62,7 +64,7 @@ class InvoicePaymentTest extends TestCase
         $data = [
             'invoice_uuid' => $invoice->uuid,
             'payment_method_id' => null,
-            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'paid_at' => $this->getDateForInvoice($date),
             'amount' => round($invoice->amount_due / 2),
             'made_by' => null,
         ];
@@ -101,7 +103,7 @@ class InvoicePaymentTest extends TestCase
             'invoice_uuid' => $invoice->uuid,
             'payment_method_id' => null,
             'invoice_payment_term_uuid' => $term->uuid,
-            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'paid_at' => $this->getDateForInvoice($date),
             'amount' => (int) round($invoice->amount_due / 2),
             'made_by' => null,
         ];
@@ -138,7 +140,7 @@ class InvoicePaymentTest extends TestCase
         $data = [
             'invoice_uuid' => $invoice->uuid,
             'payment_method_id' => null,
-            'paid_at' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'paid_at' => $this->getDateForInvoice($date),
             'amount' => $invoice->amount_due + 10,
             'made_by' => null,
         ];
@@ -176,5 +178,44 @@ class InvoicePaymentTest extends TestCase
 
             $this->assertEquals($totalPaid, $paidToSchedule);
         }
+    }
+
+    public function test_can_add_payment_to_child_invoice()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $parent = $this->createCombinedInvoice(2);
+        /** @var Invoice $child */
+        $child = $parent->children->random();
+
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $data = [
+            'invoice_uuid' => $child->uuid,
+            'payment_method_id' => null,
+            'invoice_payment_term_uuid' => null,
+            'paid_at' => $this->getDateForInvoice($date),
+            'amount' => (int) round($child->amount_due / 2),
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $child->refresh();
+        $parent->refresh();
+        $this->assertEquals($child->amount_due - $data['amount'], $child->remaining_balance);
+        $this->assertEquals($parent->amount_due - $data['amount'], $parent->remaining_balance);
+
+        $this->assertTrue(
+            $child->activities->some(fn ($a) => Str::contains($a->description, 'recorded a payment'))
+        );
+        $this->assertTrue(
+            $parent->activities->some(fn ($a) => Str::contains($a->description, "made to {$child->invoice_number}"))
+        );
     }
 }
