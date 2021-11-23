@@ -18,14 +18,13 @@ class InvoiceSearchController extends Controller
     {
         $this->authorize('viewAny', Invoice::class);
 
-        $invoices = Invoice::notAChild()
+        $invoices = Invoice::filter($request->all())
             ->with([
                 'student',
                 'students',
                 'currency',
                 'invoicePaymentSchedules.invoicePaymentTerms',
             ])
-            ->filter($request->all())
             ->limit(25)
             ->get();
 
