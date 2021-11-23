@@ -70,7 +70,14 @@ class InvoicePaymentController extends Controller
         ];
         $invoice = $request->has('invoice_uuid')
             ? Invoice::where('uuid', $request->get('invoice_uuid'))
-                ->with('student', 'students', 'currency', 'invoicePaymentSchedules.invoicePaymentTerms')
+                ->with(
+                    'student',
+                    'students',
+                    'parent',
+                    'children',
+                    'currency',
+                    'invoicePaymentSchedules.invoicePaymentTerms'
+                )
                 ->first()
             : new Invoice;
         $paidBy = $request->has('user_id')

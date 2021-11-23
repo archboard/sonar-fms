@@ -20,6 +20,8 @@ class InvoiceSearchController extends Controller
 
         $invoices = Invoice::filter($request->all())
             ->with([
+                'parent',
+                'children',
                 'student',
                 'students',
                 'currency',
