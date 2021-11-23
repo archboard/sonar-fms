@@ -527,7 +527,7 @@ class Invoice extends Model implements Searchable
         }
 
         return $this->load([
-            'children',
+            'parent',
             'children.currency',
             'children.student',
             'children.school',
