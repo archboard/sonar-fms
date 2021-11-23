@@ -364,6 +364,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
         $this->students->each(function (Student $student) {
             $invoiceUuid = $this->studentInvoiceMap
                 ->get($student->uuid, $this->uuid());
+            $invoiceNumber = $this->invoiceNumberMap
+                ->get($student->uuid, Invoice::generateInvoiceNumber($this->invoiceNumberPrefix));
 
             // Add the invoice attributes
             $this->invoices->push(array_replace(
@@ -371,7 +373,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                     'uuid' => $invoiceUuid,
                     'student_uuid' => $student->uuid,
                     'published_at' => $this->asDraft ? null : $this->now,
-                    'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
+                    'invoice_number' => $invoiceNumber,
                 ],
                 $this->invoiceAttributes
             ));
