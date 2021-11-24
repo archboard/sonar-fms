@@ -5,6 +5,7 @@
       <span class="whitespace-nowrap flex items-center space-x-2">
         <span>{{ invoice.invoice_number }}</span>
         <CollectionIcon v-if="invoice.is_parent" class="w-4 h-4" />
+        <TableLink v-if="invoice.parent" :href="`/invoices/${invoice.parent_uuid}`">{{ invoice.parent.invoice_number }}</TableLink>
       </span>
     </Td>
     <Td :lighter="false">

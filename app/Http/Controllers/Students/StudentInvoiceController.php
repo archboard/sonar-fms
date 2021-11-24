@@ -33,6 +33,7 @@ class StudentInvoiceController extends Controller
             ->with([
                 'currency',
                 'student',
+                'parent',
             ])
             ->orderBy('created_at', 'desc')
             ->paginate(10);

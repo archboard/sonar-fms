@@ -7,9 +7,8 @@
           <tr>
             <Th>#</Th>
             <Th>{{ __('Title') }}</Th>
-            <Th class="text-right">{{ __('Total') }}</Th>
-            <Th class="text-right">{{ __('Remaining') }}</Th>
-            <th/>
+            <Th class="text-right">{{ __('Remaining balance') }}</Th>
+            <Th/>
           </tr>
         </Thead>
         <Tbody>
