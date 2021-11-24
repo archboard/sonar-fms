@@ -37,7 +37,7 @@ class StudentSelectionController extends Controller
 
         $selection = $school->students()
             ->filter($request->all())
-            ->pluck('id')
+            ->pluck('uuid')
             ->map(fn ($student) => [
                 'school_id' => $school->id,
                 'student_uuid' => $student,
