@@ -14,7 +14,7 @@ class StudentSelection extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    public function scopeStudent(Builder $builder, $studentId)
+    public function scopeStudent(Builder $builder, string $studentId)
     {
         $builder->where('student_uuid', $studentId);
     }

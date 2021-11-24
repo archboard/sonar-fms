@@ -234,10 +234,10 @@ class User extends Authenticatable implements HasLocalePreference
      * @param int|Student $studentId
      * @return User
      */
-    public function selectStudent(Student|int $studentId): static
+    public function selectStudent(Student|string $studentId): static
     {
         if ($studentId instanceof Student) {
-            $studentId = $studentId->id;
+            $studentId = $studentId->uuid;
         }
 
         $exists = $this->studentSelections()

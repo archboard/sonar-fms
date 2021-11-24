@@ -234,8 +234,8 @@ export default defineComponent({
       })
     }
     const clearSelection = async () => {
-      await $http.delete($route('student-selection.remove'))
       props.user.student_selection = []
+      await $http.delete($route('student-selection.remove'))
     }
     watch(selectAll, (newVal) => {
       if (newVal) {
