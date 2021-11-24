@@ -133,12 +133,13 @@ export default defineComponent({
     paymentMethods: Object,
     invoice: Object,
     paidBy: Object,
+    term: String,
   },
 
   setup (props) {
     const form = useForm({
       invoice_uuid: props.invoice?.uuid,
-      invoice_payment_term_uuid: null,
+      invoice_payment_term_uuid: props.term || null,
       payment_method_id: null,
       paid_at: new Date,
       amount: null,

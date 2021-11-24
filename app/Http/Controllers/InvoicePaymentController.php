@@ -90,6 +90,7 @@ class InvoicePaymentController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'invoice' => $invoice->toResource(),
             'paidBy' => $paidBy->toResource(),
+            'term' => $request->input('term'),
         ])->withViewData(compact('title'));
     }
 

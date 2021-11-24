@@ -56,16 +56,36 @@
             {{ __('Total due') }}
           </Td>
           <Td class="text-base font-bold text-right" :lighter="false">
-            {{ invoice.remaining_balance_formatted }}
+            {{ invoice.amount_due_formatted }}
           </Td>
         </tr>
       </Tbody>
     </Table>
 
-    <section v-if="paymentSchedules.length > 0" class="mt-6">
+    <section class="mt-8 xl:mt-10 py-5">
       <div class="divide-y divide-gray-300 dark:divide-gray-600">
         <div class="pb-4">
-          <h2 id="activity-title" class="text-lg font-medium">{{ __('Payment schedules') }}</h2>
+          <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
+        </div>
+        <div class="pt-6">
+          <Table v-if="invoice.payments.length > 0">
+            <Thead>
+              <tr>
+                <Th>{{ __('Date') }}</Th>
+                <Th>{{ __('Amount') }}</Th>
+                <Th>{{ __('Paid by') }}</Th>
+              </tr>
+            </Thead>
+          </Table>
+          <p v-else class="text-sm">{{ __('No payments have been recorded yet.') }} <Link :href="`/payments/create?invoice_uuid=${invoice.uuid}`">{{ __('Record a payment') }}</Link>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section v-if="paymentSchedules.length > 0" class="mt-8 xl:mt-10 py-5">
+      <div class="divide-y divide-gray-300 dark:divide-gray-600">
+        <div class="pb-4">
+          <h2 class="text-lg font-medium">{{ __('Payment schedules') }}</h2>
         </div>
         <div class="pt-6">
           <Alert v-if="invoice.parent" class="mb-4">
@@ -78,15 +98,26 @@
                 {{ __(':number payments (:total_price)', { number: schedule.terms.length, total_price: displayCurrency(schedule.amount) }) }}
               </h3>
 
-              <div class="flex items-start space-x-4">
-                <CardWrapper v-for="(term, termIndex) in schedule.terms" :key="term.uuid" class="flex-0">
-                  <CardPadding>
-                    <h4 class="font-medium">{{ __('Payment :number', { number: termIndex + 1 }) }}</h4>
-                    <span v-if="term.due_at">{{ __(':amount due by :date', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date') }) }}</span>
-                    <span v-else>{{ displayCurrency(term.amount) }}</span>
-                  </CardPadding>
-                </CardWrapper>
-              </div>
+              <Table>
+                <Thead>
+                  <tr>
+                    <Th>{{ __('Payment') }}</Th>
+                    <Th>{{ __('Due date') }}</Th>
+                    <Th class="text-right">{{ __('Amount due') }}</Th>
+                    <Th class="text-right">{{ __('Remaining balance') }}</Th>
+                    <Th v-if="can('payments.create')"></Th>
+                  </tr>
+                </Thead>
+                <Tbody>
+                  <tr v-for="(term, termIndex) in schedule.terms" :key="term.uuid">
+                    <Td>{{ termIndex + 1}}/{{ schedule.terms.length }}</Td>
+                    <Td>{{ term.due_at ? displayDate(term.due_at, 'abbr_date') : __('N/A') }}</Td>
+                    <Td class="text-right">{{ displayCurrency(term.amount_due) }}</Td>
+                    <Td :lighter="false" class="text-right">{{ displayCurrency(term.remaining_balance) }}</Td>
+                    <Td v-if="can('payments.create')" class="text-right"><Link :href="`/payments/create?invoice_uuid=${invoice.uuid}&term=${term.uuid}`">{{ __('Add payment') }}</Link></Td>
+                  </tr>
+                </Tbody>
+              </Table>
             </div>
           </div>
         </div>
@@ -102,14 +133,20 @@ import Tbody from '@/components/tables/Tbody'
 import Table from '@/components/tables/Table'
 import displaysCurrency from '@/composition/displaysCurrency'
 import displaysDate from '@/composition/displaysDate'
+import checksPermissions from '@/composition/checksPermissions'
 import { XIcon } from '@heroicons/vue/solid'
 import Alert from '@/components/Alert'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
 import CardHeader from '@/components/CardHeader'
+import Thead from '@/components/tables/Thead'
+import Th from '@/components/tables/Th'
+import Link from '@/components/Link'
 
 export default defineComponent({
   components: {
+    Th,
+    Thead,
     CardHeader,
     CardPadding,
     CardWrapper,
@@ -118,6 +155,7 @@ export default defineComponent({
     Tbody,
     Td,
     XIcon,
+    Link,
   },
 
   props: {
@@ -131,6 +169,7 @@ export default defineComponent({
   setup (props) {
     const { displayCurrency } = displaysCurrency()
     const { displayDate } = displaysDate()
+    const { can } = checksPermissions()
     const subTotal = computed(() => {
       return props.invoice.items.reduce((total, item) => {
         return total + (item.amount_per_unit * item.quantity)
@@ -147,6 +186,7 @@ export default defineComponent({
       displayCurrency,
       displayDate,
       paymentSchedules,
+      can,
     }
   }
 })
