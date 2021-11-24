@@ -72,10 +72,19 @@
             <Thead>
               <tr>
                 <Th>{{ __('Date') }}</Th>
-                <Th>{{ __('Amount') }}</Th>
+                <Th class="text-right">{{ __('Amount') }}</Th>
+                <Th>{{ __('Recorded by') }}</Th>
                 <Th>{{ __('Paid by') }}</Th>
               </tr>
             </Thead>
+            <Tbody>
+              <tr v-for="payment in invoice.payments" :key="payment.id">
+                <Td>{{ payment.paid_at_formatted }}</Td>
+                <Td class="text-right">{{ payment.amount_formatted }}</Td>
+                <Td>{{ payment.recorded_by.full_name }}</Td>
+                <Td>{{ payment.made_by?.full_name }}</Td>
+              </tr>
+            </Tbody>
           </Table>
           <p v-else class="text-sm">{{ __('No payments have been recorded yet.') }} <Link :href="`/payments/create?invoice_uuid=${invoice.uuid}`">{{ __('Record a payment') }}</Link>.</p>
         </div>
