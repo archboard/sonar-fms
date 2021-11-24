@@ -3,6 +3,10 @@
     <CardWrapper>
       <form @submit.prevent="save">
         <CardPadding>
+          <Alert class="mb-4">
+            {{ __('Please ensure the file is not password protected before uploading.') }}
+          </Alert>
+
           <Fieldset>
             <InputWrap :error="form.errors.files">
               <FileUpload v-model="form.files" :extensions="extensions" />
@@ -49,9 +53,11 @@ import Button from '@/components/Button'
 import FileUpload from '@/components/forms/FileUpload'
 import Fieldset from '@/components/forms/Fieldset'
 import HelpText from '@/components/HelpText'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   components: {
+    Alert,
     HelpText,
     Fieldset,
     FileUpload,

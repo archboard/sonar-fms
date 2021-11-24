@@ -76,8 +76,13 @@ class InvoiceImportController extends Controller
                 'starting_row' => $data['starting_row'],
             ]);
 
-        $import->setTotalRecords()
-            ->save();
+        try {
+            $import->setTotalRecords()
+                ->save();
+        } catch (\ValueError $exception) {
+            session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+            return back();
+        }
 
         session()->flash('success', __('Invoice import created successfully.'));
 
