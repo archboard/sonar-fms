@@ -322,7 +322,8 @@ class Invoice extends Model implements Searchable
 
     public function invoicePayments(): HasMany
     {
-        return $this->hasMany(InvoicePayment::class, 'invoice_uuid', 'uuid');
+        return $this->hasMany(InvoicePayment::class, 'invoice_uuid', 'uuid')
+            ->orderBy('paid_at', 'desc');
     }
 
     public function invoiceTaxItems(): HasMany
