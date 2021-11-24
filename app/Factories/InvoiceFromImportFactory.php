@@ -204,7 +204,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     protected function convertCurrency($value): ?int
     {
-        $sanitized = NumberUtility::sanitizeNumber($value);
+        $sanitized = abs(NumberUtility::sanitizeNumber($value));
 
         try {
             return Money::of($sanitized, $this->school->currency->code)
