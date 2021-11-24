@@ -142,7 +142,7 @@
           <tr>
             <td class="font-bold text-left px-4 py-2">
               @if($invoice->due_at)
-                {{ __('Amount due by :date', ['date' => $invoice->due_at->setTimezone($invoice->school->timezone)->format('F j, Y H:i')]) }}
+                {{ __('Amount due by :date', ['date' => $invoice->due_at->setTimezone($invoice->school->timezone)->format('F j, Y')]) }}
               @else
                 {{ __('Amount due') }}
               @endif
@@ -177,7 +177,7 @@
                   @foreach($paymentSchedule->invoicePaymentTerms as $term)
                     <div class="flex-0 w-full border p-4">
                       @if($term->due_at)
-                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->setTimezone($invoice->school->timezone)->format('F j, Y')]) }}
+                        {{ __(':amount due by :date', ['amount' => displayCurrency($term->amount_due, $currency), 'date' => $term->due_at->setTimezone($invoice->school->timezone)->format('M j, Y')]) }}
                       @else
                         {{ displayCurrency($term->amount_due, $currency) }}
                       @endif
