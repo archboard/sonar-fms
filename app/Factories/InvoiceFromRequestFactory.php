@@ -5,6 +5,7 @@ namespace App\Factories;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Models\Invoice;
 use App\Models\Student;
+use App\Models\Term;
 use App\Utilities\NumberUtility;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -27,6 +28,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
     protected int $preTaxTotal = 0;
     protected int $subtotal = 0;
     protected int $discountTotal = 0;
+    protected ?Term $term = null;
+    protected bool $compileTitle = false;
 
     public static function make(CreateInvoiceRequest $request, string $originalBatchId = null): static
     {
@@ -87,6 +90,11 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             $this->invoiceAttributes['notified_at'] = null;
             $this->invoiceAttributes['notify_at'] = $this->notifyAt;
         }
+
+        $this->term = $this->invoiceAttributes['term_id']
+            ? Term::find($this->invoiceAttributes['term_id'])
+            : null;
+        $this->compileTitle = str_contains($this->invoiceAttributes['title'], '{');
 
         $this->setInvoiceTotalsAttributes();
 
@@ -366,16 +374,20 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 ->get($student->uuid, $this->uuid());
             $invoiceNumber = $this->invoiceNumberMap
                 ->get($student->uuid, Invoice::generateInvoiceNumber($this->invoiceNumberPrefix));
+            $title = $this->compileTitle
+                ? $this->school->compileTemplate($this->invoiceAttributes['title'], student: $student, term: $this->term)
+                : $this->invoiceAttributes['title'];
 
             // Add the invoice attributes
             $this->invoices->push(array_replace(
+                $this->invoiceAttributes,
                 [
                     'uuid' => $invoiceUuid,
                     'student_uuid' => $student->uuid,
                     'published_at' => $this->asDraft ? null : $this->now,
                     'invoice_number' => $invoiceNumber,
-                ],
-                $this->invoiceAttributes
+                    'title' => $title,
+                ]
             ));
 
             // Add the items attributes

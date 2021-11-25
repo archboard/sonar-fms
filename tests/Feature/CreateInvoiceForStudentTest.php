@@ -11,6 +11,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
+use App\Models\Student;
 use App\Models\Term;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
@@ -189,6 +190,52 @@ class CreateInvoiceForStudentTest extends TestCase
         $this->assertEquals(now()->addMonth()->startOfMinute(), optional($invoice->due_at)->startOfMinute());
         $this->assertEquals($available, $invoice->available_at);
         $this->assertEquals(2, $invoice->invoiceItems()->count());
+    }
+
+    public function test_title_gets_dynamically_generated_with_included_term()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', Invoice::class);
+
+        Queue::fake();
+        /** @var Student $student */
+        $student = $this->school->students->random();
+        /** @var Term $term */
+        $term = $this->school->terms()->save(
+            Term::factory()->make()
+        );
+        $invoiceData = [
+            'students' => [$student->id],
+            'title' => '{last_name}, {first_name} {term} {school_year} Invoice',
+            'description' => $this->faker->sentence,
+            'available_at' => null,
+            'due_at' => now()->addMonth()->format('Y-m-d\TH:i:s.v\Z'),
+            'term_id' => $term->id,
+            'notify' => false,
+            'items' => [
+                [
+                    'id' => $this->uuid(),
+                    'fee_id' => null,
+                    'name' => 'Line item 1',
+                    'amount_per_unit' => 100,
+                    'quantity' => 1,
+                ],
+            ],
+            'scholarships' => [],
+            'payment_schedules' => [],
+        ];
+
+        $this->post(route('students.invoices.store', [$student]), $invoiceData)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        /** @var Invoice $invoice */
+        $invoice = $student->invoices()->first();
+
+        $this->assertEquals(
+            "{$student->last_name}, {$student->first_name} {$term->abbreviation} {$term->school_years} Invoice",
+            $invoice->title
+        );
     }
 
     public function test_invoice_does_not_get_created_if_sql_fails_for_its_items()
