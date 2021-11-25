@@ -49,14 +49,16 @@ abstract class TestCase extends BaseTestCase
         return UuidFactory::make();
     }
 
-    public function createUser(): User
+    public function createUser(array $attributes = []): User
     {
+        $defaultAttributes = ['school_id' => $this->school->id];
+
         /** @var User $user */
         $user = $this->tenant->users()
             ->save(
-                User::factory()->make([
-                    'school_id' => $this->school->id,
-                ])
+                User::factory()->make(
+                    array_merge($defaultAttributes, $attributes)
+                )
             );
 
         $user->schools()->attach($this->school->id);

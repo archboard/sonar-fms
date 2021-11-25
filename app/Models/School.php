@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongsToTenant;
 use App\Traits\HasTaxRateAttribute;
+use Carbon\Carbon;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +27,7 @@ class School extends Model
     use HasTaxRateAttribute;
 
     protected $guarded = [];
+    protected ?Term $currentTerm = null;
 
     protected $casts = [
         'active_at' => 'datetime',
@@ -115,21 +117,65 @@ class School extends Model
         return $this->hasMany(InvoicePayment::class);
     }
 
-    public function getInvoiceNumberPrefix(?User $user = null): string
+    public function getCurrentTerm(?Carbon $date = null): Term
     {
-        if (!$this->invoice_number_template) {
+        if ($this->currentTerm) {
+            return $this->currentTerm;
+        }
+
+        $date = $date ?? now();
+
+        return $this->currentTerm = $this->terms()
+            ->where('starts_at', '<=', $date)
+            ->where('ends_at', '>=', $date)
+            ->orderBy('portion', 'desc')
+            ->first() ?? new Term;
+    }
+
+    public function compileTemplate(string $subject, ?User $user = null, ?Student $student = null, ?Term $term = null): string
+    {
+        $subject = trim($subject);
+
+        if (!$subject) {
             return '';
         }
 
+        $user = $user ?? auth()->user();
         $now = $user
             ? $user->getCarbonFactory()->now()
             : now();
+        $term = $term ?? $this->getCurrentTerm($now);
+        $student = $student ?? new Student;
 
-        return Str::replace(
-            ['{year}', '{month}'],
-            [$now->format('Y'), $now->format('m')],
-            $this->invoice_number_template
-        );
+        $search = [
+            '{year}',
+            '{month}',
+            '{day}',
+            '{term}',
+            '{school_year}',
+            '{student_number}',
+            '{sis_id}',
+            '{first_name}',
+            '{last_name}',
+        ];
+        $replace = [
+            $now->year,
+            $now->format('m'),
+            $now->format('d'),
+            $term->abbreviation,
+            $term->school_years,
+            $student->student_number,
+            $student->sis_id,
+            $student->first_name,
+            $student->last_name,
+        ];
+
+        return Str::replace($search, $replace, $subject);
+    }
+
+    public function getInvoiceNumberPrefix(?User $user = null, ?Student $student = null): string
+    {
+        return strtoupper($this->compileTemplate($this->invoice_number_template ?? '', $user, $student));
     }
 
     public function getGradeLevelsAttribute(): array

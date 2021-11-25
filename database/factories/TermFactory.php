@@ -34,4 +34,21 @@ class TermFactory extends Factory
             'ends_at' => today()->addMonths(6),
         ];
     }
+
+    public function past(): static
+    {
+        return $this->state([
+            'starts_at' => now()->subMonths(8),
+            'ends_at' => now()->subMonth(),
+        ]);
+    }
+
+    public function semester(): static
+    {
+        return $this->state([
+            'name' => 'Semester',
+            'abbreviation' => 'SX',
+            'portion' => 2,
+        ]);
+    }
 }
