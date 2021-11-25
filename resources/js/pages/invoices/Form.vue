@@ -191,7 +191,7 @@ export default {
     const { school } = useSchool()
     const form = useForm({
       students: students.value || props.invoice.students || [],
-      title: props.invoice.title || null,
+      title: props.invoice.title || school.value.default_title,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,
       invoice_date: props.invoice.invoice_date
