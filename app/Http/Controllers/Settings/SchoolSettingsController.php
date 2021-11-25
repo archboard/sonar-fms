@@ -46,6 +46,7 @@ class SchoolSettingsController extends Controller
             'tax_rate' => 'required_if:collect_tax,true|numeric|min:0',
             'tax_label' => 'required_if:collect_tax,true',
             'invoice_number_template' => 'nullable',
+            'default_title' => 'nullable',
         ]);
 
         $request->school()

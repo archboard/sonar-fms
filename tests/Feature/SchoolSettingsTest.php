@@ -51,6 +51,7 @@ class SchoolSettingsTest extends TestCase
             'tax_rate' => '8',
             'tax_label' => 'Nunya',
             'invoice_number_template' => 'INV--',
+            'default_title' => '{year}{month}{student_number}',
         ];
 
         $this->post(route('settings.school'), $data)

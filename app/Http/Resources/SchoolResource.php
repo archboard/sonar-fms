@@ -28,6 +28,7 @@ class SchoolResource extends JsonResource
             'currency_id' => $this->currency_id,
             'grade_levels' => $this->grade_levels,
             'school_number' => $this->school_number,
+            'default_title' => $this->default_title,
             'tax_rate_formatted' => $this->tax_rate_formatted,
             'tax_rate_converted' => $this->tax_rate_converted,
             'invoice_number_template' => $this->invoice_number_template,
