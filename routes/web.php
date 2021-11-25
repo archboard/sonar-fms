@@ -66,6 +66,9 @@ Route::middleware('tenant')->group(function () {
         Route::post('/locale', \App\Http\Controllers\ChangeLocaleController::class)
             ->name('locale');
 
+        Route::post('/preview-template', \App\Http\Controllers\PreviewTemplateController::class)
+            ->name('preview.template');
+
         Route::middleware('school_settings')
             ->group(function () {
                 /**
