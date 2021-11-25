@@ -8,7 +8,8 @@
   <Fieldset>
     <InputWrap :error="localValue.errors.title">
       <Label for="title" :required="true">{{ __('Title') }}</Label>
-      <Input v-model="localValue.title" id="title" required autofocus />
+<!--      <Input v-model="localValue.title" id="title" required autofocus />-->
+      <TemplateBuilder v-model="localValue.title" id="title" required autofocus />
       <HelpText>
         {{ __('Give the invoice a meaningful title that is easily recognizable and descriptive.') }}
       </HelpText>
@@ -92,9 +93,11 @@ import FadeIn from '@/components/transitions/FadeIn'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import fetchesTerms from '@/composition/fetchesTerms'
 import displaysDate from '@/composition/displaysDate'
+import TemplateBuilder from '@/components/forms/TemplateBuilder'
 
 export default defineComponent({
   components: {
+    TemplateBuilder,
     FadeInGroup,
     FadeIn,
     CheckboxText,

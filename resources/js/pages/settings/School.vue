@@ -86,7 +86,7 @@
                 <Fieldset>
                   <InputWrap :error="form.errors.invoice_number_template">
                     <Label for="invoice_number_template">{{ __('Invoice number prefix') }}</Label>
-                    <Input v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
+                    <TemplateBuilder v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
                     <HelpText class="mb-3">
                       {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-EIXVYSL0` }) }}
                     </HelpText>
@@ -97,7 +97,7 @@
 
                   <InputWrap :error="form.errors.default_title">
                     <Label for="default_title">{{ __('Default invoice title') }}</Label>
-                    <Input v-model="form.default_title" placeholder="{student_number}" class="font-mono" id="default_title" />
+                    <TemplateBuilder v-model="form.default_title" placeholder="{student_number}" class="font-mono" id="default_title" />
                     <HelpText class="mb-3">
                       {{ __('Add a template to use for the default invoice title when creating and importing invoices.') }}
                     </HelpText>
@@ -173,10 +173,12 @@ import PageProps from '@/mixins/PageProps'
 import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysDate from '@/composition/displaysDate'
 import PercentInput from '@/components/forms/PercentInput'
+import TemplateBuilder from '@/components/forms/TemplateBuilder'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    TemplateBuilder,
     PercentInput,
     FadeInGroup,
     CheckboxWrapper,
