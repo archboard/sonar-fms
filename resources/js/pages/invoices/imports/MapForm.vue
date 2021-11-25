@@ -60,7 +60,7 @@
           <InputWrap :error="form.errors.title">
             <Label for="title" :required="true">{{ __('Title') }}</Label>
             <MapField v-model="form.title" :headers="headers" id="title">
-              <Input v-model="form.title.value" id="title" :placeholder="__('Invoice title')" />
+              <TemplateBuilder v-model="form.title.value" id="title" :placeholder="__('Invoice title')" />
               <template v-slot:after>
                 <HelpText>
                   {{ __('Give the invoice a meaningful title that is easily recognizable and descriptive.') }}
@@ -232,9 +232,11 @@ import InvoiceItemMapping from '@/components/forms/invoices/InvoiceItemMapping'
 import InvoiceScholarshipMapping from '@/components/forms/invoices/InvoiceScholarshipMapping'
 import InvoicePaymentScheduleMapping from '@/components/forms/invoices/InvoicePaymentScheduleMapping'
 import InvoiceTaxMapping from '@/components/forms/invoices/InvoiceTaxMapping'
+import TemplateBuilder from '@/components/forms/TemplateBuilder'
 
 export default {
   components: {
+    TemplateBuilder,
     InvoiceTaxMapping,
     InvoicePaymentScheduleMapping,
     InvoiceScholarshipMapping,
