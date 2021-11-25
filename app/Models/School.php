@@ -162,12 +162,12 @@ class School extends Model
             $now->year,
             $now->format('m'),
             $now->format('d'),
-            $term->abbreviation,
-            $term->school_years,
-            $student->student_number,
-            $student->sis_id,
-            $student->first_name,
-            $student->last_name,
+            $term->abbreviation ?? '',
+            $term->school_years ?? '',
+            $student->student_number ?? '',
+            $student->sis_id ?? '',
+            $student->first_name ?? '',
+            $student->last_name ?? '',
         ];
 
         return Str::replace($search, $replace, $subject);

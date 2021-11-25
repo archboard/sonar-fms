@@ -400,6 +400,17 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'updated_at' => $this->now,
         ];
 
+        // If the title contains a bracket, do some dynamic processing on it
+        if (str_contains($attributes['title'], '{')) {
+            $term = $attributes['term_id']
+                ? $this->terms->firstWhere('id', $attributes['term_id'])
+                : null;
+
+            // Compile invoice title if it contains a bracket
+            $attributes['title'] = $this->school
+                ->compileTemplate($attributes['title'], student: $student, term: $term);
+        }
+
         $amountDue = $this->rowPreTaxSubtotal + $this->rowTaxDue;
         $attributes['amount_due'] = $amountDue;
         $attributes['remaining_balance'] = $amountDue;
