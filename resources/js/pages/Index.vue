@@ -8,7 +8,7 @@
             <Link href="/invoices/create">{{ __('Create an invoice') }}</Link>
           </li>
           <li>
-            <Link href="/invoices/create">{{ __('Import invoices') }}</Link>
+            <Link href="/invoices/imports/create">{{ __('Import invoices') }}</Link>
           </li>
         </ul>
       </CardPadding>

@@ -8,7 +8,17 @@
               <FadeIn>
                 <Alert v-if="selectedInvoice.parent" level="warning" class="mb-4">
                   {{ __('This invoice is part of the combined invoice :invoice. This payment will also be recorded for that invoice.', { invoice: `${selectedInvoice.parent.title} (${selectedInvoice.parent.invoice_number})` }) }}
+                  <InertiaLink class="font-medium text-yellow-50 hover:text-white hover:underline" :href="`/payments/create?invoice_uuid=${selectedInvoice.parent_uuid}`">{{ __('Record a payment for that invoice') }}</InertiaLink>.
                 </Alert>
+              </FadeIn>
+              <FadeIn>
+                <div v-if="selectedInvoice.children && selectedInvoice.children.length > 0" class="mb-4">
+                  <Alert class="mb-4">
+                    {{ __('This invoice is a combined invoice. The payment will be distributed evenly to the following invoices. If you want to apply a payment to a specific invoice, you may do so below.') }}
+                  </Alert>
+
+                  <ChildInvoices :invoices="selectedInvoice.children" />
+                </div>
               </FadeIn>
 
               <InputWrap :error="form.errors.invoice_uuid">
@@ -107,9 +117,11 @@ import displaysDate from '@/composition/displaysDate'
 import displaysCurrency from '@/composition/displaysCurrency'
 import isEmpty from 'lodash/isEmpty'
 import Alert from '@/components/Alert'
+import ChildInvoices from '@/components/ChildInvoices'
 
 export default defineComponent({
   components: {
+    ChildInvoices,
     Alert,
     FadeIn,
     UserTypeahead,

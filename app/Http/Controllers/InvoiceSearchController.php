@@ -22,6 +22,7 @@ class InvoiceSearchController extends Controller
             ->with([
                 'parent',
                 'children',
+                'children.student',
                 'student',
                 'students',
                 'currency',

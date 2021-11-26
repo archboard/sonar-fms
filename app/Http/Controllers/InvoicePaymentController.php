@@ -75,6 +75,7 @@ class InvoicePaymentController extends Controller
                     'students',
                     'parent',
                     'children',
+                    'children.student',
                     'currency',
                     'invoicePaymentSchedules.invoicePaymentTerms'
                 )
