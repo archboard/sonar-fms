@@ -61,6 +61,12 @@
               <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
             </InputWrap>
 
+            <InputWrap :error="form.errors.transaction_details">
+              <Label for="transaction_details">{{ __('Transaction details') }}</Label>
+              <Input v-model="form.transaction_details" id="transaction_details" />
+              <HelpText>{{ __("This could hold additional information about the payment, such as a transaction number, to add more auditable details about the payment.") }}</HelpText>
+            </InputWrap>
+
             <InputWrap :error="form.errors.paid_at">
               <Label for="paid_at">{{ __('Date paid') }} <Req /></Label>
               <DatePicker v-model="form.paid_at" mode="date" id="paid_at" />
@@ -77,6 +83,12 @@
               <Label for="made_by">{{ __('Paid by') }}</Label>
               <UserTypeahead v-model="selectedUser" id="made_by" />
               <HelpText>{{ __('Associating a payment to a user is helpful for historical records.') }}</HelpText>
+            </InputWrap>
+
+            <InputWrap :error="form.errors.notes">
+              <Label for="notes">{{ __('Notes') }}</Label>
+              <Textarea v-model="form.notes" id="notes" />
+              <HelpText>{{ __('Include additional internal notes. Only other administrators can view these notes.') }}</HelpText>
             </InputWrap>
           </Fieldset>
         </CardPadding>
@@ -118,9 +130,13 @@ import displaysCurrency from '@/composition/displaysCurrency'
 import isEmpty from 'lodash/isEmpty'
 import Alert from '@/components/Alert'
 import ChildInvoices from '@/components/ChildInvoices'
+import Input from '@/components/forms/Input'
+import Textarea from '@/components/forms/Textarea'
 
 export default defineComponent({
   components: {
+    Textarea,
+    Input,
     ChildInvoices,
     Alert,
     FadeIn,
@@ -153,9 +169,11 @@ export default defineComponent({
       invoice_uuid: props.invoice?.uuid,
       invoice_payment_term_uuid: props.term || null,
       payment_method_id: null,
+      transaction_details: null,
       paid_at: new Date,
       amount: null,
       made_by: null,
+      notes: null,
     })
     const save = () => {
       form.transform(data => ({
