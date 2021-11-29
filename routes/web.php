@@ -229,10 +229,20 @@ Route::middleware('tenant')->group(function () {
                         });
                     });
 
+                /**
+                 * Payments and payment imports
+                 */
                 Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)
                     ->names('payments.imports');
+
+                Route::get('/payments/imports/{import}/map', [\App\Http\Controllers\MapPaymentImportController::class, 'index'])
+                    ->name('payments.imports.map');
+
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 
+                /**
+                 * Other stuff
+                 */
                 Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)
                     ->except('create', 'edit');
 
