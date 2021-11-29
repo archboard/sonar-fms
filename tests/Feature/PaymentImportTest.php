@@ -33,4 +33,19 @@ class PaymentImportTest extends TestCase
                 ->component('payments/imports/Index')
             );
     }
+
+    public function test_can_view_the_create_form()
+    {
+        $this->assignPermission('create', PaymentImport::class);
+
+        $this->get(route('payments.imports.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->where('method', 'post')
+                ->where('endpoint', route('payments.imports.store'))
+                ->component('invoices/imports/Create')
+            );
+    }
 }

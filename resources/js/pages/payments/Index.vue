@@ -13,7 +13,7 @@
           },
           {
             label: __('From import'),
-            route: `/payments/import`,
+            route: `/payments/imports/create`,
           },
         ]"
       >

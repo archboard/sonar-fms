@@ -37,11 +37,34 @@ class PaymentImportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function create()
     {
-        //
+        $title = __('Add a payment import');
+        $breadcrumbs = [
+            [
+                'label' => __('Payments'),
+                'route' => route('payments.index'),
+            ],
+            [
+                'label' => __('Payment imports'),
+                'route' => route('payments.imports.index'),
+            ],
+            [
+                'label' => __('Create import'),
+                'route' => route('payments.imports.create'),
+            ],
+        ];
+
+        // Since the InvoiceImport and PaymentImport models
+        // are essentially the same, reuse the same form
+        return inertia('invoices/imports/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'method' => 'post',
+            'endpoint' => route('payments.imports.store'),
+        ])->withViewData(compact('title'));
     }
 
     /**
