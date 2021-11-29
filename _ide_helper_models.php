@@ -789,6 +789,58 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\PaymentImport
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string|null $user_uuid
+ * @property string $file_path
+ * @property int $heading_row
+ * @property int $starting_row
+ * @property array|null $mapping
+ * @property bool $mapping_valid
+ * @property int|null $total_records
+ * @property int $imported_records
+ * @property int $failed_records
+ * @property \Illuminate\Support\Carbon|null $imported_at
+ * @property array|null $results
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read string $absolute_path
+ * @property-read string $file_name
+ * @property-read array $headers
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @property-read \App\Models\User|null $user
+ * @method static Builder|PaymentImport filter(array $filters)
+ * @method static Builder|PaymentImport newModelQuery()
+ * @method static Builder|PaymentImport newQuery()
+ * @method static Builder|PaymentImport query()
+ * @method static Builder|PaymentImport whereCreatedAt($value)
+ * @method static Builder|PaymentImport whereFailedRecords($value)
+ * @method static Builder|PaymentImport whereFilePath($value)
+ * @method static Builder|PaymentImport whereHeadingRow($value)
+ * @method static Builder|PaymentImport whereId($value)
+ * @method static Builder|PaymentImport whereImportedAt($value)
+ * @method static Builder|PaymentImport whereImportedRecords($value)
+ * @method static Builder|PaymentImport whereMapping($value)
+ * @method static Builder|PaymentImport whereMappingValid($value)
+ * @method static Builder|PaymentImport whereResults($value)
+ * @method static Builder|PaymentImport whereSchoolId($value)
+ * @method static Builder|PaymentImport whereStartingRow($value)
+ * @method static Builder|PaymentImport whereTenantId($value)
+ * @method static Builder|PaymentImport whereTotalRecords($value)
+ * @method static Builder|PaymentImport whereUpdatedAt($value)
+ * @method static Builder|PaymentImport whereUserUuid($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperPaymentImport extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\PaymentMethod
  *
  * @mixin IdeHelperPaymentMethod
@@ -935,6 +987,8 @@ namespace App\Models{
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentImport[] $paymentImports
+ * @property-read int|null $payment_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentMethod[] $paymentMethods
  * @property-read int|null $payment_methods_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships

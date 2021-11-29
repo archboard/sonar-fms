@@ -8,6 +8,7 @@ use App\Rules\InvoiceImportMap;
 use App\Imports\InvoiceImport as ExcelInvoiceImport;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
+use App\Traits\IsFileImport;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ class InvoiceImport extends Model
     use HasResource;
     use BelongsToSchool;
     use BelongsToUser;
+    use IsFileImport;
 
     protected $guarded = [];
 
@@ -48,39 +50,6 @@ class InvoiceImport extends Model
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
         });
-    }
-
-    public function getAbsolutePathAttribute(): string
-    {
-        return Storage::path($this->file_path);
-    }
-
-    public function getFileNameAttribute(): string
-    {
-        return basename($this->file_path);
-    }
-
-    public function getHeadersAttribute(): array
-    {
-        if (!$this->file_path) {
-            return [];
-        }
-
-        $workbook = (new HeadingRowImport($this->heading_row))
-            ->toArray($this->file_path);
-        $sheets = Arr::first($workbook);
-
-        return Arr::first($sheets);
-    }
-
-    public function getImportedRecordsAttribute($value)
-    {
-        return $value ?? 0;
-    }
-
-    public function getFailedRecordsAttribute($value)
-    {
-        return $value ?? 0;
     }
 
     public function invoices(): HasMany

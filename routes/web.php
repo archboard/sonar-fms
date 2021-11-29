@@ -229,6 +229,8 @@ Route::middleware('tenant')->group(function () {
                         });
                     });
 
+                Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)
+                    ->names('payments.imports');
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 
                 Route::resource('/templates', \App\Http\Controllers\InvoiceTemplateController::class)

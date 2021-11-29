@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button v-if="can('create')" component="inertia-link" :href="$route('invoices.imports.create')">
+      <Button v-if="can('create')" component="inertia-link" href="/payments/imports/create">
         {{ __('New import') }}
       </Button>
     </template>
@@ -114,7 +114,7 @@
 
         <tr v-if="imports.data.length === 0">
           <Td colspan="5" class="text-center">
-            {{ __('No imports exist.') }} <Link :href="$route('invoices.imports.create')">{{ __('Add one') }}</Link>.
+            {{ __('No imports exist.') }} <Link href="/payments/imports/create">{{ __('Add one') }}</Link>.
           </Td>
         </tr>
       </Tbody>
@@ -196,7 +196,6 @@ export default defineComponent({
   },
 
   setup (props) {
-    const $route = inject('$route')
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 15,
@@ -204,9 +203,8 @@ export default defineComponent({
       orderBy: 'created_at',
       orderDir: 'desc',
       imported: true,
-    }, $route('students.index'))
+    }, `/payments/imports`)
     const { searchTerm } = searchesItems(filters)
-    const selectAll = ref(false)
     const showFilters = ref(false)
     const { can } = checksPermissions(props.permissions)
     const { rollBack, rollingBackImport } = rollsBackImport()
@@ -218,7 +216,6 @@ export default defineComponent({
       resetFilters,
       sortColumn,
       searchTerm,
-      selectAll,
       showFilters,
       rollingBackImport,
       rollBack,
