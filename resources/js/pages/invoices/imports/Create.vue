@@ -27,7 +27,7 @@
         </CardPadding>
 
         <CardAction>
-          <Button v-if="invoiceImport.mapping_valid" type="submit" :loading="form.processing">
+          <Button v-if="existingImport.mapping_valid" type="submit" :loading="form.processing">
             {{ __('Save') }}
           </Button>
           <Button v-else type="submit" :loading="form.processing">
@@ -73,26 +73,23 @@ export default defineComponent({
 
   props: {
     extensions: Array,
-    invoiceImport: {
+    existingImport: {
       type: Object,
       default: () => ({}),
     },
+    endpoint: String,
+    method: String,
   },
 
   setup (props) {
-    const $route = inject('$route')
     const form = useForm({
-      files: props.invoiceImport.files || null,
-      heading_row: props.invoiceImport.heading_row || 1,
-      starting_row: props.invoiceImport.starting_row || 2,
-      _method: props.invoiceImport.id ? 'put' : 'post',
+      files: props.existingImport.files || null,
+      heading_row: props.existingImport.heading_row || 1,
+      starting_row: props.existingImport.starting_row || 2,
+      _method: props.method,
     })
     const save = () => {
-      const route = props.invoiceImport.id
-        ? $route('invoices.imports.update', props.invoiceImport)
-        : $route('invoices.imports.store')
-
-      form.post(route)
+      form.post(props.endpoint)
     }
 
     return {

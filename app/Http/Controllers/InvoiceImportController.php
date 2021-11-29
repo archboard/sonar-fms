@@ -51,6 +51,8 @@ class InvoiceImportController extends Controller
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
             'extensions' => ['csv', 'xlsx', 'xls'],
+            'endpoint' => route('invoices.imports.store'),
+            'method' => 'post',
         ])->withViewData(compact('title'));
     }
 
@@ -142,7 +144,9 @@ class InvoiceImportController extends Controller
             'title' => $title,
             'extensions' => ['csv', 'xlsx', 'xls'],
             'breadcrumbs' => $breadcrumbs,
-            'invoiceImport' => $import->toResource(),
+            'existingImport' => $import->toResource(),
+            'method' => 'put',
+            'endpoint' => route('invoices.imports.update', $import),
         ])->withViewData(compact('title'));
     }
 

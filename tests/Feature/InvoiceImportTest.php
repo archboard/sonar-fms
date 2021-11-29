@@ -68,6 +68,22 @@ class InvoiceImportTest extends TestCase
             );
     }
 
+    public function test_can_access_create_page()
+    {
+        $this->assignPermission('create', InvoiceImport::class);
+
+        $this->get(route('invoices.imports.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('extensions')
+                ->has('breadcrumbs')
+                ->where('endpoint', route('invoices.imports.store'))
+                ->where('method', 'post')
+                ->component('invoices/imports/Create')
+            );
+    }
+
     public function test_can_create_invoice_import()
     {
         $this->withoutExceptionHandling();
@@ -109,7 +125,16 @@ class InvoiceImportTest extends TestCase
         ]);
 
         $this->get(route('invoices.imports.edit', $import))
-            ->assertOk();
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('extensions')
+                ->has('existingImport')
+                ->where('method', 'put')
+                ->where('endpoint', route('invoices.imports.update', $import))
+                ->component('invoices/imports/Create')
+            );
     }
 
     public function test_can_update_existing_import_with_different_file()
