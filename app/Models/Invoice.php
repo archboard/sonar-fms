@@ -1029,6 +1029,7 @@ class Invoice extends Model implements Searchable
                     'parent_uuid' => $payment->uuid,
                     'invoice_uuid' => $child->uuid,
                     'amount' => $amount,
+                    'original_amount' => $amount,
                     'school_id' => $payment->school_id,
                     'tenant_id' => $payment->tenant_id,
                     'payment_method_id' => $payment->payment_method_id,
