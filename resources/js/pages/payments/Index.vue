@@ -1,6 +1,9 @@
 <template>
   <Authenticated>
     <template #actions>
+      <Button size="sm" component="InertiaLink" href="/payments/imports" color="white">
+        {{ __('Payment imports') }}
+      </Button>
       <Dropdown
         size="sm"
         :menu-items="[
@@ -204,10 +207,12 @@ import FilterButton from '@/components/FilterButton'
 import ClearFilterButton from '@/components/ClearFilterButton'
 import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import Dropdown from '@/components/forms/Dropdown'
+import Button from '@/components/Button'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    Button,
     Dropdown,
     InvoiceStatusBadge,
     ClearFilterButton,
