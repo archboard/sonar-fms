@@ -80,7 +80,12 @@
             <Tbody>
               <tr v-for="payment in invoice.payments" :key="payment.id">
                 <Td>{{ payment.paid_at_formatted }}</Td>
-                <Td class="text-right">{{ payment.amount_formatted }}</Td>
+                <Td>
+                  <div class="flex items-center justify-end space-x-1">
+                    <CollectionIcon v-if="payment.parent_uuid" class="h-4 w-4" />
+                    <span>{{ payment.amount_formatted }}</span>
+                  </div>
+                </Td>
                 <Td>{{ payment.recorded_by.full_name }}</Td>
                 <Td>{{ payment.made_by?.full_name }}</Td>
               </tr>
@@ -144,6 +149,7 @@ import displaysCurrency from '@/composition/displaysCurrency'
 import displaysDate from '@/composition/displaysDate'
 import checksPermissions from '@/composition/checksPermissions'
 import { XIcon } from '@heroicons/vue/solid'
+import { CollectionIcon } from '@heroicons/vue/outline'
 import Alert from '@/components/Alert'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
@@ -165,6 +171,7 @@ export default defineComponent({
     Td,
     XIcon,
     Link,
+    CollectionIcon,
   },
 
   props: {
