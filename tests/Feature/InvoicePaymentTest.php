@@ -67,6 +67,8 @@ class InvoicePaymentTest extends TestCase
             'paid_at' => $this->getDateForInvoice($date),
             'amount' => round($invoice->amount_due / 2),
             'made_by' => null,
+            'notes' => $this->faker->sentence(),
+            'transaction_details' => $this->faker->words(asText: true),
         ];
 
         $this->post(route('payments.store'), $data)
@@ -80,6 +82,9 @@ class InvoicePaymentTest extends TestCase
             'school_id' => $this->school->id,
             'invoice_uuid' => $invoice->uuid,
             'amount' => $data['amount'],
+            'original_amount' => $data['amount'],
+            'notes' => $data['notes'],
+            'transaction_details' => $data['transaction_details'],
             'paid_at' => $date->toDateTimeString(),
         ]);
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);

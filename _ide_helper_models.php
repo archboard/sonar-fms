@@ -545,6 +545,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $uuid
  * @property string|null $parent_uuid
+ * @property int $original_amount
+ * @property int $amount_refunded
+ * @property string|null $transaction_details
+ * @property string|null $notes
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $amount_formatted
  * @property-read string $paid_at_formatted
@@ -562,17 +566,21 @@ namespace App\Models{
  * @method static Builder|InvoicePayment newQuery()
  * @method static Builder|InvoicePayment query()
  * @method static Builder|InvoicePayment whereAmount($value)
+ * @method static Builder|InvoicePayment whereAmountRefunded($value)
  * @method static Builder|InvoicePayment whereCreatedAt($value)
  * @method static Builder|InvoicePayment whereId($value)
  * @method static Builder|InvoicePayment whereInvoicePaymentTermUuid($value)
  * @method static Builder|InvoicePayment whereInvoiceUuid($value)
  * @method static Builder|InvoicePayment whereMadeBy($value)
+ * @method static Builder|InvoicePayment whereNotes($value)
+ * @method static Builder|InvoicePayment whereOriginalAmount($value)
  * @method static Builder|InvoicePayment wherePaidAt($value)
  * @method static Builder|InvoicePayment whereParentUuid($value)
  * @method static Builder|InvoicePayment wherePaymentMethodId($value)
  * @method static Builder|InvoicePayment whereRecordedBy($value)
  * @method static Builder|InvoicePayment whereSchoolId($value)
  * @method static Builder|InvoicePayment whereTenantId($value)
+ * @method static Builder|InvoicePayment whereTransactionDetails($value)
  * @method static Builder|InvoicePayment whereUpdatedAt($value)
  * @method static Builder|InvoicePayment whereUuid($value)
  */

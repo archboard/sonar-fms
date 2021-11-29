@@ -56,6 +56,8 @@ class CreateInvoicePaymentRequest extends FormRequest
                 Rule::exists('invoice_payment_terms', 'uuid')
                     ->where('invoice_uuid', $this->input('invoice_uuid')),
             ],
+            'transaction_details' => 'nullable',
+            'notes' => 'nullable',
         ];
     }
 }
