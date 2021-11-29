@@ -6,6 +6,8 @@ use App\Http\Resources\PaymentImportResource;
 use App\Models\PaymentImport;
 use App\Models\School;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 
 class PaymentImportController extends Controller
 {
@@ -71,11 +73,41 @@ class PaymentImportController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, School $school)
     {
-        //
+        $data = $request->validate([
+            'files' => 'array|required',
+            'files.*.file' => 'file',
+            'heading_row' => 'required|integer',
+            'starting_row' => 'required|integer',
+        ]);
+
+        $fileData = Arr::first($data['files']);
+        /** @var UploadedFile $uploadedFile */
+        $uploadedFile = $fileData['file'];
+
+        /** @var PaymentImport $import */
+        $import = $school->paymentImports()
+            ->make([
+                'user_uuid' => $request->user()->id,
+                'file_path' => PaymentImport::storeFile($uploadedFile, $school),
+                'heading_row' => $data['heading_row'],
+                'starting_row' => $data['starting_row'],
+            ]);
+
+        try {
+            $import->setTotalRecords()
+                ->save();
+        } catch (\ValueError $exception) {
+            session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+            return back();
+        }
+
+        session()->flash('success', __('Payment import created successfully.'));
+
+        return redirect()->route('payments.imports.map', $import);
     }
 
     /**
