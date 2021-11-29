@@ -62,7 +62,7 @@
       </Tbody>
     </Table>
 
-    <section class="mt-8 xl:mt-10 py-5">
+    <section v-if="invoice.payments" class="mt-8 xl:mt-10 py-5">
       <div class="divide-y divide-gray-300 dark:divide-gray-600">
         <div class="pb-4">
           <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
