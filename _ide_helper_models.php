@@ -249,7 +249,7 @@ namespace App\Models{
  * App\Models\Invoice
  *
  * @mixin IdeHelperInvoice
- * @property int $id
+ * @property string $id
  * @property string $uuid
  * @property string|null $batch_id
  * @property string|null $import_id
@@ -314,7 +314,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceItem[] $invoiceItems
  * @property-read int|null $invoice_items_count
  * @property-read \App\Models\InvoiceLayout|null $invoiceLayout
- * @property-read \App\Models\InvoicePaymentSchedule $invoicePaymentSchedule
+ * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentSchedule[] $invoicePaymentSchedules
  * @property-read int|null $invoice_payment_schedules_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePaymentTerm[] $invoicePaymentTerms
@@ -531,7 +531,7 @@ namespace App\Models{
  * App\Models\InvoicePayment
  *
  * @mixin IdeHelperInvoicePayment
- * @property int $id
+ * @property string|null $id
  * @property int $tenant_id
  * @property int $school_id
  * @property string $invoice_uuid
@@ -543,6 +543,8 @@ namespace App\Models{
  * @property string|null $made_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $uuid
+ * @property string|null $parent_uuid
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $amount_formatted
  * @property-read string $paid_at_formatted
@@ -550,6 +552,7 @@ namespace App\Models{
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
  * @property-read \App\Models\InvoicePaymentTerm|null $invoicePaymentTerm
  * @property-read \App\Models\User|null $madeBy
+ * @property-read InvoicePayment|null $parent
  * @property-read \App\Models\User|null $recordedBy
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
@@ -565,11 +568,13 @@ namespace App\Models{
  * @method static Builder|InvoicePayment whereInvoiceUuid($value)
  * @method static Builder|InvoicePayment whereMadeBy($value)
  * @method static Builder|InvoicePayment wherePaidAt($value)
+ * @method static Builder|InvoicePayment whereParentUuid($value)
  * @method static Builder|InvoicePayment wherePaymentMethodId($value)
  * @method static Builder|InvoicePayment whereRecordedBy($value)
  * @method static Builder|InvoicePayment whereSchoolId($value)
  * @method static Builder|InvoicePayment whereTenantId($value)
  * @method static Builder|InvoicePayment whereUpdatedAt($value)
+ * @method static Builder|InvoicePayment whereUuid($value)
  */
 	class IdeHelperInvoicePayment extends \Eloquent {}
 }
@@ -903,6 +908,7 @@ namespace App\Models{
  * @property float|null $tax_rate
  * @property string|null $tax_label
  * @property string|null $invoice_number_template
+ * @property string|null $default_title
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
  * @property-read int|null $courses_count
  * @property-read \App\Models\Currency|null $currency
@@ -915,6 +921,8 @@ namespace App\Models{
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceLayout[] $invoiceLayouts
  * @property-read int|null $invoice_layouts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePayment[] $invoicePayments
+ * @property-read int|null $invoice_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTemplate[] $invoiceTemplates
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
@@ -942,6 +950,7 @@ namespace App\Models{
  * @method static Builder|School whereCollectTax($value)
  * @method static Builder|School whereCreatedAt($value)
  * @method static Builder|School whereCurrencyId($value)
+ * @method static Builder|School whereDefaultTitle($value)
  * @method static Builder|School whereHighGrade($value)
  * @method static Builder|School whereId($value)
  * @method static Builder|School whereInvoiceNumberTemplate($value)
@@ -1080,7 +1089,7 @@ namespace App\Models{
  * @method static Builder|StudentSelection newModelQuery()
  * @method static Builder|StudentSelection newQuery()
  * @method static Builder|StudentSelection query()
- * @method static Builder|StudentSelection student($studentId)
+ * @method static Builder|StudentSelection student(string $studentId)
  * @method static Builder|StudentSelection whereSchoolId($value)
  * @method static Builder|StudentSelection whereStudentUuid($value)
  * @method static Builder|StudentSelection whereUserUuid($value)

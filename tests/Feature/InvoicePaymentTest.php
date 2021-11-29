@@ -182,7 +182,6 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_add_payment_to_child_invoice()
     {
-        $this->withoutExceptionHandling();
         $this->assignPermission('create', InvoicePayment::class);
 
         $parent = $this->createCombinedInvoice(2);
@@ -219,5 +218,97 @@ class InvoicePaymentTest extends TestCase
         $this->assertTrue(
             $parent->activities->some(fn ($a) => Str::contains($a->description, "made to {$child->invoice_number}"))
         );
+    }
+
+    public function test_can_make_simple_payment_to_combined_invoice()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $invoice = $this->createCombinedInvoice(5);
+
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $childrenCount = $invoice->children()->count();
+        $basePayment = $invoice->amount_due / $childrenCount;
+
+        $data = [
+            'invoice_uuid' => $invoice->uuid,
+            'payment_method_id' => null,
+            'invoice_payment_term_uuid' => null,
+            'paid_at' => $this->getDateForInvoice($date),
+            'amount' => $basePayment % $childrenCount === 0
+                ? (int) $basePayment + 1
+                : (int) floor($basePayment),
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals($invoice->remaining_balance - $data['amount'], $invoice->children()->sum('remaining_balance'));
+
+        // Assert that the terms got distributed payments correctly
+        foreach ($invoice->invoicePaymentSchedules as $schedule) {
+            $distributedToTerms = $schedule->invoicePaymentTerms->reduce(function (int $total, InvoicePaymentTerm $term) {
+                return $total + ($term->amount_due - $term->remaining_balance);
+            }, 0);
+
+            $this->assertEquals($data['amount'], $distributedToTerms);
+        }
+
+        // Each child invoice will have received a distribution of some kind
+        foreach ($invoice->children as $child) {
+            if ($child->amount_due > 0) {
+                $this->assertTrue($child->amount_due > $child->remaining_balance);
+                $this->assertEquals(1, $child->invoicePayments()->count());
+            } else {
+                $this->assertEquals(0, $child->invoicePayments()->count());
+            }
+        }
+    }
+
+    public function test_can_make_full_payment_to_combined_invoice()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+
+        $invoice = $this->createCombinedInvoice(5);
+        $this->assertEquals($invoice->amount_due, $invoice->remaining_balance);
+
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDay()
+            ->setTimezone(config('app.timezone'));
+        $data = [
+            'invoice_uuid' => $invoice->uuid,
+            'payment_method_id' => null,
+            'invoice_payment_term_uuid' => null,
+            'paid_at' => $this->getDateForInvoice($date),
+            'amount' => $invoice->amount_due,
+            'made_by' => null,
+        ];
+
+        $this->post(route('payments.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals($invoice->remaining_balance - $data['amount'], $invoice->children()->sum('remaining_balance'));
+
+        // Assert that the terms got distributed payments correctly
+        foreach ($invoice->invoicePaymentSchedules as $schedule) {
+            $distributedToTerms = $schedule->invoicePaymentTerms->reduce(function (int $total, InvoicePaymentTerm $term) {
+                return $total + max($term->amount_due - $term->remaining_balance, 0);
+            }, 0);
+
+            $this->assertEquals($data['amount'], $distributedToTerms);
+        }
+
+        // Each child invoice will have received a distribution of some kind
+        foreach ($invoice->children as $child) {
+            $this->assertEquals(0, $child->remaining_balance);
+            $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
+        }
     }
 }

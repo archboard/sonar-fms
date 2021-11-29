@@ -7,6 +7,7 @@ use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasAmountAttribute;
 use App\Traits\ScopeToCurrentSchool;
+use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ class InvoicePayment extends Model
     use BelongsToSchool;
     use BelongsToInvoice;
     use HasAmountAttribute;
+    use UsesUuid;
 
     protected $guarded = [];
 
@@ -48,6 +50,11 @@ class InvoicePayment extends Model
         }
 
         return Timezone::convertToLocal($this->paid_at, 'M j, Y');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(static::class, 'parent_uuid', 'uuid');
     }
 
     public function invoicePaymentTerm(): BelongsTo

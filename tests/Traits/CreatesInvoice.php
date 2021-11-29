@@ -132,7 +132,7 @@ trait CreatesInvoice
             ->make(['invoice_uuid' => $invoice->uuid])
             ->each(function (InvoicePaymentSchedule $schedule) use ($invoice) {
                 $termCount = $this->faker->numberBetween(2, 5);
-                $amountDue = (int) round($invoice->amount_due / $termCount);
+                $amountDue = (int) ceil($invoice->amount_due / $termCount);
                 $terms = InvoicePaymentTerm::factory()
                     ->count($termCount)
                     ->make([
@@ -264,8 +264,10 @@ trait CreatesInvoice
         // but they do have payment schedules
         $parentInvoice->invoiceItems()->delete();
         $parentInvoice->invoiceScholarships()->delete();
-        $this->seedPaymentSchedules($parentInvoice);
         $parentInvoice->setCalculatedAttributes(true);
+        $parentInvoice->unsetRelations()
+            ->refresh();
+        $this->seedPaymentSchedules($parentInvoice);
 
         // Make sure everything reconciles correctly
         $this->assertEquals($children->sum('amount_due'), $parentInvoice->amount_due);
@@ -276,7 +278,8 @@ trait CreatesInvoice
         $this->assertEquals($children->sum('discount_total'), $parentInvoice->discount_total);
         $this->assertEquals($children->sum('total_paid'), $parentInvoice->total_paid);
 
-        return $parentInvoice->refresh();
+        return $parentInvoice->unsetRelations()
+            ->refresh();
     }
 
     protected function getDateForInvoice(Carbon $date): string

@@ -1,6 +1,6 @@
 <template>
   <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-    <li v-for="invoice in invoices" :key="invoice.uuid" class="col-span-1 bg-white dark:bg-gray-900 rounded-lg shadow divide-y divide-gray-200 dark:divide-gray-500">
+    <li v-for="invoice in invoices" :key="invoice.uuid" class="col-span-1 bg-gray-100 dark:bg-gray-900 rounded-lg shadow divide-y divide-gray-200 dark:divide-gray-500">
       <div class="w-full flex items-center justify-between px-6 py-5 space-x-6">
         <div class="flex-1 truncate">
           <div class="flex justify-between">

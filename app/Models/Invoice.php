@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Factories\UuidFactory;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
@@ -657,15 +658,19 @@ class Invoice extends Model implements Searchable
         }
 
         // Eager load any payments for the children
-        $this->load('children.invoicePayments');
+        // but not any that have a parent payment
+        $this->load([
+            'children.invoicePayments' => function ($query) {
+                $query->whereNull('invoice_payments.parent_uuid');
+            },
+        ]);
 
         // Add all the payments made to this invoice
         // and any child invoices since they could be
         // recorded independently of the parent
-        return $paymentsSum +
-            $this->children->reduce(function (int $total, Invoice $child) {
+        return $this->children->reduce(function (int $total, Invoice $child) {
                 return $total + $child->invoicePayments->sum('amount');
-            }, 0);
+            }, $paymentsSum);
     }
 
     public function setCalculatedAttributes(bool $save = false): static
@@ -947,6 +952,7 @@ class Invoice extends Model implements Searchable
 
         // Only parent invoices should distribute to terms
         $parent->distributePaymentToTerms($payment)
+            ->distributePaymentToChildren($payment)
             ->forceFill([
                 'invoice_payment_schedule_uuid' => $scheduleUuid ?? $this->invoice_payment_schedule_uuid,
             ])
@@ -956,6 +962,93 @@ class Invoice extends Model implements Searchable
         if ($log) {
             $this->logPayment($payment);
         }
+
+        return $this;
+    }
+
+    public function distributePaymentToChildren(InvoicePayment $payment): static
+    {
+        // If this isn't a parent invoice
+        // Or the payment isn't being applied to the parent invoice
+        // Don't distribute to the children because it isn't for the parent
+        if (!$this->is_parent || $this->uuid !== $payment->invoice_uuid) {
+            return $this;
+        }
+
+        // Do in a transaction so nothing weird happens
+        DB::transaction(function () use ($payment) {
+            $children = $this->children->keyBy('uuid');
+            $remainingBalances = $this->children->pluck('remaining_balance', 'uuid');
+            $distributions = $children->reduce(function (array $distributions, Invoice $invoice) use ($payment) {
+                // This is the ratio of child:parent remaining balance,
+                // which we'll use to assign the distribution amount
+                $ratio = $invoice->remaining_balance / $this->remaining_balance;
+                // Always round down to avoid over-distribution
+                // Will make up the difference later
+                $distribution = (int) floor($ratio * $payment->amount);
+
+                $distributions[$invoice->uuid] = $distribution < $invoice->remaining_balance
+                    ? $distribution
+                    : $invoice->remaining_balance;
+
+                return $distributions;
+            }, []);
+
+            // Until the distributions matches the payment amount,
+            // add to the invoices' distribution if less than remaining balance
+            while ($payment->amount - array_sum($distributions) > 0) {
+                // Add to distributions until they equal
+                foreach ($distributions as $uuid => $distribution) {
+                    $remaining = $remainingBalances->get($uuid) - $distribution;
+
+                    if ($remaining > 0) {
+                        $distributions[$uuid] = $distribution + 1;
+                        $remainingBalances[$uuid] = $remaining - 1;
+                    }
+
+                    // If the total distribution matches the payment amount, break now
+                    if ($payment->amount === array_sum($distributions)) {
+                        break;
+                    }
+                }
+            }
+
+            $childPayments = [];
+
+            foreach ($children as $child) {
+                $amount = $distributions[$child->uuid];
+
+                // Don't add a payment for an invoice that
+                // doesn't get a distribution
+                if ($amount === 0) {
+                    continue;
+                }
+
+                $childPayments[] = [
+                    'uuid' => UuidFactory::make(),
+                    'parent_uuid' => $payment->uuid,
+                    'invoice_uuid' => $child->uuid,
+                    'amount' => $amount,
+                    'school_id' => $payment->school_id,
+                    'tenant_id' => $payment->tenant_id,
+                    'payment_method_id' => $payment->payment_method_id,
+                    'paid_at' => $payment->paid_at,
+                    'recorded_by' => $payment->recorded_by,
+                    'made_by' => $payment->made_by,
+                    'created_at' => $payment->created_at,
+                    'updated_at' => $payment->updated_at,
+                ];
+
+                $remaining = $child->remaining_balance - $amount;
+
+                $child->update([
+                    'remaining_balance' => $remaining,
+                    'paid_at' => $remaining > 0 ? null : now()
+                ]);
+            }
+
+            DB::table('invoice_payments')->insert($childPayments);
+        });
 
         return $this;
     }
