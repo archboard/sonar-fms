@@ -5,22 +5,16 @@ namespace App\Models;
 use App\Factories\InvoiceFromImportFactory;
 use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\InvoiceImportMap;
-use App\Imports\InvoiceImport as ExcelInvoiceImport;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
-use App\Traits\IsFileImport;
+use App\Traits\ImportsFiles;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Maatwebsite\Excel\HeadingRowImport;
 
 /**
  * @mixin IdeHelperInvoiceImport
@@ -30,7 +24,7 @@ class InvoiceImport extends Model
     use HasResource;
     use BelongsToSchool;
     use BelongsToUser;
-    use IsFileImport;
+    use ImportsFiles;
 
     protected $guarded = [];
 
@@ -55,29 +49,6 @@ class InvoiceImport extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'import_id');
-    }
-
-    public function getExcelImport(): ExcelInvoiceImport
-    {
-        return new ExcelInvoiceImport($this);
-    }
-
-    public function getImportContents(): Collection
-    {
-        $sheets = $this->getExcelImport()
-            ->toCollection($this->absolute_path);
-
-        // Don't support multiple sheets,
-        // just grab the first sheet
-        return $sheets->first();
-    }
-
-    public function setTotalRecords(): static
-    {
-        $this->total_records = $this->getImportContents()
-            ->count();
-
-        return $this;
     }
 
     public function getMappingValidator(): \Illuminate\Validation\Validator
@@ -192,32 +163,9 @@ class InvoiceImport extends Model
         ]);
     }
 
-    public function getMappingValidationErrors(): array
-    {
-        return $this->getMappingValidator()
-            ->errors()
-            ->toArray();
-    }
-
-    public function hasValidMapping(): bool
-    {
-        return $this->getMappingValidator()
-            ->passes();
-    }
-
-    public static function storeFile(UploadedFile $file, School $school): string
-    {
-        $now = now()->format('U') . '-' . Str::random(8);
-
-        return $file->storeAs(
-            "imports/{$school->id}/{$now}",
-            $file->getClientOriginalName()
-        );
-    }
-
     public function rollBack()
     {
-        ray('rollback', $this->invoices()->delete());
+        $this->invoices()->delete();
 
         // Reset some properties
         $this->update([

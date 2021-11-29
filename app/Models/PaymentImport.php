@@ -5,11 +5,9 @@ namespace App\Models;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
-use App\Traits\IsFileImport;
+use App\Traits\ImportsFiles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperPaymentImport
@@ -19,7 +17,7 @@ class PaymentImport extends Model
     use BelongsToTenant;
     use BelongsToSchool;
     use BelongsToUser;
-    use IsFileImport;
+    use ImportsFiles;
 
     protected $guarded = [];
 
@@ -40,15 +38,5 @@ class PaymentImport extends Model
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where('file_path', 'ilike', "/%{$search}%");
         });
-    }
-
-    public static function storeFile(UploadedFile $file, School $school): string
-    {
-        $now = now()->format('U') . '-' . Str::random(8);
-
-        return $file->storeAs(
-            "payments/{$school->id}/{$now}",
-            $file->getClientOriginalName()
-        );
     }
 }
