@@ -29,7 +29,7 @@
 
           <InputWrap :error="form.errors.student_column">
             <Label for="title" :required="true">{{ __('Student reference column') }}</Label>
-            <ColumnSelector v-model="form.student_column" id="student_column" :headers="headers" />
+            <ColumnSelector v-model="form.student_column" id="student_column" :headers="headers" :required="true" />
             <HelpText>
               {{ __('Select the column that holds student identifying data.') }}
             </HelpText>
@@ -187,7 +187,7 @@
     </FormMultipartWrapper>
 
     <div class="mt-8 p-4 border-t border-gray-400 bg-white dark:bg-gray-700 dark:border-gray-200 rounded-b-md">
-      <Button type="submit" size="lg" :loading="form.processing">
+      <Button type="submit" :loading="form.processing">
         {{ __('Save mapping') }}
       </Button>
     </div>
