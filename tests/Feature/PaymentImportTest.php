@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\PaymentImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
@@ -181,7 +180,7 @@ class PaymentImportTest extends TestCase
 
     public function test_can_get_to_mapping_page()
     {
-        $this->assignPermission('create', PaymentImport::class);
+        $this->assignPermission('update', PaymentImport::class);
         $import = $this->createImport();
 
         $this->get(route('payments.imports.map', $import))

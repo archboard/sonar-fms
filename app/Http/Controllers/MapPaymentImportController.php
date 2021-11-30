@@ -9,7 +9,7 @@ class MapPaymentImportController extends Controller
 {
     public function index(Request $request, PaymentImport $import)
     {
-        $this->authorize('create', PaymentImport::class);
+        $this->authorize('update', PaymentImport::class);
 
         $title = __('Map Payment Import');
         $breadcrumbs = [
