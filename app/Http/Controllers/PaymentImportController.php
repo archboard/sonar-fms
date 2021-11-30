@@ -64,6 +64,7 @@ class PaymentImportController extends Controller
         // are essentially the same, reuse the same form
         return inertia('invoices/imports/Create', [
             'title' => $title,
+            'extensions' => ['csv', 'xlsx', 'xls'],
             'breadcrumbs' => $breadcrumbs,
             'method' => 'post',
             'endpoint' => route('payments.imports.store'),

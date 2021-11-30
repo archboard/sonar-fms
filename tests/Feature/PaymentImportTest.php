@@ -49,6 +49,7 @@ class PaymentImportTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
                 ->has('breadcrumbs')
+                ->has('extensions')
                 ->where('method', 'post')
                 ->where('endpoint', route('payments.imports.store'))
                 ->component('invoices/imports/Create')
