@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\FileImport;
+use App\Rules\FileImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @mixin IdeHelperPaymentImport
@@ -64,7 +66,18 @@ class PaymentImport extends Model implements FileImport
 
     public function getMappingValidator(): \Illuminate\Validation\Validator
     {
-        // TODO: Implement getMappingValidator() method.
+        $mapping = $this->mapping ?? [];
+
+        return Validator::make($mapping, [
+            'invoice_column' => 'required',
+            'invoice_payment_term' => new FileImportMap('nullable'),
+            'payment_method' => new FileImportMap('nullable'),
+            'transaction_details' => new FileImportMap('nullable'),
+            'paid_at' => new FileImportMap('nullable|date'),
+            'amount' => new FileImportMap('required', true),
+            'made_by' => new FileImportMap('nullable'),
+            'notes' => new FileImportMap('nullable'),
+        ]);
     }
 
     public function rollBack(): static
