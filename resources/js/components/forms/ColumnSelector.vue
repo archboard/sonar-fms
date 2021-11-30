@@ -12,7 +12,8 @@
       ref="select"
       class="block w-full px-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
     >
-      <option :value="null">{{ __('Do not map') }}</option>
+      <option v-if="required" :value="null" disabled>{{ __('Select column') }}</option>
+      <option v-else :value="null">{{ __('Do not map') }}</option>
       <option
         v-for="header in headers"
         :key="header"
@@ -36,6 +37,10 @@ export default defineComponent({
   props: {
     headers: Array,
     modelValue: String,
+    required: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits: ['update:modelValue', 'change'],
 
