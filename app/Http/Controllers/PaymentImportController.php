@@ -91,6 +91,7 @@ class PaymentImportController extends Controller
         /** @var PaymentImport $import */
         $import = $school->paymentImports()
             ->make([
+                'tenant_id' => $school->tenant_id,
                 'user_uuid' => $request->user()->id,
                 'file_path' => PaymentImport::storeFile($uploadedFile, $school),
                 'heading_row' => $data['heading_row'],

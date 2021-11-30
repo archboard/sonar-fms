@@ -205,6 +205,11 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->hasMany(InvoiceImport::class);
     }
 
+    public function paymentImports(): HasMany
+    {
+        return $this->hasMany(PaymentImport::class);
+    }
+
     public function preferredLocale(): ?string
     {
         return $this->locale;
