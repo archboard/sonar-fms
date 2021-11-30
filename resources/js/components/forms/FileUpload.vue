@@ -94,12 +94,15 @@ export default defineComponent({
       try {
         const chosenFiles = Array.from(dataFiles)
           .map(item => typeof item.getAsFile === 'function' ? item.getAsFile() : item)
+          .filter(fileFilter)
           .map(fileMap)
           .filter(item => item.id)
 
-        files.value = props.multiple
-          ? [...files.value, ...chosenFiles]
-          : [chosenFiles.shift()]
+        if (chosenFiles.length > 0) {
+          files.value = props.multiple
+            ? [...files.value, ...chosenFiles]
+            : [chosenFiles.shift()]
+        }
       } catch (err) {
         $error($translate('Could not choose file: :message', {
           message: err.message
@@ -110,26 +113,27 @@ export default defineComponent({
       return props.extensions.length > 0 &&
         props.extensions.map(ex => ex.toLowerCase()).includes(extension.toLowerCase())
     }
-    const fileMap = (file) => {
+    const fileFilter = file => {
       if (!file.type) {
         $error($translate('Please select a valid file.'))
-        return {}
+        return false
       }
 
       const [nameParts, extension] = file.name.split('.')
 
       if (!hasValidExtension(extension)) {
         $error($translate('Invalid file extension (:extensions only).', { extensions: props.extensions.join(', ') }))
-        return {}
+        return false
       }
 
-      return {
-        file,
-        name: file.name,
-        progress: 0,
-        id: nanoid(),
-      }
+      return true
     }
+    const fileMap = file => ({
+      file,
+      name: file.name,
+      progress: 0,
+      id: nanoid(),
+    })
     watch(files, () => {
       emit('update:modelValue', files.value)
     })
