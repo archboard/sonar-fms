@@ -168,7 +168,7 @@ export default defineComponent({
       notes: props.paymentImport.mapping?.notes || addMapFieldValue(),
     })
     const save = () => {
-
+      form.put(`/payments/imports/${props.paymentImport.id}/map`)
     }
 
     return {
