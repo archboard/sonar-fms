@@ -30,4 +30,11 @@ class Cash extends PaymentMethodBase implements PaymentMethodDriver
             'instructions' => 'nullable',
         ];
     }
+
+    public function getImportDetectionValues(): array
+    {
+        return [
+            'cash',
+        ];
+    }
 }
