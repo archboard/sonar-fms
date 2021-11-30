@@ -23,7 +23,7 @@ class PaymentImportController extends Controller
      */
     public function index(Request $request, School $school)
     {
-        $title = __('Payment imports');
+        $title = __('Payment Imports');
         $imports = $school->paymentImports()
             ->orderBy('created_at', 'desc')
             ->filter($request->all())
@@ -43,7 +43,7 @@ class PaymentImportController extends Controller
      */
     public function create()
     {
-        $title = __('Add a payment import');
+        $title = __('Add a Payment Import');
         $breadcrumbs = [
             [
                 'label' => __('Payments'),
@@ -114,10 +114,10 @@ class PaymentImportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PaymentImport  $paymentImport
+     * @param  \App\Models\PaymentImport  $import
      * @return \Illuminate\Http\Response
      */
-    public function show(PaymentImport $paymentImport)
+    public function show(PaymentImport $import)
     {
         //
     }
@@ -125,22 +125,54 @@ class PaymentImportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PaymentImport  $paymentImport
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\PaymentImport  $import
+     * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
      */
-    public function edit(PaymentImport $paymentImport)
+    public function edit(PaymentImport $import)
     {
-        //
+        if ($import->imported_records > 0) {
+            session()->flash('error', __('You have already imported the payments. Please create a new import.'));
+            return redirect()->route('payments.imports.show', $import);
+        }
+
+        $title = __('Edit Payment Import');
+        $breadcrumbs = [
+            [
+                'label' => __('Payments'),
+                'route' => route('payments.index'),
+            ],
+            [
+                'label' => __('Payment imports'),
+                'route' => route('payments.imports.index'),
+            ],
+            [
+                'label' => $import->file_name,
+                'route' => route('payments.imports.show', $import),
+            ],
+            [
+                'label' => __('Edit import'),
+                'route' => route('payments.imports.edit', $import),
+            ],
+        ];
+
+        return inertia('invoices/imports/Create', [
+            'title' => $title,
+            'extensions' => ['csv', 'xlsx', 'xls'],
+            'breadcrumbs' => $breadcrumbs,
+            'existingImport' => $import->toResource(),
+            'method' => 'put',
+            'endpoint' => route('payments.imports.update', $import),
+        ])->withViewData(compact('title'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PaymentImport  $paymentImport
+     * @param  \App\Models\PaymentImport  $import
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PaymentImport $paymentImport)
+    public function update(Request $request, PaymentImport $import)
     {
         //
     }
@@ -148,10 +180,10 @@ class PaymentImportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PaymentImport  $paymentImport
+     * @param  \App\Models\PaymentImport  $import
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PaymentImport $paymentImport)
+    public function destroy(PaymentImport $import)
     {
         //
     }

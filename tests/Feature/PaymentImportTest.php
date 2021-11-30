@@ -85,4 +85,27 @@ class PaymentImportTest extends TestCase
         $this->assertEquals(0, $import->imported_records);
         $this->assertEquals(0, $import->failed_records);
     }
+
+    public function test_can_view_edit_import_page()
+    {
+        $this->assignPermission('update', PaymentImport::class);
+        $import = PaymentImport::create([
+            'tenant_id' => $this->tenant->id,
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => '/tmp/file.csv',
+        ]);
+
+        $this->get(route('payments.imports.edit', $import))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('extensions')
+                ->has('existingImport')
+                ->where('method', 'put')
+                ->where('endpoint', route('payments.imports.update', $import))
+                ->component('invoices/imports/Create')
+            );
+    }
 }

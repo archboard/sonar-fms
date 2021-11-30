@@ -6,6 +6,7 @@ use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
 use App\Traits\ImportsFiles;
+use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,7 @@ class PaymentImport extends Model
     use BelongsToSchool;
     use BelongsToUser;
     use ImportsFiles;
+    use HasResource;
 
     protected $guarded = [];
 
