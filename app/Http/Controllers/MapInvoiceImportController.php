@@ -52,7 +52,7 @@ class MapInvoiceImportController extends Controller
         $import->mapping_valid = $import->hasValidMapping();
         $import->save();
 
-        session()->flash('success', __('Invoice import mapping saved successfully.'));
+        session()->flash('success', __('Mapping saved successfully.'));
 
         return redirect()->route('invoices.imports.show', $import);
     }
