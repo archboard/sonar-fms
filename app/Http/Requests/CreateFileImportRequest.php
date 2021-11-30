@@ -27,7 +27,7 @@ class CreateFileImportRequest extends FormRequest
     {
         return [
             'files' => ['array', 'required'],
-            'files.0.file' => ['file', 'mimes:csv,xls,xlsx'],
+            'files.0.file' => ['file', 'mimes:txt,csv,xls,xlsx'],
             'heading_row' => ['required', 'integer', 'min:1'],
             'starting_row' => ['required', 'integer', 'min:1'],
         ];
