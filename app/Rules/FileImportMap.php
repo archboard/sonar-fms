@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
-class InvoiceImportMap implements Rule
+class FileImportMap implements Rule
 {
     protected bool $required;
     protected string|array $rules;

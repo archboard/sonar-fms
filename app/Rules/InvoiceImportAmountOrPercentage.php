@@ -44,7 +44,7 @@ class InvoiceImportAmountOrPercentage implements Rule
             (!$useAmount && Str::endsWith($attribute, 'percentage'))
         ) {
             return Validator::make(['value' => $value], [
-                'value' => new InvoiceImportMap('required', true)
+                'value' => new FileImportMap('required', true)
             ])->passes();
         }
 

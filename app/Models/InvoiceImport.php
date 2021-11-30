@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Concerns\FileImport;
 use App\Factories\InvoiceFromImportFactory;
 use App\Rules\InvoiceImportAmountOrPercentage;
-use App\Rules\InvoiceImportMap;
+use App\Rules\FileImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use App\Traits\ImportsFiles;
@@ -59,43 +59,43 @@ class InvoiceImport extends Model implements FileImport
         return Validator::make($mapping, [
             'student_attribute' => ['required', Rule::in(['sis_id', 'student_number', 'email'])],
             'student_column' => 'required',
-            'title' => new InvoiceImportMap('required', true),
-            'description' => new InvoiceImportMap('nullable'),
-            'import_date' => new InvoiceImportMap('nullable|date'),
-            'due_at' => new InvoiceImportMap('nullable|date'),
-            'available_at' => new InvoiceImportMap('nullable|date'),
-            'term_id' => new InvoiceImportMap([
+            'title' => new FileImportMap('required', true),
+            'description' => new FileImportMap('nullable'),
+            'import_date' => new FileImportMap('nullable|date'),
+            'due_at' => new FileImportMap('nullable|date'),
+            'available_at' => new FileImportMap('nullable|date'),
+            'term_id' => new FileImportMap([
                 'nullable',
                 Rule::in($this->school->terms->pluck('id')),
             ]),
             'notify' => 'boolean',
             'items' => 'required|array|min:1',
-            'items.*.fee_id' => new InvoiceImportMap([
+            'items.*.fee_id' => new FileImportMap([
                 'nullable',
                 Rule::in($this->school->fees->pluck('id')),
             ]),
-            'items.*.name' => new InvoiceImportMap('required', true),
-            'items.*.amount_per_unit' => new InvoiceImportMap('required|integer', true),
-            'items.*.quantity' => new InvoiceImportMap('required|integer', true),
+            'items.*.name' => new FileImportMap('required', true),
+            'items.*.amount_per_unit' => new FileImportMap('required|integer', true),
+            'items.*.quantity' => new FileImportMap('required|integer', true),
             'scholarships' => 'array',
-            'scholarships.*.scholarship_id' => new InvoiceImportMap([
+            'scholarships.*.scholarship_id' => new FileImportMap([
                 'nullable',
                 Rule::in($this->school->scholarships->pluck('id')),
             ]),
-            'scholarships.*.name' => new InvoiceImportMap('required', true),
+            'scholarships.*.name' => new FileImportMap('required', true),
             'scholarships.*.use_amount' => 'required|boolean',
             // required_without:scholarships.*.percentage
             'scholarships.*.amount' => [
-                new InvoiceImportMap('nullable|integer'),
+                new FileImportMap('nullable|integer'),
                 new InvoiceImportAmountOrPercentage($mapping, 'percentage'),
             ],
             // required_without:scholarships.*.amount
             'scholarships.*.percentage' => [
-                new InvoiceImportMap('nullable|numeric|max:100'),
+                new FileImportMap('nullable|numeric|max:100'),
                 new InvoiceImportAmountOrPercentage($mapping, 'amount'),
             ],
             // I don't think this is needed here, we can set it manually
-            'scholarships.*.resolution_strategy' => new InvoiceImportMap([
+            'scholarships.*.resolution_strategy' => new FileImportMap([
                 'nullable',
                 'required_with:scholarships.*.amount,scholarships.*.percentage',
                 Rule::in(array_keys(Scholarship::getResolutionStrategies())),
@@ -106,15 +106,15 @@ class InvoiceImport extends Model implements FileImport
             'payment_schedules.*.terms.*.use_amount' => 'required|boolean',
             // required_without:payment_schedules.*.terms.*.percentage
             'payment_schedules.*.terms.*.amount' => [
-                new InvoiceImportMap('nullable|integer'),
+                new FileImportMap('nullable|integer'),
                 new InvoiceImportAmountOrPercentage($mapping, 'percentage'),
             ],
             // required_without:payment_schedules.*.terms.*.amount
             'payment_schedules.*.terms.*.percentage' => [
-                new InvoiceImportMap('nullable|numeric|max:100'),
+                new FileImportMap('nullable|numeric|max:100'),
                 new InvoiceImportAmountOrPercentage($mapping, 'amount'),
             ],
-            'payment_schedules.*.terms.*.due_at' => new InvoiceImportMap('nullable|date'),
+            'payment_schedules.*.terms.*.due_at' => new FileImportMap('nullable|date'),
             'apply_tax' => [
                 Rule::requiredIf(fn () => $this->school->collect_tax),
                 'boolean',
@@ -123,7 +123,7 @@ class InvoiceImport extends Model implements FileImport
                 Rule::requiredIf(fn () => $this->school->collect_tax && ($mapping['apply_tax'] ?? false)),
                 'boolean',
             ],
-            'tax_rate' => new InvoiceImportMap([
+            'tax_rate' => new FileImportMap([
                 Rule::requiredIf(fn () =>
                     $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false) &&
@@ -132,7 +132,7 @@ class InvoiceImport extends Model implements FileImport
                 'nullable',
                 'numeric',
             ]),
-            'tax_label' => new InvoiceImportMap([
+            'tax_label' => new FileImportMap([
                 Rule::requiredIf(fn () =>
                     $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false) &&
@@ -159,7 +159,7 @@ class InvoiceImport extends Model implements FileImport
             'tax_items.*.item_id' => 'required|in_array:items.*.id',
             'tax_items.*.selected' => 'required|boolean',
             'tax_items.*.tax_rate' => [
-                new InvoiceImportMap('required|numeric', true),
+                new FileImportMap('required|numeric', true),
             ],
         ]);
     }
