@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Exceptions\InvalidImportFileTypeException;
 use App\Http\Requests\CreateFileImportRequest;
+use App\Http\Requests\UpdateFileImportRequest;
 use App\Imports\FileImport;
 use App\Models\School;
 use Illuminate\Http\UploadedFile;
@@ -114,6 +115,36 @@ trait ImportsFiles
             session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
             throw new InvalidImportFileTypeException();
         }
+
+        return $this;
+    }
+
+    public function updateFromRequest(UpdateFileImportRequest $request): static
+    {
+        $data = $request->validated();
+        $fileData = Arr::first($data['files']);
+        $this->fill(Arr::except($data, 'files'));
+
+        // This key only exists if the file hasn't been changed
+        if (!isset($fileData['existing'])) {
+            /** @var UploadedFile $file */
+            $file = $fileData['file'];
+
+            if (!$file->isValid()) {
+                session()->flash('error', __('Invalid file.'));
+                throw new InvalidImportFileTypeException();
+            }
+
+            Storage::delete($this->file_path);
+            Storage::deleteDirectory(dirname($this->file_path));
+            $this->file_path = $this->storeFile($file, $request->school());
+            $this->mapping_valid = $this->hasValidMapping();
+            $this->setTotalRecords();
+        }
+
+        $this->save();
+
+        session()->flash('success', __('Import updated successfully.'));
 
         return $this;
     }

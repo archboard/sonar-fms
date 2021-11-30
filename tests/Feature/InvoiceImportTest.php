@@ -128,7 +128,7 @@ class InvoiceImportTest extends TestCase
         $this->assignPermission('update', InvoiceImport::class);
         Storage::fake();
 
-        $originalPath = InvoiceImport::storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
+        $originalPath = (new InvoiceImport)->storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
         $import = InvoiceImport::create([
             'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
@@ -163,7 +163,7 @@ class InvoiceImportTest extends TestCase
         $this->assignPermission('update', InvoiceImport::class);
         Storage::fake();
 
-        $originalPath = InvoiceImport::storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
+        $originalPath = (new InvoiceImport)->storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
         $import = InvoiceImport::create([
             'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,

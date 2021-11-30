@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidImportFileTypeException;
 use App\Http\Requests\CreateFileImportRequest;
+use App\Http\Requests\UpdateFileImportRequest;
 use App\Http\Resources\InvoiceImportResource;
 use App\Models\InvoiceImport;
 use App\Models\School;
@@ -134,38 +135,13 @@ class InvoiceImportController extends Controller
         ])->withViewData(compact('title'));
     }
 
-    public function update(Request $request, InvoiceImport $import)
+    public function update(UpdateFileImportRequest $request, InvoiceImport $import)
     {
-        $data = $request->validate([
-            'files' => 'array|required',
-            'heading_row' => 'required|integer',
-            'starting_row' => 'required|integer',
-        ]);
-
-        $fileData = Arr::first($data['files']);
-        $import->fill(Arr::except($data, 'files'));
-
-        // This key only exists if the file hasn't been changed
-        if (!isset($fileData['existing'])) {
-            /** @var UploadedFile $file */
-            $file = $fileData['file'];
-
-            if (!$file->isValid()) {
-                session()->flash('error', __('Invalid file.'));
-
-                return back();
-            }
-
-            Storage::delete($import->file_path);
-            Storage::deleteDirectory(dirname($import->file_path));
-            $import->file_path = InvoiceImport::storeFile($file, $request->school());
-            $import->mapping_valid = $import->hasValidMapping();
-            $import->setTotalRecords();
+        try {
+            $import->updateFromRequest($request);
+        } catch (InvalidImportFileTypeException) {
+            return back();
         }
-
-        $import->save();
-
-        session()->flash('success', __('Import updated successfully.'));
 
         if ($import->mapping_valid) {
             return redirect()->route('invoices.imports.show', $import);

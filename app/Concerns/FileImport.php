@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use App\Http\Requests\CreateFileImportRequest;
+use App\Http\Requests\UpdateFileImportRequest;
 use App\Models\School;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -26,6 +27,8 @@ interface FileImport
     public function setTotalRecords(): static;
 
     public function createFromRequest(CreateFileImportRequest $request): static;
+
+    public function updateFromRequest(UpdateFileImportRequest $request): static;
 
     public function storeFile(UploadedFile $file, School $school): string;
 
