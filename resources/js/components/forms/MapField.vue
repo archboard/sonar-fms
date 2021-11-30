@@ -1,6 +1,6 @@
 <template>
   <slot v-if="localValue.isManual" />
-  <ColumnSelector v-else v-model="localValue.column" :headers="headers" :id="id" />
+  <ColumnSelector v-else v-model="localValue.column" :headers="headers" :id="id" :required="required" />
   <div>
     <button @click.prevent="localValue.isManual = !localValue.isManual" class="text-sm text-primary-500 hover:text-primary-400 focus:outline-none focus:underline translate">
       <span v-if="localValue.isManual">{{ __('Map to column') }}</span>
@@ -22,6 +22,10 @@ export default defineComponent({
     modelValue: Object,
     headers: Array,
     id: String,
+    required: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits: ['update:modelValue', 'manual'],
 
