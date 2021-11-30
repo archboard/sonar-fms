@@ -54,10 +54,7 @@
 
             <InputWrap :error="form.errors.payment_method_id">
               <Label for="payment_method_id">{{ __('Payment method') }}</Label>
-              <Select v-model="form.payment_method_id" id="payment_method_id">
-                <option :value="null">{{ __('N/A') }}</option>
-                <option v-for="(driver, name) in paymentMethods" :key="name" :value="driver.payment_method.id">{{ driver.label }}</option>
-              </Select>
+              <PaymentMethodSelector v-model="form.payment_method_id" id="payment_method_id" />
               <HelpText>{{ __("Associating a payment method isn't required, but could be helpful for record keeping.") }} <Link href="/payment-methods">{{ __("Manage payment methods") }}.</Link></HelpText>
             </InputWrap>
 
@@ -132,9 +129,11 @@ import Alert from '@/components/Alert'
 import ChildInvoices from '@/components/ChildInvoices'
 import Input from '@/components/forms/Input'
 import Textarea from '@/components/forms/Textarea'
+import PaymentMethodSelector from '@/components/forms/PaymentMethodSelector'
 
 export default defineComponent({
   components: {
+    PaymentMethodSelector,
     Textarea,
     Input,
     ChildInvoices,
@@ -158,7 +157,6 @@ export default defineComponent({
     Label,
   },
   props: {
-    paymentMethods: Object,
     invoice: Object,
     paidBy: Object,
     term: String,

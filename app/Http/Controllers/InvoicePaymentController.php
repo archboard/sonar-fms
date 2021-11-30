@@ -57,7 +57,6 @@ class InvoicePaymentController extends Controller
     public function create(Request $request)
     {
         $title = __('Record payment');
-        $paymentMethods = $request->school()->getPaymentMethods();
         $breadcrumbs = [
             [
                 'label' => __('Payments'),
@@ -87,7 +86,6 @@ class InvoicePaymentController extends Controller
 
         return inertia('payments/Create', [
             'title' => $title,
-            'paymentMethods' => PaymentMethodDriverResource::collection($paymentMethods),
             'breadcrumbs' => $breadcrumbs,
             'invoice' => $invoice->toResource(),
             'paidBy' => $paidBy->toResource(),

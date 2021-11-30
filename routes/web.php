@@ -293,6 +293,7 @@ Route::middleware('tenant')->group(function () {
                 /**
                  * Payment methods
                  */
+                Route::get('/payment-methods/all', \App\Http\Controllers\FetchPaymentMethodsController::class);
                 Route::resource('/payment-methods', \App\Http\Controllers\PaymentMethodController::class)
                     ->except('destroy');
             });

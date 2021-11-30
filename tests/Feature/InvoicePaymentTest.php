@@ -43,7 +43,6 @@ class InvoicePaymentTest extends TestCase
         $this->get('/payments/create')
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
-                ->has('paymentMethods')
                 ->has('breadcrumbs')
                 ->has('invoice')
                 ->has('paidBy')
