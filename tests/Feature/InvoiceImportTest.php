@@ -22,33 +22,19 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
-use JetBrains\PhpStorm\ArrayShape;
 use Tests\TestCase;
+use Tests\Traits\GetsUploadedFiles;
+use Tests\Traits\MapsFields;
 use Tests\Traits\SignsIn;
 
 class InvoiceImportTest extends TestCase
 {
     use RefreshDatabase;
     use SignsIn;
-
-    #[ArrayShape(['id' => "string", 'column' => "null|string", 'value' => "null|string", 'isManual' => "bool"])]
-    protected function makeMapField(string $column = null, string $value = null, bool $isManual = false): array
-    {
-        return [
-            'id' => $this->uuid(),
-            'column' => $column,
-            'value' => $value,
-            'isManual' => $isManual,
-        ];
-    }
-
-    protected function getUploadedFile(string $fileName = 'sonar-import.xlsx'): UploadedFile
-    {
-        return new UploadedFile(base_path("tests/{$fileName}"), $fileName, null, null, true);
-    }
+    use MapsFields;
+    use GetsUploadedFiles;
 
     public function test_cannot_access_imports_without_permission()
     {
