@@ -70,41 +70,41 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(invoiceImport) in imports.data"
-          :key="invoiceImport.id"
+          v-for="paymentImport in imports.data"
+          :key="paymentImport.id"
         >
           <Td :lighter="false">
             <div class="flex items-center">
-              <InertiaLink class="hover:underline" :href="$route('invoices.imports.show', invoiceImport)">{{ invoiceImport.file_name }}</InertiaLink>
-              <SolidBadge v-if="!invoiceImport.mapping_valid" class="ml-2" color="red">{{ __('Fix mapping') }}</SolidBadge>
-              <SolidBadge v-if="invoiceImport.imported_at" class="ml-2" color="green">{{ __('Imported') }}</SolidBadge>
-              <SolidBadge v-if="invoiceImport.rolled_back_at" class="ml-2" color="yellow">{{ __('Rolled back') }}</SolidBadge>
+              <InertiaLink class="hover:underline" :href="`/payments/imports/${paymentImport.id}`">{{ paymentImport.file_name }}</InertiaLink>
+              <SolidBadge v-if="!paymentImport.mapping_valid" class="ml-2" color="red">{{ __('Fix mapping') }}</SolidBadge>
+              <SolidBadge v-if="paymentImport.imported_at" class="ml-2" color="green">{{ __('Imported') }}</SolidBadge>
+              <SolidBadge v-if="paymentImport.rolled_back_at" class="ml-2" color="yellow">{{ __('Rolled back') }}</SolidBadge>
             </div>
           </Td>
-          <Td>{{ invoiceImport.total_records }}</Td>
-          <Td>{{ invoiceImport.imported_records }}</Td>
-          <Td>{{ invoiceImport.failed_records }}</Td>
+          <Td>{{ paymentImport.total_records }}</Td>
+          <Td>{{ paymentImport.imported_records }}</Td>
+          <Td>{{ paymentImport.failed_records }}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem v-if="can('viewAny')" is="inertia-link" :href="$route('invoices.imports.show', invoiceImport)">
+                <SonarMenuItem v-if="can('viewAny')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}`">
                   {{ __('View') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
+                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/edit`">
                   {{ __('Edit import file') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
+                <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
                   {{ __('Update mapping') }}
                 </SonarMenuItem>
               </div>
-              <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
-                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
+              <div class="p-1" v-if="paymentImport.imported_at || paymentImport.mapping_valid">
+                <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/preview`">
                   {{ __('Preview import') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
+                <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = paymentImport">
                   {{ __('Import') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
+                <SonarMenuItem v-if="paymentImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = paymentImport">
                   {{ __('Roll back') }}
                 </SonarMenuItem>
               </div>
