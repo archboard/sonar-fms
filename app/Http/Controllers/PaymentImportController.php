@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidImportFileTypeException;
+use App\Http\Requests\CreateFileImportRequest;
 use App\Http\Resources\PaymentImportResource;
 use App\Models\PaymentImport;
 use App\Models\School;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentImportController extends Controller
 {
@@ -72,37 +75,19 @@ class PaymentImportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateFileImportRequest $request
+     * @param School $school
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function store(Request $request, School $school)
+    public function store(CreateFileImportRequest $request, School $school)
     {
-        $data = $request->validate([
-            'files' => 'array|required',
-            'files.*.file' => 'file',
-            'heading_row' => 'required|integer',
-            'starting_row' => 'required|integer',
-        ]);
-
-        $fileData = Arr::first($data['files']);
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $fileData['file'];
-
         /** @var PaymentImport $import */
         $import = $school->paymentImports()
-            ->make([
-                'tenant_id' => $school->tenant_id,
-                'user_uuid' => $request->user()->id,
-                'file_path' => PaymentImport::storeFile($uploadedFile, $school),
-                'heading_row' => $data['heading_row'],
-                'starting_row' => $data['starting_row'],
-            ]);
+            ->make(['tenant_id' => $school->tenant_id]);
 
         try {
-            $import->setTotalRecords()
-                ->save();
-        } catch (\ValueError $exception) {
-            session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+            $import->createFromRequest($request);
+        } catch (InvalidImportFileTypeException) {
             return back();
         }
 
@@ -170,11 +155,46 @@ class PaymentImportController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\PaymentImport  $import
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, PaymentImport $import)
     {
-        //
+        $data = $request->validate([
+            'files' => 'array|required',
+            'heading_row' => 'required|integer',
+            'starting_row' => 'required|integer',
+        ]);
+
+        $fileData = Arr::first($data['files']);
+        $import->fill(Arr::except($data, 'files'));
+
+        // This key only exists if the file hasn't been changed
+        if (!isset($fileData['existing'])) {
+            /** @var UploadedFile $file */
+            $file = $fileData['file'];
+
+            if (!$file->isValid()) {
+                session()->flash('error', __('Invalid file.'));
+
+                return back();
+            }
+
+            Storage::delete($import->file_path);
+            Storage::deleteDirectory(dirname($import->file_path));
+            $import->file_path = PaymentImport::storeFile($file, $request->school());
+            $import->mapping_valid = $import->hasValidMapping();
+            $import->setTotalRecords();
+        }
+
+        $import->save();
+
+        session()->flash('success', __('Import updated successfully.'));
+
+        if ($import->mapping_valid) {
+            return redirect()->route('payments.imports.show', $import);
+        }
+
+        return redirect()->route('payments.imports.map', $import);
     }
 
     /**

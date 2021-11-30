@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidImportFileTypeException;
+use App\Http\Requests\CreateFileImportRequest;
 use App\Http\Resources\InvoiceImportResource;
 use App\Models\InvoiceImport;
 use App\Models\School;
@@ -56,33 +58,15 @@ class InvoiceImportController extends Controller
         ])->withViewData(compact('title'));
     }
 
-    public function store(Request $request, School $school)
+    public function store(CreateFileImportRequest $request, School $school)
     {
-        $data = $request->validate([
-            'files' => 'array|required',
-            'files.*.file' => 'file',
-            'heading_row' => 'required|integer',
-            'starting_row' => 'required|integer',
-        ]);
-
-        $fileData = Arr::first($data['files']);
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $fileData['file'];
-
         /** @var InvoiceImport $import */
         $import = $school->invoiceImports()
-            ->make([
-                'user_uuid' => $request->user()->id,
-                'file_path' => InvoiceImport::storeFile($uploadedFile, $school),
-                'heading_row' => $data['heading_row'],
-                'starting_row' => $data['starting_row'],
-            ]);
+            ->make();
 
         try {
-            $import->setTotalRecords()
-                ->save();
-        } catch (\ValueError $exception) {
-            session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+            $import->createFromRequest($request);
+        } catch (InvalidImportFileTypeException) {
             return back();
         }
 

@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Exceptions\InvalidImportFileTypeException;
+use App\Http\Requests\CreateFileImportRequest;
 use App\Imports\FileImport;
 use App\Models\School;
 use Illuminate\Http\UploadedFile;
@@ -70,7 +72,7 @@ trait ImportsFiles
         return $this;
     }
 
-    public static function storeFile(UploadedFile $file, School $school): string
+    public function storeFile(UploadedFile $file, School $school): string
     {
         $now = now()->format('U') . '-' . Str::random(8);
 
@@ -91,5 +93,41 @@ trait ImportsFiles
     {
         return $this->getMappingValidator()
             ->passes();
+    }
+
+    public function createFromRequest(CreateFileImportRequest $request): static
+    {
+        $data = $request->validated();
+        $uploadedFile = $request->getFile();
+
+        $this->forceFill([
+            'user_uuid' => $request->user()->id,
+            'file_path' => $this->storeFile($uploadedFile, $request->school()),
+            'heading_row' => $data['heading_row'],
+            'starting_row' => $data['starting_row'],
+        ]);
+
+        try {
+            $this->setTotalRecords()
+                ->save();
+        } catch (\ValueError $exception) {
+            session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+            throw new InvalidImportFileTypeException();
+        }
+
+        return $this;
+    }
+
+    public function reset(): static
+    {
+        $this->update([
+            'rolled_back_at' => now(),
+            'imported_at' => null,
+            'failed_records' => 0,
+            'imported_records' => 0,
+            'results' => null,
+        ]);
+
+        return $this;
     }
 }

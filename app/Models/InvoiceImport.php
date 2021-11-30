@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\FileImport;
 use App\Factories\InvoiceFromImportFactory;
 use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\InvoiceImportMap;
@@ -19,7 +20,7 @@ use Illuminate\Validation\Rule;
 /**
  * @mixin IdeHelperInvoiceImport
  */
-class InvoiceImport extends Model
+class InvoiceImport extends Model implements FileImport
 {
     use HasResource;
     use BelongsToSchool;
@@ -163,18 +164,11 @@ class InvoiceImport extends Model
         ]);
     }
 
-    public function rollBack()
+    public function rollBack(): static
     {
         $this->invoices()->delete();
 
-        // Reset some properties
-        $this->update([
-            'rolled_back_at' => now(),
-            'imported_at' => null,
-            'failed_records' => 0,
-            'imported_records' => 0,
-            'results' => null,
-        ]);
+        return $this->reset();
     }
 
     public function importAsModels(): Collection

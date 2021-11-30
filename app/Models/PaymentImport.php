@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\FileImport;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixin IdeHelperPaymentImport
  */
-class PaymentImport extends Model
+class PaymentImport extends Model implements FileImport
 {
     use BelongsToTenant;
     use BelongsToSchool;
@@ -40,5 +41,21 @@ class PaymentImport extends Model
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->where('file_path', 'ilike', "/%{$search}%");
         });
+    }
+
+    public function getMappingValidator(): \Illuminate\Validation\Validator
+    {
+        // TODO: Implement getMappingValidator() method.
+    }
+
+    public function rollBack(): static
+    {
+        $invoices = $this->invoices()->pluck('uuid');
+
+        $this->invoicePayments()->delete();
+
+        // Run jobs on the invoices to recalculate balances
+
+        return $this->reset();
     }
 }
