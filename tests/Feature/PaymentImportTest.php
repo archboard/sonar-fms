@@ -193,4 +193,62 @@ class PaymentImportTest extends TestCase
                 ->component('payments/imports/Map')
             );
     }
+
+    public function test_can_save_valid_mapping()
+    {
+        $this->assignPermission('update', PaymentImport::class);
+        $import = $this->createImport();
+
+        // Just do the bare minimum
+        $data = [
+            'invoice_column' => 'invoice number',
+            'invoice_payment_term' => $this->makeMapField(),
+            'payment_method' => $this->makeMapField(),
+            'transaction_details' => $this->makeMapField(),
+            'paid_at' => $this->makeMapField('date'),
+            'amount' => $this->makeMapField('amount'),
+            'made_by' => $this->makeMapField(),
+            'notes' => $this->makeMapField(),
+        ];
+
+        $this->put(route('payments.imports.map', $import), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('payments.imports.show', $import));
+
+        $import->refresh();
+        $this->assertNotEmpty($import->mapping);
+        $this->assertTrue($import->mapping_valid);
+    }
+
+    public function test_can_save_invalid_mapping()
+    {
+        $this->assignPermission('update', PaymentImport::class);
+        $import = $this->createImport();
+
+        // Just do the bare minimum
+        $data = [
+            'invoice_column' => null,
+            'invoice_payment_term' => $this->makeMapField(),
+            'payment_method' => $this->makeMapField(),
+            'transaction_details' => $this->makeMapField(),
+            'paid_at' => $this->makeMapField(),
+            'amount' => $this->makeMapField(),
+            'made_by' => $this->makeMapField(),
+            'notes' => $this->makeMapField(),
+        ];
+
+        $this->put(route('payments.imports.map', $import), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('payments.imports.show', $import));
+
+        $import->refresh();
+        $this->assertNotEmpty($import->mapping);
+        $this->assertFalse($import->mapping_valid);
+
+        $errors = $import->getMappingValidationErrors();
+        $this->assertCount(3, $errors);
+        $this->assertArrayHasKey('invoice_column', $errors);
+        $this->assertArrayHasKey('paid_at', $errors);
+        $this->assertArrayHasKey('amount', $errors);
+    }
 }

@@ -237,6 +237,7 @@ Route::middleware('tenant')->group(function () {
 
                 Route::get('/payments/imports/{import}/map', [\App\Http\Controllers\MapPaymentImportController::class, 'index'])
                     ->name('payments.imports.map');
+                Route::put('/payments/imports/{import}/map', [\App\Http\Controllers\MapPaymentImportController::class, 'update']);
 
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 

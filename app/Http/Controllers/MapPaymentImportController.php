@@ -38,4 +38,17 @@ class MapPaymentImportController extends Controller
             'headers' => $import->headers,
         ])->withViewData(compact('title'));
     }
+
+    public function update(Request $request, PaymentImport $import)
+    {
+        $this->authorize('update', PaymentImport::class);
+
+        $import->mapping = $request->all();
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->save();
+
+        session()->flash('success', __('Mapping saved successfully.'));
+
+        return redirect()->route('payments.imports.show', $import);
+    }
 }

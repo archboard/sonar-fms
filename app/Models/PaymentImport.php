@@ -73,7 +73,7 @@ class PaymentImport extends Model implements FileImport
             'invoice_payment_term' => new FileImportMap('nullable'),
             'payment_method' => new FileImportMap('nullable'),
             'transaction_details' => new FileImportMap('nullable'),
-            'paid_at' => new FileImportMap('nullable|date'),
+            'paid_at' => new FileImportMap('required|date', true),
             'amount' => new FileImportMap('required', true),
             'made_by' => new FileImportMap('nullable'),
             'notes' => new FileImportMap('nullable'),
