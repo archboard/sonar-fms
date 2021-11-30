@@ -111,7 +111,7 @@ trait ImportsFiles
         try {
             $this->setTotalRecords()
                 ->save();
-        } catch (\ValueError $exception) {
+        } catch (\ValueError) {
             session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
             throw new InvalidImportFileTypeException();
         }
@@ -139,7 +139,13 @@ trait ImportsFiles
             Storage::deleteDirectory(dirname($this->file_path));
             $this->file_path = $this->storeFile($file, $request->school());
             $this->mapping_valid = $this->hasValidMapping();
-            $this->setTotalRecords();
+
+            try {
+                $this->setTotalRecords();
+            } catch (\ValueError) {
+                session()->flash('error', __('There was a problem reading the file. Please make sure it is not password protected and try again.'));
+                throw new InvalidImportFileTypeException();
+            }
         }
 
         $this->save();
