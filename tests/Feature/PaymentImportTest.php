@@ -21,6 +21,19 @@ class PaymentImportTest extends TestCase
 
     protected bool $signIn = true;
 
+    protected function createImport(string $file = 'small_payments.xlsx'): PaymentImport
+    {
+        $originalPath = (new PaymentImport)
+            ->storeFile($this->getUploadedFile($file), $this->school);
+
+        return PaymentImport::create([
+            'tenant_id' => $this->tenant->id,
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+        ]);
+    }
+
     public function test_cant_view_imports_page_without_permission()
     {
         $this->get(route('payments.imports.index'))
@@ -116,14 +129,7 @@ class PaymentImportTest extends TestCase
         $this->assignPermission('update', PaymentImport::class);
         Storage::fake();
 
-        $originalPath = (new PaymentImport)
-            ->storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
-        $import = PaymentImport::create([
-            'tenant_id' => $this->tenant->id,
-            'user_uuid' => $this->user->id,
-            'school_id' => $this->school->id,
-            'file_path' => $originalPath,
-        ]);
+        $import = $this->createImport('single_payment.csv');
         $data = [
             'files' => [[
                 'file' => null,
@@ -138,7 +144,7 @@ class PaymentImportTest extends TestCase
             ->assertRedirect();
 
         $import->refresh();
-        $this->assertEquals('original.xlsx', $import->file_name);
+        $this->assertEquals('single_payment.csv', $import->file_name);
         $this->assertEquals(2, $import->heading_row);
         $this->assertEquals(3, $import->starting_row);
         Storage::assertExists($import->file_path);
@@ -149,14 +155,8 @@ class PaymentImportTest extends TestCase
         $this->assignPermission('update', PaymentImport::class);
         Storage::fake();
 
-        $originalPath = (new PaymentImport)
-            ->storeFile($this->getUploadedFile('single_payment.csv'), $this->school);
-        $import = PaymentImport::create([
-            'tenant_id' => $this->tenant->id,
-            'user_uuid' => $this->user->id,
-            'school_id' => $this->school->id,
-            'file_path' => $originalPath,
-        ]);
+        $import = $this->createImport('single_payment.csv');
+        $originalPath = $import->file_path;
         $data = [
             'files' => [[
                 'file' => $this->getUploadedFile('small_payments.xlsx'),
