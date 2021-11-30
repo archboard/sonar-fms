@@ -178,4 +178,20 @@ class PaymentImportTest extends TestCase
         Storage::assertMissing($originalPath);
         Storage::assertMissing(dirname($originalPath));
     }
+
+    public function test_can_get_to_mapping_page()
+    {
+        $this->assignPermission('create', PaymentImport::class);
+        $import = $this->createImport();
+
+        $this->get(route('payments.imports.map', $import))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('paymentImport')
+                ->has('headers')
+                ->component('payments/imports/Map')
+            );
+    }
 }
