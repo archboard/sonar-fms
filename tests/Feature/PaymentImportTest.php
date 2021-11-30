@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\PaymentImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
@@ -108,5 +109,73 @@ class PaymentImportTest extends TestCase
                 ->where('endpoint', route('payments.imports.update', $import))
                 ->component('invoices/imports/Create')
             );
+    }
+
+    public function test_can_view_update_existing_import_without_new_file()
+    {
+        $this->assignPermission('update', PaymentImport::class);
+        Storage::fake();
+
+        $originalPath = (new PaymentImport)
+            ->storeFile(UploadedFile::fake()->create('original.xlsx', 2), $this->school);
+        $import = PaymentImport::create([
+            'tenant_id' => $this->tenant->id,
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+        ]);
+        $data = [
+            'files' => [[
+                'file' => null,
+                'existing' => true,
+            ]],
+            'heading_row' => 2,
+            'starting_row' => 3,
+        ];
+
+        $this->put(route('payments.imports.update', $import), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $import->refresh();
+        $this->assertEquals('original.xlsx', $import->file_name);
+        $this->assertEquals(2, $import->heading_row);
+        $this->assertEquals(3, $import->starting_row);
+        Storage::assertExists($import->file_path);
+    }
+
+    public function test_can_view_update_existing_import_with_new_file()
+    {
+        $this->assignPermission('update', PaymentImport::class);
+        Storage::fake();
+
+        $originalPath = (new PaymentImport)
+            ->storeFile($this->getUploadedFile('single_payment.csv'), $this->school);
+        $import = PaymentImport::create([
+            'tenant_id' => $this->tenant->id,
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+        ]);
+        $data = [
+            'files' => [[
+                'file' => $this->getUploadedFile('small_payments.xlsx'),
+            ]],
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ];
+
+        $this->put(route('payments.imports.update', $import), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $import->refresh();
+        $this->assertEquals('small_payments.xlsx', $import->file_name);
+        $this->assertEquals(1, $import->heading_row);
+        $this->assertEquals(2, $import->starting_row);
+        $this->assertEquals(4, $import->total_records);
+        Storage::assertExists($import->file_path);
+        Storage::assertMissing($originalPath);
+        Storage::assertMissing(dirname($originalPath));
     }
 }
