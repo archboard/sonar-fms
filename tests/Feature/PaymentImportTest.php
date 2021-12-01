@@ -251,4 +251,21 @@ class PaymentImportTest extends TestCase
         $this->assertArrayHasKey('paid_at', $errors);
         $this->assertArrayHasKey('amount', $errors);
     }
+
+    public function test_can_view_import_show_page()
+    {
+        $this->assignPermission('viewAny', PaymentImport::class);
+        $import = $this->createImport();
+
+        $this->get(route('payments.imports.show', $import))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->has('paymentImport')
+                ->has('permissions')
+                ->has('results')
+                ->component('payments/imports/Show')
+            );
+    }
 }

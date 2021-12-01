@@ -99,11 +99,35 @@ class PaymentImportController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\PaymentImport  $import
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function show(PaymentImport $import)
+    public function show(Request $request, PaymentImport $import)
     {
-        //
+        $title = __('Import details for :filename', [
+            'filename' => $import->file_name,
+        ]);
+        $breadcrumbs = [
+            [
+                'label' => __('Payments'),
+                'route' => route('payments.index'),
+            ],
+            [
+                'label' => __('Payment imports'),
+                'route' => route('payments.imports.index'),
+            ],
+            [
+                'label' => $import->file_name,
+                'route' => route('payments.imports.show', $import),
+            ],
+        ];
+
+        return inertia('payments/imports/Show', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'paymentImport' => $import->load('user')->toResource(),
+            'results' => $import->results ?? [],
+            'permissions' => $request->user()->getPermissions(PaymentImport::class),
+        ])->withViewData(compact('title'));
     }
 
     /**
