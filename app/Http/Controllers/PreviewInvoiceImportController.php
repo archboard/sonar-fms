@@ -38,7 +38,7 @@ class PreviewInvoiceImportController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'invoiceImport' => $results->get('invoiceImport')->toResource(),
             'results' => $import->results ?? [],
-            'errors' => $import->getMappingValidationErrors(),
+//            'errors' => $import->getMappingValidationErrors(),
             'permissions' => $request->user()->getPermissions(InvoiceImport::class),
             'previewResults' => $results->get('models'),
             'isPreview' => true,
