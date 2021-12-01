@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div class="fixed z-50 inset-0 overflow-y-auto">
+    <div class="fixed z-40 inset-0 overflow-y-auto">
       <div class="flex items-start md:items-center justify-center min-h-screen pt-12 md:pt-4 px-4 pb-20 text-center">
         <transition
           enter-active-class="duration-300 ease-out"
