@@ -232,6 +232,10 @@ Route::middleware('tenant')->group(function () {
                 /**
                  * Payments and payment imports
                  */
+                Route::resource('/payments/imports/templates', \App\Http\Controllers\PaymentImportTemplateController::class)
+                    ->except(['create', 'edit'])
+                    ->names('payments.imports.templates');
+
                 Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)
                     ->names('payments.imports');
 

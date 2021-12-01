@@ -100,6 +100,14 @@
         </Button>
       </div>
     </form>
+
+    <InvoiceTemplatesModal
+      v-if="showTemplates"
+      @use="useTemplate"
+      @close="showTemplates = false"
+      route-base="/payments/imports/templates"
+      :invoice="form"
+    />
   </Authenticated>
 </template>
 
@@ -126,9 +134,12 @@ import CurrencyInput from '@/components/forms/CurrencyInput'
 import UserTypeahead from '@/components/forms/UserTypeahead'
 import Link from '@/components/Link'
 import Textarea from '@/components/forms/Textarea'
+import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default defineComponent({
   components: {
+    InvoiceTemplatesModal,
     Textarea,
     PaymentMethodSelector,
     Fieldset,
@@ -170,11 +181,19 @@ export default defineComponent({
     const save = () => {
       form.put(`/payments/imports/${props.paymentImport.id}/map`)
     }
+    const useTemplate = template => {
+      Object.keys(template.template).forEach(key => {
+        if (typeof form[key] !== 'undefined') {
+          form[key] = cloneDeep(template.template[key])
+        }
+      })
+    }
 
     return {
       showTemplates,
       save,
       form,
+      useTemplate,
     }
   }
 })

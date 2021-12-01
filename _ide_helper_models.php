@@ -443,7 +443,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereUpdatedAt($value)
  * @method static Builder|InvoiceImport whereUserUuid($value)
  */
-	class IdeHelperInvoiceImport extends \Eloquent {}
+	class IdeHelperInvoiceImport extends \Eloquent implements \App\Concerns\FileImport {}
 }
 
 namespace App\Models{
@@ -549,6 +549,7 @@ namespace App\Models{
  * @property int $amount_refunded
  * @property string|null $transaction_details
  * @property string|null $notes
+ * @property int|null $payment_import_id
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $amount_formatted
  * @property-read string $paid_at_formatted
@@ -576,6 +577,7 @@ namespace App\Models{
  * @method static Builder|InvoicePayment whereOriginalAmount($value)
  * @method static Builder|InvoicePayment wherePaidAt($value)
  * @method static Builder|InvoicePayment whereParentUuid($value)
+ * @method static Builder|InvoicePayment wherePaymentImportId($value)
  * @method static Builder|InvoicePayment wherePaymentMethodId($value)
  * @method static Builder|InvoicePayment whereRecordedBy($value)
  * @method static Builder|InvoicePayment whereSchoolId($value)
@@ -791,6 +793,7 @@ namespace App\Models{
 /**
  * App\Models\PaymentImport
  *
+ * @mixin IdeHelperPaymentImport
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
@@ -811,6 +814,10 @@ namespace App\Models{
  * @property-read string $absolute_path
  * @property-read string $file_name
  * @property-read array $headers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePayment[] $invoicePayments
+ * @property-read int|null $invoice_payments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
+ * @property-read int|null $invoices_count
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
  * @property-read \App\Models\User|null $user
@@ -834,9 +841,24 @@ namespace App\Models{
  * @method static Builder|PaymentImport whereTotalRecords($value)
  * @method static Builder|PaymentImport whereUpdatedAt($value)
  * @method static Builder|PaymentImport whereUserUuid($value)
+ */
+	class IdeHelperPaymentImport extends \Eloquent implements \App\Concerns\FileImport {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\PaymentImportTemplate
+ *
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\PaymentImportTemplateFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate query()
  * @mixin \Eloquent
  */
-	class IdeHelperPaymentImport extends \Eloquent {}
+	class IdeHelperPaymentImportTemplate extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -987,6 +1009,8 @@ namespace App\Models{
  * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentImportTemplate[] $paymentImportTemplates
+ * @property-read int|null $payment_import_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentImport[] $paymentImports
  * @property-read int|null $payment_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentMethod[] $paymentMethods
@@ -1340,6 +1364,10 @@ namespace App\Models{
  * @property-read int|null $invoices_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentImportTemplate[] $paymentImportTemplates
+ * @property-read int|null $payment_import_templates_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PaymentImport[] $paymentImports
+ * @property-read int|null $payment_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property-read int|null $roles_count
  * @property-read \App\Models\School|null $school
