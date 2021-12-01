@@ -51,7 +51,7 @@ class FeeCategoryTest extends TestCase
 
     public function test_can_get_single_fee_category()
     {
-        $this->assignPermission('view', FeeCategory::class);
+        $this->assignPermission('viewAny', FeeCategory::class);
 
         /** @var FeeCategory $category */
         $category = $this->tenant->feeCategories()

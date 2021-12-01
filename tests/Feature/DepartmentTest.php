@@ -53,7 +53,7 @@ class DepartmentTest extends TestCase
 
     public function test_can_get_existing_department()
     {
-        $this->assignPermission('view', Department::class);
+        $this->assignPermission('viewAny', Department::class);
 
         /** @var Department $department */
         $department = $this->tenant->departments()
