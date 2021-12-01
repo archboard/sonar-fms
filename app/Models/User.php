@@ -375,7 +375,7 @@ class User extends Authenticatable implements HasLocalePreference
      * @param string|Model $model
      * @return User
      */
-    public function givePermissionForSchool(School $school, string $permission = '*', $model = '*'): static
+    public function givePermissionForSchool(School $school, string $permission = '*', Model|string $model = '*'): static
     {
         \Bouncer::scope()->to($school->id);
         $this->allow($permission, $model);
