@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -262,10 +263,20 @@ class PaymentImportTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
                 ->has('breadcrumbs')
-                ->has('paymentImport')
+                ->where('paymentImport', $import->refresh()->load('user')->toResource())
                 ->has('permissions')
+                ->where('previewResults', [])
                 ->has('results')
                 ->component('payments/imports/Show')
             );
+    }
+
+    public function test_can_redirect_preview()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport();
+
+        $this->get(route('payments.imports.preview', $import))
+            ->assertRedirect(route('payments.imports.show', $import) . '?preview=1');
     }
 }

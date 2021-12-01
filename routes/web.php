@@ -236,6 +236,15 @@ Route::middleware('tenant')->group(function () {
                     ->except(['create', 'edit'])
                     ->names('payments.imports.templates');
 
+                Route::get('/payments/imports/{import}/preview', \App\Http\Controllers\PreviewPaymentImportController::class)
+                    ->name('payments.imports.preview');
+
+//                Route::post('/payments/imports/{import}/start', \App\Http\Controllers\StartInvoiceImport::class)
+//                    ->name('payments.imports.start');
+//
+//                Route::post('/payments/imports/{import}/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
+//                    ->name('payments.imports.rollback');
+
                 Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)
                     ->names('payments.imports');
 

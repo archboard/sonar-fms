@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -89,5 +90,10 @@ class PaymentImport extends Model implements FileImport
         // Run jobs on the invoices to recalculate balances
 
         return $this->reset();
+    }
+
+    public function importAsModels(): Collection
+    {
+        return collect();
     }
 }

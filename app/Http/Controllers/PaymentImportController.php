@@ -124,12 +124,19 @@ class PaymentImportController extends Controller
         ];
         /** @var User $user */
         $user = $request->user();
+        $results = collect();
+
+        if ($request->has('preview')) {
+            $results = $import->importAsModels();
+        }
 
         return inertia('payments/imports/Show', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
-            'paymentImport' => $import->load('user')->toResource(),
+            'paymentImport' => $results->get('paymentImport', $import->load('user'))
+                ->toResource(),
             'results' => $import->results ?? [],
+            'previewResults' => $results->get('models', []),
             'permissions' => [
                 'imports' => $user->getPermissions(PaymentImport::class),
                 'payments' => $user->getPermissions(InvoicePayment::class),

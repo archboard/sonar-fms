@@ -6,18 +6,18 @@
 
         <template v-slot:dropdown>
           <div class="p-1">
-            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.edit', paymentImport)">
+            <SonarMenuItem v-if="can('imports.update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/edit`">
               {{ __('Edit import file') }}
             </SonarMenuItem>
-            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', paymentImport)">
+            <SonarMenuItem v-if="can('imports.update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
               {{ __('Update mapping') }}
             </SonarMenuItem>
           </div>
           <div class="p-1" v-if="paymentImport.imported_at || paymentImport.mapping_valid">
-            <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create') && !isPreview" is="inertia-link" :href="$route('invoices.imports.preview', paymentImport)">
+            <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('payments.create') && !isPreview" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/preview`">
               {{ __('Preview import') }}
             </SonarMenuItem>
-            <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = paymentImport">
+            <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('payments.create')" @click.prevent="importingInvoiceImport = paymentImport">
               {{ __('Import') }}
             </SonarMenuItem>
             <SonarMenuItem v-if="paymentImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = paymentImport">
