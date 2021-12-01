@@ -6,8 +6,10 @@ use App\Exceptions\InvalidImportFileTypeException;
 use App\Http\Requests\CreateFileImportRequest;
 use App\Http\Requests\UpdateFileImportRequest;
 use App\Http\Resources\PaymentImportResource;
+use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
 use App\Models\School;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PaymentImportController extends Controller
@@ -120,13 +122,18 @@ class PaymentImportController extends Controller
                 'route' => route('payments.imports.show', $import),
             ],
         ];
+        /** @var User $user */
+        $user = $request->user();
 
         return inertia('payments/imports/Show', [
             'title' => $title,
             'breadcrumbs' => $breadcrumbs,
             'paymentImport' => $import->load('user')->toResource(),
             'results' => $import->results ?? [],
-            'permissions' => $request->user()->getPermissions(PaymentImport::class),
+            'permissions' => [
+                'imports' => $user->getPermissions(PaymentImport::class),
+                'payments' => $user->getPermissions(InvoicePayment::class),
+            ],
         ])->withViewData(compact('title'));
     }
 
