@@ -2,7 +2,7 @@
   <Modal
     @action="save"
     @close="$emit('close')"
-    :headline="__('Invoice Templates')"
+    :headline="__('Templates')"
     :action-loading="templateForm.processing"
     ref="modal"
   >
@@ -32,7 +32,7 @@
 
     <form @submit.prevent="save">
       <ModalHeadline v-if="templateForm.id" class="mb-4 mt-6">{{ __('Update template') }}</ModalHeadline>
-      <ModalHeadline v-else class="mb-4 mt-6">{{ __('Save invoice as new template') }}</ModalHeadline>
+      <ModalHeadline v-else class="mb-4 mt-6">{{ __('Save as new template') }}</ModalHeadline>
       <Fieldset>
         <InputWrap :error="templateForm.errors.name">
           <Label for="new-template-name" :required="true">{{ __('Name') }}</Label>
@@ -72,6 +72,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    routeBase: {
+      type: String,
+      default: '/templates',
+    }
   },
   emits: ['use', 'close'],
 
@@ -83,7 +87,7 @@ export default defineComponent({
       template: {},
       for_import: props.forImport,
     })
-    const { templates, saveTemplate, deleteTemplate } = handlesInvoiceTemplates(props.forImport)
+    const { templates, saveTemplate, deleteTemplate } = handlesInvoiceTemplates(props.forImport, props.routeBase)
     const editTemplate = template => {
       templateForm.id = template.id
       templateForm.name = template.name
@@ -105,7 +109,7 @@ export default defineComponent({
       modal.value.close()
     }
     const promptDelete = template => {
-      console.log(template)
+      deleteTemplate(template)
     }
 
     return {

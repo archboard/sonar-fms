@@ -1,9 +1,8 @@
 import { inject, ref } from 'vue'
 import omit from 'lodash/omit'
 
-export default (forImport) => {
+export default (forImport, routeBase) => {
   const $http = inject('$http')
-  const $route = inject('$route')
   const templates = ref([])
 
   const fetchTemplates = () => {
@@ -11,14 +10,14 @@ export default (forImport) => {
       ? { for_import: 1 }
       : {}
 
-    $http.get($route('templates.index', params)).then(({ data }) => {
+    $http.get(routeBase, { params }).then(({ data }) => {
       templates.value = data
     })
   }
   const saveTemplate = async form => {
     const route = form.id
-      ? $route('templates.update', form.id)
-      : $route('templates.store')
+      ? `${routeBase}/${form.id}`
+      : routeBase
     const method = form.id
       ? 'put'
       : 'post'
@@ -28,7 +27,7 @@ export default (forImport) => {
     fetchTemplates()
   }
   const deleteTemplate = template => {
-    $http.delete($route('templates.destroy', template))
+    $http.delete(`${routeBase}/${template.id}`)
       .then(fetchTemplates)
   }
 
