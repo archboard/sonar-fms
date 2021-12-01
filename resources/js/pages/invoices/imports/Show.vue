@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Dropdown>
+      <Dropdown size="sm">
         {{ __('Actions') }}
 
         <template v-slot:dropdown>
