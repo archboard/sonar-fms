@@ -44,7 +44,7 @@
         </InputWrap>
 
         <InputWrap>
-          <Label for="payment_method">{{ __('Payment term') }}</Label>
+          <Label for="payment_method">{{ __('Payment method') }}</Label>
           <MapField v-model="form.payment_method" :headers="headers" id="payment_method">
             <PaymentMethodSelector v-model="form.payment_method.value" id="payment_method" />
             <template #after>
