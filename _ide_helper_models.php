@@ -849,14 +849,28 @@ namespace App\Models{
 /**
  * App\Models\PaymentImportTemplate
  *
+ * @mixin IdeHelperPaymentImportTemplate
+ * @property int $id
+ * @property int $school_id
+ * @property string|null $user_uuid
+ * @property string $name
+ * @property array $template
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Currency|null $currency
  * @property-read \App\Models\School $school
- * @property-read \App\Models\User $user
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\PaymentImportTemplateFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate query()
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereTemplate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentImportTemplate whereUserUuid($value)
  */
 	class IdeHelperPaymentImportTemplate extends \Eloquent {}
 }
