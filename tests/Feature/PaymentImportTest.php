@@ -2,13 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ProcessPaymentImport;
 use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
+use App\Models\PaymentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
+use Tests\Traits\CreatesInvoice;
 use Tests\Traits\GetsUploadedFiles;
 use Tests\Traits\MapsFields;
 
@@ -18,20 +22,38 @@ class PaymentImportTest extends TestCase
     use WithFaker;
     use MapsFields;
     use GetsUploadedFiles;
+    use CreatesInvoice;
 
     protected bool $signIn = true;
 
-    protected function createImport(string $file = 'small_payments.xlsx'): PaymentImport
+    protected function createImport(string $file = 'small_payments.xlsx', array $attributes = []): PaymentImport
     {
         $originalPath = (new PaymentImport)
             ->storeFile($this->getUploadedFile($file), $this->school);
-
-        return PaymentImport::create([
+        $defaults = [
             'tenant_id' => $this->tenant->id,
             'user_uuid' => $this->user->id,
             'school_id' => $this->school->id,
             'file_path' => $originalPath,
-        ]);
+        ];
+
+        return PaymentImport::create(array_merge($defaults, $attributes));
+    }
+
+    protected function addPaymentInvoices(PaymentImport $import, string $invoiceColumn, bool $allowCombined = false)
+    {
+        foreach ($import->getImportContents() as $row) {
+            if ($invoiceNumber = $row->get($invoiceColumn)) {
+                $function = $this->faker->boolean() && $allowCombined
+                    ? 'createCombinedInvoice'
+                    : 'createInvoice';
+
+                $invoice = $this->$function();
+                $invoice->update([
+                    'invoice_number' => strtoupper($invoiceNumber),
+                ]);
+            }
+        }
     }
 
     public function test_cant_view_imports_page_without_permission()
@@ -278,5 +300,39 @@ class PaymentImportTest extends TestCase
 
         $this->get(route('payments.imports.preview', $import))
             ->assertRedirect(route('payments.imports.show', $import) . '?preview=1');
+    }
+
+    public function test_can_import_payments()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport(attributes: [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        PaymentMethod::factory()->create(['driver' => 'cash']);
+        PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
+        Queue::fake();
+
+        $import->update([
+            'mapping' => [
+                'invoice_column' => 'invoice number',
+                'invoice_payment_term' => $this->makeMapField(),
+                'payment_method' => $this->makeMapField('payment method'),
+                'transaction_details' => $this->makeMapField('transaction details'),
+                'paid_at' => $this->makeMapField('date'),
+                'amount' => $this->makeMapField('amount'),
+                'made_by' => $this->makeMapField('paid by'),
+                'notes' => $this->makeMapField('notes'),
+            ],
+        ]);
+
+        $this->addPaymentInvoices($import, 'invoice number');
+
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+
+        $import->refresh();
+        $this->assertEquals(4, $this->school->invoicePayments()->count());
+        $this->assertNotNull($import->job_batch_id);
     }
 }

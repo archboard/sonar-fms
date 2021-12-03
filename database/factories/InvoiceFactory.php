@@ -44,6 +44,7 @@ class InvoiceFactory extends Factory
             'tax_rate' => $this->faker->randomFloat(5, 0.001, 0.1),
             'tax_label' => $this->faker->word,
             'published_at' => now(),
+            'is_parent' => false,
         ];
     }
 }

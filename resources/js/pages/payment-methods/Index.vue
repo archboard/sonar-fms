@@ -5,6 +5,7 @@
         <tr>
           <Th>{{ __('Method') }}</Th>
           <Th>{{ __('Description') }}</Th>
+          <Th>{{ __('For import') }}</Th>
           <Th></Th>
         </tr>
       </Thead>
@@ -13,7 +14,7 @@
           v-for="method in paymentMethods"
           :key="method.key"
         >
-          <Td :lighter="false">
+          <Td class="align-top" :lighter="false">
             <div class="flex items-center space-x-2 whitespace-nowrap">
               <span>{{ method.label }}</span>
               <SolidBadge v-if="!method.payment_method.id" size="sm" color="yellow">
@@ -24,10 +25,9 @@
               </SolidBadge>
             </div>
           </Td>
-          <Td>
-            {{ method.description }}
-          </Td>
-          <Td class="text-right whitespace-nowrap">
+          <Td>{{ method.description }}</Td>
+          <Td>{{ method.detects_list }}</Td>
+          <Td class="align-top text-right whitespace-nowrap">
             <Link v-if="method.payment_method.id" :href="$route('payment-methods.edit', method.payment_method)">
               {{ __('Edit') }}
             </Link>
@@ -68,7 +68,7 @@ export default defineComponent({
     Link,
   },
   props: {
-    paymentMethods: Array,
+    paymentMethods: Object,
   },
 
   setup () {

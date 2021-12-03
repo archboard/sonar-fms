@@ -254,7 +254,7 @@ trait CreatesInvoice
     {
         $parentInvoice = $this->createInvoice([
             'student_uuid' => null,
-            'is_parent' => true
+            'is_parent' => true,
         ]);
 
         $children = Collection::times($count)

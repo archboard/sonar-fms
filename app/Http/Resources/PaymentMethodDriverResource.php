@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PaymentMethod;
 use App\PaymentMethods\PaymentMethodDriver;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,14 +18,17 @@ class PaymentMethodDriverResource extends JsonResource
     {
         /** @var PaymentMethodDriver $resource */
         $resource = $this->resource;
+        /** @var PaymentMethod $paymentMethod */
+        $paymentMethod = $resource->getPaymentMethod();
 
         return [
             'key' => $resource->key(),
             'label' => $resource->label(),
             'description' => $resource->description(),
             'component' => $resource->component(),
+            'detects_list' => implode(', ', [$paymentMethod?->id, ...$resource->getImportDetectionValues()]),
             'payment_method' => $resource->includePaymentMethodInResource()
-                ? new PaymentMethodResource($resource->getPaymentMethod())
+                ? new PaymentMethodResource($paymentMethod)
                 : null,
         ];
     }
