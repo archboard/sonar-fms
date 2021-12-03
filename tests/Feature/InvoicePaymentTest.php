@@ -64,7 +64,7 @@ class InvoicePaymentTest extends TestCase
             'invoice_uuid' => $invoice->uuid,
             'payment_method_id' => null,
             'paid_at' => $this->getDateForInvoice($date),
-            'amount' => round($invoice->amount_due / 2),
+            'amount' => (int) round($invoice->amount_due / 2),
             'made_by' => null,
             'notes' => $this->faker->sentence(),
             'transaction_details' => $this->faker->words(asText: true),
