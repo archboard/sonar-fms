@@ -201,7 +201,7 @@ class InvoiceImportTest extends TestCase
             'tax_label' => 'Taxes',
         ]);
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile(),
             $this->school
         );
@@ -273,7 +273,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
             $this->school
         );
@@ -339,7 +339,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
             $this->school
         );
@@ -479,7 +479,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('small.csv'),
             $this->school
         );
@@ -571,7 +571,7 @@ class InvoiceImportTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
             $this->school
         );
@@ -649,7 +649,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
             $this->school
         );
@@ -741,7 +741,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('fail.csv'),
             $this->school
         );
@@ -804,7 +804,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('huge.csv'),
             $this->school
         );
@@ -879,7 +879,7 @@ class InvoiceImportTest extends TestCase
         Storage::fake();
         Event::fake();
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('complex.xlsx'),
             $this->school
         );
@@ -1116,7 +1116,7 @@ class InvoiceImportTest extends TestCase
             'tax_label' => 'Taxes',
         ]);
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile(),
             $this->school
         );
@@ -1194,7 +1194,7 @@ class InvoiceImportTest extends TestCase
             'tax_label' => 'Taxes',
         ]);
 
-        $originalPath = InvoiceImport::storeFile(
+        $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('taxed.xls'),
             $this->school
         );

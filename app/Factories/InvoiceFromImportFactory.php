@@ -11,6 +11,8 @@ use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\InvoiceTaxItem;
 use App\Models\Student;
+use App\Traits\ConvertsExcelValues;
+use App\Traits\GetsImportMappingValues;
 use App\Utilities\NumberUtility;
 use Brick\Money\Money;
 use Carbon\Exceptions\InvalidFormatException;
@@ -21,14 +23,12 @@ use Illuminate\Support\Str;
 
 class InvoiceFromImportFactory extends InvoiceFactory
 {
+    use ConvertsExcelValues;
+    use GetsImportMappingValues;
+
     protected ?InvoiceImport $import;
     protected Collection $contents;
-    protected array $results = [];
     protected array $warnings = [];
-    protected Collection $currentRow;
-    protected int $currentRowNumber = 0;
-    protected int $failedRecords = 0;
-    protected int $importedRecords = 0;
     protected bool $attributesBuilt = false;
     protected bool $asModels = false;
     protected string $userNow = '';
@@ -123,13 +123,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $property = $successful ? 'importedRecords' : 'failedRecords';
         $this->{$property}++;
 
-        $this->results[] = [
+        $this->results->push([
             'row' => $this->currentRowNumber,
             'successful' => $successful,
             'result' => $result,
             'student' => optional($this->getStudentForCurrentRow())->full_name,
             'warnings' => $this->warnings,
-        ];
+        ]);
 
         $this->warnings = [];
     }
@@ -144,85 +144,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     protected function addWarning(string $message)
     {
         $this->warnings[] = $message;
-    }
-
-    protected function getMapField(string $key, $default = null)
-    {
-        return Arr::get($this->import->mapping, $key, $default) ?? null;
-    }
-
-    /**
-     * Converts Excel's number format to a
-     * Carbon instance and returns the date/time string
-     */
-    protected function convertDateTime($value): ?string
-    {
-        if (is_numeric($value)) {
-            $date = Carbon::create(1900, 1, 1, 0, 0, 0, $this->user->timezone);
-            $days = floatval($value) - 2;
-            $hours = $days * 24;
-            $minutes = $hours * 60;
-            return $date->addMinutes((int) $minutes)
-                ->roundUnit('minute', 15)
-                ->setTimezone(config('app.timezone'))
-                ->toDateTimeString();
-        }
-
-        try {
-            return Carbon::parse($value, $this->user->timezone)
-                ->setTimezone(config('app.timezone'))
-                ->toDateTimeString();
-        } catch (InvalidFormatException $exception) {
-            return null;
-        }
-    }
-
-    /**
-     * Converts Excel's number format to a
-     * Carbon instance and returns the date string
-     */
-    protected function convertDate($value): ?string
-    {
-        if (is_numeric($value)) {
-            $date = Carbon::create(1900);
-            $days = floatval($value) - 2;
-            $hours = $days * 24;
-            $minutes = $hours * 60;
-
-            return $date->addMinutes((int) $minutes)
-                ->toDateString();
-        }
-
-        try {
-            return Carbon::parse($value, $this->user->timezone)
-                ->setTimezone(config('app.timezone'))
-                ->toDateTimeString();
-        } catch (InvalidFormatException $exception) {
-            return null;
-        }
-    }
-
-    protected function convertCurrency($value): ?int
-    {
-        $sanitized = abs(NumberUtility::sanitizeNumber($value));
-
-        try {
-            return Money::of($sanitized, $this->school->currency->code)
-                ->getMinorAmount()
-                ->toInt();
-        } catch (\Exception $exception) {
-            return null;
-        }
-    }
-
-    protected function convertInt($value): int
-    {
-        return (int) $value;
-    }
-
-    protected function convertPercentage($value)
-    {
-        return NumberUtility::convertPercentageFromUser($value);
     }
 
     protected function convertTerm($value)
@@ -313,45 +234,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
     {
         return $this->school->collect_tax &&
             $this->getMapValue('apply_tax');
-    }
-
-    /**
-     * This gets a value from the mapping
-     * or from the row if the value is mapped to
-     * the spreadsheet
-     *
-     * @param string $key
-     * @param string|null $conversion
-     * @return array|\ArrayAccess|mixed|null
-     */
-    protected function getMapValue(string $key, string $conversion = null, $default = null)
-    {
-        $mapField = $this->getMapField($key, $default);
-
-        // Check that the resulting field is an array
-        // that has all the column mapping keys
-        if (
-            !is_array($mapField) ||
-            !Arr::has($mapField, ['isManual', 'column', 'value'])
-        ) {
-            return $mapField;
-        }
-
-        if ($mapField['isManual']) {
-            return $mapField['value'];
-        }
-
-        $value = $this->currentRow->get($mapField['column']);
-
-        if ($conversion) {
-            $method = Str::camel('convert ' . $conversion);
-
-            if (method_exists($this, $method)) {
-                return $this->{$method}($value);
-            }
-        }
-
-        return $value;
     }
 
     /**
@@ -801,7 +683,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'imported_records' => $this->importedRecords,
             'failed_records' => $this->failedRecords,
             'imported_at' => $this->asModels ? null : now(),
-            'results' => $this->results,
+            'results' => $this->results->toArray(),
         ]);
 
         ray($this->import);

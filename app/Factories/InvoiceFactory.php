@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-abstract class InvoiceFactory
+abstract class InvoiceFactory extends BaseImportFactory
 {
     public string $batchId;
     public ?School $school = null;
@@ -62,6 +62,7 @@ abstract class InvoiceFactory
         $this->invoiceTaxItems = collect();
         $this->studentInvoiceMap = collect();
         $this->invoiceNumberMap = collect();
+        $this->results = collect();
 
         $this->fillableInvoiceAttributes = (new Invoice)->getFillable();
         $this->fillableInvoiceItemAttributes = (new InvoiceItem)->getFillable();
