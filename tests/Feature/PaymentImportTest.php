@@ -8,8 +8,10 @@ use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
 use App\Models\PaymentMethod;
 use App\Utilities\NumberUtility;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
@@ -319,7 +321,7 @@ class PaymentImportTest extends TestCase
         ]);
         $cash = PaymentMethod::factory()->create(['driver' => 'cash']);
         $bank = PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
-        Queue::fake();
+        Bus::fake();
 
         $import->update([
             'mapping' => [
@@ -336,6 +338,11 @@ class PaymentImportTest extends TestCase
 
         $this->addPaymentInvoices($import, 'invoice number');
 
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
+            return $batch->name === "Payment import {$import->id}" &&
+                $batch->jobs->count() === 4;
+        });
         (new ProcessPaymentImport($import, $this->user))
             ->handle();
 
