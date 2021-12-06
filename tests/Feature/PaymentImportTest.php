@@ -50,10 +50,16 @@ class PaymentImportTest extends TestCase
                     ? 'createCombinedInvoice'
                     : 'createInvoice';
 
+                /** @var Invoice $invoice */
                 $invoice = $this->$function();
-                $invoice->update([
-                    'invoice_number' => strtoupper($invoiceNumber),
-                ]);
+
+                // No scholarship funny business
+                $invoice->invoiceScholarships()->delete();
+                $invoice->unsetRelations();
+
+                $invoice->fill(['invoice_number' => strtoupper($invoiceNumber)])
+                    ->setCalculatedAttributes()
+                    ->save();
             }
         }
     }
@@ -311,8 +317,8 @@ class PaymentImportTest extends TestCase
             'heading_row' => 1,
             'starting_row' => 2,
         ]);
-        PaymentMethod::factory()->create(['driver' => 'cash']);
-        PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
+        $cash = PaymentMethod::factory()->create(['driver' => 'cash']);
+        $bank = PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
         Queue::fake();
 
         $import->update([
@@ -354,13 +360,18 @@ class PaymentImportTest extends TestCase
 
             // All the dates for this import are the same
             $this->assertEquals('2021-12-01', $payment->paid_at->toDateString());
-        }
-    }
-        (new ProcessPaymentImport($import, $this->user))
-            ->handle();
+            $this->assertEquals($row->get('notes'), $payment->notes);
+            $this->assertEquals($row->get('transaction details'), $payment->transaction_details);
 
-        $import->refresh();
-        $this->assertEquals(4, $this->school->invoicePayments()->count());
-        $this->assertNotNull($import->job_batch_id);
+            if ($method = $row->get('payment method')) {
+                $id = str_contains($method, 'cash')
+                    ? $cash->id
+                    : $bank->id;
+
+                $this->assertEquals($id, $payment->payment_method_id);
+            } else {
+                $this->assertNull($payment->payment_method_id);
+            }
+        }
     }
 }

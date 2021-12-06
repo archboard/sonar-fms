@@ -12,12 +12,11 @@ use App\Models\User;
 use App\Traits\ConvertsExcelValues;
 use App\Traits\GetsImportMappingValues;
 use Illuminate\Bus\Batch;
-use Illuminate\Bus\PendingBatch;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 
-class PaymentFromImportFactoryFactory extends BaseImportFactory
+class PaymentFromImportFactory extends BaseImportFactory
 {
     use ConvertsExcelValues;
     use GetsImportMappingValues;
@@ -158,9 +157,9 @@ class PaymentFromImportFactoryFactory extends BaseImportFactory
                 'school_id' => $this->school->id,
                 'tenant_id' => $this->school->tenant_id,
                 'paid_at' => $this->getMapValue('paid_at', 'date'),
-                'payment_method_id' => $this->getMapValue('paid_at', 'payment method'),
-                'notes' => $this->getMapValue('paid_at', 'notes'),
-                'transaction_details' => $this->getMapValue('paid_at', 'transaction_details'),
+                'payment_method_id' => $this->getMapValue('payment_method', 'payment method'),
+                'notes' => $this->getMapValue('notes', 'notes'),
+                'transaction_details' => $this->getMapValue('transaction_details', 'transaction details'),
 //                'made_by' => $payment->made_by,
                 'recorded_by' => $this->user->uuid,
                 'created_at' => $this->now,

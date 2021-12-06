@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Factories\PaymentFromImportFactoryFactory;
+use App\Factories\PaymentFromImportFactory;
 use App\Models\PaymentImport;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -38,7 +38,7 @@ class ProcessPaymentImport implements ShouldQueue
             'rolled_back_at' => null,
         ]);
 
-        PaymentFromImportFactoryFactory::make($this->import, $this->user)
+        PaymentFromImportFactory::make($this->import, $this->user)
             ->build();
     }
 }
