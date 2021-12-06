@@ -33,7 +33,7 @@ class InvoiceItemFactory extends Factory
             'uuid' => Str::uuid()->toString(),
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
-            'amount_per_unit' => $this->faker->numberBetween(1000),
+            'amount_per_unit' => $this->faker->numberBetween(500000),
             'quantity' => $this->faker->numberBetween(1, 4),
         ];
     }
