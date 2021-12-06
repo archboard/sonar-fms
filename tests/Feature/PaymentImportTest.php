@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Jobs\ProcessPaymentImport;
+use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
 use App\Models\PaymentMethod;
+use App\Utilities\NumberUtility;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
@@ -328,6 +330,32 @@ class PaymentImportTest extends TestCase
 
         $this->addPaymentInvoices($import, 'invoice number');
 
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+
+        $import->refresh();
+        $this->assertEquals(4, $this->school->invoicePayments()->count());
+        $this->assertNotNull($import->job_batch_id);
+        $invoices = $this->school->invoices()
+            ->with('invoicePayments')
+            ->get()
+            ->keyBy('invoice_number');
+
+        foreach ($import->getImportContents() as $row) {
+            /** @var Invoice $invoice */
+            $invoice = $invoices->get(strtoupper($row->get('invoice number')));
+
+            $this->assertEquals(1, $invoice->invoicePayments->count());
+            /** @var InvoicePayment $payment */
+            $payment = $invoice->invoicePayments->first();
+
+            $amount = NumberUtility::sanitizeNumber($row->get('amount'));
+            $this->assertEquals($amount * 100, $payment->amount);
+
+            // All the dates for this import are the same
+            $this->assertEquals('2021-12-01', $payment->paid_at->toDateString());
+        }
+    }
         (new ProcessPaymentImport($import, $this->user))
             ->handle();
 
