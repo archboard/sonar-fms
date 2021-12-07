@@ -536,5 +536,11 @@ class PaymentImportTest extends TestCase
                 $this->assertNull($payment->made_by);
             }
         }
+
+        $this->assertTrue(
+            collect($import->results)->some(function ($result) {
+                return count($result['warnings']) > 0;
+            })
+        );
     }
 }
