@@ -2,6 +2,7 @@
 
 namespace App\Factories;
 
+use App\Events\PaymentImportFinished;
 use App\Jobs\SetInvoiceRemainingBalance;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
@@ -221,7 +222,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                         ->unique()
                         ->map(fn ($uuid) => new SetInvoiceRemainingBalance($uuid))
                 )->then(function (Batch $batch) {
-                    //
+                    event(new PaymentImportFinished($this->import));
                 })->catch(function (Batch $batch, \Throwable $e) {
                     //
                 })->finally(function (Batch $batch) {

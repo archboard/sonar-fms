@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Events\InvoiceImportFinished;
+use App\Events\PaymentImportFinished;
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogLogin;
+use App\Listeners\SendPaymentImportFinishedNotification;
 use App\Listeners\SetUserSchool;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -31,6 +33,9 @@ class EventServiceProvider extends ServiceProvider
             LogFailedLogin::class,
         ],
         InvoiceImportFinished::class => [],
+        PaymentImportFinished::class => [
+            SendPaymentImportFinishedNotification::class,
+        ],
     ];
 
     /**
