@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Traits\ConvertsExcelValues;
 use App\Traits\GetsImportMappingValues;
 use Illuminate\Bus\Batch;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -98,6 +99,10 @@ class PaymentFromImportFactory extends BaseImportFactory
 
         $invoice = $this->getCurrentRowInvoice();
 
+        if (!$successful) {
+            ray($this->currentRow->toArray());
+        }
+
         $this->results->push([
             'row' => $this->currentRowNumber,
             'successful' => $successful,
@@ -151,6 +156,7 @@ class PaymentFromImportFactory extends BaseImportFactory
 
             $attributes = [
                 'uuid' => UuidFactory::make(),
+                'parent_uuid' => null,
                 'invoice_uuid' => $invoice->uuid,
                 'amount' => $amount,
                 'original_amount' => $amount,
@@ -172,9 +178,18 @@ class PaymentFromImportFactory extends BaseImportFactory
             // after we've already pushed the parent payment details
             if ($invoice->children->isNotEmpty()) {
                 $childPayments = $invoice->getChildrenPayments(new InvoicePayment($attributes));
+                $overwriteAttributes = [
+                    'uuid',
+                    'parent_uuid',
+                    'invoice_uuid',
+                    'amount',
+                    'original_amount',
+                ];
 
                 foreach ($childPayments as $childAttributes) {
-                    $this->invoicePayments->push($childAttributes);
+                    $this->invoicePayments->push(
+                        array_merge($attributes, Arr::only($childAttributes, $overwriteAttributes))
+                    );
                 }
             }
 
@@ -189,13 +204,13 @@ class PaymentFromImportFactory extends BaseImportFactory
             $this->addResult('Payment recorded successfully');
         }
 
-        ray($this->results->toArray());
         return $this->store();
     }
 
     protected function store()
     {
         DB::transaction(function () {
+            ray($this->invoicePayments->filter(fn ($p) => $p['parent_uuid'])->toArray())->blue();
             DB::table('invoice_payments')
                 ->insert($this->invoicePayments->toArray());
 

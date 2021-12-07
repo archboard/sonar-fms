@@ -55,6 +55,12 @@ class PaymentImportTest extends TestCase
                 /** @var Invoice $invoice */
                 $invoice = $this->$function();
 
+                foreach ($invoice->children as $child) {
+                    $child->invoiceScholarships()->delete();
+                    $child->unsetRelations();
+                    $child->setCalculatedAttributes(true);
+                }
+
                 // No scholarship funny business
                 $invoice->invoiceScholarships()->delete();
                 $invoice->unsetRelations();
@@ -338,11 +344,6 @@ class PaymentImportTest extends TestCase
 
         $this->addPaymentInvoices($import, 'invoice number');
 
-
-        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
-            return $batch->name === "Payment import {$import->id}" &&
-                $batch->jobs->count() === 4;
-        });
         (new ProcessPaymentImport($import, $this->user))
             ->handle();
 
@@ -353,6 +354,11 @@ class PaymentImportTest extends TestCase
             ->with('invoicePayments')
             ->get()
             ->keyBy('invoice_number');
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
+            return $batch->name === "Payment import {$import->id}" &&
+                $batch->jobs->count() === 4;
+        });
 
         foreach ($import->getImportContents() as $row) {
             /** @var Invoice $invoice */
@@ -378,6 +384,89 @@ class PaymentImportTest extends TestCase
                 $this->assertEquals($id, $payment->payment_method_id);
             } else {
                 $this->assertNull($payment->payment_method_id);
+            }
+        }
+    }
+
+    public function test_can_import_payments_with_combined_invoices()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport('medium_payments.xlsx', [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        $cash = PaymentMethod::factory()->create(['driver' => 'cash']);
+        $bank = PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
+        Bus::fake();
+        Queue::fake();
+
+        $import->update([
+            'mapping' => [
+                'invoice_column' => 'invoice number',
+                'invoice_payment_term' => $this->makeMapField(),
+                'payment_method' => $this->makeMapField('payment method'),
+                'transaction_details' => $this->makeMapField('transaction details'),
+                'paid_at' => $this->makeMapField('date'),
+                'amount' => $this->makeMapField('amount'),
+                'made_by' => $this->makeMapField('paid by'),
+                'notes' => $this->makeMapField('notes'),
+            ],
+        ]);
+
+        $this->addPaymentInvoices($import, 'invoice number', true);
+
+        ray()->measure();
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+        ray()->measure();
+
+        $import->refresh();
+        $this->assertEquals($import->getImportContents()->count(), $this->school->invoicePayments()->whereNull('parent_uuid')->count());
+        $this->assertNotNull($import->job_batch_id);
+        $invoices = $this->school->invoices()
+            ->with('invoicePayments', 'children.invoicePayments')
+            ->get()
+            ->keyBy('invoice_number');
+
+        // This import shouldn't have any failed rows, assume all gets batched
+        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
+            return $batch->name === "Payment import {$import->id}";
+        });
+
+        foreach ($import->getImportContents() as $row) {
+            /** @var Invoice $invoice */
+            $invoice = $invoices->get(strtoupper($row->get('invoice number')));
+
+            $this->assertEquals(1, $invoice->invoicePayments->count());
+            /** @var InvoicePayment $payment */
+            $payment = $invoice->invoicePayments->first();
+
+            $amount = NumberUtility::sanitizeNumber($row->get('amount'));
+            $this->assertEquals($amount * 100, $payment->amount);
+
+            // All the dates for this import are the same
+            $this->assertEquals('2021-12-15', $payment->paid_at->toDateString());
+            $this->assertEquals($row->get('notes'), $payment->notes);
+            $this->assertEquals($row->get('transaction details'), $payment->transaction_details);
+
+            if ($method = $row->get('payment method')) {
+                $id = str_contains($method, 'cash')
+                    ? $cash->id
+                    : $bank->id;
+
+                $this->assertEquals($id, $payment->payment_method_id);
+            } else {
+                $this->assertNull($payment->payment_method_id);
+            }
+
+            if ($invoice->children->isNotEmpty()) {
+                foreach ($invoice->children as $child) {
+                    $this->assertEquals(1, $child->invoicePayments->count());
+                    /** @var InvoicePayment $childPayment */
+                    $childPayment = $child->invoicePayments->first();
+                    $this->assertEquals($payment->uuid, $childPayment->parent_uuid);
+                    $this->assertNotEquals($amount, $childPayment->amount);
+                }
             }
         }
     }

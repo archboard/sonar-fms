@@ -36,8 +36,15 @@ class SetInvoiceRemainingBalance implements ShouldQueue
             return;
         }
 
-        Invoice::find($this->invoiceUuid)
+        /** @var Invoice $invoice */
+        $invoice = Invoice::find($this->invoiceUuid)
             ->setRemainingBalance()
             ->save();
+
+        // If the original invoice was a child
+        // dispatch calculating the parents data
+        $this->batch()->add([
+            new static($invoice->parent_uuid)
+        ]);
     }
 }
