@@ -470,4 +470,71 @@ class PaymentImportTest extends TestCase
             }
         }
     }
+
+    public function test_can_import_payments_with_made_by()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport('made_by_payments.xlsx', [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        Bus::fake();
+
+        $import->update([
+            'mapping' => [
+                'invoice_column' => 'invoice number',
+                'invoice_payment_term' => $this->makeMapField(),
+                'payment_method' => $this->makeMapField(),
+                'transaction_details' => $this->makeMapField(),
+                'paid_at' => $this->makeMapField('date'),
+                'amount' => $this->makeMapField('amount'),
+                'made_by' => $this->makeMapField('paid by'),
+                'notes' => $this->makeMapField(),
+            ],
+        ]);
+
+        $this->addPaymentInvoices($import, 'invoice number');
+        $madeByEmail = 'real@example.com';
+        $createdUser = $this->createUser(['email' => $madeByEmail]);
+        $rowCount = $import->getImportContents()->count();
+
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+
+        $import->refresh();
+        $this->assertEquals($rowCount, $this->school->invoicePayments()->count());
+        $this->assertNotNull($import->job_batch_id);
+        $invoices = $this->school->invoices()
+            ->with('invoicePayments')
+            ->get()
+            ->keyBy('invoice_number');
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($import, $rowCount) {
+            return $batch->name === "Payment import {$import->id}" &&
+                $batch->jobs->count() === $rowCount;
+        });
+
+        foreach ($import->getImportContents() as $row) {
+            /** @var Invoice $invoice */
+            $invoice = $invoices->get(strtoupper($row->get('invoice number')));
+
+            $this->assertEquals(1, $invoice->invoicePayments->count());
+            /** @var InvoicePayment $payment */
+            $payment = $invoice->invoicePayments->first();
+
+            $amount = NumberUtility::sanitizeNumber($row->get('amount'));
+            $this->assertEquals($amount * 100, $payment->amount);
+
+            // All the dates for this import are the same
+            $this->assertEquals('2021-12-01', $payment->paid_at->toDateString());
+            $this->assertNull($payment->notes);
+            $this->assertNull($payment->transaction_details);
+
+            if ($row->get('paid by') === $madeByEmail) {
+                $this->assertEquals($createdUser->uuid, $payment->made_by);
+            } else {
+                $this->assertNull($payment->made_by);
+            }
+        }
+    }
 }

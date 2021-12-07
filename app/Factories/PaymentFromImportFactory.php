@@ -17,6 +17,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PaymentFromImportFactory extends BaseImportFactory
 {
@@ -31,6 +32,7 @@ class PaymentFromImportFactory extends BaseImportFactory
     protected School $school;
     protected Collection $paymentMethods;
     protected Collection $users;
+    protected array $warnings = [];
 
     public function __construct(protected PaymentImport $import, protected User $user)
     {
@@ -54,7 +56,8 @@ class PaymentFromImportFactory extends BaseImportFactory
     public static function make(PaymentImport $import, User $user): static
     {
         return (new static($import, $user))
-            ->setInvoices();
+            ->setInvoices()
+            ->setUsers();
     }
 
     public function setInvoices(): static
@@ -75,6 +78,23 @@ class PaymentFromImportFactory extends BaseImportFactory
             ->with('children:uuid,remaining_balance,parent_uuid')
             ->get()
             ->keyBy('invoice_number');
+
+        return $this;
+    }
+
+    public function setUsers(): static
+    {
+        $this->users = collect();
+
+        if ($madeByColumn = $this->getMapField('made_by.column')) {
+            $emails = $this->contents->pluck($madeByColumn)
+                ->filter(fn ($value) => $madeByColumn)
+                ->unique()
+                ->map(fn ($value) => strtolower($value));
+
+            $this->users = User::whereIn('email', $emails)
+                ->pluck('uuid', 'email');
+        }
 
         return $this;
     }
@@ -106,15 +126,36 @@ class PaymentFromImportFactory extends BaseImportFactory
             'result' => $result,
             'invoice' => $invoice?->invoice_number,
             'remaining_balance' => $invoice?->remaining_balance,
-            'warnings' => [],
+            'warnings' => $this->warnings,
         ]);
 
-//        $this->warnings = [];
+        $this->warnings = [];
     }
 
     protected function convertPaymentMethod($value): ?int
     {
         return $this->paymentMethods->get($value);
+    }
+
+    protected function convertUserEmail(?string $value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if (str_contains($value, '@')) {
+            if ($user = $this->users->get($value)) {
+                return $user;
+            }
+
+            $this->warnings[] = "Could not locate user from {$value}. Please ensure the email matches a user in the SIS.";
+
+            return null;
+        }
+
+        return Str::isUuid($value)
+            ? $value
+            : null;
     }
 
     public function build()
@@ -163,7 +204,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'payment_method_id' => $this->getMapValue('payment_method', 'payment method'),
                 'notes' => $this->getMapValue('notes', 'notes'),
                 'transaction_details' => $this->getMapValue('transaction_details', 'transaction details'),
-//                'made_by' => $payment->made_by,
+                'made_by' => $this->getMapValue('made_by', 'user email'),
                 'recorded_by' => $this->user->uuid,
                 'created_at' => $this->now,
                 'updated_at' => $this->now,

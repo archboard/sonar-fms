@@ -83,6 +83,9 @@
           <Label for="made_by">{{ __('Paid by') }}</Label>
           <MapField v-model="form.made_by" id="made_by" :headers="headers">
             <UserTypeahead v-model="form.made_by.value" id="made_by" />
+            <template #after>
+              <HelpText>{{ __('The value of this column should be an email address.') }}</HelpText>
+            </template>
           </MapField>
         </InputWrap>
 
