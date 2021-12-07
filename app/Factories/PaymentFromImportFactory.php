@@ -100,10 +100,6 @@ class PaymentFromImportFactory extends BaseImportFactory
 
         $invoice = $this->getCurrentRowInvoice();
 
-        if (!$successful) {
-            ray($this->currentRow->toArray());
-        }
-
         $this->results->push([
             'row' => $this->currentRowNumber,
             'successful' => $successful,
@@ -211,7 +207,6 @@ class PaymentFromImportFactory extends BaseImportFactory
     protected function store()
     {
         DB::transaction(function () {
-            ray($this->invoicePayments->filter(fn ($p) => $p['parent_uuid'])->toArray())->blue();
             DB::table('invoice_payments')
                 ->insert($this->invoicePayments->toArray());
 
