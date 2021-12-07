@@ -66,12 +66,6 @@ class PaymentFromImportFactory extends BaseImportFactory
             ->reject(fn ($row) => !$row[$this->invoiceColumn])
             ->pluck($this->invoiceColumn)
             ->map(fn ($number) => strtoupper($number));
-//        $this->invoices = DB::table('invoices')
-//            ->where('school_id', $this->school->id)
-//            ->whereIn('invoice_number', $invoiceNumbers)
-//            ->select(['uuid', 'remaining_balance', 'invoice_number', 'parent_uuid'])
-//            ->get()
-//            ->keyBy('invoice_number');
         $this->invoices = $this->school->invoices()
             ->whereIn('invoice_number', $invoiceNumbers)
             ->select(['uuid', 'remaining_balance', 'invoice_number', 'is_parent', 'parent_uuid'])
