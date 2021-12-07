@@ -91,7 +91,7 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->getPermissionsForSchool();
     }
 
-    public function getStudentSelectionAttribute()
+    public function getStudentSelectionAttribute(): Collection
     {
         if ($this->relationLoaded('studentSelections')) {
             return $this->studentSelections->pluck('student_uuid');
@@ -100,7 +100,7 @@ class User extends Authenticatable implements HasLocalePreference
         return collect();
     }
 
-    public function getInvoiceSelectionAttribute()
+    public function getInvoiceSelectionAttribute(): Collection
     {
         if ($this->relationLoaded('invoiceSelections')) {
             return $this->invoiceSelections->pluck('invoice_uuid');
