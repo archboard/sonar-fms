@@ -48,7 +48,7 @@
     <Alert v-if="paymentImport.imported_at_formatted" class="mt-8">
       {{ __('Invoice imported on :date', { date: paymentImport.imported_at_formatted }) }}
     </Alert>
-    <Alert v-if="paymentImport.mapping_valid && paymentImport.imported_records === 0" class="mt-8">
+    <Alert v-if="paymentImport.mapping_valid && !isPreview" class="mt-8">
       {{ __('Mapping is ready for import.') }} <button @click.prevent="importingInvoiceImport = paymentImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>.
     </Alert>
     <Alert v-if="!paymentImport.mapping_valid" level="warning" class="mt-8">

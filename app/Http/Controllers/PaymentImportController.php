@@ -125,9 +125,11 @@ class PaymentImportController extends Controller
         /** @var User $user */
         $user = $request->user();
         $results = collect();
+        $isPreview = $request->has('preview');
 
-        if ($request->has('preview')) {
-            $results = $import->importAsModels();
+        if ($isPreview) {
+            $results = $import->importAsModels($user);
+            ray($results);
         }
 
         return inertia('payments/imports/Show', [
@@ -141,6 +143,7 @@ class PaymentImportController extends Controller
                 'imports' => $user->getPermissions(PaymentImport::class),
                 'payments' => $user->getPermissions(InvoicePayment::class),
             ],
+            'isPreview' => $isPreview,
         ])->withViewData(compact('title'));
     }
 

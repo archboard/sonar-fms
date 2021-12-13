@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\FileImport;
+use App\Factories\PaymentFromImportFactory;
 use App\Rules\FileImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
@@ -92,8 +93,10 @@ class PaymentImport extends Model implements FileImport
         return $this->reset();
     }
 
-    public function importAsModels(): Collection
+    public function importAsModels(User $user): Collection
     {
-        return collect();
+        return PaymentFromImportFactory::make($this, $user)
+            ->asModels()
+            ->build();
     }
 }
