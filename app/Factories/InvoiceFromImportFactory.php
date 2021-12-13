@@ -689,7 +689,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         ray($this->import);
 
         // If we're just building models, only return the import
-        // and the models collection instead of storing the results
+        // and the model's collection instead of storing the results
         if ($this->asModels) {
             return collect()->put('invoiceImport', $this->import)
                 ->put('models', $this->models->keyBy('uuid'));

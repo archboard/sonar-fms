@@ -32,6 +32,7 @@ class PaymentFromImportFactory extends BaseImportFactory
     protected School $school;
     protected Collection $paymentMethods;
     protected Collection $users;
+    protected Collection $models;
     protected array $warnings = [];
 
     public function __construct(protected PaymentImport $import, protected User $user)
@@ -40,6 +41,7 @@ class PaymentFromImportFactory extends BaseImportFactory
         $this->invoices = collect();
         $this->invoicePayments = collect();
         $this->results = collect();
+        $this->models = collect();
         $this->contents = $this->import->getImportContents();
         $this->now = now()->toDateTimeString();
         $this->invoiceColumn = $this->getMapField('invoice_column');
@@ -68,7 +70,14 @@ class PaymentFromImportFactory extends BaseImportFactory
             ->map(fn ($number) => strtoupper($number));
         $this->invoices = $this->school->invoices()
             ->whereIn('invoice_number', $invoiceNumbers)
-            ->select(['uuid', 'remaining_balance', 'invoice_number', 'is_parent', 'parent_uuid'])
+            ->select([
+                'uuid',
+                'remaining_balance',
+                'amount_due',
+                'invoice_number',
+                'is_parent',
+                'parent_uuid',
+            ])
             ->with('children:uuid,remaining_balance,parent_uuid')
             ->get()
             ->keyBy('invoice_number');
@@ -93,7 +102,7 @@ class PaymentFromImportFactory extends BaseImportFactory
         return $this;
     }
 
-    public function asModels(bool $asModels): static
+    public function asModels(bool $asModels = true): static
     {
         $this->asModels = $asModels;
 
@@ -234,12 +243,28 @@ class PaymentFromImportFactory extends BaseImportFactory
 
             // __('Payment recorded successfully');
             $this->addResult('Payment recorded successfully');
+
+            if ($this->asModels) {
+                $payment = new InvoicePayment($attributes);
+                $payment->setRelation('invoice', $invoice);
+
+                $this->models->push($payment);
+            }
+        }
+
+        if ($this->asModels) {
+            $this->import->results = $this->results;
+            $this->import->failed_records = $this->failedRecords;
+            $this->import->imported_records = $this->importedRecords;
+
+            return collect()->put('paymentImport', $this->import)
+                ->put('models', $this->models);
         }
 
         return $this->store();
     }
 
-    protected function store()
+    protected function store(): Collection
     {
         DB::transaction(function () {
             DB::table('invoice_payments')
@@ -270,5 +295,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'failed_records' => $this->failedRecords,
             ]);
         });
+
+        return $this->invoicePayments->pluck('uuid');
     }
 }

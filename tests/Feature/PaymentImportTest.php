@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Factories\PaymentFromImportFactory;
 use App\Jobs\ProcessPaymentImport;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
@@ -542,5 +543,63 @@ class PaymentImportTest extends TestCase
                 return count($result['warnings']) > 0;
             })
         );
+    }
+
+    public function test_can_get_import_payments_as_models()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport(attributes: [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        Bus::fake();
+
+        $import->update([
+            'mapping' => [
+                'invoice_column' => 'invoice number',
+                'invoice_payment_term' => $this->makeMapField(),
+                'payment_method' => $this->makeMapField('payment method'),
+                'transaction_details' => $this->makeMapField('transaction details'),
+                'paid_at' => $this->makeMapField('date'),
+                'amount' => $this->makeMapField('amount'),
+                'made_by' => $this->makeMapField('paid by'),
+                'notes' => $this->makeMapField('notes'),
+            ],
+        ]);
+
+        $this->addPaymentInvoices($import, 'invoice number');
+
+        ray()->measure();
+        $results = PaymentFromImportFactory::make($import, $this->user)
+            ->asModels()
+            ->build();
+        ray()->measure();
+
+        $this->assertEquals(0, $this->school->invoicePayments()->count());
+        $this->assertNull($import->job_batch_id);
+        Bus::assertNothingDispatched();
+
+        $this->assertEquals($import->getImportContents()->count(), $results->get('models')->count());
+        $this->assertTrue(
+            collect($results->get('paymentImport')->results)->every(fn ($result) => $result['successful'])
+        );
+        $contents = $import->getImportContents();
+        /** @var PaymentImport $modelImport */
+        $modelImport = $results->get('paymentImport');
+
+        $this->assertEquals($contents->count(), $modelImport->imported_records);
+        $this->assertEquals(0, $modelImport->failed_records);
+
+        /**
+         * @var int $index
+         * @var InvoicePayment $model
+         */
+        foreach ($results->get('models') as $index => $model) {
+            $row = $contents->get($index);
+            $amount = NumberUtility::sanitizeNumber($row->get('amount')) * 100;
+
+            $this->assertEquals($amount, $model->amount);
+            $this->assertEquals($model->invoice->amount_due - $amount, $model->invoice->remaining_balance);
+        }
     }
 }
