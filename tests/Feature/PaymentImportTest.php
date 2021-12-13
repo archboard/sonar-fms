@@ -602,4 +602,17 @@ class PaymentImportTest extends TestCase
             $this->assertEquals($model->invoice->amount_due - $amount, $model->invoice->remaining_balance);
         }
     }
+
+    public function test_can_download_payment_import_file()
+    {
+        $this->assignPermission('viewAny', PaymentImport::class);
+        Storage::fake();
+        $import = $this->createImport(attributes: [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+
+        $this->get(route('payments.imports.download', $import))
+            ->assertDownload($import->file_name);
+    }
 }

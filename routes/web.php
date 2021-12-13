@@ -237,9 +237,13 @@ Route::middleware('tenant')->group(function () {
                     ->names('payments.imports.templates');
 
                 Route::prefix('/payments/imports/{import}')
+                    ->name('payments.imports.')
                     ->group(function () {
                         Route::get('/preview', \App\Http\Controllers\PreviewPaymentImportController::class)
-                            ->name('payments.imports.preview');
+                            ->name('preview');
+
+                        Route::get('/download', \App\Http\Controllers\DownloadPaymentImportFileController::class)
+                            ->name('download');
 
         //                Route::post('/start', \App\Http\Controllers\StartInvoiceImport::class)
         //                    ->name('payments.imports.start');

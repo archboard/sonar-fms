@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\Pure;
 use Maatwebsite\Excel\HeadingRowImport;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ImportsFiles
 {
@@ -25,6 +26,11 @@ trait ImportsFiles
     public function getFileNameAttribute(): string
     {
         return basename($this->file_path);
+    }
+
+    public function download(): StreamedResponse
+    {
+        return Storage::download($this->file_path);
     }
 
     public function getHeadersAttribute(): array
