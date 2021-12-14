@@ -12,6 +12,9 @@
             <SonarMenuItem v-if="can('imports.update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
               {{ __('Update mapping') }}
             </SonarMenuItem>
+            <SonarMenuItem v-if="can('imports.create')" is="a" :href="`/payments/imports/${paymentImport.id}/download`">
+              {{ __('Download file') }}
+            </SonarMenuItem>
           </div>
           <div class="p-1" v-if="paymentImport.imported_at || paymentImport.mapping_valid">
             <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('payments.create') && !isPreview" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/preview`">
