@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -133,7 +134,7 @@ class PowerSchoolProvider implements SisProvider
                 ->keyBy('sis_id');
 
             foreach ($results as $user) {
-                $email = strtolower(optional($user->emails)->work_email);
+                $email = strtolower(optional($user->emails)->work_email ?? '');
 
                 if (!$email) {
                     continue;
@@ -286,7 +287,7 @@ class PowerSchoolProvider implements SisProvider
 
     protected function getStudentAttributes($student)
     {
-        $email = strtolower(optional($student->contact_info)->email);
+        $email = strtolower(optional($student->contact_info)->email ?? '');
 
         return [
             'student_number' => $student->local_id,
@@ -553,7 +554,6 @@ class PowerSchoolProvider implements SisProvider
         $relations = [];
 
         while ($results = $builder->paginate()) {
-            ray(count($results))->green();
             $now = now()->format('Y-m-d H:i:s');
 
             foreach ($results as $result) {
@@ -581,6 +581,8 @@ class PowerSchoolProvider implements SisProvider
                         'tenant_id' => $this->tenant->id,
                         'first_name' => $result->first_name,
                         'last_name' => $result->last_name,
+                        // TODO not possible to get their account email, but may be ok ultimately
+                        // since we can get their contact ids
                         'email' => $result->other_email,
                         'contact_id' => $contactId,
                         'guardian_id' => $result->guardian_id,
@@ -611,8 +613,12 @@ class PowerSchoolProvider implements SisProvider
             }
         }
 
-        ray($users->count())->green();
-        DB::table('student_user')->whereIn('user_uuid', $users->values()->toArray())
+        DB::table('student_user')
+            ->join('students', function (JoinClause $join) use ($school) {
+                $join->on('student_uuid', '=', 'students.uuid')
+                    ->where('students.school_id', $school->id);
+            })
+//            ->whereIn('user_uuid', $users->values()->toArray())
             ->delete();
 
         DB::table('users')->insert($newUsers);
@@ -634,13 +640,13 @@ class PowerSchoolProvider implements SisProvider
         ray()->newScreen("Sync for {$school->name}");
         ray()->measure();
         ray('syncing school info');
-        $this->syncSchool($school);
+//        $this->syncSchool($school);
         ray()->measure();
         ray('syncing school terms');
-        $this->syncSchoolTerms($school);
+//        $this->syncSchoolTerms($school);
         ray()->measure();
         ray('syncing school students');
-        $this->syncSchoolStudents($school);
+//        $this->syncSchoolStudents($school);
         ray()->measure();
         ray('syncing school guardians');
         $this->syncSchoolStudentGuardians($school);
