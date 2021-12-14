@@ -640,13 +640,13 @@ class PowerSchoolProvider implements SisProvider
         ray()->newScreen("Sync for {$school->name}");
         ray()->measure();
         ray('syncing school info');
-//        $this->syncSchool($school);
+        $this->syncSchool($school);
         ray()->measure();
         ray('syncing school terms');
-//        $this->syncSchoolTerms($school);
+        $this->syncSchoolTerms($school);
         ray()->measure();
         ray('syncing school students');
-//        $this->syncSchoolStudents($school);
+        $this->syncSchoolStudents($school);
         ray()->measure();
         ray('syncing school guardians');
         $this->syncSchoolStudentGuardians($school);
