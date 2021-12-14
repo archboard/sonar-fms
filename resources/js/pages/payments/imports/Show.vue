@@ -68,7 +68,7 @@
           <Th>{{ __('Result') }}</Th>
           <Th class="text-right">
             <span v-if="isPreview">
-              {{ __('Amount due') }}
+              {{ __('Remaining balance') }}
             </span>
           </Th>
         </tr>
@@ -90,7 +90,7 @@
           >
             <div v-if="result.successful">
               <ExclamationIcon class="w-4 h-4 mr-1 text-orange-400 dark:text-orange-300 inline-block" v-if="result.warnings.length > 0" />
-              {{ __('Invoice created for :student_name', { student_name: result.student }) }}
+              {{ __('Payment imported for :invoice_number', { invoice_number: result.invoice }) }}
               <div v-if="result.warnings.length > 0">
                 <strong>{{ __('Warnings') }}</strong>
                 <ul>
@@ -110,7 +110,7 @@
           >
             <Link v-if="!isPreview && result.successful" :href="$route('invoices.show', result.result)">{{ __('View invoice') }}</Link>
             <span v-else-if="isPreview && result.successful" class="font-medium">
-              {{ displayCurrency(previewResults[result.result].amount_due) }}
+              {{ displayCurrency(result.remaining_balance) }}
             </span>
           </Td>
         </tr>
