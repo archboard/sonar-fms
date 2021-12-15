@@ -23,7 +23,7 @@
             <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('payments.create')" @click.prevent="importingImport = paymentImport">
               {{ __('Import') }}
             </SonarMenuItem>
-            <SonarMenuItem v-if="paymentImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = paymentImport">
+            <SonarMenuItem v-if="paymentImport.imported_at && can('imports.roll back')" @click.prevent="rollingBackImport = paymentImport">
               {{ __('Roll back') }}
             </SonarMenuItem>
           </div>
