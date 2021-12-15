@@ -2,7 +2,7 @@
   <Authenticated>
     <template v-slot:actions>
       <div class="space-x-2">
-        <Button size="sm" @click.prevent="showTemplates = true">
+        <Button size="sm" @click.prevent="showTemplates = true" color="white">
           {{ __('View templates') }}
         </Button>
         <Button component="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)" size="sm">

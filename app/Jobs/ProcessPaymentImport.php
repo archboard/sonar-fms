@@ -12,7 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessPaymentImport implements ShouldQueue
+class ProcessPaymentImport
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

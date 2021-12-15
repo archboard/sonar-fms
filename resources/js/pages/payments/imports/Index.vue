@@ -93,6 +93,9 @@
                 <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/edit`">
                   {{ __('Edit import file') }}
                 </SonarMenuItem>
+                <SonarMenuItem v-if="can('create')" is="a" :href="`/payments/imports/${paymentImport.id}/download`">
+                  {{ __('Download file') }}
+                </SonarMenuItem>
                 <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
                   {{ __('Update mapping') }}
                 </SonarMenuItem>
@@ -101,7 +104,7 @@
                 <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/preview`">
                   {{ __('Preview import') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = paymentImport">
+                <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" @click.prevent="importingImport = paymentImport">
                   {{ __('Import') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="paymentImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = paymentImport">
@@ -129,18 +132,18 @@
     @confirmed="rollBack"
   />
   <ConfirmationModal
-    v-if="importingInvoiceImport.id"
-    @close="importingInvoiceImport = {}"
-    @confirmed="importImport"
+    v-if="importingImport.id"
+    @close="importingImport = {}"
+    @confirmed="importImport(`/payments/imports/${importingImport.id}/start`)"
   >
     <template v-slot:content>
-      {{ __('This will begin importing invoices.') }}
+      {{ __('This will begin importing payments.') }}
     </template>
   </ConfirmationModal>
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import handlesFilters from '@/composition/handlesFilters'
 import searchesItems from '@/composition/searchesItems'
 import Authenticated from '@/layouts/Authenticated'
@@ -163,7 +166,7 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
 import rollsBackImport from '@/composition/rollsBackImport'
-import importsInvoiceImport from '@/composition/importsInvoiceImport'
+import importFileImport from '@/composition/importFileImport'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -208,7 +211,7 @@ export default defineComponent({
     const showFilters = ref(false)
     const { can } = checksPermissions(props.permissions)
     const { rollBack, rollingBackImport } = rollsBackImport()
-    const { importingInvoiceImport, importImport } = importsInvoiceImport()
+    const { importingImport, importImport } = importFileImport()
 
     return {
       filters,
@@ -220,7 +223,7 @@ export default defineComponent({
       rollingBackImport,
       rollBack,
       can,
-      importingInvoiceImport,
+      importingImport,
       importImport,
     }
   }

@@ -245,8 +245,12 @@ Route::middleware('tenant')->group(function () {
                         Route::get('/download', \App\Http\Controllers\DownloadPaymentImportFileController::class)
                             ->name('download');
 
-        //                Route::post('/start', \App\Http\Controllers\StartInvoiceImport::class)
-        //                    ->name('payments.imports.start');
+                        Route::get('/map', [\App\Http\Controllers\MapPaymentImportController::class, 'index'])
+                            ->name('map');
+                        Route::put('/map', [\App\Http\Controllers\MapPaymentImportController::class, 'update']);
+
+                        Route::post('/start', \App\Http\Controllers\StartPaymentImport::class)
+                            ->name('start');
         //
         //                Route::post('/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
         //                    ->name('payments.imports.rollback');
@@ -254,10 +258,6 @@ Route::middleware('tenant')->group(function () {
 
                 Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)
                     ->names('payments.imports');
-
-                Route::get('/payments/imports/{import}/map', [\App\Http\Controllers\MapPaymentImportController::class, 'index'])
-                    ->name('payments.imports.map');
-                Route::put('/payments/imports/{import}/map', [\App\Http\Controllers\MapPaymentImportController::class, 'update']);
 
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 

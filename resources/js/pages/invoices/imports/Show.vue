@@ -17,7 +17,7 @@
             <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create') && !isPreview" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
               {{ __('Preview import') }}
             </SonarMenuItem>
-            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
+            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingImport = invoiceImport">
               {{ __('Import') }}
             </SonarMenuItem>
             <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
@@ -48,14 +48,14 @@
     <Alert v-if="invoiceImport.imported_at_formatted" class="mt-8">
       {{ __('Invoice imported on :date', { date: invoiceImport.imported_at_formatted }) }}
     </Alert>
-    <Alert v-if="invoiceImport.mapping_valid && invoiceImport.imported_records === 0" class="mt-8">
-      {{ __('Mapping is ready for import.') }} <button @click.prevent="importingInvoiceImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>.
+    <Alert v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at_formatted && invoiceImport.imported_records === 0" class="mt-8">
+      {{ __('Mapping is ready for import.') }} <button @click.prevent="importingImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>.
     </Alert>
     <Alert v-if="!invoiceImport.mapping_valid" level="warning" class="mt-8">
       {{ __('Mapping is incomplete.') }} <inertia-link :href="$route('invoices.imports.map', invoiceImport)" class="underline">{{ __('Finish mapping') }}</inertia-link>.
     </Alert>
     <Alert v-if="isPreview" class="mt-8">
-      {{ __('This is a preview of what would be imported.') }}  <button @click.prevent="importingInvoiceImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>
+      {{ __('This is a preview of what would be imported.') }}  <button @click.prevent="importingImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>
     </Alert>
 
     <Table v-if="results.length > 0" class="mt-8">
@@ -121,9 +121,9 @@
     @confirmed="rollBack"
   />
   <ConfirmationModal
-    v-if="importingInvoiceImport.id"
-    @close="importingInvoiceImport = {}"
-    @confirmed="importImport"
+    v-if="importingImport.id"
+    @close="importingImport = {}"
+    @confirmed="importImport(`/invoices/imports/${importingImport.id}/start`)"
   >
     <template v-slot:content>
       {{ __('This will begin importing invoices.') }}
@@ -152,7 +152,7 @@ import SonarMenuItems from '@/components/dropdown/SonarMenuItems'
 import rollsBackImport from '@/composition/rollsBackImport'
 import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import checksPermissions from '@/composition/checksPermissions'
-import importsInvoiceImport from '@/composition/importsInvoiceImport'
+import importsInvoiceImport from '@/composition/importFileImport'
 import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
@@ -193,7 +193,7 @@ export default defineComponent({
 
   setup (props) {
     const { rollingBackImport, rollBack } = rollsBackImport()
-    const { importImport, importingInvoiceImport } = importsInvoiceImport()
+    const { importImport, importingImport } = importsInvoiceImport()
     const { can } = checksPermissions(props.permissions)
     const { displayCurrency } = displaysCurrency()
 
@@ -201,7 +201,7 @@ export default defineComponent({
       rollingBackImport,
       rollBack,
       can,
-      importingInvoiceImport,
+      importingImport,
       importImport,
       displayCurrency,
     }

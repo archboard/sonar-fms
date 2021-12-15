@@ -101,7 +101,7 @@
                 <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
                   {{ __('Preview import') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingInvoiceImport = invoiceImport">
+                <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingImport = invoiceImport">
                   {{ __('Import') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
@@ -129,9 +129,9 @@
     @confirmed="rollBack"
   />
   <ConfirmationModal
-    v-if="importingInvoiceImport.id"
-    @close="importingInvoiceImport = {}"
-    @confirmed="importImport"
+    v-if="importingImport.id"
+    @close="importingImport = {}"
+    @confirmed="importImport(`/invoices/imports/${importingImport.id}/start`)"
   >
     <template v-slot:content>
       {{ __('This will begin importing invoices.') }}
@@ -163,7 +163,7 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
 import rollsBackImport from '@/composition/rollsBackImport'
-import importsInvoiceImport from '@/composition/importsInvoiceImport'
+import importFileImport from '@/composition/importFileImport'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -210,7 +210,7 @@ export default defineComponent({
     const showFilters = ref(false)
     const { can } = checksPermissions(props.permissions)
     const { rollBack, rollingBackImport } = rollsBackImport()
-    const { importingInvoiceImport, importImport } = importsInvoiceImport()
+    const { importingImport, importImport } = importFileImport()
 
     return {
       filters,
@@ -223,7 +223,7 @@ export default defineComponent({
       rollingBackImport,
       rollBack,
       can,
-      importingInvoiceImport,
+      importingImport,
       importImport,
     }
   }
