@@ -811,6 +811,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $job_batch_id
+ * @property \Illuminate\Support\Carbon|null $rolled_back_at
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $absolute_path
  * @property-read string $file_name
@@ -837,6 +838,7 @@ namespace App\Models{
  * @method static Builder|PaymentImport whereMapping($value)
  * @method static Builder|PaymentImport whereMappingValid($value)
  * @method static Builder|PaymentImport whereResults($value)
+ * @method static Builder|PaymentImport whereRolledBackAt($value)
  * @method static Builder|PaymentImport whereSchoolId($value)
  * @method static Builder|PaymentImport whereStartingRow($value)
  * @method static Builder|PaymentImport whereTenantId($value)
@@ -1367,11 +1369,11 @@ namespace App\Models{
  * @property-read Factory $date_factory
  * @property-read string $full_name
  * @property-read string|null $id
- * @property-read mixed $invoice_selection
+ * @property-read Collection $invoice_selection
  * @property-read bool $is_school_admin
  * @property-read array $school_permissions
  * @property-read Collection $selected_students
- * @property-read mixed $student_selection
+ * @property-read Collection $student_selection
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceImport[] $invoiceImports
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceSelection[] $invoiceSelections
