@@ -682,4 +682,56 @@ class PaymentImportTest extends TestCase
                 $batch->jobs->count() === 4;
         });
     }
+
+    /**
+     * This test does not fake the queue, so the SetInvoiceRemainingBalance
+     * job gets fired for both the invoice and parent invoice
+     */
+    public function test_can_import_payment_to_child_invoice()
+    {
+        $this->assignPermission('create', InvoicePayment::class);
+        $import = $this->createImport('single_payment.csv', attributes: [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        $import->mapping = [
+            'invoice_column' => 'invoice number',
+            'invoice_payment_term' => $this->makeMapField(),
+            'payment_method' => $this->makeMapField(),
+            'transaction_details' => $this->makeMapField('transaction details'),
+            'paid_at' => $this->makeMapField('date'),
+            'amount' => $this->makeMapField('amount'),
+            'made_by' => $this->makeMapField(),
+            'notes' => $this->makeMapField(),
+        ];
+        $import->save();
+
+        $parent = $this->createCombinedInvoice();
+        /** @var Invoice $invoice */
+        $invoice = $parent->children->random();
+        $row = $import->getImportContents()->first();
+
+        // Update the invoice number to match the file's
+        $invoice->update(['invoice_number' => $row->get('invoice number')]);
+
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+
+        $import->refresh();
+        $parent->refresh();
+        $invoice->refresh();
+        $amount = NumberUtility::sanitizeNumber($row->get('amount')) * 100;
+
+        $this->assertTrue(
+            $invoice->activities->some(fn ($activity) => str_contains($activity->description, 'imported a payment'))
+        );
+        $this->assertTrue(
+            $parent->activities->some(fn ($activity) => str_contains($activity->description, 'imported a payment'))
+        );
+
+        $this->assertEquals($invoice->amount_due - $amount, $invoice->remaining_balance);
+        $this->assertEquals($parent->amount_due - $amount, $parent->remaining_balance);
+        $this->assertEquals(1, $invoice->invoicePayments()->count());
+        $this->assertEquals(0, $parent->invoicePayments()->count());
+    }
 }
