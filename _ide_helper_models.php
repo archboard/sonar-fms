@@ -812,6 +812,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $job_batch_id
  * @property \Illuminate\Support\Carbon|null $rolled_back_at
+ * @property string|null $import_batch_id
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $absolute_path
  * @property-read string $file_name
@@ -832,6 +833,7 @@ namespace App\Models{
  * @method static Builder|PaymentImport whereFilePath($value)
  * @method static Builder|PaymentImport whereHeadingRow($value)
  * @method static Builder|PaymentImport whereId($value)
+ * @method static Builder|PaymentImport whereImportBatchId($value)
  * @method static Builder|PaymentImport whereImportedAt($value)
  * @method static Builder|PaymentImport whereImportedRecords($value)
  * @method static Builder|PaymentImport whereJobBatchId($value)

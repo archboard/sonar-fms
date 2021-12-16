@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Factories\PaymentFromImportFactory;
 use App\Jobs\ProcessPaymentImport;
+use App\Models\Activity;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
@@ -358,6 +359,7 @@ class PaymentImportTest extends TestCase
         $import->refresh();
         $this->assertEquals(4, $this->school->invoicePayments()->count());
         $this->assertNotNull($import->job_batch_id);
+        $this->assertNotNull($import->import_batch_id);
         $invoices = $this->school->invoices()
             ->with('invoicePayments')
             ->get()
@@ -367,6 +369,8 @@ class PaymentImportTest extends TestCase
             return $batch->name === "Payment import {$import->id}" &&
                 $batch->jobs->count() === 4;
         });
+
+        $this->assertTrue(Activity::where('batch_uuid', $import->import_batch_id)->exists());
 
         foreach ($import->getImportContents() as $row) {
             /** @var Invoice $invoice */

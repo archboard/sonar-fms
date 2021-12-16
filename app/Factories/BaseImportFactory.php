@@ -12,4 +12,6 @@ abstract class BaseImportFactory
     protected int $currentRowNumber = 0;
     protected int $failedRecords = 0;
     protected int $importedRecords = 0;
+    protected bool $logActivity = true;
+    public string $batchId;
 }

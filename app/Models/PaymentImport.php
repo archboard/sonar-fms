@@ -91,6 +91,12 @@ class PaymentImport extends Model implements FileImport
 
         $this->invoicePayments()->delete();
 
+        // Delete the activity logs for both invoices
+        // and payments
+        Activity::query()
+            ->where('batch_uuid', $this->import_batch_id)
+            ->delete();
+
         // Run jobs on the invoices to recalculate balances
         Bus::batch(
             $invoices->map(fn ($uuid) => new SetInvoiceRemainingBalance($uuid))
@@ -101,6 +107,20 @@ class PaymentImport extends Model implements FileImport
         ->dispatch();
 
         return $this->reset();
+    }
+
+    public function reset(): static
+    {
+        $this->update([
+            'rolled_back_at' => now(),
+            'imported_at' => null,
+            'failed_records' => 0,
+            'imported_records' => 0,
+            'results' => null,
+            'import_batch_id' => null,
+        ]);
+
+        return $this;
     }
 
     public function importAsModels(User $user): Collection

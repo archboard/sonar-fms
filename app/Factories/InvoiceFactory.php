@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 
 abstract class InvoiceFactory extends BaseImportFactory
 {
-    public string $batchId;
     public ?School $school = null;
     protected Collection $students;
     protected User $user;
@@ -45,7 +44,6 @@ abstract class InvoiceFactory extends BaseImportFactory
     protected string $now;
     protected string $notifyAt;
     protected bool $asDraft = false;
-    protected bool $logActivity = true;
     protected string $activityDescription;
 
     public function __construct()

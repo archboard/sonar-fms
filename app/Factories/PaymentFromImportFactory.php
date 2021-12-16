@@ -33,6 +33,8 @@ class PaymentFromImportFactory extends BaseImportFactory
     protected Collection $paymentMethods;
     protected Collection $users;
     protected Collection $models;
+    protected Collection $activityLogs;
+    protected Collection $invoicesToRecalculate;
     protected array $warnings = [];
 
     public function __construct(protected PaymentImport $import, protected User $user)
@@ -42,8 +44,11 @@ class PaymentFromImportFactory extends BaseImportFactory
         $this->invoicePayments = collect();
         $this->results = collect();
         $this->models = collect();
+        $this->activityLogs = collect();
+        $this->invoicesToRecalculate = collect();
         $this->contents = $this->import->getImportContents();
         $this->now = now()->toDateTimeString();
+        $this->batchId = UuidFactory::make();
         $this->invoiceColumn = $this->getMapField('invoice_column');
         $this->paymentMethods = $this->school->paymentMethods
             ->reduce(function (Collection $methods, PaymentMethod $method) {
@@ -162,6 +167,48 @@ class PaymentFromImportFactory extends BaseImportFactory
             : null;
     }
 
+    protected function queueToRecalculate($invoiceUuid): static
+    {
+        if (!$this->invoicesToRecalculate->contains($invoiceUuid)) {
+            $this->invoicesToRecalculate->push($invoiceUuid);
+        }
+
+        return $this;
+    }
+
+    protected function addLog(array $attributes): static
+    {
+        if (!$this->logActivity) {
+            return $this;
+        }
+
+        $defaultAttributes = [
+            'log_name' => 'default',
+            'causer_type' => 'user',
+            'causer_id' => $this->user->id,
+            'created_at' => $this->now,
+            'updated_at' => $this->now,
+            'batch_uuid' => $this->batchId,
+        ];
+
+        $this->activityLogs->push(array_merge($defaultAttributes, $attributes));
+
+        return $this;
+    }
+
+    protected function addLogForPayment(array $attributes): static
+    {
+        return $this->addLog([
+            // __(':user imported a payment of :amount')
+            'description' => ':user imported a payment of :amount',
+            'subject_type' => 'invoice',
+            'subject_id' => $attributes['invoice_uuid'],
+            'properties' => json_encode([
+                'amount' => displayCurrency($attributes['amount'], $this->school->currency)
+            ]),
+        ]);
+    }
+
     public function build()
     {
         foreach ($this->contents as $row) {
@@ -216,6 +263,22 @@ class PaymentFromImportFactory extends BaseImportFactory
             ];
 
             $this->invoicePayments->push($attributes);
+            $this->queueToRecalculate($invoice->uuid)
+                ->addLogForPayment($attributes);
+
+            if ($invoice->parent_uuid) {
+                $this->queueToRecalculate($invoice->parent_uuid);
+                $this->addLog([
+                    // __(':user imported a payment of :amount made to :invoice_number')
+                    'description' => ':user imported a payment of :amount made to :invoice_number',
+                    'subject_type' => 'invoice',
+                    'subject_id' => $invoice->parent_uuid,
+                    'properties' => json_encode([
+                        'amount' => displayCurrency($attributes['amount'], $this->school->currency),
+                        'invoice_number' => $invoice->invoice_number,
+                    ]),
+                ]);
+            }
 
             // We need to add the child payments for the children
             // after we've already pushed the parent payment details
@@ -230,9 +293,9 @@ class PaymentFromImportFactory extends BaseImportFactory
                 ];
 
                 foreach ($childPayments as $childAttributes) {
-                    $this->invoicePayments->push(
-                        array_merge($attributes, Arr::only($childAttributes, $overwriteAttributes))
-                    );
+                    $child = array_merge($attributes, Arr::only($childAttributes, $overwriteAttributes));
+                    $this->invoicePayments->push($child);
+                    $this->addLogForPayment($child);
                 }
             }
 
@@ -295,7 +358,12 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'rolled_back_at' => null,
                 'imported_records' => $this->importedRecords,
                 'failed_records' => $this->failedRecords,
+                'import_batch_id' => $this->batchId,
             ]);
+
+            // Add the activity logs
+            DB::table(config('activitylog.table_name'))
+                ->insert($this->activityLogs->toArray());
         });
 
         return $this->invoicePayments->pluck('uuid');
