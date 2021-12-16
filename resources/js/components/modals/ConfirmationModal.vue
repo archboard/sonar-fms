@@ -29,7 +29,7 @@
 
     <template v-slot:actions>
       <div class="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense w-full">
-        <Button type="button" @click.prevent="confirmed" class="w-full" color="yellow">
+        <Button type="button" @click.prevent="confirmed" class="w-full" color="yellow" ref="action">
           <slot name="actionText">
             {{ __('Do it!') }}
           </slot>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, nextTick, onMounted, ref } from 'vue'
 import Modal from '@/components/Modal'
 import Button from '@/components/Button'
 import { ExclamationIcon } from '@heroicons/vue/outline'
@@ -57,14 +57,22 @@ export default defineComponent({
   emits: ['close', 'confirmed'],
 
   setup (props, { emit }) {
+    const action = ref(null)
     const modal = ref(null)
     const confirmed = () => {
       emit('confirmed')
       modal.value.close()
     }
 
+    onMounted(() => {
+      nextTick(() => {
+        action.value?.$el?.focus()
+      })
+    })
+
     return {
       modal,
+      action,
       confirmed,
     }
   }

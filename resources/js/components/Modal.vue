@@ -22,7 +22,7 @@
         </div>
         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 flex flex-col space-y-2 sm:space-y-0 sm:flex-row-reverse rounded-b-2xl">
           <slot name="actions">
-            <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm">
+            <Button @click.prevent="performAction" type="button" :color="actionColor" class="sm:ml-2 text-sm" ref="action">
               {{ computedActionText }}
             </Button>
             <Button @click.prevent="close" type="button" color="white" class="text-sm">
@@ -111,6 +111,10 @@ export default defineComponent({
 
     this.$nextTick(() => {
       disableBodyScroll(this.$refs.modal)
+
+      if (this.$refs.action) {
+        this.$refs.action.focus()
+      }
     })
   },
 
