@@ -108,7 +108,7 @@
               'bg-red-100 dark:bg-red-600': !result.successful,
             }"
           >
-            <Link v-if="!isPreview && result.successful" :href="$route('invoices.show', result.result)">{{ __('View invoice') }}</Link>
+            <Link v-if="!isPreview && result.successful" :href="$route('invoices.show', result.invoice_uuid)">{{ __('View invoice') }}</Link>
             <span v-else-if="isPreview && result.successful" class="font-medium">
               {{ displayCurrency(result.remaining_balance) }}
             </span>

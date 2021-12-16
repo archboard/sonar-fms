@@ -128,6 +128,7 @@ class PaymentFromImportFactory extends BaseImportFactory
             'successful' => $successful,
             'result' => $result,
             'invoice' => $invoice?->invoice_number,
+            'invoice_uuid' => $invoice?->uuid,
             'remaining_balance' => $invoice?->remaining_balance,
             'warnings' => $this->warnings,
         ]);
