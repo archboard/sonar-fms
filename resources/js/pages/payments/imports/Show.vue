@@ -121,12 +121,12 @@
   <ConfirmationModal
     v-if="rollingBackImport.id"
     @close="rollingBackImport = {}"
-    @confirmed="rollBack"
+    @confirmed="rollBack(`/payments/imports/${rollingBackImport.id}/reverse`)"
   />
   <ConfirmationModal
     v-if="importingImport.id"
     @close="importingImport = {}"
-    @confirmed="importImport(`/invoices/imports/${importingImport.id}/start`)"
+    @confirmed="importImport(`/payments/imports/${importingImport.id}/start`)"
   >
     <template v-slot:content>
       {{ __('This will begin importing payments.') }}

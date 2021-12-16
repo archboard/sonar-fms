@@ -4,17 +4,20 @@ namespace App\Models;
 
 use App\Concerns\FileImport;
 use App\Factories\PaymentFromImportFactory;
+use App\Jobs\SetInvoiceRemainingBalance;
 use App\Rules\FileImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
 use App\Traits\ImportsFiles;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -84,11 +87,18 @@ class PaymentImport extends Model implements FileImport
 
     public function rollBack(): static
     {
-        $invoices = $this->invoices()->pluck('uuid');
+        $invoices = $this->invoices()->pluck('invoices.uuid');
 
         $this->invoicePayments()->delete();
 
         // Run jobs on the invoices to recalculate balances
+        Bus::batch(
+            $invoices->map(fn ($uuid) => new SetInvoiceRemainingBalance($uuid))
+        )->catch(function (Batch $batch, \Throwable $e) {
+            //
+        })
+        ->name("Roll back {$this->id}")
+        ->dispatch();
 
         return $this->reset();
     }

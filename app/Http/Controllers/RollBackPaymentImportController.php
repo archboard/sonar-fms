@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InvoiceImport;
+use App\Models\PaymentImport;
 use Illuminate\Http\Request;
 
-class RollBackInvoiceImportController extends Controller
+class RollBackPaymentImportController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -13,7 +13,7 @@ class RollBackInvoiceImportController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function __invoke(Request $request, InvoiceImport $import)
+    public function __invoke(Request $request, PaymentImport $import)
     {
         $this->authorize('roll back', $import);
 
@@ -21,6 +21,6 @@ class RollBackInvoiceImportController extends Controller
 
         session()->flash('success', __('Import rolled back successfully.'));
 
-        return redirect()->route('invoices.imports.show', $import);
+        return redirect()->route('payments.imports.show', $import);
     }
 }

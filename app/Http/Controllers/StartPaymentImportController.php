@@ -7,7 +7,7 @@ use App\Models\InvoicePayment;
 use App\Models\PaymentImport;
 use Illuminate\Http\Request;
 
-class StartPaymentImport extends Controller
+class StartPaymentImportController extends Controller
 {
     /**
      * Handle the incoming request.

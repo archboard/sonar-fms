@@ -623,4 +623,59 @@ class PaymentImportTest extends TestCase
         $this->get(route('payments.imports.download', $import))
             ->assertDownload($import->file_name);
     }
+
+    public function test_can_roll_back_import()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('create', InvoicePayment::class);
+        $this->assignPermission('roll back', PaymentImport::class);
+        $import = $this->createImport(attributes: [
+            'heading_row' => 1,
+            'starting_row' => 2,
+        ]);
+        Bus::fake();
+
+        $import->mapping = [
+            'invoice_column' => 'invoice number',
+            'invoice_payment_term' => $this->makeMapField(),
+            'payment_method' => $this->makeMapField(),
+            'transaction_details' => $this->makeMapField('transaction details'),
+            'paid_at' => $this->makeMapField('date'),
+            'amount' => $this->makeMapField('amount'),
+            'made_by' => $this->makeMapField('paid by'),
+            'notes' => $this->makeMapField('notes'),
+        ];
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->save();
+
+        $this->addPaymentInvoices($import, 'invoice number');
+
+        // Since we're faking the bus, we need to run the job manually
+        (new ProcessPaymentImport($import, $this->user))
+            ->handle();
+
+        $import->refresh();
+        $this->assertEquals(4, $this->school->invoicePayments()->count());
+        $this->assertNotNull($import->job_batch_id);
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
+            return $batch->name === "Payment import {$import->id}" &&
+                $batch->jobs->count() === 4;
+        });
+
+        $this->post(route('payments.imports.rollback', $import))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $import->refresh();
+        $this->assertEquals(0, $import->imported_records);
+        $this->assertNotNull($import->rolled_back_at);
+        $this->assertNull($import->imported_at);
+        $this->assertEquals(0, $this->school->invoicePayments()->count());
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($import) {
+            return $batch->name === "Roll back {$import->id}" &&
+                $batch->jobs->count() === 4;
+        });
+    }
 }
