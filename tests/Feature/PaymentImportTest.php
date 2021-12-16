@@ -330,21 +330,28 @@ class PaymentImportTest extends TestCase
         $bank = PaymentMethod::factory()->create(['driver' => 'bank_transfer']);
         Bus::fake();
 
-        $import->update([
-            'mapping' => [
-                'invoice_column' => 'invoice number',
-                'invoice_payment_term' => $this->makeMapField(),
-                'payment_method' => $this->makeMapField('payment method'),
-                'transaction_details' => $this->makeMapField('transaction details'),
-                'paid_at' => $this->makeMapField('date'),
-                'amount' => $this->makeMapField('amount'),
-                'made_by' => $this->makeMapField('paid by'),
-                'notes' => $this->makeMapField('notes'),
-            ],
-        ]);
+        $import->mapping = [
+            'invoice_column' => 'invoice number',
+            'invoice_payment_term' => $this->makeMapField(),
+            'payment_method' => $this->makeMapField('payment method'),
+            'transaction_details' => $this->makeMapField('transaction details'),
+            'paid_at' => $this->makeMapField('date'),
+            'amount' => $this->makeMapField('amount'),
+            'made_by' => $this->makeMapField('paid by'),
+            'notes' => $this->makeMapField('notes'),
+        ];
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->save();
 
         $this->addPaymentInvoices($import, 'invoice number');
 
+        $this->post(route('payments.imports.start', $import))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        Bus::assertDispatched(ProcessPaymentImport::class);
+
+        // Since we're faking the bus, we need to run the job manually
         (new ProcessPaymentImport($import, $this->user))
             ->handle();
 
