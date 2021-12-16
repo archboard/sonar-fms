@@ -208,6 +208,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'notes' => $this->getMapValue('notes', 'notes'),
                 'transaction_details' => $this->getMapValue('transaction_details', 'transaction details'),
                 'made_by' => $this->getMapValue('made_by', 'user email'),
+                'payment_import_id' => $this->import->id,
                 'recorded_by' => $this->user->uuid,
                 'created_at' => $this->now,
                 'updated_at' => $this->now,

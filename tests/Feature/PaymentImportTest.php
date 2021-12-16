@@ -378,6 +378,7 @@ class PaymentImportTest extends TestCase
 
             $amount = NumberUtility::sanitizeNumber($row->get('amount'));
             $this->assertEquals($amount * 100, $payment->amount);
+            $this->assertEquals($import->id, $payment->payment_import_id);
 
             // All the dates for this import are the same
             $this->assertEquals('2021-12-01', $payment->paid_at->toDateString());
