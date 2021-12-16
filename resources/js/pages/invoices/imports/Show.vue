@@ -118,7 +118,7 @@
   <ConfirmationModal
     v-if="rollingBackImport.id"
     @close="rollingBackImport = {}"
-    @confirmed="rollBack"
+    @confirmed="rollBack(`/invoices/imports/${rollingBackImport.id}/reverse`)"
   />
   <ConfirmationModal
     v-if="importingImport.id"
