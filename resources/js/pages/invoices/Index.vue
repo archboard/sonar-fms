@@ -155,7 +155,6 @@
   <ConvertInvoiceModal
     v-if="convertInvoice.uuid"
     @close="convertInvoice = {}"
-    :invoice="convertInvoice"
     :endpoint="`/invoices/${convertInvoice.uuid}/convert`"
   />
   <InvoiceTableFilterModal
