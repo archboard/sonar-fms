@@ -44,7 +44,11 @@ class InvoicePayment extends Model
             $builder->whereHas('invoice', function (Builder $builder) use ($search) {
                 $builder->search($search);
             });
-        });
+        })->when($filters['start_amount'] ?? null, function (Builder $builder, $amount) {
+            $builder->where('invoice_payments.amount', '>=', $amount);
+        })->when($filters['end_amount'] ?? null, function (Builder $builder, $amount) {
+            $builder->where('invoice_payments.amount', '<=', $amount);
+        })->whereNull('invoice_payments.parent_uuid');
 
         $builder->join('invoices', 'invoice_payments.invoice_uuid', '=', 'invoices.uuid');
         $orderDir = $filters['orderDir'] ?? 'desc';
