@@ -48,7 +48,7 @@
     <Alert v-if="invoiceImport.imported_at_formatted" class="mt-8">
       {{ __('Invoice imported on :date', { date: invoiceImport.imported_at_formatted }) }}
     </Alert>
-    <Alert v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at_formatted && invoiceImport.imported_records === 0" class="mt-8">
+    <Alert v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at_formatted && invoiceImport.imported_records === 0" class="mt-8" level="success">
       {{ __('Mapping is ready for import.') }} <button @click.prevent="importingImport = invoiceImport" class="font-medium hover:underline focus:outline-none">{{ __('Start import') }}</button>.
     </Alert>
     <Alert v-if="!invoiceImport.mapping_valid" level="warning" class="mt-8">
