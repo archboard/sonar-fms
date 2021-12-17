@@ -38,6 +38,12 @@ class InvoicePayment extends Model
 
     public function scopeFilter(Builder $builder, array $filters)
     {
+        $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
+            $builder->whereHas('invoice', function (Builder $builder) use ($search) {
+                $builder->search($search);
+            });
+        });
+
         $orderDir = $filters['orderDir'] ?? 'desc';
         $builder->orderBy($filters['orderBy'] ?? 'paid_at', $orderDir)
             ->orderBy('created_at', $orderDir);

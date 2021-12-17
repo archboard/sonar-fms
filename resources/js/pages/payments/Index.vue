@@ -35,11 +35,6 @@
 
     <div class="space-x-2 pt-1 flex flex-wrap">
       <FadeInGroup>
-        <DismissibleBadge v-if="filters.status !== 'enrolled'" @dismiss="filters.status = 'enrolled'">
-          <span v-if="filters.status === 'withdrawn'">{{ __('Not enrolled') }}</span>
-          <span v-else>{{ __('Enrolled and not enrolled') }}</span>
-        </DismissibleBadge>
-
         <DismissibleBadge
           v-for="(grade, index) in filters.grades"
           :key="grade"
@@ -259,10 +254,9 @@ export default defineComponent({
         s: '',
         perPage: 25,
         page: 1,
-        orderBy: 'last_name',
+        orderBy: 'paid_at',
         orderDir: 'asc',
         grades: [],
-        status: 'enrolled',
       },
       '/payments',
       {}
