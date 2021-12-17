@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
+use Tests\Traits\CreatesPaymentImports;
 use Tests\Traits\GetsUploadedFiles;
 use Tests\Traits\MapsFields;
 
@@ -29,50 +30,9 @@ class PaymentImportTest extends TestCase
     use MapsFields;
     use GetsUploadedFiles;
     use CreatesInvoice;
+    use CreatesPaymentImports;
 
     protected bool $signIn = true;
-
-    protected function createImport(string $file = 'small_payments.xlsx', array $attributes = []): PaymentImport
-    {
-        $originalPath = (new PaymentImport)
-            ->storeFile($this->getUploadedFile($file), $this->school);
-        $defaults = [
-            'tenant_id' => $this->tenant->id,
-            'user_uuid' => $this->user->id,
-            'school_id' => $this->school->id,
-            'file_path' => $originalPath,
-        ];
-
-        return PaymentImport::create(array_merge($defaults, $attributes));
-    }
-
-    protected function addPaymentInvoices(PaymentImport $import, string $invoiceColumn, bool $allowCombined = false)
-    {
-        foreach ($import->getImportContents() as $row) {
-            if ($invoiceNumber = $row->get($invoiceColumn)) {
-                $function = $this->faker->boolean() && $allowCombined
-                    ? 'createCombinedInvoice'
-                    : 'createInvoice';
-
-                /** @var Invoice $invoice */
-                $invoice = $this->$function();
-
-                foreach ($invoice->children as $child) {
-                    $child->invoiceScholarships()->delete();
-                    $child->unsetRelations();
-                    $child->setCalculatedAttributes(true);
-                }
-
-                // No scholarship funny business
-                $invoice->invoiceScholarships()->delete();
-                $invoice->unsetRelations();
-
-                $invoice->fill(['invoice_number' => strtoupper($invoiceNumber)])
-                    ->setCalculatedAttributes()
-                    ->save();
-            }
-        }
-    }
 
     public function test_cant_view_imports_page_without_permission()
     {
