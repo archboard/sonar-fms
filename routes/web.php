@@ -254,6 +254,9 @@ Route::middleware('tenant')->group(function () {
 
                         Route::post('/reverse', \App\Http\Controllers\RollBackPaymentImportController::class)
                             ->name('rollback');
+
+                        Route::post('/template', \App\Http\Controllers\ConvertPaymentImportMappingToTemplateController::class)
+                            ->name('template');
                     });
 
                 Route::resource('/payments/imports', \App\Http\Controllers\PaymentImportController::class)

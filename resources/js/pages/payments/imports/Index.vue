@@ -99,6 +99,9 @@
                 <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
                   {{ __('Update mapping') }}
                 </SonarMenuItem>
+                <SonarMenuItem v-if="can('create')" @click.prevent="convertingImport = paymentImport">
+                  {{ __('Save mapping as template') }}
+                </SonarMenuItem>
               </div>
               <div class="p-1" v-if="paymentImport.imported_at || paymentImport.mapping_valid">
                 <SonarMenuItem v-if="paymentImport.mapping_valid && !paymentImport.imported_at && can('create')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/preview`">
@@ -140,6 +143,11 @@
       {{ __('This will begin importing payments.') }}
     </template>
   </ConfirmationModal>
+  <ConvertImportMappingToTemplateModal
+    v-if="convertingImport.id"
+    @close="convertingImport = {}"
+    :endpoint="`/payments/imports/${convertingImport.id}/template`"
+  />
 </template>
 
 <script>
@@ -167,10 +175,12 @@ import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
 import rollsBackImport from '@/composition/rollsBackImport'
 import importFileImport from '@/composition/importFileImport'
+import ConvertImportMappingToTemplateModal from '@/components/modals/ConvertImportMappingToTemplateModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertImportMappingToTemplateModal,
     ConfirmationModal,
     SonarMenuItem,
     VerticalDotMenu,
@@ -212,6 +222,7 @@ export default defineComponent({
     const { can } = checksPermissions(props.permissions)
     const { rollBack, rollingBackImport } = rollsBackImport()
     const { importingImport, importImport } = importFileImport()
+    const convertingImport = ref({})
 
     return {
       filters,
@@ -225,6 +236,7 @@ export default defineComponent({
       can,
       importingImport,
       importImport,
+      convertingImport,
     }
   }
 })
