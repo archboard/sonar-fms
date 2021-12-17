@@ -70,6 +70,9 @@ export default defineComponent({
     size: {
       type: String,
       default: 'lg'
+    },
+    initialFocus: {
+      type: Object,
     }
   },
 
@@ -112,8 +115,10 @@ export default defineComponent({
     this.$nextTick(() => {
       disableBodyScroll(this.$refs.modal)
 
-      if (this.$refs.action) {
-        this.$refs.action.focus()
+      if (this.initialFocus) {
+        this.initialFocus?.$el.focus()
+      } else if (this.$refs.action) {
+        this.$refs.action.$el.focus()
       }
     })
   },
