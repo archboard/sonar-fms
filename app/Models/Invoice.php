@@ -224,7 +224,7 @@ class Invoice extends Model implements Searchable
     public function scopeSearch(Builder $builder, string $search)
     {
         $builder->where(function (Builder $builder) use ($search) {
-            $builder->where('id', 'ilike', "{$search}%")
+            $builder->where('invoices.uuid', 'ilike', "{$search}%")
                 ->orWhere('title', 'ilike', "%{$search}%")
                 ->orWhere('invoice_number', 'ilike', "%{$search}%")
                 ->orWhereHas('student', function (Builder $builder) use ($search) {
