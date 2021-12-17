@@ -145,17 +145,7 @@ class Invoice extends Model implements Searchable
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
-            $builder->where(function (Builder $builder) use ($search) {
-                $builder->where('id', 'ilike', "{$search}%")
-                    ->orWhere('title', 'ilike', "%{$search}%")
-                    ->orWhere('invoice_number', 'ilike', "%{$search}%")
-                    ->orWhereHas('student', function (Builder $builder) use ($search) {
-                        $builder->filter(['s' => $search]);
-                    })
-                    ->orWhereHas('students', function (Builder $builder) use ($search) {
-                        $builder->filter(['s' => $search]);
-                    });
-            });
+            $builder->search($search);
         })->when($filters['batch_id'] ?? null, function (Builder $builder, $batchId) {
             $builder->where('batch_id', $batchId);
         })->when($filters['ids'] ?? null, function (Builder $builder, $ids) {
@@ -229,6 +219,21 @@ class Invoice extends Model implements Searchable
         if ($orderBy !== 'title') {
             $builder->orderBy('invoices.title');
         }
+    }
+
+    public function scopeSearch(Builder $builder, string $search)
+    {
+        $builder->where(function (Builder $builder) use ($search) {
+            $builder->where('id', 'ilike', "{$search}%")
+                ->orWhere('title', 'ilike', "%{$search}%")
+                ->orWhere('invoice_number', 'ilike', "%{$search}%")
+                ->orWhereHas('student', function (Builder $builder) use ($search) {
+                    $builder->search($search);
+                })
+                ->orWhereHas('students', function (Builder $builder) use ($search) {
+                    $builder->search($search);
+                });
+        });
     }
 
     public function scopeIsNotVoid(Builder $builder)
