@@ -4,6 +4,7 @@
     @close="$emit('close')"
     :headline="__('Templates')"
     :action-loading="templateForm.processing"
+    :initial-focus="input"
     ref="modal"
   >
     <ul class="space-y-2">
@@ -36,7 +37,7 @@
       <Fieldset>
         <InputWrap :error="templateForm.errors.name">
           <Label for="new-template-name" :required="true">{{ __('Name') }}</Label>
-          <Input v-model="templateForm.name" :placeholder="__('My template name')" id="new-template-name" />
+          <Input v-model="templateForm.name" :placeholder="__('My template name')" id="new-template-name" ref="input" />
         </InputWrap>
       </Fieldset>
     </form>
@@ -81,6 +82,7 @@ export default defineComponent({
 
   setup (props, { emit }) {
     const modal = ref()
+    const input = ref()
     const templateForm = useForm({
       id: null,
       name: '',
@@ -121,6 +123,7 @@ export default defineComponent({
       promptDelete,
       deleteTemplate,
       modal,
+      input,
     }
   }
 })
