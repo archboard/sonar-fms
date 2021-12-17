@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button v-if="can('create')" component="inertia-link" href="/payments/imports/create">
+      <Button v-if="can('create')" component="inertia-link" href="/payments/imports/create" size="sm">
         {{ __('New import') }}
       </Button>
     </template>
