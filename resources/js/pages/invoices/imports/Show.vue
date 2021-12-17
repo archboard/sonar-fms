@@ -12,6 +12,9 @@
             <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
               {{ __('Update mapping') }}
             </SonarMenuItem>
+            <SonarMenuItem v-if="can('create')" @click.prevent="convert = true">
+              {{ __('Save mapping as template') }}
+            </SonarMenuItem>
           </div>
           <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
             <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create') && !isPreview" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
@@ -129,10 +132,15 @@
       {{ __('This will begin importing invoices.') }}
     </template>
   </ConfirmationModal>
+  <ConvertImportMappingToTemplateModal
+    v-if="convert"
+    @close="convert = false"
+    :endpoint="`/invoices/imports/${invoiceImport.id}/template`"
+  />
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import PageProps from '@/mixins/PageProps'
 import Dropdown from '@/components/forms/Dropdown'
@@ -154,10 +162,12 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import checksPermissions from '@/composition/checksPermissions'
 import importsInvoiceImport from '@/composition/importFileImport'
 import displaysCurrency from '@/composition/displaysCurrency'
+import ConvertImportMappingToTemplateModal from '@/components/modals/ConvertImportMappingToTemplateModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertImportMappingToTemplateModal,
     ConfirmationModal,
     SonarMenuItems,
     ScaleIn,
@@ -196,6 +206,7 @@ export default defineComponent({
     const { importImport, importingImport } = importsInvoiceImport()
     const { can } = checksPermissions(props.permissions)
     const { displayCurrency } = displaysCurrency()
+    const convert = ref(false)
 
     return {
       rollingBackImport,
@@ -204,6 +215,7 @@ export default defineComponent({
       importingImport,
       importImport,
       displayCurrency,
+      convert,
     }
   },
 })

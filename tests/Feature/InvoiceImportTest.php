@@ -14,6 +14,7 @@ use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\InvoiceTaxItem;
+use App\Models\InvoiceTemplate;
 use App\Models\Scholarship;
 use App\Models\Student;
 use App\Models\Term;
@@ -121,6 +122,34 @@ class InvoiceImportTest extends TestCase
                 ->where('endpoint', route('invoices.imports.update', $import))
                 ->component('invoices/imports/Create')
             );
+    }
+
+    public function test_can_save_mapping_as_template()
+    {
+        $this->assignPermission('create', InvoiceImport::class);
+        $import = InvoiceImport::create([
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => '/tmp/file.csv',
+            'mapping' => [
+                'key1' => 'value',
+                'key2' => 'value',
+                'key3' => 'value',
+            ],
+        ]);
+
+        $this->post(route('invoices.imports.template', $import), ['name' => 'import template'])
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('invoice_templates', [
+            'user_uuid' => $this->user->uuid,
+            'school_id' => $this->school->id,
+            'for_import' => true,
+            'name' => 'import template',
+        ]);
+        $template = InvoiceTemplate::first();
+        $this->assertEquals($import->mapping, $template->template);
     }
 
     public function test_can_update_existing_import_with_different_file()

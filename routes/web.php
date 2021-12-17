@@ -141,18 +141,25 @@ Route::middleware('tenant')->group(function () {
                 Route::name('invoices')
                     ->resource('/invoices/imports', \App\Http\Controllers\InvoiceImportController::class);
 
-                Route::get('invoices/imports/{import}/map', [\App\Http\Controllers\MapInvoiceImportController::class, 'index'])
-                    ->name('invoices.imports.map');
-                Route::put('invoices/imports/{import}/map', [\App\Http\Controllers\MapInvoiceImportController::class, 'update']);
+                Route::prefix('/invoices/imports/{import}')
+                    ->name('invoices.imports.')
+                    ->group(function () {
+                        Route::get('/map', [\App\Http\Controllers\MapInvoiceImportController::class, 'index'])
+                            ->name('map');
+                        Route::put('/map', [\App\Http\Controllers\MapInvoiceImportController::class, 'update']);
 
-                Route::get('invoices/imports/{import}/preview', \App\Http\Controllers\PreviewInvoiceImportController::class)
-                    ->name('invoices.imports.preview');
+                        Route::get('/preview', \App\Http\Controllers\PreviewInvoiceImportController::class)
+                            ->name('preview');
 
-                Route::post('invoices/imports/{import}/start', \App\Http\Controllers\StartInvoiceImport::class)
-                    ->name('invoices.imports.start');
+                        Route::post('/start', \App\Http\Controllers\StartInvoiceImport::class)
+                            ->name('start');
 
-                Route::post('invoices/imports/{import}/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
-                    ->name('invoices.imports.rollback');
+                        Route::post('/reverse', \App\Http\Controllers\RollBackInvoiceImportController::class)
+                            ->name('rollback');
+
+                        Route::post('/template', \App\Http\Controllers\ConvertInvoiceImportMappingToTemplateController::class)
+                            ->name('template');
+                    });
 
                 /**
                  * Invoices

@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button v-if="can('create')" component="inertia-link" :href="$route('invoices.imports.create')">
+      <Button v-if="can('create')" component="inertia-link" :href="$route('invoices.imports.create')" size="sm">
         {{ __('New import') }}
       </Button>
     </template>
@@ -96,6 +96,9 @@
                 <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
                   {{ __('Update mapping') }}
                 </SonarMenuItem>
+                <SonarMenuItem v-if="can('create')" @click.prevent="convertingImport = invoiceImport">
+                  {{ __('Save mapping as template') }}
+                </SonarMenuItem>
               </div>
               <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
                 <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
@@ -137,6 +140,11 @@
       {{ __('This will begin importing invoices.') }}
     </template>
   </ConfirmationModal>
+  <ConvertImportMappingToTemplateModal
+    v-if="convertingImport.id"
+    @close="convertingImport = {}"
+    :endpoint="`/invoices/imports/${convertingImport.id}/template`"
+  />
 </template>
 
 <script>
@@ -164,10 +172,12 @@ import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
 import rollsBackImport from '@/composition/rollsBackImport'
 import importFileImport from '@/composition/importFileImport'
+import ConvertImportMappingToTemplateModal from '@/components/modals/ConvertImportMappingToTemplateModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertImportMappingToTemplateModal,
     ConfirmationModal,
     SonarMenuItem,
     VerticalDotMenu,
@@ -211,6 +221,7 @@ export default defineComponent({
     const { can } = checksPermissions(props.permissions)
     const { rollBack, rollingBackImport } = rollsBackImport()
     const { importingImport, importImport } = importFileImport()
+    const convertingImport = ref({})
 
     return {
       filters,
@@ -225,6 +236,7 @@ export default defineComponent({
       can,
       importingImport,
       importImport,
+      convertingImport,
     }
   }
 })
