@@ -162,7 +162,7 @@
 
     <Pagination :meta="payments.meta" :links="payments.links" />
 
-    <StudentTableFiltersModal
+    <PaymentTableFiltersModal
       v-if="showFilters"
       @close="showFilters = false"
       @apply="applyFilters"
@@ -187,7 +187,6 @@ import Checkbox from '@/components/forms/Checkbox'
 import Pagination from '@/components/tables/Pagination'
 import Input from '@/components/forms/Input'
 import { SearchIcon, SortAscendingIcon, SortDescendingIcon, XCircleIcon, CollectionIcon } from '@heroicons/vue/outline'
-import StudentTableFiltersModal from '@/components/modals/StudentTableFiltersModal'
 import Link from '@/components/Link'
 import checksPermissions from '@/composition/checksPermissions'
 import PageProps from '@/mixins/PageProps'
@@ -203,10 +202,12 @@ import ClearFilterButton from '@/components/ClearFilterButton'
 import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import Dropdown from '@/components/forms/Dropdown'
 import Button from '@/components/Button'
+import PaymentTableFiltersModal from '@/components/modals/PaymentTableFiltersModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    PaymentTableFiltersModal,
     Button,
     Dropdown,
     InvoiceStatusBadge,
@@ -219,7 +220,6 @@ export default defineComponent({
     SonarMenuItem,
     VerticalDotMenu,
     XCircleIcon,
-    StudentTableFiltersModal,
     SearchIcon,
     Input,
     SortDescendingIcon,
@@ -256,6 +256,8 @@ export default defineComponent({
         page: 1,
         orderBy: 'paid_at',
         orderDir: 'asc',
+        start_amount: null,
+        end_amount: null,
         grades: [],
       },
       '/payments',
