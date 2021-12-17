@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template #actions>
-      <Button size="sm" @click.prevent="showTemplates = true">
+      <Button size="sm" @click.prevent="showTemplates = true" color="white">
         {{ __('View templates') }}
       </Button>
       <Button component="inertia-link" :href="`/payments/imports/${paymentImport.id}/edit`" size="sm">
