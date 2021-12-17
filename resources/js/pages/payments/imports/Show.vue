@@ -12,6 +12,9 @@
             <SonarMenuItem v-if="can('imports.update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/map`">
               {{ __('Update mapping') }}
             </SonarMenuItem>
+            <SonarMenuItem v-if="can('imports.create')" @click.prevent="convert = true">
+              {{ __('Save mapping as template') }}
+            </SonarMenuItem>
             <SonarMenuItem v-if="can('imports.create')" is="a" :href="`/payments/imports/${paymentImport.id}/download`">
               {{ __('Download file') }}
             </SonarMenuItem>
@@ -132,10 +135,15 @@
       {{ __('This will begin importing payments.') }}
     </template>
   </ConfirmationModal>
+  <ConvertImportMappingToTemplateModal
+    v-if="convert"
+    @close="convert = false"
+    :endpoint="`/payments/imports/${paymentImport.id}/template`"
+  />
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import PageProps from '@/mixins/PageProps'
 import Dropdown from '@/components/forms/Dropdown'
@@ -157,10 +165,12 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal'
 import checksPermissions from '@/composition/checksPermissions'
 import importFileImport from '@/composition/importFileImport'
 import displaysCurrency from '@/composition/displaysCurrency'
+import ConvertImportMappingToTemplateModal from '@/components/modals/ConvertImportMappingToTemplateModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConvertImportMappingToTemplateModal,
     ConfirmationModal,
     SonarMenuItems,
     ScaleIn,
@@ -199,6 +209,7 @@ export default defineComponent({
     const { importImport, importingImport } = importFileImport()
     const { can } = checksPermissions(props.permissions)
     const { displayCurrency } = displaysCurrency()
+    const convert = ref(false)
 
     return {
       rollingBackImport,
@@ -207,6 +218,7 @@ export default defineComponent({
       importingImport,
       importImport,
       displayCurrency,
+      convert,
     }
   },
 })
