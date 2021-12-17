@@ -40,11 +40,7 @@ class Student extends Model implements Searchable
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
-            $builder->where(function (Builder $builder) use ($search) {
-                $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "${search}%")
-                    ->orWhere('student_number', 'ilike', "${search}%");
-            });
+            $builder->search($search);
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->whereIn('grade_level', $grades);
         })->when(isset($filters['ids']), function (Builder $builder) use ($filters) {
@@ -69,6 +65,15 @@ class Student extends Model implements Searchable
 
         // Add the secondary first name order column
         $builder->orderBy('first_name', $filters['orderDir'] ?? 'asc');
+    }
+
+    public function scopeSearch(Builder $builder, string $search)
+    {
+        $builder->where(function (Builder $builder) use ($search) {
+                $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "${search}%")
+                    ->orWhere('student_number', 'ilike', "${search}%");
+            });
     }
 
     public function scopeSisId(Builder $builder, $sisId)
