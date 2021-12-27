@@ -118,23 +118,15 @@ class InvoicePaymentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\InvoicePayment  $invoicePayment
-     * @return \Illuminate\Http\Response
+     * @param Invoice $invoice
+     * @param InvoicePayment $payment
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
-    public function show(Invoice $invoice, InvoicePayment $invoicePayment)
+    public function show(InvoicePayment $payment)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\InvoicePayment  $invoicePayment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Invoice $invoice, InvoicePayment $invoicePayment)
-    {
-        //
+        return $payment
+            ->fullLoad()
+            ->toResource();
     }
 
     /**

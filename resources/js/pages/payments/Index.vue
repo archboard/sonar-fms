@@ -141,6 +141,12 @@
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
+                <SonarMenuItem @click.prevent="currentPayment = payment">
+                  {{ __('Details') }}
+                </SonarMenuItem>
+                <SonarMenuItem is="a" target="_blank" :href="`/payments/${payment.id}/receipt`">
+                  {{ __('Receipt') }}
+                </SonarMenuItem>
                 <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
                   {{ __('View invoice') }}
                 </SonarMenuItem>
@@ -168,6 +174,11 @@
       @apply="applyFilters"
       :filters="filters"
       :school="school"
+    />
+    <PaymentDetailsModal
+      v-if="currentPayment.id"
+      @close="currentPayment = {}"
+      :payment="currentPayment"
     />
   </Authenticated>
 </template>
@@ -203,10 +214,12 @@ import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import Dropdown from '@/components/forms/Dropdown'
 import Button from '@/components/Button'
 import PaymentTableFiltersModal from '@/components/modals/PaymentTableFiltersModal'
+import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    PaymentDetailsModal,
     PaymentTableFiltersModal,
     Button,
     Dropdown,
@@ -247,6 +260,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
+    const currentPayment = ref({})
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters(
@@ -298,6 +312,7 @@ export default defineComponent({
       searchTerm,
       can,
       displayLongGrade,
+      currentPayment,
     }
   }
 })

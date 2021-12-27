@@ -106,4 +106,18 @@ class InvoicePayment extends Model
     {
         return $this->belongsTo(User::class, 'made_by', 'uuid');
     }
+
+    public function fullLoad(): static
+    {
+        return $this->load(
+            'currency',
+            'invoice',
+            'invoice.student',
+            'invoice.students',
+            'parent',
+            'invoicePaymentTerm',
+            'recordedBy',
+            'madeBy'
+        );
+    }
 }
