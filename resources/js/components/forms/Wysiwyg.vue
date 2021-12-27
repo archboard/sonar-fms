@@ -10,9 +10,8 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { component } from '@ckeditor/ckeditor5-vue'
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import InlineEditor from '@/plugins/ckeditor'
 
 export default defineComponent({
