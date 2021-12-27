@@ -58,7 +58,7 @@ export default defineComponent({
   setup (props, { emit }) {
     const { timezone, getDate } = displaysDate()
     const localValue = computed({
-      get: () => getDate(props.modelValue).toDate(),
+      get: () => getDate(props.modelValue)?.toDate() || null,
       set: value => emit('update:modelValue', value)
     })
     const attributes = []
