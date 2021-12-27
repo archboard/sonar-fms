@@ -346,6 +346,7 @@ namespace App\Models{
  * @method static Builder|Invoice paymentMade()
  * @method static Builder|Invoice published()
  * @method static Builder|Invoice query()
+ * @method static Builder|Invoice search(string $search)
  * @method static Builder|Invoice unpaid()
  * @method static Builder|Invoice unpublished()
  * @method static Builder|Invoice whereAmountDue($value)
@@ -1157,6 +1158,7 @@ namespace App\Models{
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
+ * @method static Builder|Student search(string $search)
  * @method static Builder|Student sisId($sisId)
  * @method static Builder|Student whereCreatedAt($value)
  * @method static Builder|Student whereCurrentEntryDate($value)
@@ -1380,6 +1382,8 @@ namespace App\Models{
  * @property-read int|null $invoice_imports_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceSelection[] $invoiceSelections
  * @property-read int|null $invoice_selections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTemplate[] $invoiceTemplates
+ * @property-read int|null $invoice_templates_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoices
  * @property-read int|null $invoices_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
