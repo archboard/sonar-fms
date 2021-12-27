@@ -18,8 +18,11 @@ if (
   (process.env.APP_ENV && process.env.APP_ENV !== 'production') ||
   process.env.NODE_ENV !== 'production'
 ) {
+  const url = new URL(process.env.APP_URL)
+
   config.devServer = {
-    public: `${process.env.APP_URL}:${process.env.APP_PORT}/`,
+    host: url.host,
+    port: process.env.APP_PORT,
     https: {
       key: fs.readFileSync(process.env.APP_SSL_KEY),
       cert: fs.readFileSync(process.env.APP_SSL_CERT),
