@@ -7,6 +7,9 @@ const config = {
     chunkFilename: 'js/[name].js?id=[chunkhash]'
   },
   plugins: [],
+  stats: {
+    children: true
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),

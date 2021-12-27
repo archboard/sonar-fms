@@ -28,7 +28,7 @@ module.exports = {
           800: '#155e75',
           900: '#164e63',
         },
-        gray: colors.trueGray,
+        gray: colors.neutral,
       }
     },
   },

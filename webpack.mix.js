@@ -23,18 +23,21 @@ mix.js('resources/js/app.js', 'public/js')
   .webpackConfig(webpackConfig)
   .postCss('resources/css/app.css', 'public/css', [
     require('postcss-import'),
+    require('tailwindcss/nesting'),
     require('tailwindcss'),
-    require('postcss-nested'),
+    require('autoprefixer'),
   ])
   .postCss('resources/css/pdf.css', 'public/css', [
     require('postcss-import'),
+    require('tailwindcss/nesting'),
     require('tailwindcss')('./tailwind-pdf.config.js'),
-    require('postcss-nested'),
+    require('autoprefixer'),
   ])
   .postCss('resources/css/ckeditor.css', 'public/css', [
     require('postcss-import'),
+    require('tailwindcss/nesting'),
     require('tailwindcss'),
-    require('postcss-nested'),
+    require('autoprefixer'),
   ])
   .babelConfig({
     plugins: ['@babel/plugin-syntax-dynamic-import'],
