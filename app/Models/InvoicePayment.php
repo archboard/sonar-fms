@@ -48,6 +48,10 @@ class InvoicePayment extends Model
             $builder->where('invoice_payments.amount', '>=', $amount);
         })->when($filters['end_amount'] ?? null, function (Builder $builder, $amount) {
             $builder->where('invoice_payments.amount', '<=', $amount);
+        })->when($filters['start_date'] ?? null, function (Builder $builder, $date) {
+            $builder->where('invoice_payments.paid_at', '>=', $date);
+        })->when($filters['end_date'] ?? null, function (Builder $builder, $date) {
+            $builder->where('invoice_payments.paid_at', '<=', $date);
         })->whereNull('invoice_payments.parent_uuid');
 
         $builder->join('invoices', 'invoice_payments.invoice_uuid', '=', 'invoices.uuid');

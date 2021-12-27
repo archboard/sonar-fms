@@ -14,16 +14,31 @@
           <option value="100">100</option>
         </Select>
       </InputWrap>
+
       <InputWrap>
         <Label for="start-amount">{{ __('Minimum amount') }}</Label>
         <CurrencyInput v-model="localFilters.start_amount" id="start-amount" />
         <HelpText>{{ __('Find payments with at least this amount. Leave empty for no minimum amount.') }}</HelpText>
       </InputWrap>
+
       <InputWrap>
         <Label for="end-amount">{{ __('Maximum amount') }}</Label>
         <CurrencyInput v-model="localFilters.end_amount" id="end-amount" />
         <HelpText>{{ __('Find payments with at most this amount. Leave empty for no maximum amount.') }}</HelpText>
       </InputWrap>
+
+      <div class="grid grid-cols-2 gap-4">
+        <InputWrap>
+          <Label for="start-date">{{ __('Payment start date') }}</Label>
+          <DatePicker v-model="localFilters.start_date" id="start-date" mode="date" />
+          <HelpText>{{ __('Find payments made on or after this date.') }}</HelpText>
+        </InputWrap>
+        <InputWrap>
+          <Label for="end-date">{{ __('Payment end date') }}</Label>
+          <DatePicker v-model="localFilters.end_date" id="end-date" mode="date" />
+          <HelpText>{{ __('Find payments made on or before this date.') }}</HelpText>
+        </InputWrap>
+      </div>
     </div>
   </Modal>
 </template>
@@ -38,6 +53,7 @@ import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import CurrencyInput from '@/components/forms/CurrencyInput'
+import DatePicker from '@/components/forms/DatePicker'
 import HelpText from '@/components/HelpText'
 
 export default defineComponent({
@@ -51,7 +67,8 @@ export default defineComponent({
     Select,
     Label,
     InputWrap,
-    Modal
+    Modal,
+    DatePicker,
   },
 
   props: {

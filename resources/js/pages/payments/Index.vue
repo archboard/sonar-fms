@@ -258,6 +258,8 @@ export default defineComponent({
         orderDir: 'asc',
         start_amount: null,
         end_amount: null,
+        start_date: null,
+        end_date: null,
         grades: [],
       },
       '/payments',
