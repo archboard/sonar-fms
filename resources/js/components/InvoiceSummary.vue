@@ -8,28 +8,28 @@
     </HelpText>
   </div>
 
-  <dl class="sm:divide-y sm:divide-gray-200 dark:sm:divide-gray-500">
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+  <DescriptionList>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Title') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         {{ invoice.title }}
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Description') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         {{ invoice.description }}
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Availability date') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <span v-if="invoice.available_at" class="flex items-end">
           <span>{{ displayDate(invoice.available_at, 'MMMM D, YYYY H:mm') }}</span>
           <span class="inline-flex ml-3">
@@ -41,13 +41,13 @@
         <span v-else>
           {{ __('No due date.') }}
         </span>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Due date') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <span v-if="invoice.due_at" class="flex items-end">
           <span>{{ displayDate(invoice.due_at, 'MMMM D, YYYY H:mm') }}</span>
           <span class="inline-flex ml-3">
@@ -59,26 +59,26 @@
         <span v-else>
           {{ __('No due date.') }}
         </span>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Notification') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <span v-if="invoice.notify">
           {{ __('Contacts will be notified in 15 minutes, unless cancelled.') }}
         </span>
         <span v-else>
           {{ __('Manually notify.') }}
         </span>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Line items') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <div
           v-for="item in invoice.items"
           :key="item.id"
@@ -100,13 +100,13 @@
           <div>{{ __('Subtotal' )}}</div>
           <div>{{ displayCurrency(subtotal) }}</div>
         </div>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Scholarships') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <div
           v-for="item in invoice.scholarships"
           :key="item.id"
@@ -128,13 +128,13 @@
           <div>{{ __('Scholarship subtotal' )}}</div>
           <div>{{ displayCurrency(scholarshipSubtotal) }}</div>
         </div>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         {{ __('Payment schedules') }}
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+      </template>
+      <template #dd>
         <div class="space-y-2 divide-y divide-gray-200 dark:divide-gray-500">
           <div
             v-for="(item, index) in invoice.payment_schedules"
@@ -166,17 +166,17 @@
             </div>
           </div>
         </div>
-      </dd>
-    </div>
-    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium">
+      </template>
+    </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
         <strong>{{ __('Invoice total') }}</strong>
-      </dt>
-      <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2 text-right">
+      </template>
+      <template #dd>
         <strong>{{ totalDue }}</strong>
-      </dd>
-    </div>
-  </dl>
+      </template>
+    </DescriptionItem>
+  </DescriptionList>
 </template>
 
 <script>
@@ -194,9 +194,13 @@ import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
 import useSchool from '@/composition/useSchool'
+import DescriptionList from '@/components/tables/DescriptionList'
+import DescriptionItem from '@/components/tables/DescriptionItem'
 
 export default {
   components: {
+    DescriptionItem,
+    DescriptionList,
     CardPadding,
     CardWrapper,
     CardSectionHeader,
