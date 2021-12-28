@@ -344,6 +344,8 @@ Route::middleware('tenant')->group(function () {
                 Route::post('school', [\App\Http\Controllers\Settings\SchoolSettingsController::class, 'update']);
                 Route::get('school', [\App\Http\Controllers\Settings\SchoolSettingsController::class, 'index'])
                     ->name('settings.school');
+
+                Route::post('/school/sync', \App\Http\Controllers\SyncSchoolDataController::class);
             });
 
             Route::middleware('manages_tenancy')->group(function () {

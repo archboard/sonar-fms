@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\School;
+use App\Models\User;
 use App\Notifications\SchoolSyncFinished;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -17,10 +18,8 @@ class SyncSchool implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * @var School
-     */
     public $school;
+    public $user;
     public bool $notify = false;
 
     // Set the timeout to be 10 minutes
@@ -33,10 +32,11 @@ class SyncSchool implements ShouldQueue
      * @param School $school
      * @param bool $notify
      */
-    public function __construct(School $school, bool $notify = false)
+    public function __construct(School $school, bool $notify = false, User $user = null)
     {
         $this->school = $school;
         $this->notify = $notify;
+        $this->user = $user;
     }
 
     /**
@@ -57,11 +57,15 @@ class SyncSchool implements ShouldQueue
         }
 
         if ($this->notify) {
-            collect($this->school->tenant->getSyncNotificationEmails())
-                ->each(function ($email) {
-                    Notification::route('mail', $email)
-                        ->notify(new SchoolSyncFinished($this->school));
-                });
+            if ($this->user) {
+                $this->user->notify(new SchoolSyncFinished($this->school));
+            } else {
+                collect($this->school->tenant->getSyncNotificationEmails())
+                    ->each(function ($email) {
+                        Notification::route('mail', $email)
+                            ->notify(new SchoolSyncFinished($this->school));
+                    });
+            }
         }
     }
 }

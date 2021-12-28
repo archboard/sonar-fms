@@ -48,8 +48,9 @@ class SchoolSyncFinished extends Notification
     {
         return (new MailMessage)
             ->subject('[' . config('app.name') . '] ' . __('School Sync Complete'))
-            ->line(__('This is letting you know that the data for :school has finished syncing from PowerSchool.', [
+            ->line(__('This is letting you know that the data for :school has finished syncing from :sis.', [
                 'school' => $this->school->name,
+                'sis' => $this->school->tenant->sis,
             ]));
     }
 

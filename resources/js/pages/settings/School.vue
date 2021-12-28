@@ -124,7 +124,7 @@
           </HelpText>
         </CardPadding>
         <CardAction>
-          <Button component="inertia-link" :href="$route('layouts.index')">
+          <Button component="inertia-link" href="/layouts">
             {{ __('Manage layouts') }}
           </Button>
         </CardAction>
@@ -140,8 +140,30 @@
           </HelpText>
         </CardPadding>
         <CardAction>
-          <Button component="inertia-link" :href="$route('payment-methods.index')">
+          <Button component="inertia-link" href="/payment-methods">
             {{ __('Manage payment methods') }}
+          </Button>
+        </CardAction>
+      </CardWrapper>
+
+      <CardWrapper>
+        <CardPadding>
+          <CardSectionHeader>
+            {{ __('SIS Sync') }}
+          </CardSectionHeader>
+          <HelpText>
+            {{ __('Sync school data from your SIS, including student data. You will receive an email when the sync is finished.') }}
+          </HelpText>
+        </CardPadding>
+        <CardAction>
+          <Button
+            component="InertiaLink"
+            as="button"
+            method="post"
+            href="/settings/school/sync"
+            preserve-scroll
+          >
+            {{ __('Start sync') }}
           </Button>
         </CardAction>
       </CardWrapper>
@@ -150,7 +172,7 @@
 </template>
 
 <script>
-import { defineComponent, inject } from 'vue'
+import { defineComponent } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import Authenticated from '@/layouts/Authenticated'
 import Fieldset from '@/components/forms/Fieldset'
@@ -206,7 +228,6 @@ export default defineComponent({
   },
 
   setup ({ school }) {
-    const $route = inject('$route')
     const form = useForm({
       currency_id: school.currency_id,
       timezone: school.timezone,
@@ -217,7 +238,7 @@ export default defineComponent({
       default_title: school.default_title,
     })
     const submit = () => {
-      form.post($route('settings.school'))
+      form.post('/settings/school')
     }
     const { displayDate } = displaysDate()
 
