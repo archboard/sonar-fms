@@ -1,0 +1,40 @@
+<template>
+  <div class="p-1">
+    <SonarMenuItem @click.prevent="$emit('details', payment)">
+      {{ __('Details') }}
+    </SonarMenuItem>
+    <SonarMenuItem is="a" target="_blank" :href="`/payments/${payment.id}/receipt`">
+      {{ __('Receipt') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('invoices.viewAny') && payment.invoice" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
+      {{ __('View invoice') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('students.viewAny') && payment.invoice" is="inertia-link" :href="`/students/${payment.invoice.student_uuid}`">
+      {{ __('View student') }}
+    </SonarMenuItem>
+  </div>
+</template>
+
+<script>
+import { defineComponent } from 'vue'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import checksPermissions from '@/composition/checksPermissions'
+
+export default defineComponent({
+  components: {
+    SonarMenuItem,
+  },
+  emits: ['details'],
+  props: {
+    payment: Object,
+  },
+
+  setup () {
+    const { can } = checksPermissions()
+
+    return {
+      can,
+    }
+  }
+})
+</script>

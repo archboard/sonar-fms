@@ -88,7 +88,7 @@
     </DescriptionItem>
     <DescriptionItem>
       <template #dt>
-        <strong class="text-gray-900">{{ __('Remaining balance') }}</strong>
+        <strong class="text-gray-900 dark:text-gray-100">{{ __('Remaining balance') }}</strong>
       </template>
       <template #dd>
         <strong>{{ payment.invoice.remaining_balance_formatted }}</strong>

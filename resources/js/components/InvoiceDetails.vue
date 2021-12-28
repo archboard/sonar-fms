@@ -74,7 +74,7 @@
                 <Th>{{ __('Date') }}</Th>
                 <Th class="text-right">{{ __('Amount') }}</Th>
                 <Th>{{ __('Recorded by') }}</Th>
-                <Th>{{ __('Paid by') }}</Th>
+                <Th></Th>
               </tr>
             </Thead>
             <Tbody>
@@ -87,7 +87,14 @@
                   </div>
                 </Td>
                 <Td>{{ payment.recorded_by.full_name }}</Td>
-                <Td>{{ payment.made_by?.full_name }}</Td>
+                <Td class="text-right">
+                  <VerticalDotMenu>
+                    <PaymentActionItems
+                      :payment="payment"
+                      @details="currentPayment = payment"
+                    />
+                  </VerticalDotMenu>
+                </Td>
               </tr>
             </Tbody>
           </Table>
@@ -137,11 +144,17 @@
         </div>
       </div>
     </section>
+
+    <PaymentDetailsModal
+      v-if="currentPayment.id"
+      @close="currentPayment = {}"
+      :payment="currentPayment"
+    />
   </div>
 </template>
 
 <script>
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import Td from '@/components/tables/Td'
 import Tbody from '@/components/tables/Tbody'
 import Table from '@/components/tables/Table'
@@ -157,9 +170,15 @@ import CardHeader from '@/components/CardHeader'
 import Thead from '@/components/tables/Thead'
 import Th from '@/components/tables/Th'
 import Link from '@/components/Link'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
+import PaymentActionItems from '@/components/PaymentActionItems'
+import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
 
 export default defineComponent({
   components: {
+    PaymentDetailsModal,
+    PaymentActionItems,
+    VerticalDotMenu,
     Th,
     Thead,
     CardHeader,
@@ -196,6 +215,7 @@ export default defineComponent({
         ? props.invoice.parent.payment_schedules
         : (props.invoice.payment_schedules || [])
     })
+    const currentPayment = ref({})
 
     return {
       subTotal,
@@ -203,6 +223,7 @@ export default defineComponent({
       displayDate,
       paymentSchedules,
       can,
+      currentPayment,
     }
   }
 })

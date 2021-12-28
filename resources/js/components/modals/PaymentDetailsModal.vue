@@ -3,7 +3,8 @@
     @close="$emit('close')"
     :headline="__('Payment details')"
     :action-text="__('View receipt')"
-    @action=""
+    @action="viewReceipt"
+    size="xl"
   >
     <PaymentDetails v-if="localPayment.id" :payment="localPayment" />
     <Spinner v-else class="w-12 mx-auto" />
@@ -31,7 +32,11 @@ export default defineComponent({
 
   setup (props) {
     const $http = inject('$http')
+    const $route = inject('$route')
     const localPayment = ref({})
+    const viewReceipt = () => {
+      window.open($route('payments.receipt', props.payment.id), '_blank')
+    }
 
     $http.get(`/payments/${props.payment.id}`).then(({ data }) => {
       localPayment.value = data
@@ -39,6 +44,7 @@ export default defineComponent({
 
     return {
       localPayment,
+      viewReceipt,
     }
   }
 })

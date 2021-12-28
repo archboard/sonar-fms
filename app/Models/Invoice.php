@@ -518,7 +518,6 @@ class Invoice extends Model implements Searchable
             'invoicePaymentSchedules',
             'invoicePaymentSchedules.invoicePaymentTerms',
             'invoicePayments.recordedBy',
-            'invoicePayments.madeBy',
             'invoicePayments.currency',
             'children',
             'parent',

@@ -140,20 +140,10 @@
           <Td class="text-right">{{ payment.amount_formatted }}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
-              <div class="p-1">
-                <SonarMenuItem @click.prevent="currentPayment = payment">
-                  {{ __('Details') }}
-                </SonarMenuItem>
-                <SonarMenuItem is="a" target="_blank" :href="`/payments/${payment.id}/receipt`">
-                  {{ __('Receipt') }}
-                </SonarMenuItem>
-                <SonarMenuItem v-if="can('invoices.viewAny')" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
-                  {{ __('View invoice') }}
-                </SonarMenuItem>
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${payment.invoice.student_uuid}`">
-                  {{ __('View student') }}
-                </SonarMenuItem>
-              </div>
+              <PaymentActionItems
+                :payment="payment"
+                @details="currentPayment = payment"
+              />
             </VerticalDotMenu>
           </Td>
         </tr>
@@ -215,10 +205,12 @@ import Dropdown from '@/components/forms/Dropdown'
 import Button from '@/components/Button'
 import PaymentTableFiltersModal from '@/components/modals/PaymentTableFiltersModal'
 import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
+import PaymentActionItems from '@/components/PaymentActionItems'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    PaymentActionItems,
     PaymentDetailsModal,
     PaymentTableFiltersModal,
     Button,

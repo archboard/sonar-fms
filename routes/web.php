@@ -271,7 +271,8 @@ Route::middleware('tenant')->group(function () {
 
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 
-                Route::get('/payments/{payment}/receipt', \App\Http\Controllers\PaymentReceiptController::class);
+                Route::get('/payments/{payment}/receipt', \App\Http\Controllers\PaymentReceiptController::class)
+                    ->name('payments.receipt');
 
                 /**
                  * Other stuff

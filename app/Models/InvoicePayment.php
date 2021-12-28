@@ -112,9 +112,9 @@ class InvoicePayment extends Model
         return $this->belongsTo(User::class, 'made_by', 'uuid');
     }
 
-    public function fullLoad(): static
+    public static function getLoadAttributes(): array
     {
-        return $this->load(
+        return [
             'currency',
             'invoice',
             'invoice.student',
@@ -127,6 +127,11 @@ class InvoicePayment extends Model
             'invoicePaymentSchedule.invoicePaymentTerms',
             'invoicePaymentTerm',
             'paymentMethod',
-        );
+        ];
+    }
+
+    public function fullLoad(): static
+    {
+        return $this->load(static::getLoadAttributes());
     }
 }
