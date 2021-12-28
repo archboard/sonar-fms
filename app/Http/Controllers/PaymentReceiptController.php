@@ -18,7 +18,7 @@ class PaymentReceiptController extends Controller
         $this->authorize('viewAny', $payment);
 
         $payment->fullLoad();
-        $title = __('Receipt for payment to :invoice', [
+        $title = __('Receipt of payment to :invoice', [
             'invoice' => $payment->invoice->invoice_number,
         ]);
 

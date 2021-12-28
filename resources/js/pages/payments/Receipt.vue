@@ -1,5 +1,5 @@
 <template>
-  <Empty class="max-w-md mx-auto py-10">
+  <Empty class="max-w-xl mx-auto py-10">
     <ModalHeadline>{{ title }}</ModalHeadline>
     <PaymentDetails :payment="payment" />
   </Empty>

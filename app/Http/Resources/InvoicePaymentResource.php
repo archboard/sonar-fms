@@ -21,11 +21,13 @@ class InvoicePaymentResource extends JsonResource
             'paid_at' => $this->paid_at,
             'paid_at_formatted' => $this->paid_at_formatted,
             'parent_uuid' => $this->parent_uuid,
+            'transaction_details' => $this->transaction_details,
             'recorded_by' => new UserResource($this->whenLoaded('recordedBy')),
             'made_by' => new UserResource($this->whenLoaded('madeBy')),
-            'paymentTerm' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentTerm')),
-            'schedule' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentSchedule')),
+            'payment_term' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentTerm')),
+            'schedule' => new InvoicePaymentScheduleResource($this->whenLoaded('invoicePaymentSchedule')),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
+            'payment_method' => new PaymentMethodResource($this->whenLoaded('paymentMethod')),
         ];
     }
 }

@@ -97,6 +97,11 @@ class InvoicePayment extends Model
         );
     }
 
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
     public function recordedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recorded_by', 'uuid');
@@ -114,10 +119,14 @@ class InvoicePayment extends Model
             'invoice',
             'invoice.student',
             'invoice.students',
+            'invoice.currency',
             'parent',
             'invoicePaymentTerm',
             'recordedBy',
-            'madeBy'
+            'madeBy',
+            'invoicePaymentSchedule.invoicePaymentTerms',
+            'invoicePaymentTerm',
+            'paymentMethod',
         );
     }
 }
