@@ -475,7 +475,7 @@ class Invoice extends Model implements Searchable
 
     public function getPaymentMadeAttribute(): bool
     {
-        return $this->amount_due !== $this->remaining_balance;
+        return $this->total_paid > 0;
     }
 
     public function getPastDueAttribute(): bool
