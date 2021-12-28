@@ -114,7 +114,6 @@ export default defineComponent({
   },
 
   setup ({ payment }) {
-    document.documentElement.classList.remove('dark')
     const termNumber = payment.payment_term
       ? payment.schedule.terms.findIndex(t => t.uuid === payment.payment_term.uuid) + 1
       : 0

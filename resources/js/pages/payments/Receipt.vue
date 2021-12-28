@@ -24,7 +24,7 @@ export default defineComponent({
   },
 
   setup () {
-
+    document.documentElement.classList.remove('dark')
   }
 })
 </script>
