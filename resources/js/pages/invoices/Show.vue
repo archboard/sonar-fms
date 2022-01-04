@@ -82,10 +82,10 @@
           <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="px-4 py-5 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-700 dark:to-primary-600 shadow rounded-lg overflow-hidden sm:p-6">
               <dt class="text-sm font-medium text-primary-100 dark:text-gray-300 truncate">
-                {{ __('Invoice total') }}
+                {{ __('Invoice total') }}{{ invoice.payment_schedule ? '*' : '' }}
               </dt>
               <dd class="mt-1 text-3xl font-semibold text-white">
-                {{ invoice.amount_due_formatted }}
+                {{ displayCurrency(invoice.payment_schedule ? invoice.payment_schedule.amount : invoice.amount_due) }}
               </dd>
             </div>
 
@@ -98,6 +98,7 @@
               </dd>
             </div>
           </dl>
+          <HelpText v-if="invoice.payment_schedule" class="mt-3">*{{ __('This invoice total is based on the payment schedule used when making payments. The original invoice total is :total.', { total: invoice.amount_due_formatted }) }}</HelpText>
 
           <div class="py-5 space-y-4">
             <InvoiceDetails
