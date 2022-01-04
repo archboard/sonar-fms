@@ -243,6 +243,12 @@ class PaymentFromImportFactory extends BaseImportFactory
                 continue;
             }
 
+            $madeBy = $this->getMapValue('made_by', 'user email');
+
+            if (is_array($madeBy)) {
+                $madeBy = $madeBy['uuid'];
+            }
+
             $attributes = [
                 'uuid' => UuidFactory::make(),
                 'parent_uuid' => null,
@@ -255,7 +261,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'payment_method_id' => $this->getMapValue('payment_method', 'payment method'),
                 'notes' => $this->getMapValue('notes', 'notes'),
                 'transaction_details' => $this->getMapValue('transaction_details', 'transaction details'),
-                'made_by' => $this->getMapValue('made_by', 'user email'),
+                'made_by' => $madeBy,
                 'payment_import_id' => $this->import->id,
                 'recorded_by' => $this->user->uuid,
                 'created_at' => $this->now,
