@@ -21,7 +21,7 @@ class SetInvoiceRemainingBalance implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(
+    final public function __construct(
         protected string $invoiceUuid,
         protected bool $distributeToTerms = true
     ) { }
@@ -33,7 +33,9 @@ class SetInvoiceRemainingBalance implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->batch()->cancelled()) {
+        $batch = $this->batch();
+
+        if ($batch?->cancelled()) {
             return;
         }
 
@@ -49,7 +51,7 @@ class SetInvoiceRemainingBalance implements ShouldQueue
         // If the original invoice was a child
         // dispatch calculating the parents data
         if ($invoice->parent_uuid) {
-            $this->batch()->add([
+            $batch?->add([
                 new static($invoice->parent_uuid)
             ]);
         }
