@@ -26,7 +26,6 @@
     "axios": "^0.21.4",
     "body-scroll-lock": "^3.1.5",
     "cross-env": "^7.0",
-    "cypress": "^9.2.0",
     "dayjs": "^1.10.4",
     "dotenv": "^8.4.0",
     "laravel-mix": "^6.0.18",
