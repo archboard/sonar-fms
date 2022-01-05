@@ -559,6 +559,7 @@ namespace App\Models{
  * @property-read \App\Models\InvoicePaymentTerm|null $invoicePaymentTerm
  * @property-read \App\Models\User|null $madeBy
  * @property-read InvoicePayment|null $parent
+ * @property-read \App\Models\PaymentMethod|null $paymentMethod
  * @property-read \App\Models\User|null $recordedBy
  * @property-read \App\Models\School $school
  * @property-read \App\Models\Tenant $tenant
