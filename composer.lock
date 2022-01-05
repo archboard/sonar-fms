@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42f0d5edae8daf7e50c6847612fad6a8",
+    "content-hash": "2652fdacba7e83bee85c565e7a305456",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5339,26 +5339,28 @@
         },
         {
             "name": "spatie/laravel-multitenancy",
-            "version": "1.8.1",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-multitenancy.git",
-                "reference": "62a67c9abfa1ae1f17f106b6aebb1f5c0cbe5670"
+                "reference": "a2bea128221a7e7cb53625ddf70b76e4ecd0295f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/62a67c9abfa1ae1f17f106b6aebb1f5c0cbe5670",
-                "reference": "62a67c9abfa1ae1f17f106b6aebb1f5c0cbe5670",
+                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/a2bea128221a7e7cb53625ddf70b76e4ecd0295f",
+                "reference": "a2bea128221a7e7cb53625ddf70b76e4ecd0295f",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^7.0|^8.0",
-                "php": "^8.0|^7.4"
+                "illuminate/support": "^8.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9"
             },
             "require-dev": {
                 "laravel/legacy-factories": "^1.0.4",
+                "laravel/octane": "^1.0",
                 "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^5.0|^6.0",
+                "orchestra/testbench": "^6.23",
                 "phpunit/phpunit": "^9.4",
                 "spatie/valuestore": "^1.2"
             },
@@ -5398,7 +5400,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-multitenancy/issues",
-                "source": "https://github.com/spatie/laravel-multitenancy/tree/1.8.1"
+                "source": "https://github.com/spatie/laravel-multitenancy/tree/2.3.1"
             },
             "funding": [
                 {
@@ -5410,7 +5412,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-18T09:38:33+00:00"
+            "time": "2021-11-29T11:38:53+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
