@@ -24,3 +24,5 @@ parameters:
     #     - ./*/*/FileToBeExcluded.php
 
     checkMissingIterableValueType: false
+    checkOctaneCompatibility: true
+    checkModelProperties: true
