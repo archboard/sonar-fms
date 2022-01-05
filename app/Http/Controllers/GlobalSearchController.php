@@ -45,14 +45,13 @@ class GlobalSearchController extends Controller
             ->limitAspectResults(10)
             ->search($request->input('s'))
             ->map(function (SearchResult $result) {
-                $result->searchable = $result->searchable->toResource();
+                // Each result should have the HasResource trait
+                $result->searchable = $result->searchable->toResource(); // @phpstan-ignore-line
 
                 return $result;
             });
 
-        ray($results);
-
         return response()
-            ->json($results->groupByType());
+            ->json($results->groupByType()); // @phpstan-ignore-line
     }
 }

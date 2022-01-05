@@ -51,6 +51,6 @@ if (!function_exists('timezones')) {
             return $zones;
         }
 
-        return $zones->get($timezone);
+        return $zones->get($timezone); // @phpstan-ignore-line
     }
 }

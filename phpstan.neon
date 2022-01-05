@@ -17,6 +17,14 @@ parameters:
         - '#^Call to method \w+\(\) on an unknown class Spatie\\YiiRay\\Ray\.$#'
         - '#^Call to method \w+\(\) on an unknown class Spatie\\WordPressRay\\Ray\.$#'
         - '#^Call to method \w+\(\) on an unknown class Spatie\\RayBundle\\Ray\.$#'
+        - '#^Attribute class JetBrains\\PhpStorm\\Pure does not exist.$#'
+        - '#^Parameter \#2 \$currency of function displayCurrency expects App\\Models\\Currency\|null, Illuminate\\Database\\Eloquent\\Model\|null given.$#'
+        - '#^Parameter \#2 \$format of static method JamesMills\\LaravelTimezone\\Timezone::convertToLocal\(\) expects null, string given.$#'
+        - '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model*#'
+        - '#^Access to an undefined property object::*#'
+        - '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model*#'
+        - '#^Call to an undefined method Spatie\\Searchable\\ModelSearchAspect*#'
+        - '#^Access to an undefined property App\\Http\\Resources\\*#'
         - '#^PHPDoc tag @mixin contains unknown class App\\Models\S*$#'
         - '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Response::status\(\).$#'
 
@@ -25,4 +33,4 @@ parameters:
 
     checkMissingIterableValueType: false
     checkOctaneCompatibility: true
-    checkModelProperties: true
+    checkModelProperties: false

@@ -13,7 +13,7 @@ trait HasTaxRateAttribute
 
     public function getTaxRateAttribute($value)
     {
-        return (float) $value ?? 0;
+        return (float) $value ?: 0;
     }
 
     public function getTaxRateFormattedAttribute()

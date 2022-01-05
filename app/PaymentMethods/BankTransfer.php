@@ -2,8 +2,12 @@
 
 namespace App\PaymentMethods;
 
+use App\Traits\SetsPaymentMethods;
+
 class BankTransfer extends Cash implements PaymentMethodDriver
 {
+    use SetsPaymentMethods;
+
     public function key(): string
     {
         return 'bank_transfer';

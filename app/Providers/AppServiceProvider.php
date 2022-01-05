@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $currentTenant = function (): Tenant {
-            /** @var Tenant $current */
+            /** @var Tenant|null $current */
             $current = Tenant::current();
 
             return $current ?? new Tenant();

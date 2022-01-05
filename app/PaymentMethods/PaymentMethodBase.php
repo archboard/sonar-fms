@@ -19,20 +19,6 @@ abstract class PaymentMethodBase
         return $this->paymentMethod;
     }
 
-    public function setPaymentMethod(?PaymentMethod $method): PaymentMethodDriver
-    {
-        $this->paymentMethod = $method;
-
-        return $this;
-    }
-
-    public function setIncludePaymentMethodInResource(bool $include): PaymentMethodDriver
-    {
-        $this->includePaymentMethodInResource = $include;
-
-        return $this;
-    }
-
     public function includePaymentMethodInResource(): bool
     {
         return $this->includePaymentMethodInResource;

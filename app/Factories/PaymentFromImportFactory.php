@@ -39,7 +39,7 @@ class PaymentFromImportFactory extends BaseImportFactory
 
     public function __construct(protected PaymentImport $import, protected User $user)
     {
-        $this->school = $this->import->school;
+        $this->school = $this->import->school; // @phpstan-ignore-line
         $this->invoices = collect();
         $this->invoicePayments = collect();
         $this->results = collect();
@@ -54,7 +54,7 @@ class PaymentFromImportFactory extends BaseImportFactory
             ->reduce(function (Collection $methods, PaymentMethod $method) {
                 $driver = $method->getDriver();
                 collect([$method->id, ...$driver->getImportDetectionValues()])
-                    ->each(fn ($value) => $methods->put($value, $method->id));
+                    ->each(fn ($value) => $methods->put($value, $method->id)); // @phpstan-ignore-line
 
                 return $methods;
             }, collect());
@@ -215,7 +215,7 @@ class PaymentFromImportFactory extends BaseImportFactory
             $this->currentRowNumber++;
             $this->currentRow = $row;
 
-            if (!$row[$this->invoiceColumn] ?? null) {
+            if (!$row[$this->invoiceColumn] ?? null) { // @phpstan-ignore-line
                 // __('Missing invoice number');
                 $this->addResult('Missing invoice number', false);
                 continue;
@@ -324,7 +324,7 @@ class PaymentFromImportFactory extends BaseImportFactory
         }
 
         if ($this->asModels) {
-            $this->import->results = $this->results;
+            $this->import->results = $this->results->toArray();
             $this->import->failed_records = $this->failedRecords;
             $this->import->imported_records = $this->importedRecords;
 

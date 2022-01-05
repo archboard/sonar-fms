@@ -211,15 +211,4 @@ class PaymentImportController extends Controller
 
         return redirect()->route('payments.imports.map', $import);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PaymentImport  $import
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PaymentImport $import)
-    {
-        //
-    }
 }

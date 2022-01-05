@@ -67,8 +67,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
     {
         $this->import = $import;
         $this->contents = $import->getImportContents();
-        $this->school = $import->school;
-        $this->user = $import->user;
+        $this->school = $import->school; // @phpstan-ignore-line
+        $this->user = $import->user; // @phpstan-ignore-line
         $this->invoiceNumberPrefix = $this->school->getInvoiceNumberPrefix($this->user);
         $this->terms = $this->school->terms->keyBy('sis_assigned_id');
         $this->fees = $this->school->fees->keyBy('id');

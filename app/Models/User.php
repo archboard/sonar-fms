@@ -246,10 +246,10 @@ class User extends Authenticatable implements HasLocalePreference
     /**
      * Adds a student to a user's selection
      *
-     * @param int|Student $studentId
+     * @param Student|string $studentId
      * @return User
      */
-    public function selectStudent(Student|string $studentId): static
+    public function selectStudent(Student|string $studentId): User
     {
         if ($studentId instanceof Student) {
             $studentId = $studentId->uuid;
@@ -378,7 +378,7 @@ class User extends Authenticatable implements HasLocalePreference
      * @param School $school
      * @param string $permission
      * @param string|Model $model
-     * @return User
+     * @return static
      */
     public function givePermissionForSchool(School $school, string $permission = '*', Model|string $model = '*'): static
     {

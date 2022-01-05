@@ -145,7 +145,7 @@ class Invoice extends Model implements Searchable
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, $search) {
-            $builder->search($search);
+            $builder->search($search); // @phpstan-ignore-line
         })->when($filters['batch_id'] ?? null, function (Builder $builder, $batchId) {
             $builder->where('batch_id', $batchId);
         })->when($filters['ids'] ?? null, function (Builder $builder, $ids) {
@@ -228,10 +228,10 @@ class Invoice extends Model implements Searchable
                 ->orWhere('title', 'ilike', "%{$search}%")
                 ->orWhere('invoice_number', 'ilike', "%{$search}%")
                 ->orWhereHas('student', function (Builder $builder) use ($search) {
-                    $builder->search($search);
+                    $builder->search($search); // @phpstan-ignore-line
                 })
                 ->orWhereHas('students', function (Builder $builder) use ($search) {
-                    $builder->search($search);
+                    $builder->search($search); // @phpstan-ignore-line
                 });
         });
     }
@@ -613,7 +613,7 @@ class Invoice extends Model implements Searchable
             $this->school->collect_tax &&
             $this->apply_tax
         ) {
-            $this->tax_due = round($this->pre_tax_subtotal * $this->tax_rate);
+            $this->tax_due = (int) round($this->pre_tax_subtotal * $this->tax_rate);
         }
 
         return $this;
@@ -683,7 +683,7 @@ class Invoice extends Model implements Searchable
         // invoices before recalculating this one
         if ($this->is_parent) {
             $this->loadChildren()
-                ->children->each(function (Invoice $invoice) use ($save) {
+                ->children->each(function (Invoice $invoice) use ($save) { // @phpstan-ignore-line
                     $invoice->setCalculatedAttributes($save);
                 });
         }

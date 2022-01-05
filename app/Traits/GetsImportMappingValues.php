@@ -19,10 +19,10 @@ trait GetsImportMappingValues
      *
      * @param string $key
      * @param string|null $conversion
-     * @param null $default
+     * @param mixed $default
      * @return mixed
      */
-    protected function getMapValue(string $key, string $conversion = null, $default = null): mixed
+    protected function getMapValue(string $key, string $conversion = null, mixed $default = null): mixed
     {
         $mapField = $this->getMapField($key, $default);
 

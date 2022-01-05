@@ -42,7 +42,7 @@ class InvoicePayment extends Model
 
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
             $builder->whereHas('invoice', function (Builder $builder) use ($search) {
-                $builder->search($search);
+                $builder->search($search); // @phpstan-ignore-line
             });
         })->when($filters['start_amount'] ?? null, function (Builder $builder, $amount) {
             $builder->where('invoice_payments.amount', '>=', $amount);

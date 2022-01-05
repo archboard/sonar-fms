@@ -18,7 +18,7 @@ class PaymentMethodDriverResource extends JsonResource
     {
         /** @var PaymentMethodDriver $resource */
         $resource = $this->resource;
-        /** @var PaymentMethod $paymentMethod */
+        /** @var PaymentMethod|null $paymentMethod */
         $paymentMethod = $resource->getPaymentMethod();
 
         return [

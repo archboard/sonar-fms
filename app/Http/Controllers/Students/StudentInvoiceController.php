@@ -134,21 +134,4 @@ class StudentInvoiceController extends Controller
             ],
         ])->withViewData(compact('title'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param UpdateInvoiceRequest $request
-     * @param Student $student
-     * @param Invoice $invoice
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(UpdateInvoiceRequest $request, Student $student, Invoice $invoice)
-    {
-        $invoice->updateFromRequest($request);
-
-        session()->flash('success', __('Invoice updated successfully.'));
-
-        return back();
-    }
 }

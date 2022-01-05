@@ -169,7 +169,7 @@ class School extends Model
             '{last_name}',
         ];
         $replace = [
-            $now->year,
+            $now->format('Y'),
             $now->format('m'),
             $now->format('d'),
             $term->abbreviation ?? '',
@@ -205,17 +205,12 @@ class School extends Model
         $this->tenant->sisProvider()->fullSchoolSync($this);
     }
 
-    public static function current(): ?static
+    public static function current(): ?School
     {
         /** @var User|null $user */
         $user = auth()->user();
 
-        /** @var School $school */
-        if ($user && $school = $user->school) {
-            return $school;
-        }
-
-        return null;
+        return $user?->school;
     }
 
     public function getPaymentMethods(): array

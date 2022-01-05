@@ -13,7 +13,7 @@ trait HasPercentageAttribute
 
     public function getPercentageAttribute($value)
     {
-        return (float) $value ?? 0;
+        return (float) $value ?: 0;
     }
 
     public function getPercentageFormattedAttribute()

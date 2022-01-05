@@ -40,7 +40,7 @@ class Student extends Model implements Searchable
     public function scopeFilter(Builder $builder, array $filters)
     {
         $builder->when($filters['s'] ?? null, function (Builder $builder, string $search) {
-            $builder->search($search);
+            $builder->search($search); // @phpstan-ignore-line
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->whereIn('grade_level', $grades);
         })->when(isset($filters['ids']), function (Builder $builder) use ($filters) {

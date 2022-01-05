@@ -37,7 +37,7 @@ class PowerSchoolProvider implements SisProvider
     public function getSchoolsFromSis(): array
     {
         if (config('app.cloud')) {
-            return $this->tenant->schools;
+            return $this->tenant->schools->toArray();
         }
 
         $response = $this->builder
@@ -147,11 +147,11 @@ class PowerSchoolProvider implements SisProvider
                         'first_name' => optional($user->name)->first_name,
                         'last_name' => optional($user->name)->last_name,
                     ]);
-                    /** @var School $existingSchool */
+                    /** @var School|null $existingSchool */
                     $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
 
                     // If the school record exists already, update the staff id just in case
-                    if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) {
+                    if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) { // @phpstan-ignore-line
                         $existingUser->schools()
                             ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
                     }
@@ -167,7 +167,6 @@ class PowerSchoolProvider implements SisProvider
                     continue;
                 }
 
-                /** @var User $newUser */
                 $uuid = UuidFactory::make();
                 $newUsers->push([
                     'tenant_id' => $this->tenant->id,
@@ -278,7 +277,7 @@ class PowerSchoolProvider implements SisProvider
 
         $now = now();
         $attributes['school_id'] = $school->id;
-        $attributes['sis_id'] = $student->uuid;
+        $attributes['sis_id'] = $id;
         $attributes['created_at'] = $now;
         $attributes['updated_at'] = $now;
 

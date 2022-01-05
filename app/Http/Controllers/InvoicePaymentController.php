@@ -96,7 +96,7 @@ class InvoicePaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateInvoicePaymentRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateInvoicePaymentRequest $request)
@@ -118,7 +118,6 @@ class InvoicePaymentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Invoice $invoice
      * @param InvoicePayment $payment
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
@@ -127,28 +126,5 @@ class InvoicePaymentController extends Controller
         return $payment
             ->fullLoad()
             ->toResource();
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\InvoicePayment  $invoicePayment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Invoice $invoice, InvoicePayment $invoicePayment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\InvoicePayment  $invoicePayment
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Invoice $invoice, InvoicePayment $invoicePayment)
-    {
-        //
     }
 }

@@ -43,7 +43,7 @@ class CombineInvoiceFactory extends InvoiceFactory
                 ->withOriginalBatchId($invoice->batch_id)
                 ->setInvoiceUuid($invoice->uuid)
                 ->withUpdateActivityDescription()
-                ->setSelection($invoice->children);
+                ->setSelection($invoice->children); // @phpstan-ignore-line
         }
 
         return $instance->setTotals()

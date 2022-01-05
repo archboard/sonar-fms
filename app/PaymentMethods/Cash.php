@@ -2,8 +2,12 @@
 
 namespace App\PaymentMethods;
 
+use App\Traits\SetsPaymentMethods;
+
 class Cash extends PaymentMethodBase implements PaymentMethodDriver
 {
+    use SetsPaymentMethods;
+
     public function key(): string
     {
         return 'cash';

@@ -11,7 +11,7 @@ class Activity extends BaseActivity
 {
     public function getDescriptionAttribute($description):? string
     {
-        $properties = collect($this->properties);
+        $properties = collect($this->properties); // @phpstan-ignore-line
 
         if ($this->relationLoaded('causer')) {
             $properties->put('user', $this->causer->full_name);
@@ -22,6 +22,6 @@ class Activity extends BaseActivity
 
     public function getComponentAttribute():? string
     {
-        return $this->properties->get('component');
+        return $this->properties->get('component'); // @phpstan-ignore-line
     }
 }

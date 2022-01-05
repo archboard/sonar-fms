@@ -93,8 +93,7 @@ class PaymentImport extends Model implements FileImport
 
         // Delete the activity logs for both invoices
         // and payments
-        Activity::query()
-            ->where('batch_uuid', $this->import_batch_id)
+        Activity::query()->where('batch_uuid', $this->import_batch_id)
             ->delete();
 
         // Run jobs on the invoices to recalculate balances

@@ -39,7 +39,6 @@ class CreateFileImportRequest extends FormRequest
 
         $fileData = Arr::first($data['files']);
 
-        /** @var UploadedFile $uploadedFile */
         return $fileData['file'];
     }
 }
