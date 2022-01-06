@@ -38,8 +38,8 @@ class SchoolTemplateCompilationTest extends TestCase
         $term = $this->seedTerm();
 
         $this->assertEquals(
-            "{$now->year}{$term->abbreviation}-{$term->school_years}",
-            $this->school->compileTemplate('{year}{term}-{school_year}')
+            "{$now->year}{$term->abbreviation}-{$term->school_years}-{$term->next_school_years}",
+            $this->school->compileTemplate('{year}{term}-{school_year}-{next_school_year}')
         );
     }
 

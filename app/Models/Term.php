@@ -21,7 +21,7 @@ class Term extends Model
         'ends_at' => 'date',
     ];
 
-    public function getIsCurrentAttribute()
+    public function getIsCurrentAttribute(): bool
     {
         $today = today();
 
@@ -29,10 +29,20 @@ class Term extends Model
             $this->ends_at >= $today;
     }
 
-    public function getSchoolYearsAttribute()
+    public function getSchoolYearsAttribute(): string
     {
-        $start = substr((string) $this->start_year, 2);
-        $end = substr((string) ($this->start_year + 1), 2);
+        return $this->buildSchoolYears($this->start_year);
+    }
+
+    public function getNextSchoolYearsAttribute(): string
+    {
+        return $this->buildSchoolYears($this->start_year + 1);
+    }
+
+    public function buildSchoolYears(string|int $year): string
+    {
+        $start = substr((string) $year, 2);
+        $end = substr((string) ($year + 1), 2);
 
         return $start . '-' . $end;
     }

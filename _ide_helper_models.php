@@ -637,7 +637,6 @@ namespace App\Models{
  * @property bool $notify
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $amount_formatted
  * @property-read string|null $id
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \App\Models\InvoicePaymentSchedule|null $invoicePaymentSchedule
@@ -1323,8 +1322,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $ends_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read mixed $is_current
- * @property-read mixed $school_years
+ * @property-read bool $is_current
+ * @property-read string $next_school_years
+ * @property-read string $school_years
  * @method static \Database\Factories\TermFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Term newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term newQuery()

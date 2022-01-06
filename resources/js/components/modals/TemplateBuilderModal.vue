@@ -70,6 +70,7 @@ export default defineComponent({
       '{day}': __('The current day.'),
       '{term}': __('The current school term (e.g. S1).'),
       '{school_year}': __('The current school year (e.g. 20-21).'),
+      '{next_school_year}': __('The next school year (e.g. 20-21).'),
       '{student_number}': __("The student number of the invoice's student."),
       '{sis_id}': __("The SIS ID of the invoice's student."),
       '{first_name}': __("The first name of the invoice's student."),
