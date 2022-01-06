@@ -5,28 +5,12 @@
         {{ __('Actions') }}
 
         <template v-slot:dropdown>
-          <div class="p-1">
-            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.edit', invoiceImport)">
-              {{ __('Edit import file') }}
-            </SonarMenuItem>
-            <SonarMenuItem v-if="can('update')" is="inertia-link" :href="$route('invoices.imports.map', invoiceImport)">
-              {{ __('Update mapping') }}
-            </SonarMenuItem>
-            <SonarMenuItem v-if="can('create')" @click.prevent="convert = true">
-              {{ __('Save mapping as template') }}
-            </SonarMenuItem>
-          </div>
-          <div class="p-1" v-if="invoiceImport.imported_at || invoiceImport.mapping_valid">
-            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create') && !isPreview" is="inertia-link" :href="$route('invoices.imports.preview', invoiceImport)">
-              {{ __('Preview import') }}
-            </SonarMenuItem>
-            <SonarMenuItem v-if="invoiceImport.mapping_valid && !invoiceImport.imported_at && can('create')" @click.prevent="importingImport = invoiceImport">
-              {{ __('Import') }}
-            </SonarMenuItem>
-            <SonarMenuItem v-if="invoiceImport.imported_at && can('roll back')" @click.prevent="rollingBackImport = invoiceImport">
-              {{ __('Roll back') }}
-            </SonarMenuItem>
-          </div>
+          <InvoiceImportActions
+            :invoice-import="invoiceImport"
+            @import="importingImport = invoiceImport"
+            @rollback="rollingBackImport = invoiceImport"
+            @template="convert = true"
+          />
         </template>
       </Dropdown>
     </template>
@@ -163,10 +147,12 @@ import checksPermissions from '@/composition/checksPermissions'
 import importsInvoiceImport from '@/composition/importFileImport'
 import displaysCurrency from '@/composition/displaysCurrency'
 import ConvertImportMappingToTemplateModal from '@/components/modals/ConvertImportMappingToTemplateModal'
+import InvoiceImportActions from '@/components/InvoiceImportActions'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    InvoiceImportActions,
     ConvertImportMappingToTemplateModal,
     ConfirmationModal,
     SonarMenuItems,

@@ -159,6 +159,9 @@ Route::middleware('tenant')->group(function () {
 
                         Route::post('/template', \App\Http\Controllers\ConvertInvoiceImportMappingToTemplateController::class)
                             ->name('template');
+
+                        Route::get('/download', \App\Http\Controllers\DownloadInvoiceImportFileController::class)
+                            ->name('download');
                     });
 
                 /**

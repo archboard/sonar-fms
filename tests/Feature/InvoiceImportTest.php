@@ -124,6 +124,20 @@ class InvoiceImportTest extends TestCase
             );
     }
 
+    public function test_can_view_download_import_file()
+    {
+        $this->assignPermission('viewAny', InvoiceImport::class);
+        $path = (new InvoiceImport)->storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
+        $import = InvoiceImport::create([
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $path,
+        ]);
+
+        $this->get(route('invoices.imports.download', $import))
+            ->assertDownload($import->file_name);
+    }
+
     public function test_can_save_mapping_as_template()
     {
         $this->assignPermission('create', InvoiceImport::class);
