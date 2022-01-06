@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use App\Factories\UuidFactory;
-use App\Http\Requests\UpdateInvoiceRequest;
+use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
 use App\Traits\HasActivities;
 use App\Traits\HasTaxRateAttribute;
-use App\Traits\ScopeToCurrentSchool;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Hidehalo\Nanoid\Client;
@@ -125,7 +124,7 @@ class Invoice extends Model implements Searchable
 
     protected static function booted()
     {
-        static::saving(function (Invoice $invoice) {
+        static::saved(function (Invoice $invoice) {
             if ($invoice->isDirty('voided_at')) {
                 // __('Invoice voided by :user.')
                 activity()
@@ -138,6 +137,17 @@ class Invoice extends Model implements Searchable
                 activity()
                     ->on($invoice)
                     ->log('Invoice published by :user.');
+            }
+        });
+
+        static::updated(function (Invoice $invoice) {
+            // If the invoice has been voided or the published time has changed
+            // run the recalculations on the parent
+            if (
+                ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at')) &&
+                $invoice->parent_uuid
+            ) {
+                dispatch(new CalculateInvoiceAttributes($invoice->parent_uuid));
             }
         });
     }
@@ -551,10 +561,22 @@ class Invoice extends Model implements Searchable
             }, 0);
     }
 
+    /**
+     * This gets the children that can be included
+     * in the calculations for the parent invoice
+     *
+     * @return Collection
+     */
+    public function countableChildren(): Collection
+    {
+        return $this->children
+            ->filter(fn (Invoice $child) => $child->shouldBeIncludedInCalculations());
+    }
+
     public function setSubtotal(): static
     {
         $this->subtotal = $this->is_parent
-            ? $this->children->sum('subtotal')
+            ? $this->countableChildren()->sum('subtotal')
             : static::calculateSubtotalFromItems($this->invoiceItems);
 
         return $this;
@@ -563,7 +585,7 @@ class Invoice extends Model implements Searchable
     public function setDiscountTotal(): static
     {
         if ($this->is_parent) {
-            $this->discount_total = $this->children->sum('discount_total');
+            $this->discount_total = $this->countableChildren()->sum('discount_total');
 
             return $this;
         }
@@ -583,7 +605,7 @@ class Invoice extends Model implements Searchable
     public function setPreTaxSubtotal(): static
     {
         if ($this->is_parent) {
-            $this->pre_tax_subtotal = $this->children->sum('pre_tax_subtotal');
+            $this->pre_tax_subtotal = $this->countableChildren()->sum('pre_tax_subtotal');
 
             return $this;
         }
@@ -598,7 +620,7 @@ class Invoice extends Model implements Searchable
     public function setTaxDue(): static
     {
         if ($this->is_parent) {
-            $this->tax_due = $this->children->sum('tax_due');
+            $this->tax_due = $this->countableChildren()->sum('tax_due');
 
             return $this;
         }
@@ -618,7 +640,7 @@ class Invoice extends Model implements Searchable
     public function setAmountDue(): static
     {
         $this->amount_due = $this->is_parent
-            ? $this->children->sum('amount_due')
+            ? $this->countableChildren()->sum('amount_due')
             : $this->pre_tax_subtotal + $this->tax_due;
 
         return $this;
@@ -717,6 +739,12 @@ class Invoice extends Model implements Searchable
             ->save();
 
         return $this;
+    }
+
+    public function shouldBeIncludedInCalculations(): bool
+    {
+        return ($this->published_at && $this->published_at <= now()) &&
+            !$this->voided_at;
     }
 
     public function queueNotification(Carbon $notifyAt): static
