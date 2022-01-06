@@ -2,7 +2,10 @@
   <div>
     <div v-if="showStudent" class="flex items-center justify-between">
       <h3 class="font-bold text-lg mb-2 pt-2">{{ invoice.student.full_name }}</h3>
-      <InertiaLink class="text-gray-500 dark:text-gray-400 hover:underline" :href="`/invoices/${invoice.uuid}`">{{ invoice.invoice_number }}</InertiaLink>
+      <div class="flex items-center space-x-2">
+        <InvoiceStatusBadge :invoice="invoice" />
+        <InertiaLink class="text-gray-500 dark:text-gray-400 hover:underline" :href="`/invoices/${invoice.uuid}`">{{ invoice.invoice_number }}</InertiaLink>
+      </div>
     </div>
     <Table>
       <Tbody>
@@ -55,8 +58,11 @@
           <Td class="text-base font-bold" :lighter="false">
             {{ __('Total due') }}
           </Td>
-          <Td class="text-base font-bold text-right" :lighter="false">
-            {{ invoice.amount_due_formatted }}
+          <Td class="text-base text-right" :lighter="false">
+            <div class="flex justify-end items-center space-x-2">
+              <InvoiceStatusBadge v-if="showStudent && invoice.is_void" :invoice="invoice" />
+              <span class="font-bold">{{ invoice.amount_due_formatted }}</span>
+            </div>
           </Td>
         </tr>
       </Tbody>
@@ -173,9 +179,11 @@ import Link from '@/components/Link'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import PaymentActionItems from '@/components/PaymentActionItems'
 import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 
 export default defineComponent({
   components: {
+    InvoiceStatusBadge,
     PaymentDetailsModal,
     PaymentActionItems,
     VerticalDotMenu,
