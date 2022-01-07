@@ -17,12 +17,18 @@
         </div>
       </div>
       <div>
-        <div class="-mt-px">
-          <div class="flex">
+        <div class="-mt-px flex divide-x divide-gray-200 dark:divide-gray-500">
+          <div class="w-0 flex-1 flex">
             <InertiaLink :href="`/payments/create?invoice_uuid=${invoice.uuid}`" class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 dark:text-gray-300 font-medium border border-transparent rounded-bl-lg hover:text-gray-500 dark:hover:dark:text-gray-400">
               <CashIcon class="w-5 h-5 text-gray-400 dark:text-gray-300" aria-hidden="true" />
               <span class="ml-3">{{ __('Record payment') }}</span>
             </InertiaLink>
+          </div>
+          <div class="-ml-px w-0 flex-1 flex">
+            <a :href="`/invoices/${invoice.uuid}`" target="_blank" class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 dark:text-gray-300 font-medium border border-transparent rounded-bl-lg hover:text-gray-500 dark:hover:dark:text-gray-400">
+              <ExternalLinkIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+              <span class="ml-3">{{ __('View invoice') }}</span>
+            </a>
           </div>
         </div>
       </div>
@@ -32,12 +38,13 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { CashIcon } from '@heroicons/vue/solid'
+import { CashIcon, ExternalLinkIcon } from '@heroicons/vue/solid'
 import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   components: {
     CashIcon,
+    ExternalLinkIcon,
   },
   props: {
     invoices: Array,
