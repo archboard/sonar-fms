@@ -25,7 +25,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use JamesMills\LaravelTimezone\Facades\Timezone;
+use Spatie\Browsershot\Browsershot;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -367,6 +370,11 @@ class Invoice extends Model implements Searchable
             'uuid',
             'student_uuid'
         )->distinct();
+    }
+
+    public function invoicePdfs(): HasMany
+    {
+        return $this->hasMany(InvoicePdf::class);
     }
 
     public function getIsVoidAttribute(): bool
@@ -1194,5 +1202,80 @@ class Invoice extends Model implements Searchable
         }
 
         return $this;
+    }
+
+    public static function getPdfDisk(): \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter
+    {
+        return Storage::disk(config('filesystems.invoices'));
+    }
+
+    public function generatePdfPath(): string
+    {
+        $parameters = [
+            $this->tenant_id,
+            $this->school_id,
+            $this->invoice_number,
+            $this->invoice_number,
+            now()->format('Y-m-d-H-i-s'),
+        ];
+
+        return Str::replaceArray('?', $parameters, '?/?/?/?-?.pdf');
+    }
+
+    public function savePdf(?InvoiceLayout $layout = null): InvoicePdf
+    {
+        $this->load([
+            'invoiceScholarships.appliesTo',
+            'invoicePaymentSchedules.invoicePaymentTerms',
+        ]);
+        $layout = $layout ?? $this->school->getDefaultInvoiceLayout();
+        $title = __('Invoice #:number', ['number' => $this->id]);
+
+        $content = view('invoice', [
+            'layout' => $layout,
+            'invoice' => $this,
+            'title' => $title,
+            'currency' => $this->currency,
+        ])->render();
+
+        $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/layout-{$layout->id}");
+        $disk = static::getPdfDisk();
+        $path = $this->generatePdfPath();
+
+        $disk->makeDirectory(dirname($path));
+
+        Browsershot::html($content)
+            ->disableJavascript()
+            ->margins(0, 0, 0, 0)
+            ->format($layout->paper_size)
+            ->noSandbox()
+            ->showBackground()
+            ->setNodeBinary(config('services.node.binary'))
+            ->setNpmBinary(config('services.node.npm'))
+            ->addChromiumArguments([
+                'user-data-dir' => $userDir
+            ])
+            ->ignoreHttpsErrors()
+            ->hideHeader()
+            ->hideFooter()
+            ->savePdf($disk->path($path));
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->invoicePdfs()->create([
+            'tenant_id' => $this->tenant_id,
+            'school_id' => $this->school_id,
+            'user_uuid' => auth()->user()?->uuid,
+            'invoice_layout_id' => $layout->id,
+            'name' => basename($path),
+            'relative_path' => $path,
+        ]);
+    }
+
+    public function latestPdf(): InvoicePdf
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->invoicePdfs()
+            ->latest()
+            ->first() ?? $this->savePdf();
     }
 }

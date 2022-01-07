@@ -15,6 +15,8 @@ return [
 
     'default' => env('FILESYSTEM_DRIVER', 'local'),
 
+    'invoices' => env('INVOICE_FILESYSTEM_DRIVER', 'local_pdf'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -33,6 +35,11 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+        ],
+
+        'local_pdf' => [
+            'driver' => 'local',
+            'root' => storage_path('app/invoices'),
         ],
 
         'public' => [

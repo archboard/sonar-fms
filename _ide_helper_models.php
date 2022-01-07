@@ -321,6 +321,8 @@ namespace App\Models{
  * @property-read int|null $invoice_payment_terms_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePayment[] $invoicePayments
  * @property-read int|null $invoice_payments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoicePdf[] $invoicePdfs
+ * @property-read int|null $invoice_pdfs_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceScholarship[] $invoiceScholarships
  * @property-read int|null $invoice_scholarships_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InvoiceTaxItem[] $invoiceTaxItems
@@ -659,6 +661,42 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePaymentTerm whereUuid($value)
  */
 	class IdeHelperInvoicePaymentTerm extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\InvoicePdf
+ *
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $school_id
+ * @property string $invoice_uuid
+ * @property string|null $user_uuid
+ * @property int|null $invoice_layout_id
+ * @property string|null $name
+ * @property string|null $relative_path
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read \App\Models\School $school
+ * @property-read \App\Models\Tenant $tenant
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereInvoiceLayoutId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereInvoiceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereRelativePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereSchoolId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereUserUuid($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperInvoicePdf extends \Eloquent {}
 }
 
 namespace App\Models{
