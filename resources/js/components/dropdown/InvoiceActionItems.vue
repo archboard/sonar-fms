@@ -40,7 +40,7 @@
       {{ __('Preview PDF') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
-      {{ __('View PDF') }}
+      {{ __('Download PDF') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('invoices.duplicate', invoice)">
       {{ __('Duplicate') }}
