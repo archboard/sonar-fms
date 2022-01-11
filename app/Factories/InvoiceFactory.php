@@ -2,8 +2,10 @@
 
 namespace App\Factories;
 
+use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Invoice;
+use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
@@ -11,9 +13,12 @@ use App\Models\InvoiceScholarship;
 use App\Models\School;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Bus\Batch;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 abstract class InvoiceFactory extends BaseImportFactory
 {
@@ -22,6 +27,7 @@ abstract class InvoiceFactory extends BaseImportFactory
     protected User $user;
     protected string $invoiceNumberPrefix = '';
     protected ?string $originalBatchId = null;
+    protected ?string $pdfBatchId = null;
     protected Collection $studentInvoiceMap;
     protected Collection $invoiceNumberMap;
 
@@ -232,11 +238,29 @@ abstract class InvoiceFactory extends BaseImportFactory
             }
         });
 
+        // Start the batch for the pdfs
+        $batch = Bus::batch(
+                $this->invoices->pluck('uuid')
+                    ->map(fn ($uuid) => new CreateInvoicePdf($uuid))
+            )
+            ->then(function (Batch $batch) {
+                InvoiceImport::where('pdf_batch_id', $batch->id)
+                    ->update(['pdf_batch_id' => null]);
+            })
+            ->catch(function (Batch $batch, \Throwable $e) {
+                Log::error($e->getMessage());
+            })
+            ->dispatch();
+
+        $this->pdfBatchId = $batch->id;
+
         return $this->invoices->map(function (array $invoice) {
             if ($invoice['notify'] && !$this->asDraft) {
                 SendNewInvoiceNotification::dispatch($invoice['uuid'])
                     ->delay(Carbon::parse($invoice['notify_at']));
             }
+
+//            CreateInvoicePdf::dispatch($invoice['uuid']);
 
             return $invoice['uuid'];
         });

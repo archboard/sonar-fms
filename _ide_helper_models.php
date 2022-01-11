@@ -417,6 +417,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $rolled_back_at
+ * @property string|null $pdf_batch_id
  * @property-read \App\Models\Currency|null $currency
  * @property-read string $absolute_path
  * @property-read string $file_name
@@ -438,6 +439,7 @@ namespace App\Models{
  * @method static Builder|InvoiceImport whereImportedRecords($value)
  * @method static Builder|InvoiceImport whereMapping($value)
  * @method static Builder|InvoiceImport whereMappingValid($value)
+ * @method static Builder|InvoiceImport wherePdfBatchId($value)
  * @method static Builder|InvoiceImport whereResults($value)
  * @method static Builder|InvoiceImport whereRolledBackAt($value)
  * @method static Builder|InvoiceImport whereSchoolId($value)
@@ -667,6 +669,7 @@ namespace App\Models{
 /**
  * App\Models\InvoicePdf
  *
+ * @mixin IdeHelperInvoicePdf
  * @property int $id
  * @property int $tenant_id
  * @property int $school_id
@@ -694,7 +697,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoicePdf whereUserUuid($value)
- * @mixin \Eloquent
  */
 	class IdeHelperInvoicePdf extends \Eloquent {}
 }

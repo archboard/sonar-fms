@@ -22,8 +22,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Testing\Fakes\PendingBatchFake;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\GetsUploadedFiles;
@@ -381,6 +384,8 @@ class InvoiceImportTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake();
         Event::fake();
+        Bus::fake();
+        Queue::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
@@ -509,6 +514,11 @@ class InvoiceImportTest extends TestCase
             );
         });
 
+        Bus::assertBatched(function (PendingBatchFake $batch) {
+            return $batch->jobs->count() === 3;
+        });
+        $this->assertNotNull($import->pdf_batch_id);
+
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
@@ -521,6 +531,7 @@ class InvoiceImportTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('small.csv'),
@@ -691,6 +702,7 @@ class InvoiceImportTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('sonar-import.xls'),
@@ -783,6 +795,7 @@ class InvoiceImportTest extends TestCase
     {
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('fail.csv'),
@@ -846,6 +859,7 @@ class InvoiceImportTest extends TestCase
     {
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('huge.csv'),
@@ -921,6 +935,7 @@ class InvoiceImportTest extends TestCase
     {
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $originalPath = (new InvoiceImport)->storeFile(
             $this->getUploadedFile('complex.xlsx'),
@@ -1230,6 +1245,7 @@ class InvoiceImportTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake();
         Event::fake();
+        Bus::fake();
 
         $this->school->update([
             'collect_tax' => true,

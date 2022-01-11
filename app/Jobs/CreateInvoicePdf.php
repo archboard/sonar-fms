@@ -24,7 +24,7 @@ class CreateInvoicePdf implements ShouldQueue
      */
     public function __construct(protected string $invoiceUuid, protected ?int $invoiceLayoutId = null)
     {
-        //
+        $this->onQueue('pdf');
     }
 
     /**

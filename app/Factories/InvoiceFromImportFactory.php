@@ -696,6 +696,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         }
 
         $storeResults = $this->store();
+        $this->import->pdf_batch_id = $this->pdfBatchId;
         $this->import->save();
 
         return $storeResults;
