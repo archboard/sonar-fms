@@ -51,7 +51,7 @@ class Invoice extends Model implements Searchable
     protected $fillable = [
         'uuid',
         'batch_id',
-        'import_id',
+        'invoice_import_id',
         'tenant_id',
         'school_id',
         'student_uuid',
@@ -331,7 +331,7 @@ class Invoice extends Model implements Searchable
 
     public function invoiceImport(): BelongsTo
     {
-        return $this->belongsTo(InvoiceImport::class, 'import_id');
+        return $this->belongsTo(InvoiceImport::class);
     }
 
     public function invoiceLayout(): BelongsTo

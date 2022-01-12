@@ -49,7 +49,7 @@ class InvoiceImport extends Model implements FileImport
 
     public function invoices(): HasMany
     {
-        return $this->hasMany(Invoice::class, 'import_id');
+        return $this->hasMany(Invoice::class);
     }
 
     public function getMappingValidator(): \Illuminate\Validation\Validator

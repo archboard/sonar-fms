@@ -259,7 +259,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'school_id' => $this->school->id,
             'student_uuid' => $student->uuid,
             'user_uuid' => $this->user->uuid,
-            'import_id' => $this->import->id,
+            'invoice_import_id' => $this->import->id,
             'uuid' => $this->rowInvoiceUuid,
             'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
             'title' => $this->getMapValue('title'),
