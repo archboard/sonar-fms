@@ -1214,12 +1214,14 @@ class Invoice extends Model implements Searchable
         $parameters = [
             $this->tenant_id,
             $this->school_id,
+            $this->created_at->format('Y'),
+            $this->created_at->format('n'),
             $this->invoice_number,
             $this->invoice_number,
-            now()->format('Y-m-d-H-i-s'),
+            now()->format('Ymd-Hi-s'),
         ];
 
-        return Str::replaceArray('?', $parameters, '?/?/?/?-?.pdf');
+        return Str::replaceArray('?', $parameters, '?/?/?/?/?/?-?.pdf');
     }
 
     public function savePdf(?InvoiceLayout $layout = null): InvoicePdf
@@ -1259,6 +1261,24 @@ class Invoice extends Model implements Searchable
             ->hideHeader()
             ->hideFooter()
             ->savePdf($disk->path($path));
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->invoicePdfs()->create([
+            'tenant_id' => $this->tenant_id,
+            'school_id' => $this->school_id,
+            'user_uuid' => auth()->user()?->uuid,
+            'invoice_layout_id' => $layout->id,
+            'name' => basename($path),
+            'relative_path' => $path,
+        ]);
+    }
+
+    public function fakeSavePdf(?InvoiceLayout $layout = null): InvoicePdf
+    {
+        $layout = $layout ?? $this->school->getDefaultInvoiceLayout();
+        $disk = static::getPdfDisk();
+        $path = $this->generatePdfPath();
+        $disk->write($path, '');
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->invoicePdfs()->create([

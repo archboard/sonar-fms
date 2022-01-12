@@ -4,16 +4,20 @@ namespace App\Models;
 
 use App\Concerns\FileImport;
 use App\Factories\InvoiceFromImportFactory;
+use App\Jobs\PruneInvoicePdfs;
 use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\FileImportMap;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use App\Traits\ImportsFiles;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -50,6 +54,18 @@ class InvoiceImport extends Model implements FileImport
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function invoicePdfs(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            InvoicePdf::class,
+            Invoice::class,
+            'invoice_import_id',
+            'invoice_uuid',
+            'id',
+            'uuid',
+        );
     }
 
     public function getMappingValidator(): \Illuminate\Validation\Validator
@@ -166,6 +182,24 @@ class InvoiceImport extends Model implements FileImport
 
     public function rollBack(): static
     {
+        // If the batch is still processing, cancel it
+        if ($this->pdf_batch_id) {
+            Bus::findBatch($this->pdf_batch_id)
+                ?->cancel();
+        }
+
+        // Dispatch jobs to delete any invoice files
+        Bus::batch(
+                $this->invoicePdfs()
+                    ->pluck('relative_path')
+                    ->map(fn ($path) => new PruneInvoicePdfs($path))
+            )
+            ->catch(function (Batch $batch, \Throwable $e) {
+                // Do something
+            })
+            ->name("Invoice import {$this->id}")
+            ->dispatch();
+
         $this->invoices()->delete();
 
         return $this->reset();

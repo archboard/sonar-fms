@@ -259,8 +259,10 @@ Route::middleware('tenant')->group(function () {
                             ->name('map');
                         Route::put('/map', [\App\Http\Controllers\MapPaymentImportController::class, 'update']);
 
-                        Route::post('/start', \App\Http\Controllers\StartPaymentImportController::class)
-                            ->name('start');
+                        Route::middleware('needs_layout')->group(function () {
+                            Route::post('/start', \App\Http\Controllers\StartPaymentImportController::class)
+                                ->name('start');
+                        });
 
                         Route::post('/reverse', \App\Http\Controllers\RollBackPaymentImportController::class)
                             ->name('rollback');

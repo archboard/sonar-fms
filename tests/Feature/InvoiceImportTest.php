@@ -10,14 +10,17 @@ use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
+use App\Models\InvoiceLayout;
 use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
+use App\Models\InvoicePdf;
 use App\Models\InvoiceScholarship;
 use App\Models\InvoiceTaxItem;
 use App\Models\InvoiceTemplate;
 use App\Models\Scholarship;
 use App\Models\Student;
 use App\Models\Term;
+use Illuminate\Bus\Batch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -701,6 +704,7 @@ class InvoiceImportTest extends TestCase
         $this->assignPermission('roll back', InvoiceImport::class);
         $this->withoutExceptionHandling();
         Storage::fake();
+        Storage::fake(config('filesystems.invoices'));
         Event::fake();
         Bus::fake();
 
@@ -769,13 +773,26 @@ class InvoiceImportTest extends TestCase
         $values = $contents
             ->pluck('student number')
             ->filter(fn ($value) => !is_null($value));
-        $students = $import->school->students()
+        $import->school->students()
             ->whereIn('student_number', $values)
             ->get();
 
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+
+        // Seed some invoice pdfs
+        /** @var InvoiceLayout $layout */
+        $layout = InvoiceLayout::factory()->create();
+        $import->invoices->each(function (Invoice $invoice) use ($layout) {
+            $invoice->fakeSavePdf($layout);
+        });
+
+        $pdfs = $import->invoicePdfs()->get();
+        $this->assertEquals($import->invoices->count(), $pdfs->count());
+        $pdfs->each(function (InvoicePdf $pdf) {
+            Invoice::getPdfDisk()->assertExists($pdf->relative_path);
+        });
 
         $this->post(route('invoices.imports.rollback', $import))
             ->assertSessionHas('success')
@@ -789,6 +806,10 @@ class InvoiceImportTest extends TestCase
 
         $this->assertEquals(0, InvoiceItem::whereNotNull('invoice_uuid')->count());
         $this->assertEquals(0, InvoiceScholarship::whereNotNull('invoice_uuid')->count());
+
+        Bus::assertBatched(function (PendingBatchFake $batch) use ($pdfs) {
+            return $batch->jobs->count() === $pdfs->count();
+        });
     }
 
     public function test_can_import_simple_csv_and_get_no_successful_results()
