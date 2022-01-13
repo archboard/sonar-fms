@@ -38,10 +38,10 @@
           {{ __(':count students selected', { count: user.student_selection.length }) }}
         </span>
         <div class="space-x-3 ml-3">
-          <Link is="a" href="#" @click.prevent="clearSelection">
+          <Link is="button" @click.prevent="selectAll = false">
             {{ __('Remove selection') }}
           </Link>
-          <Link :href="$route('selection.invoices.create')">
+          <Link :href="`/selection/invoices/create`">
             {{ __('Create invoice') }}
           </Link>
         </div>
@@ -119,7 +119,7 @@
                 <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${student.id}`">
                   {{ __('View') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('students.invoices.create', student)">
+                <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/students/${student.uuid}/invoices/create`">
                   {{ __('New invoice') }}
                 </SonarMenuItem>
               </div>
@@ -206,9 +206,8 @@ export default defineComponent({
 
   setup (props) {
     const $http = inject('$http')
-    const $route = inject('$route')
     const showFilters = ref(false)
-    const selectAll = ref(false)
+    const selectAll = ref(props.user.student_selection.length > 0)
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters(
@@ -221,7 +220,7 @@ export default defineComponent({
         grades: [],
         status: 'enrolled',
       },
-      $route('students.index'),
+      `/students`,
       {}
     )
     const { searchTerm } = searchesItems(filters)
@@ -230,16 +229,16 @@ export default defineComponent({
         const add = props.user.student_selection.includes(student.id)
         const method = add ? 'put' : 'delete'
 
-        $http[method]($route('student-selection.update', student.id))
+        $http[method](`/student-selection/${student.uuid}`)
       })
     }
     const clearSelection = async () => {
       props.user.student_selection = []
-      await $http.delete($route('student-selection.remove'))
+      await $http.delete(`/student-selection`)
     }
     watch(selectAll, (newVal) => {
       if (newVal) {
-        Inertia.post($route('student-selection.store'), filters.value)
+        Inertia.post(`/student-selection`, filters)
       } else {
         clearSelection()
       }
