@@ -1,20 +1,20 @@
 <template>
-  <div class="p-1">
-    <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="$route('invoices.show', invoice)">
+  <div v-if="showView || invoice.student" class="p-1">
+    <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="`/invoices/${invoice.uuid}`">
       {{ __('View invoice') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="$route('students.show', invoice.student)">
+    <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}`">
       {{ __('View student') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="$route('students.invoices.create', invoice.student)">
+    <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}/invoices/create`">
       {{ __('New invoice for student') }}
     </SonarMenuItem>
   </div>
-  <div v-if="can('invoices.update')" class="p-1">
-    <SonarMenuItem v-if="!invoice.is_void && invoice.published_at" @click.prevent="$emit('editStatus')">
+  <div v-if="can('invoices.update') && !invoice.is_void" class="p-1">
+    <SonarMenuItem v-if="invoice.published_at" @click.prevent="$emit('editStatus')">
       {{ __('Change status') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('invoices.edit', invoice)">
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="`/invoices/${invoice.uuid}/edit`">
       {{ __('Edit') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('batches.edit', invoice.batch_id)">
@@ -36,13 +36,13 @@
     </SonarMenuItem>
   </div>
   <div class="p-1">
-    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.preview', invoice)" target="_blank">
+    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="`/invoices/${invoice.uuid}/preview`" target="_blank">
       {{ __('Preview PDF') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="$route('invoices.download', invoice)" target="_blank">
+    <SonarMenuItem v-if="can('invoices.viewAny')" is="a" :href="`/invoices/${invoice.uuid}/pdf`" target="_blank">
       {{ __('Download PDF') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="$route('invoices.duplicate', invoice)">
+    <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/invoices/${invoice.uuid}/duplicate`">
       {{ __('Duplicate') }}
     </SonarMenuItem>
     <SonarMenuItem @click.prevent="$emit('convertToTemplate')">
