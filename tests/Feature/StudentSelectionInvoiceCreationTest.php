@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -176,6 +177,7 @@ class StudentSelectionInvoiceCreationTest extends TestCase
             ->assertSessionHas('success');
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
+        Queue::assertPushed(CreateInvoicePdf::class);
 
         foreach ($students as $student) {
             $student->refresh();
