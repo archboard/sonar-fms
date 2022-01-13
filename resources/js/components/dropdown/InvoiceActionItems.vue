@@ -17,10 +17,10 @@
     <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="`/invoices/${invoice.uuid}/edit`">
       {{ __('Edit') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('batches.edit', invoice.batch_id)">
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="`/batches/${invoice.batch_id}/edit`">
       {{ __('Edit batch') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="$route('invoices.publish', invoice)" as="button" method="put" preserve-scroll>
+    <SonarMenuItem v-if="!invoice.published_at" is="inertia-link" :href="`/invoices/${invoice.uuid}/publish`" as="button" method="put" preserve-scroll>
       {{ __('Publish') }}
     </SonarMenuItem>
   </div>
