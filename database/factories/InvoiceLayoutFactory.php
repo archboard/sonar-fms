@@ -24,10 +24,11 @@ class InvoiceLayoutFactory extends Factory
     public function definition()
     {
         return [
-            'tenant_id' => Tenant::current()->id,
-            'school_id' => School::current()->id,
+            'tenant_id' => Tenant::current()?->id,
+            'school_id' => School::current()?->id,
             'name' => $this->faker->words(3, true),
             'paper_size' => $this->faker->randomElement(['A4', 'Letter']),
+            'is_default' => true,
             'layout_data' => [
                 'rows' => [
                     [

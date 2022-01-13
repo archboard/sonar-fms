@@ -21,6 +21,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\Assert;
@@ -1044,7 +1045,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_create_invoice_with_taxes()
     {
-        $this->withoutExceptionHandling();
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->school->update([
             'collect_tax' => true,
@@ -1098,6 +1099,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_create_invoice_ignoring_taxes()
     {
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->school->update([
             'collect_tax' => true,
@@ -1149,7 +1151,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_create_invoice_with_taxes_overriding_defaults()
     {
-        $this->withoutExceptionHandling();
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->school->update([
             'collect_tax' => true,
@@ -1210,7 +1212,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_save_invoice_as_draft()
     {
-        $this->withoutExceptionHandling();
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
 
         $students = $this->school->students->random(3);
@@ -1248,8 +1250,7 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_calculate_correct_tax_amount()
     {
-        $this->withoutExceptionHandling();
-        Queue::fake();
+        Bus::fake();
 
         $this->assignPermission('create', Invoice::class);
         $this->school->update([

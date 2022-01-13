@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Factories\UuidFactory;
+use App\Models\InvoiceLayout;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;

@@ -23,7 +23,7 @@ class TermFactory extends Factory
     public function definition()
     {
         return [
-            'tenant_id' => Tenant::current()->id,
+            'tenant_id' => Tenant::current()?->id,
             'sis_id' => $this->faker->numberBetween(),
             'sis_assigned_id' => $this->faker->numberBetween(),
             'name' => today()->format('Y') . '-' . today()->addYear()->format('Y'),

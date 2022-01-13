@@ -10,6 +10,7 @@ use App\Models\Term;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Inertia\Testing\Assert;
@@ -270,11 +271,12 @@ class CombineInvoicesTest extends TestCase
             }
         }
 
-        Queue::assertNothingPushed();
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
     }
 
     public function test_can_join_invoices_with_a_voided_invoice()
     {
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->createSelection();
         $voided = $this->selection->random();
@@ -344,12 +346,12 @@ class CombineInvoicesTest extends TestCase
         $this->assertNull($invoice->published_at);
         $this->assertTrue($invoice->is_parent);
 
-        Queue::assertNothingPushed();
+        Queue::assertNotPushed(SendNewInvoiceNotification::class);
     }
 
     public function test_can_update_draft_invoice()
     {
-        $this->withoutExceptionHandling();
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->assignPermission('update', Invoice::class);
         $this->createSelection();
@@ -424,7 +426,7 @@ class CombineInvoicesTest extends TestCase
 
     public function test_can_update_draft_invoices_with_different_invoices_and_publish()
     {
-        $this->withoutExceptionHandling();
+        Bus::fake();
         $this->assignPermission('create', Invoice::class);
         $this->assignPermission('update', Invoice::class);
         $this->createSelection();

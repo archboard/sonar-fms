@@ -11,7 +11,14 @@ use Tests\Traits\SignsIn;
 class InvoiceLayoutTest extends TestCase
 {
     use RefreshDatabase;
-    use SignsIn;
+
+    protected bool $signIn = true;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        InvoiceLayout::whereNotNull('id')->delete();
+    }
 
     public function test_need_permission_to_get_to_layouts_page()
     {

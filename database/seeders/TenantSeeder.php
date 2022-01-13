@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\InvoiceLayout;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
+use App\Models\Term;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 
@@ -21,6 +23,9 @@ class TenantSeeder extends Seeder
         $tenant = Tenant::factory()->testing()->create();
 
         $tenant->schools->each(function (School $school) use ($tenant) {
+            $school->terms()->save(Term::factory()->make(['tenant_id' => $tenant->id]));
+            $school->invoiceLayouts()->save(InvoiceLayout::factory()->make(['tenant_id' => $tenant->id]));
+
             // Create students for the school
             $school->students()->saveMany(
                 Student::factory()->count(5)->make(['tenant_id' => $tenant->id])

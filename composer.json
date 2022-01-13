@@ -95,6 +95,6 @@
       "@php artisan horizon:publish"
     ],
     "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G",
-    "test": "./vendor/bin/phpunit"
+    "test": "./vendor/bin/phpunit --stop-on-failure"
   }
 }
