@@ -6,11 +6,11 @@
         :menu-items="[
           {
             label: __('By hand'),
-            route: $route('invoices.create'),
+            route: `/invoices/create`,
           },
           {
             label: __('From import'),
-            route: $route('invoices.imports.index'),
+            route: `/invoices/imports/create`,
           },
         ]"
       >
@@ -42,7 +42,7 @@
           {{ __(':count invoices selected', { count: user.invoice_selection.length }) }}
         </span>
         <div class="space-x-3 ml-3">
-          <Link is="a" href="#" @click.prevent="clearSelection">
+          <Link is="button" @click.prevent="selectAll = false">
             {{ __('Remove selection') }}
           </Link>
           <Link href="/combine">
@@ -245,11 +245,10 @@ export default defineComponent({
   },
 
   setup (props) {
-    const $route = inject('$route')
     const $http = inject('$http')
     const showFilters = ref(false)
     const selectedInvoice = ref({})
-    const selectAll = ref(false)
+    const selectAll = ref(props.user.invoice_selection.length > 0)
     const { can } = checksPermissions()
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
@@ -263,7 +262,7 @@ export default defineComponent({
       date_end: null,
       due_start: null,
       due_end: null,
-    }, $route('invoices.index'))
+    }, `/invoices`)
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
 
@@ -273,16 +272,16 @@ export default defineComponent({
         const add = props.user.invoice_selection.includes(invoice.uuid)
         const method = add ? 'put' : 'delete'
 
-        $http[method]($route('invoice-selection.update', invoice.uuid))
+        $http[method](`/invoice-selection/${invoice.uuid}`)
       })
     }
     const clearSelection = async () => {
-      await $http.delete($route('invoice-selection.remove'))
+      await $http.delete('/invoice-selection')
       props.user.invoice_selection = []
     }
     watch(selectAll, (newVal) => {
       if (newVal) {
-        Inertia.post($route('invoice-selection.store'), filters.value, {
+        Inertia.post(`/invoice-selection`, filters, {
           preserveState: true
         })
       } else {
