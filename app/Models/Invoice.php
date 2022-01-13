@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Factories\UuidFactory;
 use App\Jobs\CalculateInvoiceAttributes;
+use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
@@ -146,11 +147,12 @@ class Invoice extends Model implements Searchable
         static::updated(function (Invoice $invoice) {
             // If the invoice has been voided or the published time has changed
             // run the recalculations on the parent
-            if (
-                ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at')) &&
-                $invoice->parent_uuid
-            ) {
-                dispatch(new CalculateInvoiceAttributes($invoice->parent_uuid));
+            if ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at')) {
+                if ($invoice->parent_uuid) {
+                    dispatch(new CalculateInvoiceAttributes($invoice->parent_uuid));
+                }
+
+                dispatch(new CreateInvoicePdf($invoice->uuid));
             }
         });
     }
