@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="showStudent" class="flex items-center justify-between">
-      <h3 class="font-bold text-lg mb-2 pt-2">{{ invoice.student.full_name }}</h3>
+      <h3 class="font-bold text-lg mb-2 pt-2"><InertiaLink :href="`/students/${invoice.student.uuid}`" class="hover:underline">{{ invoice.student.full_name }}</InertiaLink></h3>
       <div class="flex items-center space-x-2">
         <InvoiceStatusBadge :invoice="invoice" />
         <InertiaLink class="text-gray-500 dark:text-gray-400 hover:underline" :href="`/invoices/${invoice.uuid}`">{{ invoice.invoice_number }}</InertiaLink>
