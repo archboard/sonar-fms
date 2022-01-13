@@ -38,11 +38,16 @@ class CreateInvoicePdf implements ShouldQueue
             return;
         }
 
+        $invoice = Invoice::find($this->invoiceUuid);
+
+        if (!$invoice->published_at) {
+            return;
+        }
+
         $layout = $this->invoiceLayoutId
             ? InvoiceLayout::find($this->invoiceLayoutId)
             : null;
 
-        Invoice::find($this->invoiceUuid)
-            ->savePdf($layout);
+        $invoice->savePdf($layout);
     }
 }
