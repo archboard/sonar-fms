@@ -2,6 +2,7 @@
 
 namespace Tests\Traits;
 
+use App\Models\Invoice;
 use App\Models\InvoicePayment;
 
 trait CreatesPayments
@@ -9,9 +10,9 @@ trait CreatesPayments
     use CreatesInvoice;
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-    protected function createPayment(array $attributes = []): InvoicePayment
+    protected function createPayment(array $attributes = [], ?Invoice $invoice = null): InvoicePayment
     {
-        $invoice = $this->createInvoice();
+        $invoice = $invoice ?: $this->createInvoice();
         $defaultAttributes = [
             'tenant_id' => $this->tenant->id,
             'school_id' => $this->school->id,

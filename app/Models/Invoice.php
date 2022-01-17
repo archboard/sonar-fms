@@ -379,6 +379,11 @@ class Invoice extends Model implements Searchable
         return $this->hasMany(InvoicePdf::class);
     }
 
+    public function invoiceRefunds(): HasMany
+    {
+        return $this->hasMany(InvoiceRefund::class);
+    }
+
     public function getIsVoidAttribute(): bool
     {
         return !!$this->voided_at;

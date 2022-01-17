@@ -64,6 +64,7 @@ class InvoiceResource extends JsonResource
             'payments' => InvoicePaymentResource::collection($this->whenLoaded('invoicePayments')),
             'activities' => ActivityResource::collection($this->whenLoaded('activities')),
             'children' => InvoiceResource::collection($this->whenLoaded('children')),
+            'refunds' => InvoiceRefundResource::collection($this->whenLoaded('invoiceRefunds')),
         ];
     }
 }

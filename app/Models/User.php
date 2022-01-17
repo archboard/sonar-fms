@@ -630,32 +630,6 @@ class User extends Authenticatable implements HasLocalePreference
                     ],
                 ],
                 [
-                    'model' => InvoicePayment::class,
-                    'label' => __('Invoice payments'),
-                    'permissions' => [
-                        [
-                            'permission' => 'viewAny',
-                            'label' => __('View'),
-                            'can' => $this->can('viewAny', InvoicePayment::class),
-                        ],
-                        [
-                            'permission' => 'create',
-                            'label' => __('Create'),
-                            'can' => $this->can('create', InvoicePayment::class),
-                        ],
-                        [
-                            'permission' => 'update',
-                            'label' => __('Update'),
-                            'can' => $this->can('update', InvoicePayment::class),
-                        ],
-                        [
-                            'permission' => 'delete',
-                            'label' => __('Delete'),
-                            'can' => $this->can('delete', InvoicePayment::class),
-                        ],
-                    ],
-                ],
-                [
                     'model' => InvoiceImport::class,
                     'label' => __('Invoice imports'),
                     'permissions' => [
@@ -687,6 +661,32 @@ class User extends Authenticatable implements HasLocalePreference
                     ],
                 ],
                 [
+                    'model' => InvoicePayment::class,
+                    'label' => __('Invoice payments'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', InvoicePayment::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', InvoicePayment::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', InvoicePayment::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', InvoicePayment::class),
+                        ],
+                    ],
+                ],
+                [
                     'model' => PaymentImport::class,
                     'label' => __('Payment imports'),
                     'permissions' => [
@@ -714,6 +714,42 @@ class User extends Authenticatable implements HasLocalePreference
                             'permission' => 'roll back',
                             'label' => __('Roll back'),
                             'can' => $this->can('roll back', PaymentImport::class),
+                        ],
+                    ],
+                ],
+                [
+                    'model' => InvoiceRefund::class,
+                    'label' => __('Invoice refunds'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', InvoiceRefund::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', InvoiceRefund::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', InvoiceRefund::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', InvoiceRefund::class),
+                        ],
+                        [
+                            'permission' => 'restore',
+                            'label' => __('Restore'),
+                            'can' => $this->can('restore', InvoiceRefund::class),
+                        ],
+                        [
+                            'permission' => 'forceDelete',
+                            'label' => __('Delete permanently'),
+                            'can' => $this->can('forceDelete', InvoiceRefund::class),
                         ],
                     ],
                 ],

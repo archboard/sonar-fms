@@ -26,6 +26,8 @@ class Controller extends BaseController
             'edit' => 'update',
             'update' => 'update',
             'destroy' => 'delete',
+            'restore' => 'restore',
+            'forceDelete' => 'forceDelete',
         ];
     }
 }
