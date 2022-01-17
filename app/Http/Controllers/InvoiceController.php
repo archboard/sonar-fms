@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\InvoiceRefund;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -53,6 +54,9 @@ class InvoiceController extends Controller
                 'students' => $user->getPermissions(Student::class),
                 'payments' => [
                     'create' => $user->can('create', InvoicePayment::class),
+                ],
+                'refunds' => [
+                    'create' => $user->can('create', InvoiceRefund::class),
                 ],
             ],
         ])->withViewData(compact('title'));
@@ -139,6 +143,9 @@ class InvoiceController extends Controller
                 'students' => $user->getPermissions(Student::class),
                 'payments' => [
                     'create' => $user->can('create', InvoicePayment::class),
+                ],
+                'refunds' => [
+                    'create' => $user->can('create', InvoiceRefund::class),
                 ],
             ],
         ])->withViewData(compact('title'));

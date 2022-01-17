@@ -34,6 +34,7 @@ class InvoiceRefundController extends Controller
 
         return inertia('refunds/Create', [
             'title' => $title,
+            'invoice' => $invoice->toResource(),
         ])->withViewData(compact('title'));
     }
 }

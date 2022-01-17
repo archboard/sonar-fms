@@ -24,7 +24,7 @@
       {{ __('Publish') }}
     </SonarMenuItem>
   </div>
-  <div v-if="canAny('payments.create', 'invoices.update')" class="p-1">
+  <div v-if="canAny('payments.create', 'invoices.update', 'refunds.create')" class="p-1">
     <SonarMenuItem v-if="can('payments.create') && invoice.amount_due > 0 && !invoice.is_void && invoice.published_at" is="inertia-link" :href="`/payments/create?invoice_uuid=${invoice.uuid}`">
       {{ __('Record payment') }}
     </SonarMenuItem>
@@ -33,6 +33,9 @@
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.update')" is="inertia-link" :href="`/invoices/${invoice.uuid}/distribute`" as="button" method="post" preserve-scroll>
       {{ __('Redistribute payments') }}
+    </SonarMenuItem>
+    <SonarMenuItem v-if="can('refunds.create') && invoice.payment_made" is="inertia-link" :href="`/invoices/${invoice.uuid}/refunds/create`">
+      {{ __('Record refund') }}
     </SonarMenuItem>
   </div>
   <div class="p-1">
