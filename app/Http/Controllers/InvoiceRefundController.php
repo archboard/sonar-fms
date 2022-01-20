@@ -29,6 +29,20 @@ class InvoiceRefundController extends Controller
         $title = __('Refund for :invoice_number', [
             'invoice_number' => $invoice->invoice_number,
         ]);
+        $breadcrumbs = [
+            [
+                'label' => __('Invoices'),
+                'route' => route('invoices.index'),
+            ],
+            [
+                'label' => $invoice->invoice_number,
+                'route' => route('invoices.show', $invoice),
+            ],
+            [
+                'label' => __('Record refund'),
+                'route' => route('invoices.refunds.create', $invoice),
+            ],
+        ];
         $invoice->load(
             'parent',
             'currency',
@@ -37,6 +51,7 @@ class InvoiceRefundController extends Controller
 
         return inertia('refunds/Create', [
             'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
             'invoice' => $invoice->toResource(),
         ])->withViewData(compact('title'));
     }
