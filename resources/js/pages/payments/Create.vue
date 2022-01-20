@@ -85,7 +85,7 @@
             <InputWrap :error="form.errors.notes">
               <Label for="notes">{{ __('Notes') }}</Label>
               <Textarea v-model="form.notes" id="notes" />
-              <HelpText>{{ __('Include additional internal notes. Only other administrators can view these notes.') }}</HelpText>
+              <HelpText>{{ __('Optional additional internal notes. Only other administrators can view these notes.') }}</HelpText>
             </InputWrap>
           </Fieldset>
         </CardPadding>

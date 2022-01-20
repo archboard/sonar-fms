@@ -9,7 +9,6 @@ trait CreatesPayments
 {
     use CreatesInvoice;
 
-    /** @noinspection PhpIncompatibleReturnTypeInspection */
     protected function createPayment(array $attributes = [], ?Invoice $invoice = null): InvoicePayment
     {
         $invoice = $invoice ?: $this->createInvoice();
@@ -21,8 +20,13 @@ trait CreatesPayments
             'made_by' => $this->createUser()->uuid,
         ];
 
-        return $invoice->invoicePayments()->create(
+        /** @var InvoicePayment $payment */
+        $payment = $invoice->invoicePayments()->create(
             array_merge($defaultAttributes, $attributes)
         );
+
+        $invoice->recordPayment($payment);
+
+        return $payment;
     }
 }

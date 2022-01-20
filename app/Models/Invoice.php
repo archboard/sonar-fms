@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Factories\UuidFactory;
+use App\Http\Requests\SaveRefundRequest;
 use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
@@ -407,6 +408,15 @@ class Invoice extends Model implements Searchable
         return displayCurrency($this->tax_due, $this->currency);
     }
 
+    public function getTotalPaidFormattedAttribute(): ?string
+    {
+        if (!$this->relationLoaded('currency')) {
+            return null;
+        }
+
+        return displayCurrency($this->total_paid, $this->currency);
+    }
+
     public function getSubtotalFormattedAttribute(): ?string
     {
         if (!$this->relationLoaded('currency')) {
@@ -540,6 +550,7 @@ class Invoice extends Model implements Searchable
             'invoicePaymentSchedules.invoicePaymentTerms',
             'invoicePayments.recordedBy',
             'invoicePayments.currency',
+            'invoiceRefunds.currency',
             'children',
             'parent',
             'parent.invoicePaymentSchedules.invoicePaymentTerms',
@@ -668,6 +679,7 @@ class Invoice extends Model implements Searchable
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
         $this->total_paid = $this->getTotalPaid();
+        ray($this->total_paid);
 
         // If the invoice has a schedule, use its amount
         // as the invoice's amount due, which may be different
@@ -687,11 +699,13 @@ class Invoice extends Model implements Searchable
     public function getTotalPaid(): int
     {
         $paymentsSum = $this->invoicePayments->sum('amount');
+        $refundsSum = $this->invoiceRefunds->sum('amount');
+        $total = $paymentsSum - $refundsSum;
 
         // If this isn't the parent of a combined invoice
         // just return the sum of all the payments
         if (!$this->is_parent) {
-            return $paymentsSum;
+            return $total;
         }
 
         // Eager load any payments for the children
@@ -700,14 +714,20 @@ class Invoice extends Model implements Searchable
             'children.invoicePayments' => function ($query) {
                 $query->whereNull('invoice_payments.parent_uuid');
             },
+            'children.invoiceRefunds',
         ]);
 
         // Add all the payments made to this invoice
         // and any child invoices since they could be
         // recorded independently of the parent
-        return $this->children->reduce(function (int $total, Invoice $child) {
+        $childrenPaymentTotal = $this->children->reduce(function (int $total, Invoice $child) {
                 return $total + $child->invoicePayments->sum('amount');
-            }, $paymentsSum);
+            }, $total);
+        $childrenRefunds = $this->children->reduce(function (int $total, Invoice $child) {
+                return $total + $child->invoiceRefunds->sum('amount');
+            }, 0);
+
+        return $childrenPaymentTotal - $childrenRefunds;
     }
 
     public function setCalculatedAttributes(bool $save = false): static
@@ -1304,5 +1324,41 @@ class Invoice extends Model implements Searchable
         return $this->invoicePdfs()
             ->latest()
             ->first() ?? $this->savePdf();
+    }
+
+    public function recordRefund(SaveRefundRequest $request): InvoiceRefund
+    {
+        $validated = $request->validated();
+        $validated['user_uuid'] = $request->user()->uuid;
+        $validated['school_id'] = $request->school()->id;
+        $validated['tenant_id'] = $request->tenant()->id;
+
+        /** @var InvoiceRefund $refund */
+        $refund = $this->invoiceRefunds()->create($validated);
+
+        $this->setCalculatedAttributes(true);
+
+        // __(':user recorded a refund for :amount.')
+        activity()
+            ->on($this)
+            ->withProperties([
+                'amount' => displayCurrency($refund->amount, $this->currency),
+            ])
+            ->log(':user recorded a refund for :amount.');
+
+        if ($this->parent_uuid) {
+            // __(':user recorded a refund for :amount for :invoice_number.')
+            activity()
+                ->on($this->parent)
+                ->withProperties([
+                    'amount' => displayCurrency($refund->amount, $this->currency),
+                    'invoice_number' => $this->invoice_number,
+                ])
+                ->log(':user recorded a refund for :amount for :invoice_number.');
+
+            CalculateInvoiceAttributes::dispatch($this->parent_uuid);
+        }
+
+        return $refund;
     }
 }

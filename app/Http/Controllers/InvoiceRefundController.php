@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveRefundRequest;
 use App\Models\Invoice;
 use App\Models\InvoiceRefund;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class InvoiceRefundController extends Controller
             'invoice_number' => $invoice->invoice_number,
         ]);
         $invoice->load(
+            'parent',
+            'currency',
             'invoiceRefunds',
         );
 
@@ -36,5 +39,14 @@ class InvoiceRefundController extends Controller
             'title' => $title,
             'invoice' => $invoice->toResource(),
         ])->withViewData(compact('title'));
+    }
+
+    public function store(SaveRefundRequest $request, Invoice $invoice)
+    {
+        $invoice->recordRefund($request);
+
+        session()->flash('success', __('Refund saved successfully.'));
+
+        return redirect()->route('invoices.show', $invoice);
     }
 }

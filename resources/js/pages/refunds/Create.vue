@@ -1,5 +1,9 @@
 <template>
   <Authenticated>
+    <Alert v-if="invoice.parent" level="warning" class="mb-4">
+      {{ __('This invoice is part of the combined invoice :invoice. The refund will be recorded for this invoice, but will also be reflected in the combined invoice.', { invoice: `${invoice.parent.title} (${invoice.parent.invoice_number})` }) }}
+    </Alert>
+
     <form @submit.prevent="save">
       <CardWrapper>
         <CardPadding>
@@ -7,16 +11,19 @@
             <InputWrap :error="form.errors.amount">
               <Label for="amount" required>{{ __('Refund amount') }}</Label>
               <CurrencyInput v-model="form.amount" id="amount" />
+              <HelpText>{{ __('The amount should be less than or equal to :amount.', { amount: invoice.total_paid_formatted }) }}</HelpText>
             </InputWrap>
 
-            <InputWrap :error="form.errors.transactions_details">
-              <Label for="transactions_details">{{ __('Transaction details') }}</Label>
-              <Input v-model="form.transactions_details" id="transactions_details" />
+            <InputWrap :error="form.errors.transaction_details">
+              <Label for="transaction_details">{{ __('Transaction details') }}</Label>
+              <Input v-model="form.transaction_details" id="transaction_details" />
+              <HelpText>{{ __("This could hold additional information about the payment, such as a transaction number, to add more auditable details about the payment.") }}</HelpText>
             </InputWrap>
 
             <InputWrap :error="form.errors.notes">
               <Label for="notes">{{ __('Notes') }}</Label>
               <Textarea v-model="form.notes" id="notes" />
+              <HelpText>{{ __('Optional additional internal notes. Only other administrators can view these notes.') }}</HelpText>
             </InputWrap>
           </Fieldset>
         </CardPadding>
@@ -43,9 +50,13 @@ import Label from '@/components/forms/Label'
 import CurrencyInput from '@/components/forms/CurrencyInput'
 import Input from '@/components/forms/Input'
 import Textarea from '@/components/forms/Textarea'
+import HelpText from '@/components/HelpText'
+import Alert from '@/components/Alert'
 
 export default defineComponent({
   components: {
+    Alert,
+    HelpText,
     Textarea,
     Input,
     CurrencyInput,
@@ -65,7 +76,7 @@ export default defineComponent({
   setup ({ invoice }) {
     const form = useForm({
       amount: null,
-      transactions_details: null,
+      transaction_details: null,
       notes: null,
     })
     const save = () => {

@@ -14,6 +14,7 @@ use Tests\Traits\CreatesPayments;
 class InvoiceRefundTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
     use CreatesInvoice;
     use CreatesPayments;
 
@@ -26,6 +27,8 @@ class InvoiceRefundTest extends TestCase
         parent::setUp();
 
         $this->invoice = $this->createInvoice();
+        $this->invoice->unsetRelations();
+        $this->createPayment(invoice: $this->invoice);
     }
 
     public function test_cant_access_create_without_permission()
@@ -37,6 +40,7 @@ class InvoiceRefundTest extends TestCase
     public function test_cant_see_create_refund_form_if_no_payments_made()
     {
         $this->assignPermission('create', InvoiceRefund::class);
+        $this->invoice->invoicePayments()->delete();
 
         $this->get(route('invoices.refunds.create', $this->invoice))
             ->assertSessionHas('error')
@@ -46,7 +50,6 @@ class InvoiceRefundTest extends TestCase
     public function test_can_see_create_refund_form()
     {
         $this->assignPermission('create', InvoiceRefund::class);
-        $this->createPayment(invoice: $this->invoice);
 
         $this->get(route('invoices.refunds.create', $this->invoice))
             ->assertViewHas('title')
@@ -55,5 +58,49 @@ class InvoiceRefundTest extends TestCase
                 ->has('invoice')
                 ->component('refunds/Create')
             );
+    }
+
+    public function test_amount_validation()
+    {
+        $this->assignPermission('create', InvoiceRefund::class);
+        $data = [
+            'amount' => $this->invoice->total_paid + 1,
+            'transaction_details' => $this->faker->creditCardNumber(),
+            'notes' => $this->faker->sentence(),
+        ];
+
+        $this->post(route('invoices.refunds.store', $this->invoice), $data)
+            ->assertSessionHasErrors('amount');
+    }
+
+    public function test_can_save_refund_correctly()
+    {
+        $this->assignPermission('create', InvoiceRefund::class);
+
+        $data = [
+            'amount' => rand(1, $this->invoice->total_paid),
+            'transaction_details' => $this->faker->creditCardNumber(),
+            'notes' => $this->faker->sentence(),
+        ];
+
+        $this->post(route('invoices.refunds.store', $this->invoice), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertEquals(1, $this->invoice->invoiceRefunds()->count());
+        $data['tenant_id'] = $this->tenant->id;
+        $data['school_id'] = $this->school->id;
+        $data['invoice_uuid'] = $this->invoice->uuid;
+        $this->assertDatabaseHas('invoice_refunds', $data);
+
+        $this->invoice->refresh();
+        $this->assertEquals(
+            $this->invoice->amount_due + $data['amount'] - $this->invoice->invoicePayments()->sum('amount'),
+            $this->invoice->remaining_balance
+        );
+
+        $this->assertTrue(
+            $this->invoice->activities->some(fn ($a) => str_contains($a->description, 'recorded a refund'))
+        );
     }
 }

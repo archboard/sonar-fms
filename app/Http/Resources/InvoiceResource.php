@@ -50,6 +50,8 @@ class InvoiceResource extends JsonResource
             'tax_due_formatted' => $this->tax_due_formatted,
             'tax_rate' => $this->tax_rate,
             'tax_label' => $this->tax_label,
+            'total_paid' => $this->total_paid,
+            'total_paid_formatted' => $this->total_paid_formatted,
             'tax_rate_formatted' => $this->tax_rate_formatted,
             'tax_rate_converted' => $this->tax_rate_converted,
             'children_count' => $this->children_count,
