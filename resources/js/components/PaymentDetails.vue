@@ -78,6 +78,14 @@
         {{ payment.recorded_by.full_name }}
       </template>
     </DescriptionItem>
+    <DescriptionItem>
+      <template #dt>
+        {{ __('Recorded on') }}
+      </template>
+      <template #dd>
+        {{ payment.created_at }}
+      </template>
+    </DescriptionItem>
     <DescriptionItem v-if="payment.made_by">
       <template #dt>
         {{ __('Paid by') }}
