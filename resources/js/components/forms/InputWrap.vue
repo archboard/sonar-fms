@@ -1,15 +1,19 @@
 <template>
   <div>
     <slot />
-    <Error v-if="message">{{ message }}</Error>
+    <FadeIn>
+      <Error v-if="message">{{ message }}</Error>
+    </FadeIn>
   </div>
 </template>
 <script>
 import Error from '@/components/forms/Error'
 import { computed } from 'vue'
+import FadeIn from '@/components/transitions/FadeIn'
 
 export default {
   components: {
+    FadeIn,
     Error,
   },
 
