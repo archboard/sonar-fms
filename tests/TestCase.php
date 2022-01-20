@@ -8,6 +8,7 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Collection;
 
@@ -125,5 +126,10 @@ abstract class TestCase extends BaseTestCase
                     ->count($count)
                     ->make($attributes)
             );
+    }
+
+    protected function dateFromDatePicker(Carbon $date): string
+    {
+        return $date->format('Y-m-d\TH:i:s.000\Z');
     }
 }

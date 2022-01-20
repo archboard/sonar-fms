@@ -56,6 +56,7 @@ class InvoiceRefundTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
                 ->has('invoice')
+                ->has('breadcrumbs')
                 ->component('refunds/Create')
             );
     }
@@ -65,6 +66,7 @@ class InvoiceRefundTest extends TestCase
         $this->assignPermission('create', InvoiceRefund::class);
         $data = [
             'amount' => $this->invoice->total_paid + 1,
+            'refunded_at' => $this->dateFromDatePicker(now()),
             'transaction_details' => $this->faker->creditCardNumber(),
             'notes' => $this->faker->sentence(),
         ];
@@ -79,6 +81,7 @@ class InvoiceRefundTest extends TestCase
 
         $data = [
             'amount' => rand(1, $this->invoice->total_paid),
+            'refunded_at' => $this->dateFromDatePicker(now()),
             'transaction_details' => $this->faker->creditCardNumber(),
             'notes' => $this->faker->sentence(),
         ];

@@ -11,6 +11,7 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use JamesMills\LaravelTimezone\Facades\Timezone;
 
 /**
  * @mixin IdeHelperInvoiceRefund
@@ -27,4 +28,17 @@ class InvoiceRefund extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'refunded_at' => 'datetime',
+    ];
+
+    public function getRefundedAtFormattedAttribute(): string
+    {
+        if (!$this->refunded_at) {
+            return '';
+        }
+
+        return Timezone::convertToLocal($this->refunded_at, 'M j, Y');
+    }
 }

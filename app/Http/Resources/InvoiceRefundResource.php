@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use JamesMills\LaravelTimezone\Facades\Timezone;
 
 class InvoiceRefundResource extends JsonResource
 {
@@ -18,7 +19,11 @@ class InvoiceRefundResource extends JsonResource
             'id' => $this->id,
             'amount' => $this->amount,
             'amount_formatted' => $this->amount_formatted,
+            'refunded_at' => $this->refunded_at,
+            'refunded_at_formatted' => $this->refunded_at_formatted,
+            'created_at' => Timezone::convertToLocal($this->created_at, 'M j, Y'),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

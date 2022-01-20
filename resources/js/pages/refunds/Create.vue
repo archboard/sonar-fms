@@ -14,6 +14,11 @@
               <HelpText>{{ __('The amount should be less than or equal to :amount.', { amount: invoice.total_paid_formatted }) }}</HelpText>
             </InputWrap>
 
+            <InputWrap :error="form.errors.refunded_at">
+              <Label for="refunded_at" required>{{ __('Refund date') }}</Label>
+              <DatePicker v-model="form.refunded_at" mode="date" id="refunded_at" />
+            </InputWrap>
+
             <InputWrap :error="form.errors.transaction_details">
               <Label for="transaction_details">{{ __('Transaction details') }}</Label>
               <Input v-model="form.transaction_details" id="transaction_details" />
@@ -48,6 +53,7 @@ import CardAction from '@/components/CardAction'
 import Button from '@/components/Button'
 import Label from '@/components/forms/Label'
 import CurrencyInput from '@/components/forms/CurrencyInput'
+import DatePicker from '@/components/forms/DatePicker'
 import Input from '@/components/forms/Input'
 import Textarea from '@/components/forms/Textarea'
 import HelpText from '@/components/HelpText'
@@ -68,6 +74,7 @@ export default defineComponent({
     Fieldset,
     Authenticated,
     Label,
+    DatePicker,
   },
   props: {
     invoice: Object,
@@ -76,6 +83,7 @@ export default defineComponent({
   setup ({ invoice }) {
     const form = useForm({
       amount: null,
+      refunded_at: new Date(),
       transaction_details: null,
       notes: null,
     })

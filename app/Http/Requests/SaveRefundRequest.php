@@ -29,7 +29,8 @@ class SaveRefundRequest extends FormRequest
         $invoice = $this->route('invoice');
 
         return [
-            'amount' => ['integer', 'min:1', "max:{$invoice->total_paid}"],
+            'amount' => ['required', 'integer', 'min:1', "max:{$invoice->total_paid}"],
+            'refunded_at' => ['required', 'date'],
             'transaction_details' => ['nullable', 'max:255'],
             'notes' => ['nullable'],
         ];
