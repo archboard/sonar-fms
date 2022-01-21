@@ -32,10 +32,9 @@ export default defineComponent({
 
   setup (props) {
     const $http = inject('$http')
-    const $route = inject('$route')
     const localPayment = ref({})
     const viewReceipt = () => {
-      window.open($route('payments.receipt', props.payment.id), '_blank')
+      window.open(`/payments/${props.payment.id}/receipt`, '_blank')
     }
 
     $http.get(`/payments/${props.payment.id}`).then(({ data }) => {

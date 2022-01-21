@@ -26,7 +26,7 @@ class BouncerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Bouncer::cache();
+//        Bouncer::cache();
 
         Bouncer::useAbilityModel(Ability::class);
         Bouncer::useRoleModel(Role::class);

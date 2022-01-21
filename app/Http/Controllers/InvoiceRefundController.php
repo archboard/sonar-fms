@@ -64,4 +64,18 @@ class InvoiceRefundController extends Controller
 
         return redirect()->route('invoices.show', $invoice);
     }
+
+    public function show(string $invoice, InvoiceRefund $refund)
+    {
+        $refund->load(
+            'currency',
+            'invoice',
+            'invoice.currency',
+            'invoice.student',
+            'invoice.students',
+            'user',
+        );
+
+        return $refund->toResource();
+    }
 }

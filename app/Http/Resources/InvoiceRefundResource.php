@@ -20,6 +20,7 @@ class InvoiceRefundResource extends JsonResource
             'amount' => $this->amount,
             'amount_formatted' => $this->amount_formatted,
             'refunded_at' => $this->refunded_at,
+            'invoice_uuid' => $this->invoice_uuid,
             'refunded_at_formatted' => $this->refunded_at_formatted,
             'created_at' => Timezone::convertToLocal($this->created_at, 'M j, Y'),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
