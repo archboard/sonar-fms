@@ -52,7 +52,7 @@ class InvoicePaymentController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Inertia\Response|\Inertia\ResponseFactory
+     * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
      */
     public function create(Request $request)
     {
@@ -80,6 +80,12 @@ class InvoicePaymentController extends Controller
                 )
                 ->first()
             : new Invoice;
+
+        if ($invoice->voided_at) {
+            session()->flash('error', __('Invoice has been voided.'));
+            return redirect()->route('invoices.show', $invoice);
+        }
+
         $paidBy = $request->has('user_id')
             ? User::find($request->input('user_id'))
             : new User;

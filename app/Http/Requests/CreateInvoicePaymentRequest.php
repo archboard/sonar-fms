@@ -32,7 +32,9 @@ class CreateInvoicePaymentRequest extends FormRequest
             'invoice_uuid' => [
                 'required',
                 Rule::exists('invoices', 'uuid')
-                    ->where('school_id', $this->school()->id),
+                    ->where('school_id', $this->school()->id)
+                    ->whereNull('voided_at')
+                    ->whereNotNull('published_at'),
             ],
             'payment_method_id' => [
                 'nullable',
@@ -58,6 +60,13 @@ class CreateInvoicePaymentRequest extends FormRequest
             ],
             'transaction_details' => 'nullable',
             'notes' => 'nullable',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'invoice_uuid' => __('invoice'),
         ];
     }
 }
