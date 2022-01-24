@@ -6,6 +6,7 @@ use App\Exceptions\PaymentMethodDriverNotFound;
 use App\PaymentMethods\BankTransfer;
 use App\PaymentMethods\Cash;
 use App\PaymentMethods\PaymentMethodDriver;
+use App\PaymentMethods\Skiply;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\ScopeToCurrentSchool;
@@ -47,6 +48,7 @@ class PaymentMethod extends Model
         return [
             'bank_transfer' => BankTransfer::class,
             'cash' => Cash::class,
+            'skiply' => Skiply::class,
         ];
     }
 

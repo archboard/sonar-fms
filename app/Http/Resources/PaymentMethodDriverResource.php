@@ -21,12 +21,16 @@ class PaymentMethodDriverResource extends JsonResource
         /** @var PaymentMethod|null $paymentMethod */
         $paymentMethod = $resource->getPaymentMethod();
 
+        $list = $paymentMethod?->id
+            ? [$paymentMethod?->id, ...$resource->getImportDetectionValues()]
+            : $resource->getImportDetectionValues();
+
         return [
             'key' => $resource->key(),
             'label' => $resource->label(),
             'description' => $resource->description(),
             'component' => $resource->component(),
-            'detects_list' => implode(', ', [$paymentMethod?->id, ...$resource->getImportDetectionValues()]),
+            'detects_list' => implode(', ', $list),
             'payment_method' => $resource->includePaymentMethodInResource()
                 ? new PaymentMethodResource($paymentMethod)
                 : null,
