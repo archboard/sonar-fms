@@ -44,7 +44,12 @@
                       :value="term.uuid"
                       :disabled="term.remaining_balance <= 0"
                     >
-                      {{ __(':amount due on :date (:remaining remaining)', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date'), remaining: displayCurrency(term.remaining_balance) }) }}
+                      <template v-if="term.due_at">
+                        {{ __(':amount due on :date (:remaining remaining)', { amount: displayCurrency(term.amount), date: displayDate(term.due_at, 'abbr_date'), remaining: displayCurrency(term.remaining_balance) }) }}
+                      </template>
+                      <template v-else>
+                        {{ __(':amount due (:remaining remaining)', { amount: displayCurrency(term.amount), remaining: displayCurrency(term.remaining_balance) }) }}
+                      </template>
                     </option>
                   </optgroup>
                 </Select>
