@@ -5,7 +5,10 @@
         <div class="flex-1 truncate">
           <div class="flex justify-between">
             <div>
-              <span class="flex-shrink-0 block text-gray-500 dark:text-gray-400 text-xs font-medium">{{ invoice.invoice_number }}</span>
+              <span class="flex-shrink-0 flex space-x-1.5 items-center text-gray-500 dark:text-gray-400 text-xs font-medium">
+                <span>{{ invoice.invoice_number }}</span>
+                <InvoiceStatusBadge v-if="invoice.voided_at" :invoice="invoice" />
+              </span>
               <h3 class="text-gray-900 dark:text-gray-100 text-sm font-medium truncate">{{ invoice.title }}</h3>
             </div>
             <div class="text-right">
@@ -40,9 +43,11 @@
 import { defineComponent } from 'vue'
 import { CashIcon, ExternalLinkIcon } from '@heroicons/vue/solid'
 import displaysCurrency from '@/composition/displaysCurrency'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 
 export default defineComponent({
   components: {
+    InvoiceStatusBadge,
     CashIcon,
     ExternalLinkIcon,
   },
