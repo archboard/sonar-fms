@@ -225,6 +225,16 @@ class Invoice extends Model implements Searchable
             $builder->where('due_at', '>=', $date);
         })->when($filters['due_end'] ?? null, function (Builder $builder, $date) {
             $builder->where('invoice_date', '<=', $date);
+        })->when($filters['types'] ?? null, function (Builder $builder, array $types) {
+            $builder->where(function (Builder $builder) use ($types) {
+                if (in_array('combined', $types)) {
+                    $builder->orWhere('is_parent', true);
+                }
+
+                if (in_array('individual', $types)) {
+                    $builder->orWhere('is_parent', false);
+                }
+            });
         });
 
         $orderBy = $filters['orderBy'] ?? 'invoices.created_at';

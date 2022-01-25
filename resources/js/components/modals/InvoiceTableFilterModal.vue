@@ -69,9 +69,19 @@
       <InputWrap>
         <Label>{{ __('Grade levels') }}</Label>
         <div class="grid grid-cols-6 gap-2">
-          <CheckboxWrapper v-for="grade in school.grade_levels">
+          <CheckboxWrapper v-for="grade in school.grade_levels" :key="grade">
             <Checkbox v-model:checked="localFilters.grades" :value="grade" />
             <CheckboxText>{{ displayShortGrade(grade) }}</CheckboxText>
+          </CheckboxWrapper>
+        </div>
+      </InputWrap>
+
+      <InputWrap>
+        <Label>{{ __('Type') }}</Label>
+        <div class="grid grid-cols-3 gap-2">
+          <CheckboxWrapper v-for="(key, label) in types" :key="key">
+            <Checkbox v-model:checked="localFilters.types" :value="key" />
+            <CheckboxText>{{ label }}</CheckboxText>
           </CheckboxWrapper>
         </div>
       </InputWrap>
@@ -81,6 +91,7 @@
 
 <script>
 import { defineComponent, reactive } from 'vue'
+import invoiceTypes from '@/composition/invoiceTypes'
 import Modal from '@/components/Modal'
 import InputWrap from '@/components/forms/InputWrap'
 import Label from '@/components/forms/Label'
@@ -122,6 +133,7 @@ export default defineComponent({
     const { displayShortGrade } = displaysGrades()
     const { statuses } = invoiceStatuses()
     const { school } = useSchool()
+    const types = invoiceTypes()
 
     return {
       modalClosed,
@@ -130,6 +142,7 @@ export default defineComponent({
       displayShortGrade,
       statuses,
       school,
+      types,
     }
   }
 })

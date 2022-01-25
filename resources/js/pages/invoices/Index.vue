@@ -262,6 +262,7 @@ export default defineComponent({
       date_end: null,
       due_start: null,
       due_end: null,
+      types: [],
     }, `/invoices`)
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()

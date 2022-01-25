@@ -29,6 +29,14 @@
     >
       {{ displayLongGrade(grade) }}
     </DismissibleBadge>
+
+    <DismissibleBadge
+      v-for="(type, index) in filters.types"
+      :key="type"
+      @dismiss="filters.types.splice(index, 1)"
+    >
+      {{ types[type] }}
+    </DismissibleBadge>
   </FadeInGroup>
 </template>
 
@@ -39,6 +47,7 @@ import DismissibleBadge from '@/components/DismissibleBadge'
 import invoiceStatuses from '@/composition/invoiceStatuses'
 import displaysGrades from '@/composition/displaysGrades'
 import displaysDate from '@/composition/displaysDate'
+import invoiceTypes from '@/composition/invoiceTypes'
 
 export default defineComponent({
   components: {
@@ -53,11 +62,14 @@ export default defineComponent({
     const { statuses } = invoiceStatuses()
     const { displayLongGrade } = displaysGrades()
     const { displayDate } = displaysDate()
+    const types = invoiceTypes()
 
     return {
       statuses,
       displayLongGrade,
       displayDate,
+      invoiceTypes,
+      types,
     }
   }
 })
