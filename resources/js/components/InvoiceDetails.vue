@@ -198,6 +198,7 @@
       v-if="currentRefund.id"
       @close="currentRefund = {}"
       :refund="currentRefund"
+      admin
     />
   </div>
 </template>

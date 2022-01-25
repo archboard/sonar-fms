@@ -15,16 +15,23 @@ class InvoiceRefundResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $data = [
             'id' => $this->id,
             'amount' => $this->amount,
             'amount_formatted' => $this->amount_formatted,
             'refunded_at' => $this->refunded_at,
+            'transaction_details' => $this->transaction_details,
             'invoice_uuid' => $this->invoice_uuid,
             'refunded_at_formatted' => $this->refunded_at_formatted,
             'created_at' => Timezone::convertToLocal($this->created_at, 'M j, Y'),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
             'user' => new UserResource($this->whenLoaded('user')),
         ];
+
+        if ($request->has('admin')) {
+            $data['notes'] = $this->notes;
+        }
+
+        return $data;
     }
 }

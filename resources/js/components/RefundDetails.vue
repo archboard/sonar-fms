@@ -70,6 +70,14 @@
         {{ refund.created_at }}
       </template>
     </DescriptionItem>
+    <DescriptionItem v-if="refund.notes">
+      <template #dt>
+        {{ __('Notes') }}
+      </template>
+      <template #dd>
+        {{ refund.notes }}
+      </template>
+    </DescriptionItem>
     <DescriptionItem>
       <template #dt>
         <strong class="text-gray-900 dark:text-gray-100">{{ __('Remaining balance') }}</strong>

@@ -28,16 +28,25 @@ export default defineComponent({
   emits: ['close'],
   props: {
     refund: Object,
+    admin: {
+      type: Boolean,
+      default: () => false,
+    }
   },
 
-  setup ({ refund }) {
+  setup ({ refund, admin }) {
     const $http = inject('$http')
     const localRefund = ref({})
     const viewReceipt = () => {
       window.open(`/refunds/${refund}/receipt`, '_blank')
     }
+    let endpoint = `/invoices/${refund.invoice_uuid}/refunds/${refund.id}`
 
-    $http.get(`/invoices/${refund.invoice_uuid}/refunds/${refund.id}`).then(({ data }) => {
+    if (admin) {
+      endpoint += `?admin=1`
+    }
+
+    $http.get(endpoint).then(({ data }) => {
       localRefund.value = data
     })
 
