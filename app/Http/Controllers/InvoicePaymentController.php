@@ -86,6 +86,23 @@ class InvoicePaymentController extends Controller
             return redirect()->route('invoices.show', $invoice);
         }
 
+        if ($invoice->uuid) {
+            $breadcrumbs = [
+                [
+                    'label' => __('Invoices'),
+                    'route' => route('invoices.index'),
+                ],
+                [
+                    'label' => $invoice->invoice_number,
+                    'route' => route('invoices.show', $invoice),
+                ],
+                [
+                    'label' => __('Record payment'),
+                    'route' => route('payments.create', ['invoice_uuid' => $invoice->uuid]),
+                ],
+            ];
+        }
+
         $paidBy = $request->has('user_id')
             ? User::find($request->input('user_id'))
             : new User;
