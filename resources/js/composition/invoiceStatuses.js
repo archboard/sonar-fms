@@ -5,6 +5,7 @@ export default () => {
   const statuses = {
     unpaid: __('Unpaid'),
     paid: __('Paid'),
+    partial: __('Partially paid'),
     past: __('Past due'),
     published: __('Published'),
     draft: __('Draft'),

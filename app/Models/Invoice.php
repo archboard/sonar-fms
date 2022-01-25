@@ -185,6 +185,12 @@ class Invoice extends Model implements Searchable
                 if (in_array('paid', $statuses)) {
                     $builder->orWhereNotNull('paid_at');
                 }
+                if (in_array('partial', $statuses)) {
+                    $builder->orWhere(function (Builder $builder) {
+                        $builder->whereNull('paid_at')
+                            ->where('total_paid', '>', 0);
+                    });
+                }
                 if (in_array('published', $statuses)) {
                     $builder->orWhere(function (Builder $builder) {
                         $builder->whereNotNull('published_at')
