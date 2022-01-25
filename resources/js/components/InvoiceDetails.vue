@@ -68,46 +68,7 @@
       </Tbody>
     </Table>
 
-    <section v-if="invoice.payments" class="mt-8 xl:mt-10 py-5">
-      <div class="divide-y divide-gray-300 dark:divide-gray-600">
-        <div class="pb-4">
-          <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
-        </div>
-        <div class="pt-6">
-          <Table v-if="invoice.payments.length > 0">
-            <Thead>
-              <tr>
-                <Th>{{ __('Date') }}</Th>
-                <Th class="text-right">{{ __('Amount') }}</Th>
-                <Th>{{ __('Recorded by') }}</Th>
-                <Th></Th>
-              </tr>
-            </Thead>
-            <Tbody>
-              <tr v-for="payment in invoice.payments" :key="payment.id">
-                <Td>{{ payment.paid_at_formatted }}</Td>
-                <Td>
-                  <div class="flex items-center justify-end space-x-1">
-                    <CollectionIcon v-if="payment.parent_uuid" class="h-4 w-4" />
-                    <span>{{ payment.amount_formatted }}</span>
-                  </div>
-                </Td>
-                <Td>{{ payment.recorded_by.full_name }}</Td>
-                <Td class="text-right">
-                  <VerticalDotMenu>
-                    <PaymentActionItems
-                      :payment="payment"
-                      @details="currentPayment = payment"
-                    />
-                  </VerticalDotMenu>
-                </Td>
-              </tr>
-            </Tbody>
-          </Table>
-          <p v-else class="text-sm">{{ __('No payments have been recorded yet.') }} <Link :href="`/payments/create?invoice_uuid=${invoice.uuid}`">{{ __('Record a payment') }}</Link>.</p>
-        </div>
-      </div>
-    </section>
+    <Payments v-if="!showStudent" class="mt-8 xl:mt-10 py-5" :invoice="invoice" />
 
     <section v-if="invoice.refunds" class="mt-8 xl:mt-10 py-5">
       <div class="divide-y divide-gray-300 dark:divide-gray-600">
@@ -189,11 +150,6 @@
       </div>
     </section>
 
-    <PaymentDetailsModal
-      v-if="currentPayment.id"
-      @close="currentPayment = {}"
-      :payment="currentPayment"
-    />
     <RefundDetailsModal
       v-if="currentRefund.id"
       @close="currentRefund = {}"
@@ -212,7 +168,6 @@ import displaysCurrency from '@/composition/displaysCurrency'
 import displaysDate from '@/composition/displaysDate'
 import checksPermissions from '@/composition/checksPermissions'
 import { XIcon } from '@heroicons/vue/solid'
-import { CollectionIcon } from '@heroicons/vue/outline'
 import Alert from '@/components/Alert'
 import CardWrapper from '@/components/CardWrapper'
 import CardPadding from '@/components/CardPadding'
@@ -222,17 +177,17 @@ import Th from '@/components/tables/Th'
 import Link from '@/components/Link'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import PaymentActionItems from '@/components/PaymentActionItems'
-import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
 import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import RefundActionItems from '@/components/RefundActionItems'
 import RefundDetailsModal from '@/components/modals/RefundDetailsModal'
+import Payments from '@/components/invoices/Payments'
 
 export default defineComponent({
   components: {
+    Payments,
     RefundDetailsModal,
     RefundActionItems,
     InvoiceStatusBadge,
-    PaymentDetailsModal,
     PaymentActionItems,
     VerticalDotMenu,
     Th,
@@ -246,7 +201,6 @@ export default defineComponent({
     Td,
     XIcon,
     Link,
-    CollectionIcon,
   },
 
   props: {
@@ -271,7 +225,6 @@ export default defineComponent({
         ? props.invoice.parent.payment_schedules
         : (props.invoice.payment_schedules || [])
     })
-    const currentPayment = ref({})
     const currentRefund = ref({})
 
     return {
@@ -280,7 +233,6 @@ export default defineComponent({
       displayDate,
       paymentSchedules,
       can,
-      currentPayment,
       currentRefund,
     }
   }

@@ -6,15 +6,18 @@ use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
+use Tests\Traits\CreatesPayments;
 
 class InvoicePaymentTest extends TestCase
 {
     use RefreshDatabase;
     use CreatesInvoice;
+    use CreatesPayments;
 
     protected bool $signIn = true;
 
@@ -314,5 +317,38 @@ class InvoicePaymentTest extends TestCase
             $this->assertEquals(0, $child->remaining_balance);
             $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
         }
+    }
+
+    public function test_can_fetch_payments_for_invoice()
+    {
+        $this->assignPermission('viewAny', InvoicePayment::class);
+
+        $invoice = $this->createInvoice();
+        $this->createPayment(invoice: $invoice);
+        $this->createPayment(invoice: $invoice);
+
+        $this->get(route('invoices.payments', $invoice))
+            ->assertOk()
+            ->assertJsonCount(2);
+    }
+
+    public function test_can_fetch_related_payments()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('viewAny', InvoicePayment::class);
+
+        $invoice = $this->createCombinedInvoice();
+        $this->createPayment(invoice: $invoice);
+        $this->createPayment(invoice: $invoice);
+        $child = $invoice->children->random();
+        $this->createPayment(invoice: $child);
+
+        $json = $this->get(route('invoices.payments.related', $invoice))
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->json();
+
+        $payment = Arr::first($json);
+        $this->assertEquals($payment['invoice']['uuid'], $child->uuid);
     }
 }

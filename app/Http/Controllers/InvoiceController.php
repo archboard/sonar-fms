@@ -113,12 +113,27 @@ class InvoiceController extends Controller
     public function show(Request $request, Invoice $invoice)
     {
         $title = $invoice->title . ': ' . $invoice->invoice_number;
-        $invoice->fullLoad()
-            ->loadChildren()
-            ->load(
-                'activities',
-                'activities.causer',
-            );
+        $invoice->load([
+            'student',
+            'students',
+            'school',
+            'currency',
+            'invoiceItems.invoice.currency',
+            'invoiceScholarships.invoice.currency',
+            'invoicePaymentSchedule',
+            'invoicePaymentSchedules',
+            'invoicePaymentSchedules.invoicePaymentTerms',
+//            'invoicePayments.recordedBy',
+//            'invoicePayments.currency',
+            'invoiceRefunds.currency',
+            'invoiceRefunds.user',
+            'children',
+            'parent',
+            'parent.invoicePaymentSchedules.invoicePaymentTerms',
+            'activities',
+            'activities.causer',
+        ])
+        ->loadChildren();
 
         $breadcrumbs = [
             [

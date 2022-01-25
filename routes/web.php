@@ -230,6 +230,12 @@ Route::middleware('tenant')->group(function () {
                         Route::post('distribute', \App\Http\Controllers\DistributeInvoicePaymentsController::class)
                             ->name('distribute');
 
+                        Route::get('payments', \App\Http\Controllers\FetchInvoicePaymentsController::class)
+                            ->name('payments');
+
+                        Route::get('payments/related', \App\Http\Controllers\FetchRelatedPaymentsController::class)
+                            ->name('payments.related');
+
                         Route::middleware('needs_layout')->group(function () {
                             Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
                                 ->name('preview');
