@@ -105,18 +105,25 @@ class PaymentMethod extends Model
             ->get()
             ->keyBy('driver');
 
-        return array_map(
-            function (PaymentMethodDriver $driver) use ($paymentMethods) {
+        return array_reduce(
+            PaymentMethod::getAllDrivers(),
+            function (array $methods, PaymentMethodDriver $driver) use ($paymentMethods) {
                 /** @var static $paymentMethod */
                 $paymentMethod = $paymentMethods->get($driver->key(), new PaymentMethod());
+
+                if (!$paymentMethod->id) {
+                    return $methods;
+                }
+
                 $paymentMethod->includeDriverWithResource = false;
 
                 $driver->setPaymentMethod($paymentMethod)
                     ->setIncludePaymentMethodInResource(true);
 
-                return $driver;
+                $methods[] = $driver;
+                return $methods;
             },
-            PaymentMethod::getAllDrivers()
+            []
         );
     }
 }
