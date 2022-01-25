@@ -3,7 +3,7 @@
     <slot name="prepend" />
     <Td>
       <span class="whitespace-nowrap flex items-center space-x-2">
-        <span>{{ invoice.invoice_number }}</span>
+        <Copy :copy-value="invoice.invoice_number">{{ invoice.invoice_number }}</Copy>
         <CollectionIcon v-if="invoice.is_parent" class="w-4 h-4" />
         <TableLink v-if="invoice.parent" :href="`/invoices/${invoice.parent_uuid}`">{{ invoice.parent.invoice_number }}</TableLink>
       </span>
@@ -54,9 +54,11 @@ import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import checksPermissions from '@/composition/checksPermissions'
 import TableLink from '@/components/tables/TableLink'
 import { CollectionIcon } from '@heroicons/vue/outline'
+import Copy from '@/components/Copy'
 
 export default defineComponent({
   components: {
+    Copy,
     TableLink,
     InvoiceActionItems,
     VerticalDotMenu,

@@ -15,6 +15,9 @@ module.exports = {
           ...defaultTheme.fontFamily.sans,
         ]
       },
+      backdropBlur: {
+        xs: `2px`,
+      },
       colors: {
         primary: {
           50: '#ecfeff',
