@@ -79,7 +79,7 @@
       <InputWrap>
         <Label>{{ __('Type') }}</Label>
         <div class="grid grid-cols-3 gap-2">
-          <CheckboxWrapper v-for="(key, label) in types" :key="key">
+          <CheckboxWrapper v-for="(label, key) in types" :key="key">
             <Checkbox v-model:checked="localFilters.types" :value="key" />
             <CheckboxText>{{ label }}</CheckboxText>
           </CheckboxWrapper>
