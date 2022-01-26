@@ -246,7 +246,7 @@ Route::middleware('tenant')->group(function () {
 
                         Route::resource('refunds', \App\Http\Controllers\InvoiceRefundController::class)
                             ->names('refunds')
-                            ->except('index');
+                            ->except('edit', 'update', 'destroy');
                     });
 
                 /**

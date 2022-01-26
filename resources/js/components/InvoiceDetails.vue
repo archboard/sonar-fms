@@ -70,43 +70,7 @@
 
     <Payments v-if="!showStudent" class="mt-8 xl:mt-10 py-5" :invoice="invoice" />
 
-    <section v-if="invoice.refunds" class="mt-8 xl:mt-10 py-5">
-      <div class="divide-y divide-gray-300 dark:divide-gray-600">
-        <div class="pb-4">
-          <h2 class="text-lg font-medium">{{ __('Refunds') }}</h2>
-        </div>
-        <div class="pt-6">
-          <Table v-if="invoice.refunds.length > 0">
-            <Thead>
-              <tr>
-                <Th>{{ __('Date') }}</Th>
-                <Th class="text-right">{{ __('Amount') }}</Th>
-                <Th>{{ __('Recorded by') }}</Th>
-                <Th></Th>
-              </tr>
-            </Thead>
-            <Tbody>
-              <tr v-for="refund in invoice.refunds" :key="refund.id">
-                <Td>{{ refund.refunded_at_formatted || refund.created_at }}</Td>
-                <Td class="text-right">
-                  {{ refund.amount_formatted }}
-                </Td>
-                <Td>{{ refund.user.full_name }}</Td>
-                <Td class="text-right">
-                  <VerticalDotMenu>
-                    <RefundActionItems
-                      :refund="refund"
-                      @details="currentRefund = refund"
-                    />
-                  </VerticalDotMenu>
-                </Td>
-              </tr>
-            </Tbody>
-          </Table>
-          <p v-else class="text-sm">{{ __('No refunds have been recorded yet.') }} <Link :href="`/invoices/${invoice.uuid}/refunds/create`">{{ __('Record a refund') }}</Link>.</p>
-        </div>
-      </div>
-    </section>
+    <Refunds v-if="!showStudent" class="mt-8 xl:mt-10 py-5" :invoice="invoice" />
 
     <section v-if="paymentSchedules.length > 0" class="mt-8 xl:mt-10 py-5">
       <div class="divide-y divide-gray-300 dark:divide-gray-600">
@@ -149,18 +113,11 @@
         </div>
       </div>
     </section>
-
-    <RefundDetailsModal
-      v-if="currentRefund.id"
-      @close="currentRefund = {}"
-      :refund="currentRefund"
-      admin
-    />
   </div>
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent } from 'vue'
 import Td from '@/components/tables/Td'
 import Tbody from '@/components/tables/Tbody'
 import Table from '@/components/tables/Table'
@@ -175,21 +132,15 @@ import CardHeader from '@/components/CardHeader'
 import Thead from '@/components/tables/Thead'
 import Th from '@/components/tables/Th'
 import Link from '@/components/Link'
-import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import PaymentActionItems from '@/components/PaymentActionItems'
 import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
-import RefundActionItems from '@/components/RefundActionItems'
-import RefundDetailsModal from '@/components/modals/RefundDetailsModal'
 import Payments from '@/components/invoices/Payments'
+import Refunds from '@/components/invoices/Refunds'
 
 export default defineComponent({
   components: {
+    Refunds,
     Payments,
-    RefundDetailsModal,
-    RefundActionItems,
     InvoiceStatusBadge,
-    PaymentActionItems,
-    VerticalDotMenu,
     Th,
     Thead,
     CardHeader,
@@ -225,7 +176,6 @@ export default defineComponent({
         ? props.invoice.parent.payment_schedules
         : (props.invoice.payment_schedules || [])
     })
-    const currentRefund = ref({})
 
     return {
       subTotal,
@@ -233,7 +183,6 @@ export default defineComponent({
       displayDate,
       paymentSchedules,
       can,
-      currentRefund,
     }
   }
 })

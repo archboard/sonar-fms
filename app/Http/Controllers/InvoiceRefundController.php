@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveRefundRequest;
+use App\Http\Resources\InvoiceRefundResource;
 use App\Models\Invoice;
 use App\Models\InvoiceRefund;
 use Illuminate\Http\Request;
@@ -14,9 +15,14 @@ class InvoiceRefundController extends Controller
         $this->authorizeResource(InvoiceRefund::class, 'refund');
     }
 
-    public function index(Request $request)
+    public function index(Request $request, string $invoice)
     {
+        $refunds = InvoiceRefund::forInvoice($invoice)
+            ->orderBy('refunded_at', 'desc')
+            ->with('user', 'currency')
+            ->get();
 
+        return InvoiceRefundResource::collection($refunds);
     }
 
     public function create(Invoice $invoice)
