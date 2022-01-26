@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="can('payments.viewAny')">
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
       <div class="pb-4">
         <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
@@ -104,6 +104,7 @@ import Loader from '@/components/Loader'
 import Copy from '@/components/Copy'
 import HelpText from '@/components/HelpText'
 import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
+import checksPermissions from '@/composition/checksPermissions'
 
 export default defineComponent({
   components: {
@@ -130,18 +131,21 @@ export default defineComponent({
     const currentPayment = ref({})
     const payments = ref([])
     const relatedPayments = ref([])
+    const { can } = checksPermissions()
 
-    $http.get(`/invoices/${invoice.uuid}/payments`)
-      .then(({ data }) => {
-        payments.value = data
-        loading.value = false
-      })
-
-    if (invoice.is_parent) {
-      $http.get(`/invoices/${invoice.uuid}/payments/related`)
+    if (can('payments.viewAny')) {
+      $http.get(`/invoices/${invoice.uuid}/payments`)
         .then(({ data }) => {
-          relatedPayments.value = data
+          payments.value = data
+          loading.value = false
         })
+
+      if (invoice.is_parent) {
+        $http.get(`/invoices/${invoice.uuid}/payments/related`)
+          .then(({ data }) => {
+            relatedPayments.value = data
+          })
+      }
     }
 
     return {
@@ -149,6 +153,7 @@ export default defineComponent({
       payments,
       relatedPayments,
       loading,
+      can,
     }
   }
 })
