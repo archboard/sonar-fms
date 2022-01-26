@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Invoice;
+use App\Models\InvoiceImport;
+use App\Models\InvoicePayment;
+use App\Models\InvoiceRefund;
+use App\Models\PaymentImport;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
@@ -70,6 +74,10 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'student' => Student::class,
             'invoice' => Invoice::class,
+            'refund' => InvoiceRefund::class,
+            'payment' => InvoicePayment::class,
+            'invoice_import' => InvoiceImport::class,
+            'payment_import' => PaymentImport::class,
         ]);
 
         ActivityLogger::macro('component', function (string $component) {
