@@ -696,7 +696,6 @@ class Invoice extends Model implements Searchable
         // Calculate how much has already been paid in
         // and set the remaining_balance value based on that
         $this->total_paid = $this->getTotalPaid();
-        ray($this->total_paid);
 
         // If the invoice has a schedule, use its amount
         // as the invoice's amount due, which may be different

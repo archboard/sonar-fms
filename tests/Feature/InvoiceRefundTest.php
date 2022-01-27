@@ -106,4 +106,41 @@ class InvoiceRefundTest extends TestCase
             $this->invoice->activities->some(fn ($a) => str_contains($a->description, 'recorded a refund'))
         );
     }
+
+    public function test_can_fetch_refunds()
+    {
+        $this->assignPermission('viewAny', InvoiceRefund::class);
+
+        $this->invoice->invoiceRefunds()
+            ->save(InvoiceRefund::factory()->make(['amount' => (int) round($this->invoice->total_paid / 2)]));
+
+        $this->get(route('invoices.refunds.index', $this->invoice))
+            ->assertOk()
+            ->assertJsonCount(1);
+    }
+
+    public function test_can_fetch_related_refunds()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('viewAny', InvoiceRefund::class);
+
+        $invoice = $this->createCombinedInvoice();
+        /** @var Invoice $child */
+        $child = $invoice->children->random();
+
+        $this->createPayment(invoice: $child);
+
+        $child->invoiceRefunds()
+            ->saveMany(
+                InvoiceRefund::factory()
+                    ->count(2)
+                    ->make([
+                        'amount' => (int) round($this->invoice->total_paid / 3)
+                    ])
+            );
+
+        $this->get(route('invoices.refunds.related', $invoice))
+            ->assertOk()
+            ->assertJsonCount(2);
+    }
 }

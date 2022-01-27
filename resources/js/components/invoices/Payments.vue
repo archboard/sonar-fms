@@ -45,7 +45,7 @@
     <div v-if="relatedPayments.length > 0" class="mt-8 xl:mt-10 divide-y divide-gray-300 dark:divide-gray-600">
       <div class="pb-4">
         <h2 class="text-lg font-medium">{{ __('Related payments') }}</h2>
-        <HelpText>{{ __('These are payments made to the combined invoices directly.') }}</HelpText>
+        <HelpText>{{ __('These are payments made to the combined invoices individually.') }}</HelpText>
       </div>
       <div class="pt-6">
         <Table>

@@ -39,6 +39,44 @@
       </div>
     </div>
 
+    <div v-if="relatedRefunds.length > 0" class="mt-8 xl:mt-10 divide-y divide-gray-300 dark:divide-gray-600">
+      <div class="pb-4">
+        <h2 class="text-lg font-medium">{{ __('Related refunds') }}</h2>
+        <HelpText>{{ __('These are refunds of payments made to the combined invoices individually.') }}</HelpText>
+      </div>
+      <div class="pt-6">
+        <Table>
+          <Thead>
+            <tr>
+              <Th>{{ __('Invoice') }}</Th>
+              <Th>{{ __('Date') }}</Th>
+              <Th class="text-right">{{ __('Amount') }}</Th>
+              <Th>{{ __('Recorded by') }}</Th>
+              <Th></Th>
+            </tr>
+          </Thead>
+          <Tbody>
+            <tr v-for="refund in relatedRefunds" :key="refund.id">
+              <Td>{{ refund.invoice.invoice_number }}</Td>
+              <Td>{{ refund.refunded_at_formatted || refund.created_at }}</Td>
+              <Td class="text-right">
+                {{ refund.amount_formatted }}
+              </Td>
+              <Td>{{ refund.user.full_name }}</Td>
+              <Td class="text-right">
+                <VerticalDotMenu>
+                  <RefundActionItems
+                    :refund="refund"
+                    @details="currentRefund = refund"
+                  />
+                </VerticalDotMenu>
+              </Td>
+            </tr>
+          </Tbody>
+        </Table>
+      </div>
+    </div>
+
     <RefundDetailsModal
       v-if="currentRefund.id"
       @close="currentRefund = {}"
@@ -56,14 +94,18 @@ import tables from '@/components/tables'
 import RefundDetailsModal from '@/components/modals/RefundDetailsModal'
 import Loader from '@/components/Loader'
 import checksPermissions from '@/composition/checksPermissions'
+import Link from '@/components/Link'
+import HelpText from '@/components/HelpText'
 
 export default defineComponent({
   components: {
+    HelpText,
     Loader,
     RefundDetailsModal,
     RefundActionItems,
     VerticalDotMenu,
     ...tables,
+    Link,
   },
   props: {
     invoice: {
@@ -77,7 +119,7 @@ export default defineComponent({
     const loading = ref(true)
     const currentRefund = ref({})
     const refunds = ref([])
-    const relatedPayments = ref([])
+    const relatedRefunds = ref([])
     const { can } = checksPermissions()
 
     if (can('refunds.viewAny')) {
@@ -87,18 +129,18 @@ export default defineComponent({
           loading.value = false
         })
 
-      // if (invoice.is_parent) {
-      //   $http.get(`/invoices/${invoice.uuid}/refunds/related`)
-      //     .then(({ data }) => {
-      //       relatedPayments.value = data
-      //     })
-      // }
+      if (invoice.is_parent) {
+        $http.get(`/invoices/${invoice.uuid}/related-refunds`)
+          .then(({ data }) => {
+            relatedRefunds.value = data
+          })
+      }
     }
 
     return {
       currentRefund,
       refunds,
-      relatedPayments,
+      relatedRefunds,
       loading,
       can,
     }
