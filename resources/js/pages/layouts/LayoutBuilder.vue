@@ -14,7 +14,9 @@
               class="group relative flex-0 w-full border-4 border-gray-400 border-dashed flex items-center justify-center"
             >
               <div v-if="row.isInvoiceTable" class="p-4 bg-gray-300 w-full text-center">
-                Invoice table will appear here.
+                <slot name="placeholder">
+                  {{ __('Invoice table will appear here.') }}
+                </slot>
               </div>
               <Wysiwyg v-else v-model="column.content" />
 
@@ -50,7 +52,9 @@
         {{ __('Add content row') }}
       </Button>
       <Button v-if="!hasInvoiceTable" @click.prevent="() => addRow(true)" size="sm">
-        {{ __('Add invoice table') }}
+        <slot name="action-label">
+          {{ __('Add invoice table') }}
+        </slot>
       </Button>
     </div>
   </div>
