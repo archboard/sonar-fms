@@ -73,7 +73,7 @@
         </tr>
         <tr v-if="layouts.meta.total === 0">
           <Td class="text-center" colspan="3">
-            {{ __('No invoice layouts exist.') }} <Link href="/layouts/invoices/create">{{ __('Add one') }}</Link>.
+            {{ __('No layouts exist.') }} <Link href="/layouts/invoices/create">{{ __('Add one') }}</Link>.
           </Td>
         </tr>
       </Tbody>
