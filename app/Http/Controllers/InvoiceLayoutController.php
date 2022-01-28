@@ -8,6 +8,7 @@ use App\Rules\InvoiceLayoutData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class InvoiceLayoutController extends Controller
 {
@@ -46,6 +47,8 @@ class InvoiceLayoutController extends Controller
 
         return inertia('layouts/Create', [
             'title' => $title,
+            'method' => 'post',
+            'endpoint' => route('layouts.store'),
         ])->withViewData(compact('title'));
     }
 
@@ -72,12 +75,13 @@ class InvoiceLayoutController extends Controller
         $data['is_default'] = $school->invoiceLayouts()
             ->default()
             ->doesntExist();
-        $school->invoiceLayouts()
+        /** @var InvoiceLayout $layout */
+        $layout = $school->invoiceLayouts()
             ->create($data);
 
         session()->flash('success', __('Invoice layout created successfully.'));
 
-        return $this->afterSave($request);
+        return $this->afterSave($request, $layout);
     }
 
     /**
@@ -104,6 +108,9 @@ class InvoiceLayoutController extends Controller
         return inertia('layouts/Create', [
             'title' => $title,
             'layout' => $layout->toResource(),
+            'method' => 'put',
+            'endpoint' => route('layouts.update', $layout),
+            'preview' => route('layouts.preview', $layout),
         ])->withViewData(compact('title'));
     }
 
@@ -128,7 +135,7 @@ class InvoiceLayoutController extends Controller
 
         session()->flash('success', __('Invoice layout updated successfully.'));
 
-        return $this->afterSave($request);
+        return $this->afterSave($request, $layout);
     }
 
     /**
@@ -146,10 +153,10 @@ class InvoiceLayoutController extends Controller
         return redirect()->route('layouts.index');
     }
 
-    protected function afterSave(Request $request): RedirectResponse
+    protected function afterSave(Request $request, InvoiceLayout $layout): RedirectResponse
     {
         if ($request->input('preview')) {
-            return back();
+            return redirect()->route('layouts.edit', $layout);
         }
 
         return redirect()->route('layouts.index');

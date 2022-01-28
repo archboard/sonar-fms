@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\InvoiceLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use Inertia\Testing\Assert;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
@@ -31,6 +32,7 @@ class InvoiceLayoutTest extends TestCase
         $this->assignPermission('viewAny', InvoiceLayout::class);
 
         $this->get(route('layouts.index'))
+            ->assertViewHas('title')
             ->assertOk();
     }
 
@@ -39,7 +41,12 @@ class InvoiceLayoutTest extends TestCase
         $this->assignPermission('create', InvoiceLayout::class);
 
         $this->get(route('layouts.create'))
-            ->assertOk();
+            ->assertViewHas('title')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->where('method', 'post')
+                ->where('endpoint', route('layouts.store'))
+            );
     }
 
     public function test_can_create_a_new_layout()
@@ -82,6 +89,39 @@ class InvoiceLayoutTest extends TestCase
         $this->assertEquals($data['layout_data'], $layout->layout_data);
     }
 
+    public function test_can_save_and_preview_a_new_layout()
+    {
+        $this->assignPermission('create', InvoiceLayout::class);
+
+        $data = [
+            'name' => 'My invoice layout',
+            'locale' => null,
+            'paper_size' => 'A4',
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isInvoiceTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isInvoiceTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+                'primary' => '#fff',
+            ],
+            'preview' => true,
+        ];
+
+        $this->post(route('layouts.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('layouts.edit', InvoiceLayout::first()));
+    }
+
     public function test_can_get_to_edit_page()
     {
         $this->assignPermission('update', InvoiceLayout::class);
@@ -90,7 +130,13 @@ class InvoiceLayoutTest extends TestCase
 
         $this->get(route('layouts.edit', $layout))
             ->assertViewHas('title')
-            ->assertOk();
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('layout')
+                ->where('endpoint', route('layouts.update', $layout))
+                ->where('method', 'put')
+                ->where('preview', route('layouts.preview', $layout))
+            );
     }
 
     public function test_can_update_existing_layout()

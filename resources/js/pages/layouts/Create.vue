@@ -1,10 +1,10 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button @click.prevent="saveAndPreview">
+      <Button @click.prevent="saveAndPreview" size="sm" color="white">
         {{ __('Save and preview') }}
       </Button>
-      <Button @click.prevent="save" :loading="form.processing">
+      <Button @click.prevent="save" :loading="form.processing" size="sm">
         {{ __('Save') }}
       </Button>
     </template>
@@ -23,7 +23,7 @@
             <Label for="paper_size">{{ __('Paper size') }}</Label>
             <Select id="paper_size" v-model="form.paper_size">
               <option value="A4">A4</option>
-              <option value="Letter">Letter</option>
+              <option value="Letter">US Letter</option>
             </Select>
             <HelpText>
               {{ __('This will be size of the pages that are in the PDF file.') }}
@@ -81,11 +81,13 @@ export default defineComponent({
     layout: {
       type: Object,
       default: () => ({})
-    }
+    },
+    method: String,
+    endpoint: String,
+    preview: String,
   },
 
   setup (props) {
-    const $route = inject('$route')
     const form = useForm({
       name: props.layout.name || '',
       paper_size: props.layout.paper_size || 'A4',
@@ -93,17 +95,10 @@ export default defineComponent({
       preview: false,
     })
     const save = () => {
-      const method = props.layout.id
-        ? 'put'
-        : 'post'
-      const route = props.layout.id
-        ? $route('layouts.update', props.layout.id)
-        : $route('layouts.store')
-
-      form[method](route, {
+      form[props.method](props.endpoint, {
         onFinish: () => {
-          if (form.preview) {
-            window.open($route('layouts.preview', props.layout), '_blank')
+          if (form.preview && !form.hasErrors) {
+            window.open(props.preview, '_blank')
           }
 
           form.processing = false
