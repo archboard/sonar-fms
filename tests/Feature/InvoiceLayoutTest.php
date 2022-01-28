@@ -50,6 +50,7 @@ class InvoiceLayoutTest extends TestCase
             ->assertViewHas('title')
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
+                ->where('breadcrumbs', fn ($prop) => count($prop) > 1)
                 ->where('method', 'post')
                 ->where('endpoint', route('layouts.store'))
             );
@@ -139,6 +140,7 @@ class InvoiceLayoutTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->has('title')
                 ->has('layout')
+                ->where('breadcrumbs', fn ($prop) => count($prop) > 1)
                 ->where('endpoint', route('layouts.update', $layout))
                 ->where('method', 'put')
                 ->where('preview', route('layouts.preview', $layout))

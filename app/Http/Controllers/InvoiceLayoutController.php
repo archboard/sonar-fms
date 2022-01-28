@@ -45,9 +45,14 @@ class InvoiceLayoutController extends Controller
     public function create()
     {
         $title = __('Create a new invoice layout');
+        $breadcrumbs = [
+            $this->makeBreadcrumb(__('Invoice layouts'), route('layouts.index')),
+            $this->makeBreadcrumb(__('Create layout'), route('layouts.create')),
+        ];
 
         return inertia('layouts/Create', [
             'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
             'method' => 'post',
             'endpoint' => route('layouts.store'),
         ])->withViewData(compact('title'));
@@ -98,9 +103,14 @@ class InvoiceLayoutController extends Controller
     public function edit(InvoiceLayout $layout)
     {
         $title = __('Edit :name', ['name' => $layout->name]);
+        $breadcrumbs = [
+            $this->makeBreadcrumb(__('Invoice layouts'), route('layouts.index')),
+            $this->makeBreadcrumb(__('Edit layout'), route('layouts.edit', $layout)),
+        ];
 
         return inertia('layouts/Create', [
             'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
             'layout' => $layout->toResource(),
             'method' => 'put',
             'endpoint' => route('layouts.update', $layout),
