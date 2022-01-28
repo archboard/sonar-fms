@@ -40,7 +40,7 @@
       </Thead>
       <Tbody>
         <tr
-          v-for="(layout, index) in layouts.data"
+          v-for="layout in layouts.data"
           :key="layout.id"
         >
           <Td :lighter="false">
@@ -53,13 +53,27 @@
             {{ layout.paper_size }}
           </Td>
           <Td class="text-right space-x-3">
-            <Link v-if="!layout.is_default" :href="$route('layouts.default', layout)" method="post" as="button">{{ __('Make default') }}</Link>
-            <Link :href="$route('layouts.edit', layout)">{{ __('Edit') }}</Link>
+            <VerticalDotMenu>
+              <div class="p-1">
+                <SonarMenuItem v-if="!layout.is_default && can('layouts.update')" :href="`/layouts/invoices/${layout.id}/default`" method="post" as="button" is="InertiaLink">
+                  {{ __('Make default') }}
+                </SonarMenuItem>
+                <SonarMenuItem :href="`/layouts/invoices/${layout.id}/preview`" is="a">
+                  {{ __('Preview') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="can('layouts.update')" :href="`/layouts/invoices/${layout.id}/edit`" is="InertiaLink">
+                  {{ __('Edit') }}
+                </SonarMenuItem>
+                <SonarMenuItem v-if="can('layouts.delete')" :href="`/layouts/invoices/${layout.id}`" is="button" @click.prevent="layoutToDelete = layout">
+                  {{ __('Delete') }}
+                </SonarMenuItem>
+              </div>
+            </VerticalDotMenu>
           </Td>
         </tr>
         <tr v-if="layouts.meta.total === 0">
           <Td class="text-center" colspan="3">
-            {{ __('No invoice layouts exist.') }} <Link :href="$route('layouts.create')">{{ __('Add one') }}</Link>.
+            {{ __('No invoice layouts exist.') }} <Link href="/layouts/invoices/create">{{ __('Add one') }}</Link>.
           </Td>
         </tr>
       </Tbody>
@@ -67,10 +81,16 @@
 
     <Pagination :meta="layouts.meta" :links="layouts.links" />
   </Authenticated>
+
+  <ConfirmationModal
+    v-if="layoutToDelete.id"
+    @close="layoutToDelete = {}"
+    @confirmed="deleteLayout"
+  />
 </template>
 
 <script>
-import { defineComponent, inject } from 'vue'
+import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import Button from '@/components/Button'
 import handlesFilters from '@/composition/handlesFilters'
@@ -85,10 +105,18 @@ import ScholarshipFormModal from '@/components/modals/ScholarshipFormModal'
 import PageProps from '@/mixins/PageProps'
 import Pagination from '@/components/tables/Pagination'
 import SolidBadge from '@/components/SolidBadge'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
+import SonarMenuItem from '@/components/forms/SonarMenuItem'
+import checksPermissions from '@/composition/checksPermissions'
+import ConfirmationModal from '@/components/modals/ConfirmationModal'
+import { Inertia } from '@inertiajs/inertia'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ConfirmationModal,
+    SonarMenuItem,
+    VerticalDotMenu,
     SolidBadge,
     ScholarshipFormModal,
     ...TableComponents,
@@ -107,18 +135,25 @@ export default defineComponent({
   },
   props: {
     layouts: Object,
+    permissions: Object,
   },
 
   setup () {
-    const $route = inject('$route')
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({
       s: '',
       perPage: 15,
       page: 1,
       orderBy: 'name',
       orderDir: 'asc',
-    }, $route('layouts.index'))
+    }, '/layouts/invoices')
     const { searchTerm } = searchesItems(filters)
+    const { can } = checksPermissions()
+    const layoutToDelete = ref({})
+    const deleteLayout = () => {
+      Inertia.delete(`/layouts/invoices/${layoutToDelete.id}`, {
+        preserveScroll: true
+      })
+    }
 
     return {
       filters,
@@ -126,6 +161,9 @@ export default defineComponent({
       resetFilters,
       sortColumn,
       searchTerm,
+      can,
+      layoutToDelete,
+      deleteLayout,
     }
   }
 })

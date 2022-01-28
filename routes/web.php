@@ -308,10 +308,16 @@ Route::middleware('tenant')->group(function () {
 
                 Route::resource('/layouts', \App\Http\Controllers\InvoiceLayoutController::class);
 
-                Route::post('/layouts/{layout}/default', \App\Http\Controllers\MakeInvoiceLayoutDefault::class)
+                Route::resource('/layouts/invoices', \App\Http\Controllers\InvoiceLayoutController::class)
+                    ->parameters([
+                        'invoices' => 'layout',
+                    ])
+                    ->names('layouts');
+
+                Route::post('/layouts/invoices/{layout}/default', \App\Http\Controllers\MakeInvoiceLayoutDefault::class)
                     ->name('layouts.default');
 
-                Route::get('/layouts/{layout}/preview', \App\Http\Controllers\PreviewLayoutController::class)
+                Route::get('/layouts/invoices/{layout}/preview', \App\Http\Controllers\PreviewLayoutController::class)
                     ->name('layouts.preview');
 
                 Route::get('/combine', [\App\Http\Controllers\CombineInvoiceController::class, 'index'])

@@ -31,6 +31,9 @@ class InvoiceLayoutController extends Controller
         return inertia('layouts/Index', [
             'title' => $title,
             'layouts' => InvoiceLayoutResource::collection($layouts),
+            'permissions' => [
+                'layouts' => $request->user()->getPermissions(InvoiceLayout::class),
+            ],
         ])->withViewData(compact('title'));
     }
 

@@ -32,8 +32,14 @@ class InvoiceLayoutTest extends TestCase
         $this->assignPermission('viewAny', InvoiceLayout::class);
 
         $this->get(route('layouts.index'))
+            ->assertOk()
             ->assertViewHas('title')
-            ->assertOk();
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('permissions')
+                ->has('layouts')
+                ->component('layouts/Index')
+            );
     }
 
     public function test_can_get_to_create_layout_page()
