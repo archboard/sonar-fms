@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" href="/layouts/invoices/create">
+      <Button component="inertia-link" href="/layouts/invoices/create" size="sm">
         {{ __('Add') }}
       </Button>
     </template>
