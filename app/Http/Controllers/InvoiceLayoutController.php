@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SaveLayoutRequest;
 use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
-use App\Rules\InvoiceLayoutData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 
 class InvoiceLayoutController extends Controller
 {
