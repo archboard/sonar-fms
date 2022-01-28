@@ -780,6 +780,32 @@ class User extends Authenticatable implements HasLocalePreference
                     ],
                 ],
                 [
+                    'model' => ReceiptLayout::class,
+                    'label' => __('Receipt layouts'),
+                    'permissions' => [
+                        [
+                            'permission' => 'viewAny',
+                            'label' => __('View'),
+                            'can' => $this->can('viewAny', ReceiptLayout::class),
+                        ],
+                        [
+                            'permission' => 'create',
+                            'label' => __('Create'),
+                            'can' => $this->can('create', ReceiptLayout::class),
+                        ],
+                        [
+                            'permission' => 'update',
+                            'label' => __('Update'),
+                            'can' => $this->can('update', ReceiptLayout::class),
+                        ],
+                        [
+                            'permission' => 'delete',
+                            'label' => __('Delete'),
+                            'can' => $this->can('delete', ReceiptLayout::class),
+                        ],
+                    ],
+                ],
+                [
                     'model' => PaymentMethod::class,
                     'label' => __('Payment methods'),
                     'permissions' => [

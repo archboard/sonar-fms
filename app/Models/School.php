@@ -106,6 +106,11 @@ class School extends Model
         return $this->hasMany(InvoiceLayout::class);
     }
 
+    public function receiptLayouts(): HasMany
+    {
+        return $this->hasMany(ReceiptLayout::class);
+    }
+
     public function paymentMethods(): HasMany
     {
         return $this->hasMany(PaymentMethod::class)

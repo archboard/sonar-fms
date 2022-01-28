@@ -306,7 +306,11 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/terms', [\App\Http\Controllers\TermController::class, 'index'])
                     ->name('terms.index');
 
-                Route::resource('/layouts', \App\Http\Controllers\InvoiceLayoutController::class);
+                Route::resource('/layouts/receipts', \App\Http\Controllers\ReceiptLayoutController::class)
+                    ->parameters([
+                        'receipts' => 'layout',
+                    ])
+                    ->names('receipt-layouts');
 
                 Route::resource('/layouts/invoices', \App\Http\Controllers\InvoiceLayoutController::class)
                     ->parameters([
