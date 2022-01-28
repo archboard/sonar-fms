@@ -1,7 +1,7 @@
 <template>
   <Authenticated>
     <template v-slot:actions>
-      <Button component="inertia-link" :href="$route('layouts.create')">
+      <Button component="inertia-link" href="/layouts/invoices/create">
         {{ __('Add') }}
       </Button>
     </template>
