@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveLayoutRequest;
 use App\Http\Resources\InvoiceLayoutResource;
 use App\Models\InvoiceLayout;
 use App\Rules\InvoiceLayoutData;
@@ -55,19 +56,12 @@ class InvoiceLayoutController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param SaveLayoutRequest $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(SaveLayoutRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|max:255',
-            'locale' => 'nullable',
-            'paper_size' => Rule::in(['A4', 'Letter']),
-            'layout_data' => ['required', new InvoiceLayoutData],
-            'layout_data.rows' => ['required', 'array'],
-        ]);
-
+        $data = $request->validated();
         $school = $request->school();
 
         $data['tenant_id'] = $school->tenant_id;
@@ -87,7 +81,7 @@ class InvoiceLayoutController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\InvoiceLayout  $layout
+     * @param InvoiceLayout $layout
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(InvoiceLayout $layout)
@@ -98,7 +92,7 @@ class InvoiceLayoutController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\InvoiceLayout  $layout
+     * @param InvoiceLayout $layout
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(InvoiceLayout $layout)
@@ -117,20 +111,13 @@ class InvoiceLayoutController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\InvoiceLayout  $layout
-     * @return \Illuminate\Http\RedirectResponse
+     * @param SaveLayoutRequest $request
+     * @param InvoiceLayout $layout
+     * @return RedirectResponse
      */
-    public function update(Request $request, InvoiceLayout $layout)
+    public function update(SaveLayoutRequest $request, InvoiceLayout $layout)
     {
-        $data = $request->validate([
-            'name' => 'required|max:255',
-            'locale' => 'nullable',
-            'paper_size' => Rule::in(['A4', 'Letter']),
-            'layout_data' => ['required', new InvoiceLayoutData],
-            'layout_data.rows' => ['required', 'array'],
-        ]);
-
+        $data = $request->validated();
         $layout->update($data);
 
         session()->flash('success', __('Invoice layout updated successfully.'));
@@ -141,8 +128,8 @@ class InvoiceLayoutController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\InvoiceLayout  $layout
-     * @return \Illuminate\Http\RedirectResponse
+     * @param InvoiceLayout $layout
+     * @return RedirectResponse
      */
     public function destroy(InvoiceLayout $layout)
     {
