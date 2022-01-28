@@ -30,4 +30,9 @@ class Controller extends BaseController
             'forceDelete' => 'forceDelete',
         ];
     }
+
+    protected function makeBreadcrumb(string $label, string $route): array
+    {
+        return compact('label', 'route');
+    }
 }
