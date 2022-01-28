@@ -34,7 +34,7 @@ class PreviewLayoutController extends Controller
 
         return view('invoice', [
             'layout' => $layout,
-            'invoices' => [$invoice],
+            'invoice' => $invoice,
             'title' => $title,
             'currency' => $invoice->currency,
         ]);
