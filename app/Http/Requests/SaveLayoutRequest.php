@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\InvoiceLayoutData;
+use App\Rules\PdfLayoutData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +29,7 @@ class SaveLayoutRequest extends FormRequest
             'name' => 'required|max:255',
             'locale' => 'nullable',
             'paper_size' => Rule::in(['A4', 'Letter']),
-            'layout_data' => ['required', new InvoiceLayoutData],
+            'layout_data' => ['required', new PdfLayoutData()],
             'layout_data.rows' => ['required', 'array'],
         ];
     }

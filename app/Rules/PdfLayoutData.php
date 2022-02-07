@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class InvoiceLayoutData implements Rule
+class PdfLayoutData implements Rule
 {
     /**
      * Create a new rule instance.
