@@ -177,7 +177,7 @@ class HandleInertiaRequests extends Middleware
                     $links[] = [
                         'label' => __('School settings'),
                         'route' => route('settings.school'),
-                        'active' => $request->routeIs('settings.school'),
+                        'active' => $request->routeIs('settings.school') || $request->is('layouts*'),
                     ];
                 }
 
