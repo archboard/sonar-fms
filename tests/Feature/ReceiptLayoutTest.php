@@ -193,4 +193,23 @@ class ReceiptLayoutTest extends TestCase
 
         $this->assertModelMissing($layout);
     }
+
+    public function test_can_switch_layout_defaults()
+    {
+        $this->assignPermission('update', ReceiptLayout::class);
+
+        $default = ReceiptLayout::factory()->create(['is_default' => true]);
+        $this->assertTrue($default->is_default);
+        $other = ReceiptLayout::factory()->create(['is_default' => false]);
+        $this->assertFalse($other->is_default);
+
+        $this->post(route('receipt-layouts.default', $other))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $default->refresh();
+        $this->assertFalse($default->is_default);
+        $other->refresh();
+        $this->assertTrue($other->is_default);
+    }
 }

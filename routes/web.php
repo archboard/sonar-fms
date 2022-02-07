@@ -312,7 +312,8 @@ Route::middleware('tenant')->group(function () {
                     ])
                     ->names('receipt-layouts');
 
-//                Route::get('/layouts/receipts/{layout}/default')
+                Route::post('/layouts/receipts/{layout}/default', \App\Http\Controllers\MakeReceiptLayoutDefault::class)
+                    ->name('receipt-layouts.default');
 
                 Route::get('/layouts/receipts/{layout}/preview', \App\Http\Controllers\PreviewReceiptLayoutController::class)
                     ->name('receipt-layouts.preview');
