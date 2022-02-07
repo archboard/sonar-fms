@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveLayoutRequest;
 use App\Http\Resources\ReceiptLayoutResource;
 use App\Models\ReceiptLayout;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ReceiptLayoutController extends Controller
@@ -59,12 +61,16 @@ class ReceiptLayoutController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param SaveLayoutRequest $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(SaveLayoutRequest $request)
     {
-        //
+        $layout = ReceiptLayout::saveFromRequest($request);
+
+        session()->flash('success', __('Invoice layout created successfully.'));
+
+        return $this->afterSave($request, $layout);
     }
 
     /**
@@ -92,7 +98,7 @@ class ReceiptLayoutController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  \App\Models\ReceiptLayout  $receiptLayout
      * @return \Illuminate\Http\Response
      */
@@ -110,5 +116,14 @@ class ReceiptLayoutController extends Controller
     public function destroy(ReceiptLayout $receiptLayout)
     {
         //
+    }
+
+    protected function afterSave(Request $request, ReceiptLayout $layout): RedirectResponse
+    {
+        if ($request->input('preview')) {
+            return redirect()->route('receipt-layouts.edit', $layout);
+        }
+
+        return redirect()->route('receipt-layouts.index');
     }
 }

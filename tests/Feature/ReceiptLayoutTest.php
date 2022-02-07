@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ReceiptLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
 
@@ -49,5 +50,76 @@ class ReceiptLayoutTest extends TestCase
                 ->where('method', 'post')
                 ->component('layouts/Create')
             );
+    }
+
+    public function test_can_create_a_new_layout()
+    {
+        $this->assignPermission('create', ReceiptLayout::class);
+
+        $data = [
+            'name' => 'My receipt layout',
+            'locale' => null,
+            'paper_size' => 'Letter',
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isContentTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isContentTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->post(route('receipt-layouts.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('receipt-layouts.index'));
+
+        $data['tenant_id'] = $this->tenant->id;
+        $data['school_id'] = $this->school->id;
+        $data['is_default'] = true;
+        $this->assertDatabaseHas('receipt_layouts', Arr::except($data, 'layout_data'));
+
+        $layout = ReceiptLayout::first();
+        $this->assertEquals($data['layout_data'], $layout->layout_data);
+    }
+
+    public function test_can_save_and_preview_new_layout()
+    {
+        $this->assignPermission('create', ReceiptLayout::class);
+
+        $data = [
+            'name' => 'My layout',
+            'locale' => null,
+            'paper_size' => 'A4',
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isContentTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isContentTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+            ],
+            'preview' => true,
+        ];
+
+        $this->post(route('receipt-layouts.store'), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(route('receipt-layouts.edit', ReceiptLayout::first()));
     }
 }
