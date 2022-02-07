@@ -13,9 +13,9 @@
               :key="column"
               class="group relative flex-0 w-full border-4 border-gray-400 border-dashed flex items-center justify-center"
             >
-              <div v-if="row.isInvoiceTable" class="p-4 bg-gray-300 w-full text-center">
+              <div v-if="row.isContentTable" class="p-4 bg-gray-300 w-full text-center">
                 <slot name="placeholder">
-                  {{ __('Invoice table will appear here.') }}
+                  {{ __('Content table will appear here.') }}
                 </slot>
               </div>
               <Wysiwyg v-else v-model="column.content" />
@@ -51,9 +51,9 @@
       <Button @click.prevent="() => addRow()" size="sm">
         {{ __('Add content row') }}
       </Button>
-      <Button v-if="!hasInvoiceTable" @click.prevent="() => addRow(true)" size="sm">
+      <Button v-if="!hasContentTable" @click.prevent="() => addRow(true)" size="sm">
         <slot name="action-label">
-          {{ __('Add invoice table') }}
+          {{ __('Add content table') }}
         </slot>
       </Button>
     </div>
@@ -89,8 +89,8 @@ export default defineComponent({
       rows: [],
     }
     const localData = ref(Object.assign({}, defaults, { ...props.modelValue }))
-    const hasInvoiceTable = computed(() => {
-      return localData.value.rows.some(r => r.isInvoiceTable)
+    const hasContentTable = computed(() => {
+      return localData.value.rows.some(r => r.isContentTable)
     })
     watch(() => localData, state => {
       emit('update:modelValue', state)
@@ -109,11 +109,11 @@ export default defineComponent({
         removeRow(rowIndex)
       }
     }
-    const addRow = (isInvoiceTable = false) => {
+    const addRow = (isContentTable = false) => {
       const row = {
         id: nanoid(),
         columns: [],
-        isInvoiceTable,
+        isContentTable,
       }
       addColumn(row)
 
@@ -137,7 +137,7 @@ export default defineComponent({
       addRow,
       removeRow,
       addColumn,
-      hasInvoiceTable,
+      hasContentTable,
       removeColumn,
       showModal,
       launchModal,

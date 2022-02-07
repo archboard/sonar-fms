@@ -32,7 +32,7 @@ class InvoiceLayoutFactory extends Factory
             'layout_data' => [
                 'rows' => [
                     [
-                        'isInvoiceTable' => false,
+                        'isContentTable' => false,
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
@@ -40,7 +40,7 @@ class InvoiceLayoutFactory extends Factory
                         ],
                     ],
                     [
-                        'isInvoiceTable' => true,
+                        'isContentTable' => true,
                         'columns' => [],
                     ],
                 ],

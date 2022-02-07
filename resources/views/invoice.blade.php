@@ -24,7 +24,7 @@
   <body class="bg-gray-50 text-gray-900 text-base">
     <div class="bg-white min-h-screen mx-auto p-8 space-y-8" style="max-width:{{ $layout->max_width }};">
       @foreach($layout->layout_data['rows'] as $row)
-        @if($row['isInvoiceTable'])
+        @if($row['isContentTable'])
           @if($invoice->children->isEmpty())
             <x-invoice-table :invoice="$invoice" :currency="$currency" />
           @else

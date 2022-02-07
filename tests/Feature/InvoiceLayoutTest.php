@@ -67,7 +67,7 @@ class InvoiceLayoutTest extends TestCase
             'layout_data' => [
                 'rows' => [
                     [
-                        'isInvoiceTable' => false,
+                        'isContentTable' => false,
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
@@ -75,7 +75,7 @@ class InvoiceLayoutTest extends TestCase
                         ],
                     ],
                     [
-                        'isInvoiceTable' => true,
+                        'isContentTable' => true,
                         'columns' => [],
                     ],
                 ],
@@ -107,7 +107,7 @@ class InvoiceLayoutTest extends TestCase
             'layout_data' => [
                 'rows' => [
                     [
-                        'isInvoiceTable' => false,
+                        'isContentTable' => false,
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
@@ -115,7 +115,7 @@ class InvoiceLayoutTest extends TestCase
                         ],
                     ],
                     [
-                        'isInvoiceTable' => true,
+                        'isContentTable' => true,
                         'columns' => [],
                     ],
                 ],
@@ -160,7 +160,7 @@ class InvoiceLayoutTest extends TestCase
             'layout_data' => [
                 'rows' => [
                     [
-                        'isInvoiceTable' => false,
+                        'isContentTable' => false,
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
@@ -168,7 +168,7 @@ class InvoiceLayoutTest extends TestCase
                         ],
                     ],
                     [
-                        'isInvoiceTable' => true,
+                        'isContentTable' => true,
                         'columns' => [],
                     ],
                 ],
@@ -210,7 +210,7 @@ class InvoiceLayoutTest extends TestCase
             'layout_data' => [
                 'rows' => [
                     [
-                        'isInvoiceTable' => false,
+                        'isContentTable' => false,
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',

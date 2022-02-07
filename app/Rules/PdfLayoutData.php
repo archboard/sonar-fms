@@ -26,7 +26,7 @@ class PdfLayoutData implements Rule
     public function passes($attribute, $value)
     {
         return collect($value['rows'])
-            ->some(fn ($row) => $row['isInvoiceTable']);
+            ->some(fn ($row) => $row['isContentTable']);
     }
 
     /**
@@ -36,6 +36,6 @@ class PdfLayoutData implements Rule
      */
     public function message()
     {
-        return __('One row must be the invoice table.');
+        return __('One row must be the content table.');
     }
 }
