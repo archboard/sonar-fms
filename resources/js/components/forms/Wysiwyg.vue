@@ -82,7 +82,7 @@ export default defineComponent({
       },
     }
     const editorReady = e => {
-      console.log('wysiwyg editor')
+      //
     }
 
     return {
