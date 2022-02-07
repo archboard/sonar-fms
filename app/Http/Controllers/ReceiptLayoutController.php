@@ -113,11 +113,15 @@ class ReceiptLayoutController extends Controller
      *
      * @param SaveLayoutRequest $request
      * @param \App\Models\ReceiptLayout $layout
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
     public function update(SaveLayoutRequest $request, ReceiptLayout $layout)
     {
-        //
+        $layout->update($request->validated());
+
+        session()->flash('success', __('Layout updated successfully.'));
+
+        return $this->afterSave($request, $layout);
     }
 
     /**

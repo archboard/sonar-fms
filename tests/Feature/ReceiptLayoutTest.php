@@ -141,4 +141,42 @@ class ReceiptLayoutTest extends TestCase
                 ->where('preview', route('receipt-layouts.preview', $layout))
             );
     }
+
+    public function test_can_update_layout()
+    {
+        $this->assignPermission('update', ReceiptLayout::class);
+
+        /** @var ReceiptLayout $layout */
+        $layout = ReceiptLayout::factory()->create();
+        $data = [
+            'name' => 'My layout',
+            'locale' => 'en',
+            'paper_size' => 'A4',
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isContentTable' => false,
+                        'columns' => [
+                            [
+                                'content' => '<p>My layout content</p>',
+                            ]
+                        ],
+                    ],
+                    [
+                        'isContentTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->put(route('receipt-layouts.update', $layout), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $layout->refresh();
+        $this->assertEquals($data['layout_data'], $layout->layout_data);
+        $this->assertEquals($data['name'], $layout->name);
+        $this->assertEquals($data['locale'], $layout->locale);
+    }
 }
