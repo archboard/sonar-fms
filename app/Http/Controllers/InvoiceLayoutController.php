@@ -68,7 +68,7 @@ class InvoiceLayoutController extends Controller
     {
         $layout = InvoiceLayout::saveFromRequest($request);
 
-        session()->flash('success', __('Invoice layout created successfully.'));
+        session()->flash('success', __('Layout created successfully.'));
 
         return $this->afterSave($request, $layout);
     }
@@ -119,7 +119,7 @@ class InvoiceLayoutController extends Controller
     {
         $layout->update($request->validated());
 
-        session()->flash('success', __('Invoice layout updated successfully.'));
+        session()->flash('success', __('Layout updated successfully.'));
 
         return $this->afterSave($request, $layout);
     }
@@ -134,7 +134,7 @@ class InvoiceLayoutController extends Controller
     {
         $layout->delete();
 
-        session()->flash('success', __('Invoice layout deleted successfully.'));
+        session()->flash('success', __('Layout deleted successfully.'));
 
         return redirect()->route('layouts.index');
     }
