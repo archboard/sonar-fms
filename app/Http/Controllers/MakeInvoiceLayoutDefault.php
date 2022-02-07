@@ -22,7 +22,7 @@ class MakeInvoiceLayoutDefault extends Controller
             ->update(['is_default' => false]);
         $layout->update(['is_default' => true]);
 
-        session()->flash('success', __('Invoice layout changed to default layout.'));
+        session()->flash('success', __('Layout changed to default layout.'));
 
         return back();
     }
