@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use JamesMills\LaravelTimezone\Facades\Timezone;
 
@@ -110,6 +111,11 @@ class InvoicePayment extends Model
     public function madeBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'made_by', 'uuid');
+    }
+
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
     }
 
     public static function getLoadAttributes(): array

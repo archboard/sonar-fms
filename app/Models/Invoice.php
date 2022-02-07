@@ -391,6 +391,18 @@ class Invoice extends Model implements Searchable
         )->distinct();
     }
 
+    public function receipts(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Receipt::class,
+            InvoicePayment::class,
+            'invoice_uuid',
+            'invoice_payment_uuid',
+            'uuid',
+            'uuid'
+        );
+    }
+
     public function invoicePdfs(): HasMany
     {
         return $this->hasMany(InvoicePdf::class);

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\ReceiptLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
