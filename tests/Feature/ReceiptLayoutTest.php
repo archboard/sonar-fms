@@ -122,4 +122,23 @@ class ReceiptLayoutTest extends TestCase
             ->assertSessionHas('success')
             ->assertRedirect(route('receipt-layouts.edit', ReceiptLayout::first()));
     }
+
+    public function test_can_view_edit_page()
+    {
+        $this->assignPermission('update', ReceiptLayout::class);
+
+        $layout = ReceiptLayout::factory()->create();
+
+        $this->get(route('receipt-layouts.edit', $layout))
+            ->assertOk()
+            ->assertViewHas('title')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('layout')
+                ->where('breadcrumbs', fn ($prop) => count($prop) > 1)
+                ->where('endpoint', route('receipt-layouts.update', $layout))
+                ->where('method', 'put')
+                ->where('preview', route('receipt-layouts.preview', $layout))
+            );
+    }
 }

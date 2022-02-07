@@ -312,6 +312,11 @@ Route::middleware('tenant')->group(function () {
                     ])
                     ->names('receipt-layouts');
 
+//                Route::get('/layouts/receipts/{layout}/default')
+
+                Route::get('/layouts/receipts/{layout}/preview', \App\Http\Controllers\PreviewReceiptLayoutController::class)
+                    ->name('receipt-layouts.preview');
+
                 Route::resource('/layouts/invoices', \App\Http\Controllers\InvoiceLayoutController::class)
                     ->parameters([
                         'invoices' => 'layout',

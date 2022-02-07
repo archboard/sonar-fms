@@ -2,19 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\ReceiptLayout;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ReceiptLayoutFactory extends Factory
+class ReceiptLayoutFactory extends InvoiceLayoutFactory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
-    {
-        return [
-            //
-        ];
-    }
+    protected $model = ReceiptLayout::class;
 }

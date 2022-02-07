@@ -76,33 +76,46 @@ class ReceiptLayoutController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ReceiptLayout  $receiptLayout
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\ReceiptLayout $layout
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
-    public function show(ReceiptLayout $receiptLayout)
+    public function show(ReceiptLayout $layout)
     {
-        //
+        return $layout->toResource();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ReceiptLayout  $receiptLayout
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\ReceiptLayout $layout
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
-    public function edit(ReceiptLayout $receiptLayout)
+    public function edit(ReceiptLayout $layout)
     {
-        //
+        $title = __('Edit :name', ['name' => $layout->name]);
+        $breadcrumbs = [
+            $this->makeBreadcrumb(__('Receipt layouts'), route('receipt-layouts.index')),
+            $this->makeBreadcrumb(__('Edit layout'), route('receipt-layouts.edit', $layout)),
+        ];
+
+        return inertia('layouts/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'layout' => $layout->toResource(),
+            'method' => 'put',
+            'endpoint' => route('receipt-layouts.update', $layout),
+            'preview' => route('receipt-layouts.preview', $layout),
+        ])->withViewData(compact('title'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param  \App\Models\ReceiptLayout  $receiptLayout
+     * @param SaveLayoutRequest $request
+     * @param \App\Models\ReceiptLayout $layout
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ReceiptLayout $receiptLayout)
+    public function update(SaveLayoutRequest $request, ReceiptLayout $layout)
     {
         //
     }
@@ -110,10 +123,10 @@ class ReceiptLayoutController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ReceiptLayout  $receiptLayout
+     * @param  \App\Models\ReceiptLayout $layout
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ReceiptLayout $receiptLayout)
+    public function destroy(ReceiptLayout $layout)
     {
         //
     }
