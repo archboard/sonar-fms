@@ -179,4 +179,18 @@ class ReceiptLayoutTest extends TestCase
         $this->assertEquals($data['name'], $layout->name);
         $this->assertEquals($data['locale'], $layout->locale);
     }
+
+    public function test_can_delete_a_layout()
+    {
+        $this->assignPermission('delete', ReceiptLayout::class);
+
+        /** @var ReceiptLayout $layout */
+        $layout = ReceiptLayout::factory()->create();
+
+        $this->delete(route('receipt-layouts.destroy', $layout))
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $this->assertModelMissing($layout);
+    }
 }

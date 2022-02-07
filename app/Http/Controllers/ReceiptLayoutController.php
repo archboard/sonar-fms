@@ -128,11 +128,15 @@ class ReceiptLayoutController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\ReceiptLayout $layout
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
     public function destroy(ReceiptLayout $layout)
     {
-        //
+        $layout->delete();
+
+        session()->flash('success', __('Layout deleted successfully.'));
+
+        return redirect()->route('layouts.index');
     }
 
     protected function afterSave(Request $request, ReceiptLayout $layout): RedirectResponse
