@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Requests\SaveLayoutRequest;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -52,5 +53,20 @@ class LayoutBase extends Model
         ];
 
         return $pages[$this->paper_size];
+    }
+
+    public static function saveFromRequest(SaveLayoutRequest $request): static
+    {
+        $data = $request->validated();
+        $school = $request->school();
+
+        $data['school_id'] = $school->id;
+        $data['tenant_id'] = $school->tenant_id;
+        // If a default layout doesn't exist, set it to be this one
+        $data['is_default'] = static::default()
+            ->where('school_id', $school->id)
+            ->doesntExist();
+
+        return static::create($data);
     }
 }

@@ -66,17 +66,7 @@ class InvoiceLayoutController extends Controller
      */
     public function store(SaveLayoutRequest $request)
     {
-        $data = $request->validated();
-        $school = $request->school();
-
-        $data['tenant_id'] = $school->tenant_id;
-        // If a default layout doesn't exist, set it to be this one
-        $data['is_default'] = $school->invoiceLayouts()
-            ->default()
-            ->doesntExist();
-        /** @var InvoiceLayout $layout */
-        $layout = $school->invoiceLayouts()
-            ->create($data);
+        $layout = InvoiceLayout::saveFromRequest($request);
 
         session()->flash('success', __('Invoice layout created successfully.'));
 
@@ -127,8 +117,7 @@ class InvoiceLayoutController extends Controller
      */
     public function update(SaveLayoutRequest $request, InvoiceLayout $layout)
     {
-        $data = $request->validated();
-        $layout->update($data);
+        $layout->update($request->validated());
 
         session()->flash('success', __('Invoice layout updated successfully.'));
 
