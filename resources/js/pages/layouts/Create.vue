@@ -14,7 +14,7 @@
         <TwoColumnWrapper>
           <InputWrap :error="form.errors.name">
             <Label for="name" :required="true">{{ __('Name') }}</Label>
-            <Input v-model="form.name" />
+            <Input v-model="form.name" id="name" />
             <HelpText>
               {{ __('Give the layout a meaningful name so you can identify it later.') }}
             </HelpText>
