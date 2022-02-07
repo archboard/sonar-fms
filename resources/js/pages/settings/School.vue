@@ -117,15 +117,18 @@
       <CardWrapper>
         <CardPadding>
           <CardSectionHeader>
-            {{ __('Invoice PDF Layouts') }}
+            {{ __('PDF Layouts') }}
           </CardSectionHeader>
           <HelpText>
-            {{ __('Manage the layouts for when an invoice is exported as a PDF file.') }}
+            {{ __('Manage the layouts for invoices, receipts and account statements as a PDF file.') }}
           </HelpText>
         </CardPadding>
         <CardAction>
-          <Button component="inertia-link" href="/layouts">
-            {{ __('Manage layouts') }}
+          <Button component="inertia-link" href="/layouts/invoices">
+            {{ __('Invoice layouts') }}
+          </Button>
+          <Button component="inertia-link" href="/layouts/receipts">
+            {{ __('Receipt layouts') }}
           </Button>
         </CardAction>
       </CardWrapper>
