@@ -38,11 +38,22 @@ class ReceiptLayoutController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function create()
     {
-        //
+        $title = __('Create a new receipt layout');
+        $breadcrumbs = [
+            $this->makeBreadcrumb(__('Receipt layouts'), route('receipt-layouts.index')),
+            $this->makeBreadcrumb(__('Create layout'), route('receipt-layouts.create')),
+        ];
+
+        return inertia('layouts/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'method' => 'post',
+            'endpoint' => route('receipt-layouts.store'),
+        ])->withViewData(compact('title'));
     }
 
     /**

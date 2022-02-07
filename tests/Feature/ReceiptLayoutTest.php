@@ -34,4 +34,20 @@ class ReceiptLayoutTest extends TestCase
                 ->component('layouts/receipts/Index')
             );
     }
+
+    public function test_can_view_create_page()
+    {
+        $this->assignPermission('create', ReceiptLayout::class);
+
+        $this->get(route('receipt-layouts.create'))
+            ->assertOk()
+            ->assertViewHas('title')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('breadcrumbs')
+                ->where('endpoint', route('receipt-layouts.store'))
+                ->where('method', 'post')
+                ->component('layouts/Create')
+            );
+    }
 }
