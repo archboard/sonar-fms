@@ -21,7 +21,7 @@
         </div>
         <div class="text-gray-700 text-sm space-x-2">
           <span>
-            {{ $invoice->invoice_date->formatLocalized('%B %e, %Y') }}
+            {{ $invoice->invoice_date->format('F j, Y') }}
           </span>
         </div>
       </div>
