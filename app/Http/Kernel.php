@@ -11,6 +11,7 @@ use App\Http\Middleware\InvoiceNotPublished;
 use App\Http\Middleware\InvoicePublished;
 use App\Http\Middleware\ManagesTenancy;
 use App\Http\Middleware\NeedsDefaultInvoiceLayout;
+use App\Http\Middleware\NeedsReceiptLayout;
 use App\Http\Middleware\NotVoid;
 use App\Http\Middleware\SchoolSettingsSaved;
 use App\Http\Middleware\ScopeBouncer;
@@ -97,5 +98,6 @@ class Kernel extends HttpKernel
         'invoice_unpublished' => InvoiceNotPublished::class,
         'school_settings' => SchoolSettingsSaved::class,
         'not_void' => NotVoid::class,
+        'receipt_layout' => NeedsReceiptLayout::class,
     ];
 }
