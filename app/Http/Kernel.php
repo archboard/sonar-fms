@@ -10,7 +10,7 @@ use App\Http\Middleware\Installed;
 use App\Http\Middleware\InvoiceNotPublished;
 use App\Http\Middleware\InvoicePublished;
 use App\Http\Middleware\ManagesTenancy;
-use App\Http\Middleware\NeedsDefaultInvoicdLayout;
+use App\Http\Middleware\NeedsDefaultInvoiceLayout;
 use App\Http\Middleware\NotVoid;
 use App\Http\Middleware\SchoolSettingsSaved;
 use App\Http\Middleware\ScopeBouncer;
@@ -92,7 +92,7 @@ class Kernel extends HttpKernel
         'allows_oidc_auth' => AllowsOidcLogins::class,
         'manages_tenancy' => ManagesTenancy::class,
         'can_install' => CanInstall::class,
-        'needs_layout' => NeedsDefaultInvoicdLayout::class,
+        'needs_layout' => NeedsDefaultInvoiceLayout::class,
         'invoice_published' => InvoicePublished::class,
         'invoice_unpublished' => InvoiceNotPublished::class,
         'school_settings' => SchoolSettingsSaved::class,
