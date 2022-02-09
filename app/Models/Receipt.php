@@ -2,16 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
+/**
+ * @mixin IdeHelperReceipt
+ */
 class Receipt extends Model
 {
     use HasFactory;
     use BelongsToUser;
+    use BelongsToSchool;
 
     protected $guarded = [];
 

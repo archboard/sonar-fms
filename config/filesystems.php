@@ -17,6 +17,8 @@ return [
 
     'invoices' => env('INVOICE_FILESYSTEM_DRIVER', 'local_pdf'),
 
+    'receipts' => env('RECEIPT_FILESYSTEM_DRIVER', 'local_receipt'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -40,6 +42,11 @@ return [
         'local_pdf' => [
             'driver' => 'local',
             'root' => storage_path('app/invoices'),
+        ],
+
+        'local_receipt' => [
+            'driver' => 'local',
+            'root' => storage_path('app/receipts'),
         ],
 
         'public' => [

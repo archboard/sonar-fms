@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\MakeReceipt;
 use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
@@ -15,7 +16,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use JamesMills\LaravelTimezone\Facades\Timezone;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Browsershot\Browsershot;
 
 /**
  * @mixin IdeHelperInvoicePayment
@@ -29,6 +35,7 @@ class InvoicePayment extends Model
     use BelongsToInvoice;
     use HasAmountAttribute;
     use UsesUuid;
+    use LogsActivity;
 
     protected $guarded = [];
 
@@ -36,6 +43,21 @@ class InvoicePayment extends Model
         'paid_at' => 'datetime',
         'amount' => 'int',
     ];
+
+    protected static array $recordEvents = ['updated'];
+
+    protected static function booted()
+    {
+        static::saved(function (InvoicePayment $payment) {
+            MakeReceipt::dispatch($payment);
+        });
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnlyDirty();
+    }
 
     public function scopeFilter(Builder $builder, array $filters)
     {
@@ -139,5 +161,75 @@ class InvoicePayment extends Model
     public function fullLoad(): static
     {
         return $this->load(static::getLoadAttributes());
+    }
+
+    public function makeReceipt(User $user): Receipt
+    {
+        $count = Str::padLeft($this->receipts()->count(), 2, '0');
+
+        return new Receipt([
+            'tenant_id' => $this->tenant_id,
+            'school_id' => $this->school_id,
+            'user_id' => $user->uuid,
+            'invoice_payment_uuid' => $this->uuid,
+            'receipt_number' => "{$this->invoice->invoice_number}-R{$count}",
+        ]);
+    }
+
+    public static function getReceiptDisk(): \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter
+    {
+        return Storage::disk(config('filesystems.receipts'));
+    }
+
+    public function generatePdfPath(Receipt $receipt): string
+    {
+        $parameters = [
+            $this->tenant_id,
+            $this->school_id,
+            $this->created_at->format('Y'),
+            $this->created_at->format('n'),
+            $this->invoice->invoice_number,
+            $receipt->receipt_number,
+        ];
+
+        return Str::replaceArray('?', $parameters, '?/?/?/?/?/?.pdf');
+    }
+
+    public function saveReceiptPdf(?ReceiptLayout $layout = null): Receipt
+    {
+        $receipt = $this->makeReceipt($this->recordedBy);
+        $layout = $layout ?? $this->school->getDefaultReceiptLayout();
+        $title = __('Receipt :number', ['number' => $receipt->receipt_number]);
+
+        $content = view('receipt', [
+            'title' => $title,
+            'currency' => $this->currency,
+        ])->render();
+
+        $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
+        $disk = static::getReceiptDisk();
+        $receipt->path = $this->generatePdfPath($receipt);
+
+        $disk->makeDirectory(dirname($receipt->path));
+
+        Browsershot::html($content)
+            ->disableJavascript()
+            ->margins(0, 0, 0, 0)
+            ->format($layout->paper_size)
+            ->noSandbox()
+            ->showBackground()
+            ->setNodeBinary(config('services.node.binary'))
+            ->setNpmBinary(config('services.node.npm'))
+            ->addChromiumArguments([
+                'user-data-dir' => $userDir
+            ])
+            ->ignoreHttpsErrors()
+            ->hideHeader()
+            ->hideFooter()
+            ->savePdf($disk->path($receipt->path));
+
+        $receipt->save();
+
+        return $receipt;
     }
 }

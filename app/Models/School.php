@@ -207,6 +207,13 @@ class School extends Model
             ->first();
     }
 
+    public function getDefaultReceiptLayout(): ?ReceiptLayout
+    {
+        return $this->receiptLayouts()
+            ->default()
+            ->first();
+    }
+
     public function syncDataFromSis()
     {
         $this->tenant->sisProvider()->fullSchoolSync($this);

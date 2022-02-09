@@ -7,6 +7,7 @@ use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Testing\Assert;
 use Tests\TestCase;
@@ -55,7 +56,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_save_payment_to_invoice_without_associating_term()
     {
-        $this->withoutExceptionHandling();
+        Storage::fake(config('filesystems.receipts'));
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
