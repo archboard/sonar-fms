@@ -297,8 +297,8 @@ class User extends Authenticatable implements HasLocalePreference
             return;
         }
 
-        $response = PowerSchool::get("/ws/contacts/{$this->contact_id}/students");
-        $contactStudents = collect($response);
+        $contactStudents = PowerSchool::get("/ws/contacts/{$this->contact_id}/students")
+            ->collect();
 
         $students = Student::whereIn('sis_id', $contactStudents->pluck('dcid'))
             ->pluck('uuid', 'sis_id');
@@ -312,14 +312,14 @@ class User extends Authenticatable implements HasLocalePreference
         $this->schools()->syncWithoutDetaching($schools->values());
 
         $studentUsers = $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students, $studentUser) {
-            $studentUuid = $students->get($student->dcid);
+            $studentUuid = $students->get($student['dcid']);
 
             // If the school doesn't exist
             // or the student doesn't exist
             // or we already have the relationship
             // don't do anything
             if (
-                !$schools->has($student->schoolNumber) ||
+                !$schools->has($student['schoolNumber']) ||
                 !$studentUuid ||
                 $studentUser->contains($studentUuid)
             ) {
@@ -329,7 +329,7 @@ class User extends Authenticatable implements HasLocalePreference
             $studentUsers[] = [
                 'student_uuid' => $studentUuid,
                 'user_uuid' => $this->uuid,
-                'relationship' => optional($student->studentDetails[0] ?? null)->relationship,
+                'relationship' => optional($student['studentDetails'][0] ?? null)->relationship,
             ];
 
             return $studentUsers;
@@ -344,8 +344,8 @@ class User extends Authenticatable implements HasLocalePreference
         if (!$this->contact_id && $this->guardian_id) {
             $response = PowerSchool::pq('com.archboard.sonarfms.guardian.contactid', ['guardianid' => $this->guardian_id]);
 
-            if (isset($response->record) && count($response->record) === 1) {
-                $this->update(['contact_id' => $response->record[0]->personid]);
+            if ($response->count() === 1) {
+                $this->update(['contact_id' => $response[0]['personid']]);
             }
         }
 

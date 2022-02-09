@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83f9b384857ad55e55fb525dd4801554",
+    "content-hash": "baff8ea2714ce52b62417a631e336dbe",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1461,27 +1461,28 @@
         },
         {
             "name": "grantholle/powerschool-api",
-            "version": "2.5.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/grantholle/powerschool-api.git",
-                "reference": "70dde25367c6c3baf8223722d613d6822d491155"
+                "reference": "eafe15b9eed1e9bb3a57e297ad9b0633f6f04b44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/grantholle/powerschool-api/zipball/70dde25367c6c3baf8223722d613d6822d491155",
-                "reference": "70dde25367c6c3baf8223722d613d6822d491155",
+                "url": "https://api.github.com/repos/grantholle/powerschool-api/zipball/eafe15b9eed1e9bb3a57e297ad9b0633f6f04b44",
+                "reference": "eafe15b9eed1e9bb3a57e297ad9b0633f6f04b44",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "^7.0.1",
-                "illuminate/console": "^7.0|^8.0",
-                "illuminate/support": "^7.0|^8.0",
-                "php": "^7.4|^8.0"
+                "illuminate/console": "^8.0|^9.0",
+                "illuminate/support": "^8.0|^9.0",
+                "php": "^8.0"
             },
             "require-dev": {
-                "orchestra/testbench": "^5.4"
+                "orchestra/testbench": "^7.0",
+                "spatie/ray": "^1.30"
             },
             "type": "library",
             "extra": {
@@ -1503,7 +1504,7 @@
             "authors": [
                 {
                     "name": "Grant Holle",
-                    "homepage": "http://grantholle.com",
+                    "homepage": "https://grantholle.com",
                     "role": "Developer"
                 }
             ],
@@ -1513,9 +1514,9 @@
             ],
             "support": {
                 "issues": "https://github.com/grantholle/powerschool-api/issues",
-                "source": "https://github.com/grantholle/powerschool-api/tree/2.5.0"
+                "source": "https://github.com/grantholle/powerschool-api/tree/3.2.1"
             },
-            "time": "2021-10-27T13:32:51+00:00"
+            "time": "2022-02-09T02:20:47+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

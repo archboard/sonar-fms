@@ -44,15 +44,16 @@ class PowerSchoolProvider implements SisProvider
             ->to('/ws/v1/district/school')
             ->get();
 
-        return array_map(function ($school) {
-            return [
-                'sis_id' => $school->id,
-                'name' => $school->name,
-                'school_number' => $school->school_number,
-                'low_grade' => $school->low_grade,
-                'high_grade' => $school->high_grade,
-            ];
-        }, $response->schools->school);
+        return array_map(
+            fn ($school) => [
+                'sis_id' => $school['id'],
+                'name' => $school['name'],
+                'school_number' => $school['school_number'],
+                'low_grade' => $school['low_grade'],
+                'high_grade' => $school['high_grade'],
+            ],
+            $response->toArray()
+        );
     }
 
     public function getAllSchools(): array
@@ -87,11 +88,9 @@ class PowerSchoolProvider implements SisProvider
             throw new \Exception("Your license does not support this school. Please update your license and try again.");
         }
 
-        $results = $this->builder
+        return $this->builder
             ->to("/ws/v1/school/{$sisId}")
             ->get();
-
-        return $results->school;
     }
 
     public function syncSchool($sisId, bool $force = false): School
@@ -102,12 +101,12 @@ class PowerSchoolProvider implements SisProvider
         $school = $this->tenant
             ->schools()
             ->updateOrCreate(
-                ['sis_id' => $sisSchool->id],
+                ['sis_id' => $sisSchool['id']],
                 [
-                    'name' => $sisSchool->name,
-                    'school_number' => $sisSchool->school_number,
-                    'low_grade' => $sisSchool->low_grade,
-                    'high_grade' => $sisSchool->high_grade,
+                    'name' => $sisSchool['name'],
+                    'school_number' => $sisSchool['school_number'],
+                    'low_grade' => $sisSchool['low_grade'],
+                    'high_grade' => $sisSchool['high_grade'],
                 ]
             );
 
@@ -134,33 +133,33 @@ class PowerSchoolProvider implements SisProvider
                 ->keyBy('sis_id');
 
             foreach ($results as $user) {
-                $email = strtolower(optional($user->emails)->work_email ?? '');
+                $email = strtolower(optional($user['emails'])->work_email ?? '');
 
                 if (!$email) {
                     continue;
                 }
 
                 /** @var User $existingUser */
-                if ($existingUser = $existingUsers->get($user->users_dcid)) {
+                if ($existingUser = $existingUsers->get($user['users_dcid'])) {
                     $existingUser->update([
                         'email' => $email,
-                        'first_name' => optional($user->name)->first_name,
-                        'last_name' => optional($user->name)->last_name,
+                        'first_name' => optional($user['name'])->first_name,
+                        'last_name' => optional($user['name'])->last_name,
                     ]);
                     /** @var School|null $existingSchool */
                     $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
 
                     // If the school record exists already, update the staff id just in case
-                    if ($existingSchool && $existingSchool->pivot->staff_id !== $user->id) { // @phpstan-ignore-line
+                    if ($existingSchool && $existingSchool->pivot->staff_id !== $user['id']) { // @phpstan-ignore-line
                         $existingUser->schools()
-                            ->updateExistingPivot($school->id, ['staff_id' => $user->id]);
+                            ->updateExistingPivot($school->id, ['staff_id' => $user['id']]);
                     }
                     // If there isn't a school relationship, add it here
                     elseif (!$existingSchool) {
                         $schoolUser->push([
                             'school_id' => $school->id,
                             'user_uuid' => $existingUser->uuid,
-                            'staff_id' => $user->id,
+                            'staff_id' => $user['id'],
                         ]);
                     }
 
@@ -171,10 +170,10 @@ class PowerSchoolProvider implements SisProvider
                 $newUsers->push([
                     'tenant_id' => $this->tenant->id,
                     'uuid' => $uuid,
-                    'sis_id' => $user->users_dcid,
+                    'sis_id' => $user['users_dcid'],
                     'email' => $email,
-                    'first_name' => optional($user->name)->first_name,
-                    'last_name' => optional($user->name)->last_name,
+                    'first_name' => $user['name']['first_name'] ?? null,
+                    'last_name' => $user['name']['last_name'] ?? null,
                     'school_id' => $school->id,
                     'created_at' => $now,
                     'updated_at' => $now,
@@ -183,7 +182,7 @@ class PowerSchoolProvider implements SisProvider
                 $schoolUser->push([
                     'school_id' => $school->id,
                     'user_uuid' => $uuid,
-                    'staff_id' => $user->id,
+                    'staff_id' => $user['id'],
                 ]);
             }
         }
@@ -212,12 +211,12 @@ class PowerSchoolProvider implements SisProvider
                 ->keyBy('sis_id');
 
             $entries = array_reduce(
-                $results,
+                $results->toArray(),
                 function ($entries, $student) use ($school, $now, $existingStudents) {
                     $attributes = $this->getStudentAttributes($student);
 
                     // If it exists, then update
-                    if ($existingStudent = $existingStudents->get($student->id)) {
+                    if ($existingStudent = $existingStudents->get($student['id'])) {
                         $existingStudent->update($attributes);
                         return $entries;
                     }
@@ -226,7 +225,7 @@ class PowerSchoolProvider implements SisProvider
                     $attributes['uuid'] = UuidFactory::make();
                     $attributes['tenant_id'] = $this->tenant->id;
                     $attributes['school_id'] = $school->id;
-                    $attributes['sis_id'] = $student->id;
+                    $attributes['sis_id'] = $student['id'];
                     $attributes['created_at'] = $now;
                     $attributes['updated_at'] = $now;
                     $entries[] = $attributes;
@@ -286,22 +285,22 @@ class PowerSchoolProvider implements SisProvider
 
     protected function getStudentAttributes($student)
     {
-        $email = strtolower(optional($student->contact_info)->email ?? '');
+        $email = strtolower($student['contact_info']['email'] ?? '');
 
         return [
-            'student_number' => $student->local_id,
-            'first_name' => optional($student->name)->first_name,
-            'last_name' => optional($student->name)->last_name,
+            'student_number' => $student['local_id'],
+            'first_name' => $student['name']['first_name'] ?? null,
+            'last_name' => $student['name']['last_name'] ?? null,
             'email' => $email ?: null,
-            'grade_level' => $student->school_enrollment->grade_level,
-            'enrolled' => $student->school_enrollment->enroll_status_code === 0,
-            'enroll_status' => $student->school_enrollment->enroll_status_code,
-            'current_entry_date' => optional($student->school_enrollment)->entry_date,
-            'current_exit_date' => optional($student->school_enrollment)->exit_date,
-            'initial_district_entry_date' => optional($student->initial_enrollment)->district_entry_date,
-            'initial_school_entry_date' => optional($student->initial_enrollment)->school_entry_date,
-            'initial_district_grade_level' => $student->initial_enrollment->district_entry_grade_level,
-            'initial_school_grade_level' => $student->initial_enrollment->school_entry_grade_level,
+            'grade_level' => $student['school_enrollment']['grade_level'],
+            'enrolled' => $student['school_enrollment']['enroll_status_code'] === 0,
+            'enroll_status' => $student['school_enrollment']['enroll_status_code'],
+            'current_entry_date' => $student['school_enrollment']['entry_date'],
+            'current_exit_date' => $student['school_enrollment']['exit_date'],
+            'initial_district_entry_date' => $student['initial_enrollment']['district_entry_date'],
+            'initial_school_entry_date' => $student['initial_enrollment']['school_entry_date'],
+            'initial_district_grade_level' => $student['initial_enrollment']['district_entry_grade_level'],
+            'initial_school_grade_level' => $student['initial_enrollment']['school_entry_grade_level'],
         ];
     }
 
@@ -319,7 +318,7 @@ class PowerSchoolProvider implements SisProvider
 
         try {
             while ($results = $builder->paginate()) {
-                ray(count($results))->green();
+                ray($results->count())->green();
                 $now = now()->format('Y-m-d H:i:s');
 
                 foreach ($results as $course) {
@@ -506,32 +505,27 @@ class PowerSchoolProvider implements SisProvider
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
 
-        $results = $this->builder
+        $this->builder
             ->to("/ws/v1/school/{$school->sis_id}/term")
-            ->get();
-
-        $terms = is_array($results->terms->term)
-            ? $results->terms->term
-            : [$results->terms->term];
-
-        collect($terms)->each(function ($term) use ($school) {
-            $school->terms()
-                ->updateOrCreate(
-                    [
-                        'tenant_id' => $this->tenant->id,
-                        'school_id' => $school->id,
-                        'sis_id' => $term->id,
-                    ],
-                    [
-                        'sis_assigned_id' => $term->local_id,
-                        'name' => $term->name,
-                        'abbreviation' => $term->abbreviation,
-                        'start_year' => $term->start_year,
-                        'portion' => $term->portion,
-                        'starts_at' => $term->start_date,
-                        'ends_at' => $term->end_date,
-                    ]
-                );
+            ->get()
+            ->collect()->each(function ($term) use ($school) {
+                $school->terms()
+                    ->updateOrCreate(
+                        [
+                            'tenant_id' => $this->tenant->id,
+                            'school_id' => $school->id,
+                            'sis_id' => $term['id'],
+                        ],
+                        [
+                            'sis_assigned_id' => $term['local_id'],
+                            'name' => $term['name'],
+                            'abbreviation' => $term['abbreviation'],
+                            'start_year' => $term['start_year'],
+                            'portion' => $term['portion'],
+                            'starts_at' => $term['start_date'],
+                            'ends_at' => $term['end_date'],
+                        ]
+                    );
         });
     }
 
@@ -560,16 +554,16 @@ class PowerSchoolProvider implements SisProvider
                 // or the result doesn't have an email address/name
                 // we can't do anything about the user record
                 if (
-                    !$students->has($result->sis_id) ||
-                    !isset($result->other_email) ||
-                    !isset($result->first_name) ||
-                    !isset($result->last_name)
+                    !isset($result['sis_id']) ||
+                    !$students->has($result['sis_id']) ||
+                    !isset($result['other_email']) ||
+                    !isset($result['first_name']) ||
+                    !isset($result['last_name'])
                 ) {
-                    ray($result)->blue();
                     continue;
                 }
 
-                $contactId = (int) $result->contact_id;
+                $contactId = (int) $result['contact_id'];
 
                 if (!$users->has($contactId)) {
                     $uuid = UuidFactory::make();
@@ -578,20 +572,20 @@ class PowerSchoolProvider implements SisProvider
                     $newUsers[] = [
                         'uuid' => $uuid,
                         'tenant_id' => $this->tenant->id,
-                        'first_name' => $result->first_name,
-                        'last_name' => $result->last_name,
+                        'first_name' => $result['first_name'],
+                        'last_name' => $result['last_name'],
                         // TODO not possible to get their account email, but may be ok ultimately
                         // since we can get their contact ids
-                        'email' => $result->other_email,
+                        'email' => $result['other_email'],
                         'contact_id' => $contactId,
-                        'guardian_id' => $result->guardian_id,
+                        'guardian_id' => $result['guardian_id'],
                         'school_id' => $school->id,
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
                 }
 
-                $studentUuid = $students->get($result->sis_id);
+                $studentUuid = $students->get($result['sis_id']);
                 $userUuid = $users->get($contactId);
                 $key = $studentUuid . $userUuid;
 
@@ -601,7 +595,7 @@ class PowerSchoolProvider implements SisProvider
                     $studentUser[] = [
                         'student_uuid' => $studentUuid,
                         'user_uuid' => $userUuid,
-                        'relationship' => $result->relationship,
+                        'relationship' => $result['relationship'],
                     ];
                 }
             }
@@ -617,7 +611,6 @@ class PowerSchoolProvider implements SisProvider
                 $join->on('student_uuid', '=', 'students.uuid')
                     ->where('students.school_id', $school->id);
             })
-//            ->whereIn('user_uuid', $users->values()->toArray())
             ->delete();
 
         DB::table('users')->insert($newUsers);
