@@ -87,7 +87,7 @@ export default defineComponent({
     })
     const submit = () => {
       form.post($route('settings.personal'), {
-        onFinish () {
+        onSuccess () {
           form.reset('password', 'password_confirmation')
         }
       })
