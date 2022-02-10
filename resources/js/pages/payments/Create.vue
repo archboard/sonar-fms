@@ -23,7 +23,7 @@
 
               <InputWrap :error="form.errors.invoice_uuid">
                 <Label for="invoice_uuid">{{ __('Invoice') }} <Req /></Label>
-                <InvoiceTypeahead v-model="selectedInvoice" id="invoice_uuid" />
+                <InvoiceTypeahead v-model="selectedInvoice" :disabled="!!payment.uuid" id="invoice_uuid" />
                 <HelpText>{{ __('This is the invoice for which you are recording a payment.') }}</HelpText>
               </InputWrap>
             </div>
