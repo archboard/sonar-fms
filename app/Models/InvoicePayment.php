@@ -94,6 +94,11 @@ class InvoicePayment extends Model
         return Timezone::convertToLocal($this->paid_at, 'M j, Y');
     }
 
+    public function getEditedAttribute(): bool
+    {
+        return $this->created_at->notEqualTo($this->updated_at);
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(static::class, 'parent_uuid', 'uuid');

@@ -23,6 +23,7 @@ class InvoicePaymentResource extends JsonResource
             'paid_at_formatted' => $this->paid_at_formatted,
             'parent_uuid' => $this->parent_uuid,
             'transaction_details' => $this->transaction_details,
+            'edited' => $this->edited,
             'recorded_by' => new UserResource($this->whenLoaded('recordedBy')),
             'made_by' => new UserResource($this->whenLoaded('madeBy')),
             'payment_term' => new InvoicePaymentTermResource($this->whenLoaded('invoicePaymentTerm')),
