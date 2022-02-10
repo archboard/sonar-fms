@@ -6,6 +6,9 @@
     <SonarMenuItem is="a" target="_blank" :href="`/payments/${payment.id}/receipt`">
       {{ __('Receipt') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="can('payments.update') && payment.invoice" is="inertia-link" :href="`/payments/${payment.id}/edit`">
+      {{ __('Edit') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.viewAny') && payment.invoice" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
       {{ __('View invoice') }}
     </SonarMenuItem>

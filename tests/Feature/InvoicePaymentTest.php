@@ -352,4 +352,25 @@ class InvoicePaymentTest extends TestCase
         $payment = Arr::first($json);
         $this->assertEquals($payment['invoice']['uuid'], $child->uuid);
     }
+
+    public function test_can_get_edit_payment_page()
+    {
+        $this->assignPermission('update', InvoicePayment::class);
+
+        $payment = $this->createPayment();
+
+        $this->get(route('payments.edit', $payment))
+            ->assertOk()
+            ->assertViewHas('title')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('title')
+                ->has('invoice')
+                ->has('paidBy')
+                ->has('payment')
+                ->where('method', 'put')
+                ->where('endpoint', route('payments.update', $payment))
+                ->where('breadcrumbs', fn ($prop) => count($prop) > 1)
+                ->component('payments/Create')
+            );
+    }
 }

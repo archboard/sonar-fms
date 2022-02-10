@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
 use App\Http\Resources\PaymentMethodDriverResource;
+use App\Http\Resources\UserResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\Student;
@@ -149,5 +150,26 @@ class InvoicePaymentController extends Controller
         return $payment
             ->fullLoad()
             ->toResource();
+    }
+
+    public function edit(InvoicePayment $payment)
+    {
+        $title = __('Edit payment for :invoice_number', [
+            'invoice_number' => $payment->invoice->invoice_number,
+        ]);
+        $breadcrumbs = [
+            $this->makeBreadcrumb($payment->invoice->invoice_number, route('invoices.show', $payment->invoice)),
+            $this->makeBreadcrumb(__('Edit payment'), route('payments.edit', $payment)),
+        ];
+
+        return inertia('payments/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'invoice' => $payment->invoice->toResource(),
+            'payment' => $payment->forEdit(),
+            'method' => 'put',
+            'endpoint' => route('payments.update', $payment),
+            'paidBy' => $payment->madeBy ? new UserResource($payment->madeBy) : null,
+        ])->withViewData(compact('title'));
     }
 }

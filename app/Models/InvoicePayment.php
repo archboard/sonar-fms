@@ -49,7 +49,7 @@ class InvoicePayment extends Model
     protected static function booted()
     {
         static::saved(function (InvoicePayment $payment) {
-            MakeReceipt::dispatch($payment);
+//            MakeReceipt::dispatch($payment);
         });
     }
 
@@ -231,5 +231,18 @@ class InvoicePayment extends Model
         $receipt->save();
 
         return $receipt;
+    }
+
+    public function forEdit(): array
+    {
+        return [
+            'invoice_uuid' => $this->invoice_uuid,
+            'invoice_payment_term_uuid' => $this->invoice_payment_term_uuid,
+            'payment_method_id' => $this->payment_method_id,
+            'transaction_details' => $this->transaction_details,
+            'paid_at' => $this->paid_at?->format('Y-m-d'),
+            'amount' => $this->amount,
+            'notes' => $this->notes,
+        ];
     }
 }
