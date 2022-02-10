@@ -7,7 +7,6 @@ use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasAmountAttribute;
-use App\Traits\ScopeToCurrentSchool;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -241,6 +240,7 @@ class InvoicePayment extends Model
     public function forEdit(): array
     {
         return [
+            'uuid' => $this->uuid,
             'invoice_uuid' => $this->invoice_uuid,
             'invoice_payment_term_uuid' => $this->invoice_payment_term_uuid,
             'payment_method_id' => $this->payment_method_id,
