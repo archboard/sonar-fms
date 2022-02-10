@@ -4,7 +4,7 @@
       <CardWrapper>
         <CardPadding>
           <Fieldset>
-            <div>
+            <div v-if="!payment.uuid">
               <FadeIn>
                 <Alert v-if="selectedInvoice.parent" level="warning" class="mb-4">
                   {{ __('This invoice is part of the combined invoice :invoice. This payment will also be recorded for that invoice.', { invoice: `${selectedInvoice.parent.title} (${selectedInvoice.parent.invoice_number})` }) }}
@@ -23,7 +23,7 @@
 
               <InputWrap :error="form.errors.invoice_uuid">
                 <Label for="invoice_uuid">{{ __('Invoice') }} <Req /></Label>
-                <InvoiceTypeahead v-model="selectedInvoice" :disabled="!!payment.uuid" id="invoice_uuid" />
+                <InvoiceTypeahead v-model="selectedInvoice" id="invoice_uuid" />
                 <HelpText>{{ __('This is the invoice for which you are recording a payment.') }}</HelpText>
               </InputWrap>
             </div>
