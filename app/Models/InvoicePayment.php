@@ -118,7 +118,7 @@ class InvoicePayment extends Model
             return '';
         }
 
-        return Timezone::convertToLocal($this->paid_at, 'M j, Y');
+        return $this->paid_at->format('M j, Y');
     }
 
     public function getEditedAttribute(): bool
@@ -273,7 +273,7 @@ class InvoicePayment extends Model
             'invoice_payment_term_uuid' => $this->invoice_payment_term_uuid,
             'payment_method_id' => $this->payment_method_id,
             'transaction_details' => $this->transaction_details,
-            'paid_at' => $this->paid_at?->format('Y-m-d'),
+            'paid_at' => $this->paid_at?->toDateString(),
             'amount' => $this->amount,
             'notes' => $this->notes,
         ];

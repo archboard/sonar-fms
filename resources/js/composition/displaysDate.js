@@ -15,7 +15,7 @@ export default () => {
     abbr_date: 'MMM D, YYYY',
   }
 
-  const getDate = (date) => date ? dayjs(date).tz(timezone.value) : null
+  const getDate = (date, offset = false) => (date ? dayjs(date) : dayjs()).tz(timezone.value, offset)
   const displayDate = (date, format) => getDate(date).format(formats[format] || format)
   const fromNow = (date) => getDate(date).fromNow()
 

@@ -182,12 +182,13 @@ export default defineComponent({
   },
 
   setup (props) {
+    const { getDate, displayDate } = displaysDate()
     const form = useForm({
       invoice_uuid: props.payment.uuid || props.invoice?.uuid,
       invoice_payment_term_uuid: props.payment.invoice_payment_term_uuid || props.term || null,
       payment_method_id: props.payment.payment_method_id || null,
       transaction_details: props.payment.transaction_details || null,
-      paid_at: props.payment.paid_at ? dayjs(props.payment.paid_at).toDate() : new Date,
+      paid_at: getDate(props.payment.paid_at, true).toDate(),
       amount: props.payment.amount || null,
       made_by: null,
       notes: props.payment.notes || null,
@@ -195,6 +196,7 @@ export default defineComponent({
     const save = () => {
       form.transform(data => ({
         ...data,
+        paid_at: displayDate(form.paid_at, 'YYYY-MM-DD'),
         invoice_uuid: selectedInvoice.value.uuid,
         made_by: selectedUser.value?.id,
       }))[props.method](props.endpoint)
@@ -220,7 +222,6 @@ export default defineComponent({
         return obj
       }, {})
     })
-    const { displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
 
     return {
