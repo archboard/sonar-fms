@@ -1372,6 +1372,7 @@ class Invoice extends Model implements Searchable
             ->withProperties([
                 'amount' => displayCurrency($refund->amount, $this->currency),
             ])
+            ->component('ReceiptRefundIcon')
             ->log(':user recorded a refund for :amount.');
 
         if ($this->parent_uuid) {
@@ -1382,6 +1383,7 @@ class Invoice extends Model implements Searchable
                     'amount' => displayCurrency($refund->amount, $this->currency),
                     'invoice_number' => $this->invoice_number,
                 ])
+                ->component('ReceiptRefundIcon')
                 ->log(':user recorded a refund for :amount for :invoice_number.');
 
             CalculateInvoiceAttributes::dispatch($this->parent_uuid);
