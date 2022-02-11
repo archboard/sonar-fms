@@ -9,15 +9,19 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
  */
 class Activity extends BaseActivity
 {
-    public function getDescriptionAttribute($description):? string
+    public function getDescriptionAttribute(?string $description):? string
     {
+        if (is_null($description)) {
+            return null;
+        }
+
         $properties = collect($this->properties); // @phpstan-ignore-line
 
         if ($this->relationLoaded('causer')) {
             $properties->put('user', $this->causer->full_name);
         }
 
-        return __($description, $properties->toArray());
+        return __($description, $properties->except(['attributes', 'old'])->toArray());
     }
 
     public function getComponentAttribute():? string

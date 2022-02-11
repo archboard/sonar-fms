@@ -8,9 +8,11 @@ use App\Http\Resources\PaymentMethodDriverResource;
 use App\Http\Resources\UserResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InvoicePaymentController extends Controller
 {
@@ -171,5 +173,41 @@ class InvoicePaymentController extends Controller
             'endpoint' => route('payments.update', $payment),
             'paidBy' => $payment->madeBy ? new UserResource($payment->madeBy) : null,
         ])->withViewData(compact('title'));
+    }
+
+    public function update(Request $request, School $school, InvoicePayment $payment)
+    {
+        $data = $request->validate([
+            'payment_method_id' => [
+                'nullable',
+                Rule::exists('payment_methods', 'id')
+                    ->where('school_id', $school->id),
+            ],
+            'paid_at' => ['required', 'date'],
+            'amount' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:' . ($payment->invoice->remaining_balance + $payment->amount), // Factor in the original payment
+            ],
+            'made_by' => [
+                'nullable',
+                Rule::exists('users', 'uuid')
+                    ->where('tenant_id', $payment->tenant_id),
+            ],
+            'invoice_payment_term_uuid' => [
+                'nullable',
+                Rule::exists('invoice_payment_terms', 'uuid')
+                    ->where('invoice_uuid', $payment->invoice_uuid),
+            ],
+            'transaction_details' => 'nullable',
+            'notes' => 'nullable',
+        ]);
+
+        $payment->update($data);
+
+        session()->flash('success', __('Payment updated successfully.'));
+
+        return redirect()->route('invoices.show', $payment->invoice_uuid);
     }
 }

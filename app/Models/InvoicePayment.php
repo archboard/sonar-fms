@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\MakeReceipt;
 use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasActivities;
 use App\Traits\HasAmountAttribute;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JamesMills\LaravelTimezone\Facades\Timezone;
@@ -55,7 +58,32 @@ class InvoicePayment extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logAll()
             ->logOnlyDirty();
+    }
+
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        // __(':user updated an existing payment. View the payment changelog to view the changes.')
+        $description = ':user updated an existing payment. View the payment changelog to see the changes.';
+        $changes = $activity->properties;
+
+        if (Arr::has($changes, 'attributes.amount')) {
+            // __(':user updated an existing payment, including the amount from :from to :to. View the payment changelog to view the changes.')
+            $description = ':user updated an existing payment, including the amount from :from to :to. View the payment changelog to see the changes.';
+
+            // If the amount has been changed, we need to update the balance details
+            CalculateInvoiceAttributes::dispatchSync($this->invoice_uuid);
+        }
+
+        activity()
+            ->on($this->invoice)
+            ->withProperties([
+                'from' => displayCurrency(Arr::get($changes, 'old.amount'), $this->invoice->currency),
+                'to' => displayCurrency(Arr::get($changes, 'attributes.amount'), $this->invoice->currency),
+            ])
+            ->component('PencilIcon')
+            ->log($description);
     }
 
     public function scopeFilter(Builder $builder, array $filters)

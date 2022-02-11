@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
+use App\Models\PaymentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -372,5 +373,45 @@ class InvoicePaymentTest extends TestCase
                 ->where('breadcrumbs', fn ($prop) => count($prop) > 1)
                 ->component('payments/Create')
             );
+    }
+
+    public function test_can_update_existing_payment()
+    {
+        $this->assignPermission('update', InvoicePayment::class);
+        $invoice = $this->createInvoice(paymentSchedules: 1);
+        $payment = $this->createPayment(invoice: $invoice);
+
+        $date = $this->user->getCarbonFactory()
+            ->today()
+            ->subDays(rand(0, 10))
+            ->setTimezone(config('app.timezone'));
+        $amount = rand(1, $invoice->amount_due);
+
+        $data = [
+            'payment_method_id' => PaymentMethod::factory()->create()->id,
+            'invoice_payment_term_uuid' => $invoice->invoicePaymentTerms->random()->uuid,
+            'paid_at' => $this->getDateForInvoice($date),
+            'amount' => $amount,
+            'made_by' => $this->createUser()->uuid,
+        ];
+
+        $this->put(route('payments.update', $payment), $data)
+            ->assertRedirect(route('invoices.show', $payment->invoice_uuid))
+            ->assertSessionHas('success');
+
+        $data['uuid'] = $payment->uuid;
+        $data['invoice_uuid'] = $payment->invoice_uuid;
+        $this->assertDatabaseHas($payment->getTable(), $data);
+        $this->assertEquals(1, $payment->activities()->count());
+
+        $invoice = Invoice::find($payment->invoice_uuid);
+        $activities = $invoice->activities()
+            ->get();
+
+        $this->assertTrue(
+            $activities
+                ->some(fn ($activity) => Str::contains($activity->description, 'updated an existing payment, including the amount from'))
+        );
+        $this->assertEquals($invoice->amount_due - $amount, $invoice->remaining_balance);
     }
 }

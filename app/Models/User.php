@@ -21,6 +21,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  * @mixin IdeHelperUser
@@ -33,6 +34,7 @@ class User extends Authenticatable implements HasLocalePreference
     use HasRolesAndAbilities;
     use BelongsToTenant;
     use UsesUuid;
+    use CausesActivity;
 
     const TEACHER = 'teacher';
 
