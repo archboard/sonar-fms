@@ -136,6 +136,8 @@ class InvoicePaymentController extends Controller
     {
         return $payment
             ->fullLoad()
+            ->load('activities')
+            ->load('activities.causer')
             ->toResource();
     }
 
