@@ -22,6 +22,7 @@
                 <Td>
                   <div class="flex items-center justify-end space-x-1">
                     <CollectionIcon v-if="payment.parent_uuid" class="h-4 w-4" />
+                    <PencilIcon v-if="payment.edited" class="h-4 w-4" />
                     <span>{{ payment.amount_formatted }}</span>
                   </div>
                 </Td>
@@ -95,7 +96,7 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import { CollectionIcon } from '@heroicons/vue/outline'
+import { CollectionIcon, PencilIcon } from '@heroicons/vue/outline'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
 import PaymentActionItems from '@/components/PaymentActionItems'
 import tables from '@/components/tables'
@@ -115,6 +116,7 @@ export default defineComponent({
     PaymentActionItems,
     VerticalDotMenu,
     CollectionIcon,
+    PencilIcon,
     ...tables,
     Link,
   },
