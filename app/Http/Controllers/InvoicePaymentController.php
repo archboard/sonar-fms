@@ -61,14 +61,8 @@ class InvoicePaymentController extends Controller
     {
         $title = __('Record payment');
         $breadcrumbs = [
-            [
-                'label' => __('Payments'),
-                'route' => route('payments.index'),
-            ],
-            [
-                'label' => __('Record payment'),
-                'route' => route('payments.create'),
-            ],
+            $this->makeBreadcrumb(__('Payments'),  route('payments.index')),
+            $this->makeBreadcrumb(__('Record payment'),  route('payments.create')),
         ];
         $invoice = $request->has('invoice_uuid')
             ? Invoice::where('uuid', $request->get('invoice_uuid'))
@@ -91,18 +85,9 @@ class InvoicePaymentController extends Controller
 
         if ($invoice->uuid) {
             $breadcrumbs = [
-                [
-                    'label' => __('Invoices'),
-                    'route' => route('invoices.index'),
-                ],
-                [
-                    'label' => $invoice->invoice_number,
-                    'route' => route('invoices.show', $invoice),
-                ],
-                [
-                    'label' => __('Record payment'),
-                    'route' => route('payments.create', ['invoice_uuid' => $invoice->uuid]),
-                ],
+                $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
+                $this->makeBreadcrumb($invoice->invoice_number, route('invoices.show', $invoice)),
+                $this->makeBreadcrumb(__('Record payment'), route('payments.create', ['invoice_uuid' => $invoice->uuid])),
             ];
         }
 
