@@ -1,7 +1,12 @@
 <template>
   <div class="p-1">
     <SonarMenuItem @click.prevent="$emit('details', payment)">
-      {{ __('Details') }}
+      <template v-if="payment.edited">
+        {{ __('Details and changelog') }}
+      </template>
+      <template v-else>
+        {{ __('Details') }}
+      </template>
     </SonarMenuItem>
     <SonarMenuItem is="a" target="_blank" :href="`/payments/${payment.id}/receipt`">
       {{ __('Receipt') }}
