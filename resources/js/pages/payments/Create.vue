@@ -1,5 +1,11 @@
 <template>
   <Authenticated>
+    <template v-slot:actions>
+      <Button v-if="payment.uuid" :href="`/invoices/${invoice.uuid}`" component="a" target="_blank" size="sm">
+        {{ __('Invoice details') }}
+      </Button>
+    </template>
+
     <form @submit.prevent="save">
       <CardWrapper>
         <CardPadding>
