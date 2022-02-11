@@ -18,7 +18,6 @@ class FetchRelatedRefundsController extends Controller
     {
         $this->authorize('viewAny', InvoiceRefund::class);
 
-        ray()->showQueries();
         $refunds = InvoiceRefund::whereHas('invoice', function (Builder $builder) use ($invoice) {
                 $builder->select('uuid')
                     ->where('invoices.parent_uuid', $invoice);
@@ -29,7 +28,6 @@ class FetchRelatedRefundsController extends Controller
                 'user',
             ])
             ->get();
-        ray()->stopShowingQueries();
 
         return InvoiceRefund::resource($refunds);
     }
