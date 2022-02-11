@@ -148,6 +148,7 @@ class InvoicePaymentController extends Controller
             $this->makeBreadcrumb($payment->invoice->invoice_number, route('invoices.show', $payment->invoice)),
             $this->makeBreadcrumb(__('Edit payment'), route('payments.edit', $payment)),
         ];
+        $paidBy = $payment->madeBy ?? new User;
 
         return inertia('payments/Create', [
             'title' => $title,
@@ -156,7 +157,7 @@ class InvoicePaymentController extends Controller
             'payment' => $payment->forEdit(),
             'method' => 'put',
             'endpoint' => route('payments.update', $payment),
-            'paidBy' => $payment->madeBy ? new UserResource($payment->madeBy) : null,
+            'paidBy' => $paidBy->toResource(),
         ])->withViewData(compact('title'));
     }
 
