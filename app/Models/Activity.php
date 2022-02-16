@@ -25,9 +25,9 @@ class Activity extends BaseActivity
         return __($description, $properties->except(['attributes', 'old'])->toArray());
     }
 
-    public function getComponentAttribute():? string
+    public function getComponentAttribute(): ?string
     {
-        return $this->properties->get('component'); // @phpstan-ignore-line
+        return $this->properties?->get('component') ?? 'BellIcon'; // @phpstan-ignore-line
     }
 
     public function getChangelog(): array

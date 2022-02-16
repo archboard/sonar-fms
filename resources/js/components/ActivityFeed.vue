@@ -52,7 +52,7 @@
                     <div>
                       <div class="relative px-1">
                         <div class="h-8 w-8 bg-gray-300 dark:bg-gray-800 rounded-full ring-8 ring-gray-100 dark:ring-gray-900 flex items-center justify-center">
-                          <BellIcon class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                          <component :is="activity.component" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                         </div>
                       </div>
                     </div>
@@ -143,11 +143,13 @@
 <script>
 import { defineComponent } from 'vue'
 import displaysDate from '@/composition/displaysDate'
-import { BellIcon } from '@heroicons/vue/solid'
+import { BellIcon, PencilIcon, ReceiptRefundIcon } from '@heroicons/vue/solid'
 
 export default defineComponent({
   components: {
     BellIcon,
+    PencilIcon,
+    ReceiptRefundIcon,
   },
   props: {
     activities: {

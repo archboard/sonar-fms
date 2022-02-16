@@ -17,6 +17,7 @@ class ActivityResource extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->description,
+            'component' => $this->component,
             'causer' => new UserResource($this->whenLoaded('causer')),
             'created_at' => $this->created_at,
             'properties' => $this->properties,
