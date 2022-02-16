@@ -16,7 +16,7 @@ export default () => {
   }
 
   const getDate = (date, offset = false) => (date ? dayjs(date) : dayjs()).tz(timezone.value, offset)
-  const displayDate = (date, format) => getDate(date).format(formats[format] || format)
+  const displayDate = (date, format, offset = false) => getDate(date, offset).format(formats[format] || format)
   const fromNow = (date) => getDate(date).fromNow()
 
   return {
