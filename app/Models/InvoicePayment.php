@@ -208,7 +208,7 @@ class InvoicePayment extends Model
         return new Receipt([
             'tenant_id' => $this->tenant_id,
             'school_id' => $this->school_id,
-            'user_id' => $user->uuid,
+            'user_uuid' => $user->uuid,
             'invoice_payment_uuid' => $this->uuid,
             'receipt_number' => "{$this->invoice->invoice_number}-R{$count}",
         ]);
