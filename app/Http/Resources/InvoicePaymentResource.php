@@ -19,6 +19,8 @@ class InvoicePaymentResource extends JsonResource
             'id' => $this->id,
             'amount' => $this->amount,
             'amount_formatted' => $this->amount_formatted,
+            'remaining_balance' => $this->remaining_balance,
+            'remaining_balance_formatted' => $this->remaining_balance_formatted,
             'paid_at' => $this->paid_at,
             'paid_at_formatted' => $this->paid_at_formatted,
             'parent_uuid' => $this->parent_uuid,

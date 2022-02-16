@@ -10,8 +10,10 @@ use App\Traits\BelongsToTenant;
 use App\Traits\HasActivities;
 use App\Traits\HasAmountAttribute;
 use App\Traits\UsesUuid;
+use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -124,6 +126,18 @@ class InvoicePayment extends Model
     public function getEditedAttribute(): bool
     {
         return $this->created_at->notEqualTo($this->updated_at);
+    }
+
+    public function remainingBalanceFormatted(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if ($this->relationLoaded('currency')) {
+                return Money::ofMinor($this->remaining_balance, $this->currency->code)
+                    ->formatTo(auth()->user()?->locale ?? 'en');
+            }
+
+            return '';
+        });
     }
 
     public function parent(): BelongsTo
