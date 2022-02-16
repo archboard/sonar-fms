@@ -67,7 +67,7 @@
               <Td>{{ payment.paid_at_formatted }}</Td>
               <Td>
                 <div class="flex items-center justify-end space-x-1">
-                  <CollectionIcon v-if="payment.parent_uuid" class="h-4 w-4" />
+                  <PencilIcon v-if="payment.edited" class="h-4 w-4" />
                   <span>{{ payment.amount_formatted }}</span>
                 </div>
               </Td>
