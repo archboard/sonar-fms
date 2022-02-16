@@ -257,7 +257,10 @@ class InvoicePaymentTest extends TestCase
             ->assertSessionHas('success')
             ->assertRedirect();
 
-        $this->assertEquals($invoice->remaining_balance - $data['amount'], $invoice->children()->sum('remaining_balance'));
+        $invoice->refresh();
+
+        $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->children()->sum('remaining_balance'));
+        $this->assertEquals($invoice->remaining_balance, $invoice->invoicePayments->first()->remaining_balance);
 
         // Assert that the terms got distributed payments correctly
         foreach ($invoice->invoicePaymentSchedules as $schedule) {
@@ -303,7 +306,9 @@ class InvoicePaymentTest extends TestCase
             ->assertSessionHas('success')
             ->assertRedirect();
 
-        $this->assertEquals($invoice->remaining_balance - $data['amount'], $invoice->children()->sum('remaining_balance'));
+        $invoice->refresh();
+        $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->children()->sum('remaining_balance'));
+        $this->assertEquals(0, $invoice->invoicePayments->first()->remaining_balance);
 
         // Assert that the terms got distributed payments correctly
         foreach ($invoice->invoicePaymentSchedules as $schedule) {
