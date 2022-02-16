@@ -22,6 +22,7 @@ class FetchRelatedRefundsController extends Controller
                 $builder->select('uuid')
                     ->where('invoices.parent_uuid', $invoice);
             })
+            ->orderBy('refunded_at', 'desc')
             ->with([
                 'invoice',
                 'currency',
