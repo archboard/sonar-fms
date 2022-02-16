@@ -98,6 +98,16 @@ class User extends Authenticatable implements HasLocalePreference
         return (string) $value;
     }
 
+    public function getCarbonTimeAttribute(): string
+    {
+        $formats = [
+            '12' => 'g:ia',
+            '24' => 'G:i',
+        ];
+
+        return $formats[$this->time_format] ?? $formats['12'];
+    }
+
     public function getStudentSelectionAttribute(): Collection
     {
         if ($this->relationLoaded('studentSelections')) {
