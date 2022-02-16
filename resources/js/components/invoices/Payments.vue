@@ -62,7 +62,7 @@
           <Tbody>
             <tr v-for="payment in relatedPayments" :key="payment.id">
               <Td lighter>
-                <Copy :copy-value="payment.invoice.invoice_number">{{ payment.invoice.invoice_number }}</Copy>
+                <Link :href="`/invoices/${payment.invoice.uuid}`">{{ payment.invoice.invoice_number }}</Link>
               </Td>
               <Td>{{ payment.paid_at_formatted }}</Td>
               <Td>
