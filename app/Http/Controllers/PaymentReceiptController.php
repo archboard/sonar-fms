@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InvoicePayment;
+use App\Models\School;
 use Illuminate\Http\Request;
 
 class PaymentReceiptController extends Controller
@@ -11,9 +12,9 @@ class PaymentReceiptController extends Controller
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response|\Inertia\ResponseFactory
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function __invoke(Request $request, InvoicePayment $payment)
+    public function __invoke(Request $request, School $school, InvoicePayment $payment)
     {
         $this->authorize('viewAny', $payment);
 
@@ -22,9 +23,10 @@ class PaymentReceiptController extends Controller
             'invoice' => $payment->invoice->invoice_number,
         ]);
 
-        return inertia('payments/Receipt', [
+        return view('receipt', [
             'title' => $title,
             'payment' => $payment->toResource(),
-        ])->withViewData(compact('title'));
+            'layout' => $school->getDefaultReceiptLayout(),
+        ]);
     }
 }
