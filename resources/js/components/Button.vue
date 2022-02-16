@@ -103,7 +103,7 @@ export default {
         yellow: 'text-white bg-yellow-600 hover:bg-yellow-500 focus:border-yellow-700 focus:ring-yellow-400 active:bg-yellow-700',
         green: 'text-white bg-green-600 hover:bg-green-500 focus:border-green-700 focus:shadow-outline-green active:bg-green-700',
         gray: 'text-white bg-gray-600 hover:bg-gray-500 focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700',
-        white: 'text-gray-700 bg-white hover:bg-gray-50 border-gray-300 focus:ring-gray-200 active:bg-gray-100',
+        white: 'text-gray-700 bg-white hover:border-gray-400 border-gray-300 focus:ring-gray-200 active:bg-gray-50',
       }
     }
   },
