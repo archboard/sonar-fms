@@ -43,6 +43,12 @@ class PaymentMethod extends Model
             ->where('active', true);
     }
 
+    public function getNameAttribute(): string
+    {
+        return $this->getDriver()
+            ->label();
+    }
+
     public static function drivers(): array
     {
         return [

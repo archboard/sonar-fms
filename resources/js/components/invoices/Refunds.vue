@@ -57,7 +57,9 @@
           </Thead>
           <Tbody>
             <tr v-for="refund in relatedRefunds" :key="refund.id">
-              <Td>{{ refund.invoice.invoice_number }}</Td>
+              <Td>
+                <Link :href="`/invoices/${refund.invoice.uuid}`">{{ refund.invoice.invoice_number }}</Link>
+              </Td>
               <Td>{{ refund.refunded_at_formatted || refund.created_at }}</Td>
               <Td class="text-right">
                 {{ refund.amount_formatted }}

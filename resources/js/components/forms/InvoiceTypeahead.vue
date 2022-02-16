@@ -5,6 +5,7 @@
     :placeholder="__('Search for invoice by title, number or student')"
     @selected="invoiceSelected"
     @blur="onBlur"
+    :disabled="disabled"
   >
     <template v-slot:item="{ item, active }">
       <div
@@ -49,6 +50,10 @@ export default defineComponent({
   },
   props: {
     modelValue: [Object],
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     invoice: {
       type: Object,
       default: () => ({})

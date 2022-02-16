@@ -31,6 +31,7 @@ class CalculateInvoiceAttributes implements ShouldQueue
      */
     public function handle()
     {
+        /** @var Invoice $invoice */
         $invoice = Invoice::find($this->invoiceUuid);
 
         $invoice->setCalculatedAttributes(true);

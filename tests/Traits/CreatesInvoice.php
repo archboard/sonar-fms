@@ -83,7 +83,7 @@ trait CreatesInvoice
         ];
     }
 
-    protected function createInvoice(array $invoiceAttributes = []): Invoice
+    protected function createInvoice(array $invoiceAttributes = [], int $paymentSchedules = null): Invoice
     {
         $defaultAttributes = [
             'user_uuid' => $this->user->uuid,
@@ -118,7 +118,7 @@ trait CreatesInvoice
         $invoice->setCalculatedAttributes(true)
             ->refresh();
 
-        $this->seedPaymentSchedules($invoice, $this->faker->numberBetween(0, 3));
+        $this->seedPaymentSchedules($invoice, $paymentSchedules ?? $this->faker->numberBetween(0, 3));
 
         return $invoice;
     }

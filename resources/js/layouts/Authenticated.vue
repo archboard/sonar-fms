@@ -274,7 +274,7 @@
                   </h2>
                   <slot name="afterTitle" />
                 </div>
-                <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                <div class="mt-4 flex items-start md:mt-0 md:ml-4 space-x-3">
                   <slot name="actions" />
                 </div>
               </div>

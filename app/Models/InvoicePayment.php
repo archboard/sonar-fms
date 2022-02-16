@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\MakeReceipt;
 use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasActivities;
 use App\Traits\HasAmountAttribute;
-use App\Traits\ScopeToCurrentSchool;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JamesMills\LaravelTimezone\Facades\Timezone;
@@ -49,14 +51,39 @@ class InvoicePayment extends Model
     protected static function booted()
     {
         static::saved(function (InvoicePayment $payment) {
-            MakeReceipt::dispatch($payment);
+//            MakeReceipt::dispatch($payment);
         });
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logAll()
             ->logOnlyDirty();
+    }
+
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        // __(':user updated an existing payment. View the payment changelog to view the changes.')
+        $description = ':user updated an existing payment. View the payment changelog to see the changes.';
+        $changes = $activity->properties;
+
+        if (Arr::has($changes, 'attributes.amount')) {
+            // __(':user updated an existing payment, including the amount from :from to :to. View the payment changelog to view the changes.')
+            $description = ':user updated an existing payment, including the amount from :from to :to. View the payment changelog to see the changes.';
+
+            // If the amount has been changed, we need to update the balance details
+            CalculateInvoiceAttributes::dispatchSync($this->invoice_uuid);
+        }
+
+        activity()
+            ->on($this->invoice)
+            ->withProperties([
+                'from' => displayCurrency(Arr::get($changes, 'old.amount'), $this->invoice->currency),
+                'to' => displayCurrency(Arr::get($changes, 'attributes.amount'), $this->invoice->currency),
+            ])
+            ->component('PencilIcon')
+            ->log($description);
     }
 
     public function scopeFilter(Builder $builder, array $filters)
@@ -91,7 +118,12 @@ class InvoicePayment extends Model
             return '';
         }
 
-        return Timezone::convertToLocal($this->paid_at, 'M j, Y');
+        return $this->paid_at->format('M j, Y');
+    }
+
+    public function getEditedAttribute(): bool
+    {
+        return $this->created_at->notEqualTo($this->updated_at);
     }
 
     public function parent(): BelongsTo
@@ -231,5 +263,19 @@ class InvoicePayment extends Model
         $receipt->save();
 
         return $receipt;
+    }
+
+    public function forEdit(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'invoice_uuid' => $this->invoice_uuid,
+            'invoice_payment_term_uuid' => $this->invoice_payment_term_uuid,
+            'payment_method_id' => $this->payment_method_id,
+            'transaction_details' => $this->transaction_details,
+            'paid_at' => $this->paid_at?->toDateString(),
+            'amount' => $this->amount,
+            'notes' => $this->notes,
+        ];
     }
 }

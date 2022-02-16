@@ -21,6 +21,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  * @mixin IdeHelperUser
@@ -33,6 +34,7 @@ class User extends Authenticatable implements HasLocalePreference
     use HasRolesAndAbilities;
     use BelongsToTenant;
     use UsesUuid;
+    use CausesActivity;
 
     const TEACHER = 'teacher';
 
@@ -89,6 +91,21 @@ class User extends Authenticatable implements HasLocalePreference
     public function getSchoolPermissionsAttribute(): array
     {
         return $this->getPermissionsForSchool();
+    }
+
+    public function getTimeFormatAttribute($value): string
+    {
+        return (string) $value;
+    }
+
+    public function getCarbonTimeAttribute(): string
+    {
+        $formats = [
+            '12' => 'g:ia',
+            '24' => 'G:i',
+        ];
+
+        return $formats[$this->time_format] ?? $formats['12'];
     }
 
     public function getStudentSelectionAttribute(): Collection

@@ -155,6 +155,7 @@ class InvoiceController extends Controller
                 'payments' => [
                     'create' => $user->can('create', InvoicePayment::class),
                     'viewAny' => $user->can('viewAny', InvoicePayment::class),
+                    'update' => $user->can('update', InvoicePayment::class),
                 ],
                 'refunds' => [
                     'create' => $user->can('create', InvoiceRefund::class),

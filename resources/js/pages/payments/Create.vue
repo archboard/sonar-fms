@@ -1,10 +1,16 @@
 <template>
   <Authenticated>
+    <template v-slot:actions>
+      <Button v-if="payment.uuid" :href="`/invoices/${invoice.uuid}`" component="a" target="_blank" size="sm">
+        {{ __('Invoice details') }}
+      </Button>
+    </template>
+
     <form @submit.prevent="save">
       <CardWrapper>
         <CardPadding>
           <Fieldset>
-            <div>
+            <div v-if="!payment.uuid">
               <FadeIn>
                 <Alert v-if="selectedInvoice.parent" level="warning" class="mb-4">
                   {{ __('This invoice is part of the combined invoice :invoice. This payment will also be recorded for that invoice.', { invoice: `${selectedInvoice.parent.title} (${selectedInvoice.parent.invoice_number})` }) }}
@@ -135,6 +141,8 @@ import ChildInvoices from '@/components/ChildInvoices'
 import Input from '@/components/forms/Input'
 import Textarea from '@/components/forms/Textarea'
 import PaymentMethodSelector from '@/components/forms/PaymentMethodSelector'
+import cloneDeep from 'lodash/cloneDeep'
+import dayjs from '@/plugins/dayjs'
 
 export default defineComponent({
   components: {
@@ -165,29 +173,42 @@ export default defineComponent({
     invoice: Object,
     paidBy: Object,
     term: String,
+    payment: {
+      type: Object,
+      default: () => ({})
+    },
+    endpoint: {
+      type: String,
+      default: '/payments',
+    },
+    method: {
+      type: String,
+      default: 'post',
+    }
   },
 
   setup (props) {
+    const { getDate, displayDate } = displaysDate()
     const form = useForm({
-      invoice_uuid: props.invoice?.uuid,
-      invoice_payment_term_uuid: props.term || null,
-      payment_method_id: null,
-      transaction_details: null,
-      paid_at: new Date,
-      amount: null,
+      invoice_uuid: props.payment.uuid || props.invoice?.uuid,
+      invoice_payment_term_uuid: props.payment.invoice_payment_term_uuid || props.term || null,
+      payment_method_id: props.payment.payment_method_id || null,
+      transaction_details: props.payment.transaction_details || null,
+      paid_at: getDate(props.payment.paid_at, true).toDate(),
+      amount: props.payment.amount || null,
       made_by: null,
-      notes: null,
+      notes: props.payment.notes || null,
     })
     const save = () => {
       form.transform(data => ({
-          ...data,
-          invoice_uuid: selectedInvoice.value.uuid,
-          made_by: selectedUser.value?.id,
-        }))
-        .post('/payments')
+        ...data,
+        paid_at: displayDate(form.paid_at, 'YYYY-MM-DD'),
+        invoice_uuid: selectedInvoice.value.uuid,
+        made_by: selectedUser.value?.id,
+      }))[props.method](props.endpoint)
     }
-    const selectedInvoice = ref(props.invoice)
-    const selectedUser = ref(props.paidBy)
+    const selectedInvoice = ref(cloneDeep(props.invoice))
+    const selectedUser = ref(cloneDeep(props.paidBy))
     const selectedTerm = computed(() => {
       if (!form.invoice_payment_term_uuid || !selectedInvoice.value.payment_schedules) {
         return {}
@@ -207,7 +228,6 @@ export default defineComponent({
         return obj
       }, {})
     })
-    const { displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
 
     return {

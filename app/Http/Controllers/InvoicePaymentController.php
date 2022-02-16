@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
 use App\Http\Resources\PaymentMethodDriverResource;
+use App\Http\Resources\UserResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InvoicePaymentController extends Controller
 {
@@ -58,14 +61,8 @@ class InvoicePaymentController extends Controller
     {
         $title = __('Record payment');
         $breadcrumbs = [
-            [
-                'label' => __('Payments'),
-                'route' => route('payments.index'),
-            ],
-            [
-                'label' => __('Record payment'),
-                'route' => route('payments.create'),
-            ],
+            $this->makeBreadcrumb(__('Payments'),  route('payments.index')),
+            $this->makeBreadcrumb(__('Record payment'),  route('payments.create')),
         ];
         $invoice = $request->has('invoice_uuid')
             ? Invoice::where('uuid', $request->get('invoice_uuid'))
@@ -88,18 +85,9 @@ class InvoicePaymentController extends Controller
 
         if ($invoice->uuid) {
             $breadcrumbs = [
-                [
-                    'label' => __('Invoices'),
-                    'route' => route('invoices.index'),
-                ],
-                [
-                    'label' => $invoice->invoice_number,
-                    'route' => route('invoices.show', $invoice),
-                ],
-                [
-                    'label' => __('Record payment'),
-                    'route' => route('payments.create', ['invoice_uuid' => $invoice->uuid]),
-                ],
+                $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
+                $this->makeBreadcrumb($invoice->invoice_number, route('invoices.show', $invoice)),
+                $this->makeBreadcrumb(__('Record payment'), route('payments.create', ['invoice_uuid' => $invoice->uuid])),
             ];
         }
 
@@ -148,6 +136,66 @@ class InvoicePaymentController extends Controller
     {
         return $payment
             ->fullLoad()
+            ->load('activities')
+            ->load('activities.causer')
             ->toResource();
+    }
+
+    public function edit(InvoicePayment $payment)
+    {
+        $title = __('Edit payment for :invoice_number', [
+            'invoice_number' => $payment->invoice->invoice_number,
+        ]);
+        $breadcrumbs = [
+            $this->makeBreadcrumb($payment->invoice->invoice_number, route('invoices.show', $payment->invoice)),
+            $this->makeBreadcrumb(__('Edit payment'), route('payments.edit', $payment)),
+        ];
+        $paidBy = $payment->madeBy ?? new User;
+
+        return inertia('payments/Create', [
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs,
+            'invoice' => $payment->invoice->toResource(),
+            'payment' => $payment->forEdit(),
+            'method' => 'put',
+            'endpoint' => route('payments.update', $payment),
+            'paidBy' => $paidBy->toResource(),
+        ])->withViewData(compact('title'));
+    }
+
+    public function update(Request $request, School $school, InvoicePayment $payment)
+    {
+        $data = $request->validate([
+            'payment_method_id' => [
+                'nullable',
+                Rule::exists('payment_methods', 'id')
+                    ->where('school_id', $school->id),
+            ],
+            'paid_at' => ['required', 'date'],
+            'amount' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:' . ($payment->invoice->remaining_balance + $payment->amount), // Factor in the original payment
+            ],
+            'made_by' => [
+                'nullable',
+                Rule::exists('users', 'uuid')
+                    ->where('tenant_id', $payment->tenant_id),
+            ],
+            'invoice_payment_term_uuid' => [
+                'nullable',
+                Rule::exists('invoice_payment_terms', 'uuid')
+                    ->where('invoice_uuid', $payment->invoice_uuid),
+            ],
+            'transaction_details' => 'nullable',
+            'notes' => 'nullable',
+        ]);
+
+        $payment->update($data);
+
+        session()->flash('success', __('Payment updated successfully.'));
+
+        return redirect()->route('invoices.show', $payment->invoice_uuid);
     }
 }

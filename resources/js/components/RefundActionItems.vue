@@ -12,6 +12,9 @@
     <SonarMenuItem v-if="can('students.viewAny') && refund.invoice" is="inertia-link" :href="`/students/${refund.invoice.student_uuid}`">
       {{ __('View student') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="refund.invoice" @click.prevent="copy(refund.invoice.invoice_number)">
+      {{ __('Copy invoice number') }}
+    </SonarMenuItem>
   </div>
 </template>
 
@@ -19,6 +22,7 @@
 import { defineComponent } from 'vue'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import checksPermissions from '@/composition/checksPermissions'
+import copiesToClipboard from '@/composition/copiesToClipboard'
 
 export default defineComponent({
   components: {
@@ -31,9 +35,11 @@ export default defineComponent({
 
   setup () {
     const { can } = checksPermissions()
+    const { copy } = copiesToClipboard()
 
     return {
       can,
+      copy,
     }
   }
 })
