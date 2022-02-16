@@ -93,6 +93,11 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->getPermissionsForSchool();
     }
 
+    public function getTimeFormatAttribute($value): string
+    {
+        return (string) $value;
+    }
+
     public function getStudentSelectionAttribute(): Collection
     {
         if ($this->relationLoaded('studentSelections')) {

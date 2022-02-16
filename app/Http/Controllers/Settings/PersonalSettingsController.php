@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class PersonalSettingsController extends Controller
 {
@@ -38,6 +39,7 @@ class PersonalSettingsController extends Controller
             'email' => 'required|email',
             'password' => 'nullable|string|confirmed|min:8',
             'timezone' => 'required',
+            'time_format' => ['required', Rule::in(['12', '24'])],
         ]);
 
         /** @var User $user */
