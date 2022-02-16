@@ -167,6 +167,12 @@ class InvoicePayment extends Model
         return $this->belongsTo(User::class, 'made_by', 'uuid');
     }
 
+    public function receipt(): HasOne
+    {
+        return $this->hasOne(Receipt::class)
+            ->latest();
+    }
+
     public function receipts(): HasMany
     {
         return $this->hasMany(Receipt::class);
