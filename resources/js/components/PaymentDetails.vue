@@ -113,7 +113,40 @@
             {{ __(':person on :date', { person: activity.causer.full_name, date: displayDate(activity.properties.attributes.updated_at, 'MMM D, YYYY H:mm') }) }}
           </template>
           <template #dd>
-            {{ activity.properties }}
+            <Table>
+              <Thead>
+                <tr>
+                  <Th>{{ __('Field') }}</Th>
+                  <Th>{{ __('Original') }}</Th>
+                  <Th>{{ __('New') }}</Th>
+                </tr>
+              </Thead>
+              <Tbody>
+                <template v-for="change in activity.changes" :key="change.attribute">
+                  <tr v-if="change.attribute !== 'updated_at'">
+                    <Td class="whitespace-nowrap">
+                      <span v-if="change.attribute === 'paid_at'">{{ __('Date paid') }}</span>
+                      <span v-if="change.attribute === 'payment_method_id'">{{ __('Payment method') }}</span>
+                      <span v-if="change.attribute === 'invoice_payment_term_uuid'">{{ __('Payment term') }}</span>
+                      <span v-if="change.attribute === 'transaction_details'">{{ __('Transaction details') }}</span>
+                      <span v-if="change.attribute === 'amount'">{{ __('Amount') }}</span>
+                      <span v-if="change.attribute === 'made_by'">{{ __('Paid by') }}</span>
+                      <span v-if="change.attribute === 'notes'">{{ __('Notes') }}</span>
+                    </Td>
+                    <Td class="whitespace-nowrap">
+                      <span v-if="change.attribute === 'paid_at'">{{ displayDate(change.old, 'MMM D, YYYY') }}</span>
+                      <span v-else-if="change.attribute === 'amount'">{{ displayCurrency(change.old) }}</span>
+                      <span v-else>{{ change.old }}</span>
+                    </Td>
+                    <Td class="whitespace-nowrap">
+                      <span v-if="change.attribute === 'paid_at'">{{ displayDate(change.value, 'MMM, D, YYYY') }}</span>
+                      <span v-else-if="change.attribute === 'amount'">{{ displayCurrency(change.value) }}</span>
+                      <span v-else>{{ change.value }}</span>
+                    </Td>
+                  </tr>
+                </template>
+              </Tbody>
+            </Table>
           </template>
         </DescriptionItem>
       </DescriptionList>
@@ -128,9 +161,20 @@ import DescriptionItem from '@/components/tables/DescriptionItem'
 import Link from '@/components/Link'
 import ModalHeadline from '@/components/modals/ModalHeadline'
 import displaysDate from '@/composition/displaysDate'
+import Table from '@/components/tables/Table'
+import Thead from '@/components/tables/Thead'
+import Th from '@/components/tables/Th'
+import Tbody from '@/components/tables/Tbody'
+import Td from '@/components/tables/Td'
+import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   components: {
+    Td,
+    Tbody,
+    Th,
+    Thead,
+    Table,
     ModalHeadline,
     DescriptionItem,
     DescriptionList,
@@ -141,14 +185,17 @@ export default defineComponent({
   },
 
   setup ({ payment }) {
-    const { displayDate } = displaysDate()
+    const { displayDate, getDate } = displaysDate()
+    const { displayCurrency } = displaysCurrency()
     const termNumber = payment.payment_term
       ? payment.schedule.terms.findIndex(t => t.uuid === payment.payment_term.uuid) + 1
       : 0
+    const now = ref(getDate())
 
     return {
       termNumber,
       displayDate,
+      displayCurrency,
     }
   }
 })
