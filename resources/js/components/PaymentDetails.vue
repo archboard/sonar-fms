@@ -110,7 +110,8 @@
       <DescriptionList>
         <DescriptionItem v-for="activity in payment.activities" :key="activity.id">
           <template #dt>
-            {{ __(':person on :date', { person: activity.causer.full_name, date: displayDate(activity.properties.attributes.updated_at, 'MMM D, YYYY H:mm') }) }}
+            <div class="text-gray-900 dark:text-white">{{ activity.causer.full_name }}</div>
+            <HelpText>{{ displayDate(activity.properties.attributes.updated_at, 'abbr') }}</HelpText>
           </template>
           <template #dd>
             <Table>
@@ -159,6 +160,7 @@ import { defineComponent } from 'vue'
 import DescriptionList from '@/components/tables/DescriptionList'
 import DescriptionItem from '@/components/tables/DescriptionItem'
 import Link from '@/components/Link'
+import HelpText from '@/components/HelpText'
 import ModalHeadline from '@/components/modals/ModalHeadline'
 import displaysDate from '@/composition/displaysDate'
 import Table from '@/components/tables/Table'
@@ -179,6 +181,7 @@ export default defineComponent({
     DescriptionItem,
     DescriptionList,
     Link,
+    HelpText,
   },
   props: {
     payment: Object,
@@ -190,7 +193,6 @@ export default defineComponent({
     const termNumber = payment.payment_term
       ? payment.schedule.terms.findIndex(t => t.uuid === payment.payment_term.uuid) + 1
       : 0
-    const now = ref(getDate())
 
     return {
       termNumber,
