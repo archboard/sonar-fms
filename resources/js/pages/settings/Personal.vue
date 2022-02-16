@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { defineComponent, inject } from 'vue'
+import { defineComponent, inject, onUnmounted, ref } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import Authenticated from '@/layouts/Authenticated'
 import pick from 'lodash/pick'
@@ -103,7 +103,15 @@ export default defineComponent({
         }
       })
     }
-    const { displayDate, timeFormats, realtimeNow } = displaysDate()
+    const { displayDate, timeFormats, getDate } = displaysDate()
+    const realtimeNow = ref(getDate())
+    const interval = setInterval(() => {
+      realtimeNow.value = getDate()
+    }, 1000)
+
+    onUnmounted(() => {
+      clearInterval(interval)
+    })
 
     return {
       form,
