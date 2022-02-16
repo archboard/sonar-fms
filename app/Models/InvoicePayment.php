@@ -18,11 +18,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use JamesMills\LaravelTimezone\Facades\Timezone;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Browsershot\Browsershot;
@@ -126,6 +126,27 @@ class InvoicePayment extends Model
     public function getEditedAttribute(): bool
     {
         return $this->created_at->notEqualTo($this->updated_at);
+    }
+
+    public function paymentTermCount(): Attribute
+    {
+        return Attribute::get(function () {
+            $index = 0;
+
+            if (!$this->invoice_payment_term_uuid) {
+                return $index;
+            }
+
+            foreach ($this->invoicePaymentSchedule->invoicePaymentTerms as $term) {
+                $index++;
+
+                if ($term->uuid === $this->invoice_payment_term_uuid) {
+                    break;
+                }
+            }
+
+            return $index;
+        });
     }
 
     public function remainingBalanceFormatted(): Attribute
