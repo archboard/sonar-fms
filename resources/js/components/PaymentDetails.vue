@@ -33,7 +33,7 @@
       </DescriptionItem>
       <DescriptionItem>
         <template #dt>
-          {{ __('Payment') }}
+          {{ __('Payment amount') }}
         </template>
         <template #dd>
           {{ payment.amount_formatted }}
@@ -97,7 +97,7 @@
       </DescriptionItem>
       <DescriptionItem>
         <template #dt>
-          <strong class="text-gray-900 dark:text-gray-100">{{ __('Remaining balance') }}</strong>
+          <strong class="text-gray-900 dark:text-gray-100">{{ __('Remaining balance at time of payment') }}</strong>
         </template>
         <template #dd>
           <strong>{{ payment.invoice.remaining_balance_formatted }}</strong>
@@ -188,7 +188,7 @@ export default defineComponent({
   },
 
   setup ({ payment }) {
-    const { displayDate, getDate } = displaysDate()
+    const { displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()
     const termNumber = payment.payment_term
       ? payment.schedule.terms.findIndex(t => t.uuid === payment.payment_term.uuid) + 1
