@@ -4,7 +4,7 @@
     :headline="__('Payment details')"
     :action-text="__('View receipt')"
     @action="viewReceipt"
-    size="xl"
+    size="2xl"
   >
     <PaymentDetails v-if="localPayment.id" :payment="localPayment" />
     <Spinner v-else class="w-12 mx-auto" />
