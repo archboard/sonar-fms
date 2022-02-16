@@ -17,6 +17,9 @@
     <SonarMenuItem v-if="can('invoices.viewAny') && payment.invoice" is="inertia-link" :href="`/invoices/${payment.invoice.uuid}`">
       {{ __('View invoice') }}
     </SonarMenuItem>
+    <SonarMenuItem v-if="payment.invoice" @click.prevent="copy(payment.invoice.invoice_number)">
+      {{ __('Copy invoice number') }}
+    </SonarMenuItem>
     <SonarMenuItem v-if="can('students.viewAny') && payment.invoice" is="inertia-link" :href="`/students/${payment.invoice.student_uuid}`">
       {{ __('View student') }}
     </SonarMenuItem>
@@ -27,6 +30,7 @@
 import { defineComponent } from 'vue'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import checksPermissions from '@/composition/checksPermissions'
+import copiesToClipboard from '@/composition/copiesToClipboard'
 
 export default defineComponent({
   components: {
@@ -39,9 +43,11 @@ export default defineComponent({
 
   setup () {
     const { can } = checksPermissions()
+    const { copy } = copiesToClipboard()
 
     return {
       can,
+      copy,
     }
   }
 })
