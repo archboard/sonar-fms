@@ -1,7 +1,10 @@
 <template>
-  <div v-if="showView || invoice.student" class="p-1">
+  <div class="p-1">
     <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="`/invoices/${invoice.uuid}`">
       {{ __('View invoice') }}
+    </SonarMenuItem>
+    <SonarMenuItem @click.prevent="copy(invoice.invoice_number)">
+      {{ __('Copy invoice number') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}`">
       {{ __('View student') }}
@@ -60,6 +63,7 @@ import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import checksPermissions from '@/composition/checksPermissions'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
+import copiesToClipboard from '@/composition/copiesToClipboard'
 
 export default defineComponent({
   components: {
@@ -78,10 +82,12 @@ export default defineComponent({
 
   setup () {
     const { can, canAny } = checksPermissions()
+    const { copy } = copiesToClipboard()
 
     return {
       can,
       canAny,
+      copy,
     }
   }
 })
