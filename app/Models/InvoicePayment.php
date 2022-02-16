@@ -242,6 +242,8 @@ class InvoicePayment extends Model
         $content = view('receipt', [
             'title' => $title,
             'currency' => $this->currency,
+            'layout' => $layout,
+            'payment' => $this,
         ])->render();
 
         $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
