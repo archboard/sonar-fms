@@ -20,6 +20,7 @@ class ActivityResource extends JsonResource
             'causer' => new UserResource($this->whenLoaded('causer')),
             'created_at' => $this->created_at,
             'properties' => $this->properties,
+            'changes' => $this->getChangelog(),
         ];
     }
 }
