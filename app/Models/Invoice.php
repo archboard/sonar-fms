@@ -1244,6 +1244,7 @@ class Invoice extends Model implements Searchable
         activity()
             ->on($this)
             ->withProperties($properties)
+            ->component('CashIcon')
             ->log($description);
 
         // If this is a child invoice, log details to the parent invoice
@@ -1257,6 +1258,7 @@ class Invoice extends Model implements Searchable
             activity()
                 ->on($this->parent)
                 ->withProperties($properties)
+                ->component('CashIcon')
                 ->log($description);
         }
 
