@@ -1056,7 +1056,11 @@ class Invoice extends Model implements Searchable
         }
 
         // Save the remaining balance to the payment "at this point in time"
-        $payment->update(['remaining_balance' => $parent->remaining_balance]);
+        // Update the DB to prevent events and
+        // modifying the updated timestamp
+        DB::table($payment->getTable())
+            ->where('id', $payment->id)
+            ->update(['remaining_balance' => $parent->remaining_balance]);
 
         return $this;
     }
