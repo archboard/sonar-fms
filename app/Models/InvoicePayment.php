@@ -50,13 +50,6 @@ class InvoicePayment extends Model
 
     protected static array $recordEvents = ['updated'];
 
-    protected static function booted()
-    {
-        static::saved(function (InvoicePayment $payment) {
-//            MakeReceipt::dispatch($payment);
-        });
-    }
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
