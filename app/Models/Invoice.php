@@ -487,12 +487,12 @@ class Invoice extends Model implements Searchable
             return 'green';
         }
 
-        if ($this->payment_made || !$this->available) {
-            return 'yellow';
-        }
-
         if ($this->past_due || $this->voided_at) {
             return 'red';
+        }
+
+        if ($this->payment_made || !$this->available) {
+            return 'yellow';
         }
 
         return 'yellow';
