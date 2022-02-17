@@ -16,6 +16,7 @@ trait CreatesPayments
             'tenant_id' => $this->tenant->id,
             'school_id' => $this->school->id,
             'amount' => rand(1, $invoice->remaining_balance),
+            'paid_at' => today()->subDay(),
             'recorded_by' => $this->user->uuid,
             'made_by' => $this->createUser()->uuid,
         ];

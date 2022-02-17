@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceRefund;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
@@ -26,6 +27,7 @@ class InvoiceRefundTest extends TestCase
     {
         parent::setUp();
 
+        Queue::fake();
         $this->invoice = $this->createInvoice();
         $this->invoice->unsetRelations();
         $this->createPayment(invoice: $this->invoice);

@@ -2,12 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\MakeReceipt;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
 use App\Models\PaymentMethod;
+use App\Models\Receipt;
+use App\Models\ReceiptLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -22,12 +26,16 @@ class InvoicePaymentTest extends TestCase
     use CreatesPayments;
 
     protected bool $signIn = true;
+    protected \Illuminate\Contracts\Filesystem\Filesystem $disk;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        Storage::fake(config('filesystems.receipts'));
+        $this->disk = Storage::fake(config('filesystems.receipts'));
+
+        // Create the layout
+        ReceiptLayout::factory()->create(['is_default' => true]);
     }
 
     public function test_cant_list_all_payments_without_permissions()
@@ -64,6 +72,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_save_payment_to_invoice_without_associating_term()
     {
+        Queue::fake();
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
@@ -71,11 +80,17 @@ class InvoicePaymentTest extends TestCase
             ->today()
             ->subDay()
             ->setTimezone(config('app.timezone'));
+        $amount = (int) round($invoice->amount_due / 2);
+
+        if ($amount < 1) {
+            rd($amount, $invoice);
+        }
+
         $data = [
             'invoice_uuid' => $invoice->uuid,
             'payment_method_id' => null,
             'paid_at' => $this->getDateForInvoice($date),
-            'amount' => (int) round($invoice->amount_due / 2),
+            'amount' => $amount,
             'made_by' => null,
             'notes' => $this->faker->sentence(),
             'transaction_details' => $this->faker->words(asText: true),
@@ -98,10 +113,13 @@ class InvoicePaymentTest extends TestCase
             'paid_at' => $date->toDateTimeString(),
         ]);
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);
+
+        Queue::assertPushed(MakeReceipt::class);
     }
 
     public function test_can_save_payment_to_invoice_with_associating_term()
     {
+        Queue::fake();
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
@@ -165,6 +183,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_distribute_payment_across_terms_correctly()
     {
+        Queue::fake();
         $invoice = $this->createInvoice()->refresh();
         $this->seedPaymentSchedules($invoice, 2);
         $paymentAmount = (int) round($invoice->amount_due / 3);
@@ -196,11 +215,17 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_add_payment_to_child_invoice()
     {
+        Queue::fake();
         $this->assignPermission('create', InvoicePayment::class);
 
         $parent = $this->createCombinedInvoice(2);
         /** @var Invoice $child */
         $child = $parent->children->random();
+        $amount = (int) round($child->amount_due / 2);
+
+        if ($amount < 1) {
+            rd($amount, $child);
+        }
 
         $date = $this->user->getCarbonFactory()
             ->today()
@@ -263,9 +288,11 @@ class InvoicePaymentTest extends TestCase
             ->assertRedirect();
 
         $invoice->refresh();
+        /** @var InvoicePayment $payment */
+        $payment = $invoice->invoicePayments->first();
 
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->children()->sum('remaining_balance'));
-        $this->assertEquals($invoice->remaining_balance, $invoice->invoicePayments->first()->remaining_balance);
+        $this->assertEquals($invoice->remaining_balance, $payment->remaining_balance);
 
         // Assert that the terms got distributed payments correctly
         foreach ($invoice->invoicePaymentSchedules as $schedule) {
@@ -285,10 +312,18 @@ class InvoicePaymentTest extends TestCase
                 $this->assertEquals(0, $child->invoicePayments()->count());
             }
         }
+
+        $this->assertEquals(1, $payment->receipts()->count());
+
+        /** @var Receipt $receipt */
+        $receipt = $payment->receipts()->first();
+
+        $this->disk->assertExists($receipt->path);
     }
 
     public function test_can_make_full_payment_to_combined_invoice()
     {
+        Queue::fake();
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createCombinedInvoice(5);
@@ -329,10 +364,13 @@ class InvoicePaymentTest extends TestCase
             $this->assertEquals(0, $child->remaining_balance);
             $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
         }
+
+        Queue::assertPushed(MakeReceipt::class);
     }
 
     public function test_can_fetch_payments_for_invoice()
     {
+        Queue::fake();
         $this->assignPermission('viewAny', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
@@ -346,7 +384,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_fetch_related_payments()
     {
-        $this->withoutExceptionHandling();
+        Queue::fake();
         $this->assignPermission('viewAny', InvoicePayment::class);
 
         $invoice = $this->createCombinedInvoice();
@@ -366,6 +404,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_get_edit_payment_page()
     {
+        Queue::fake();
         $this->assignPermission('update', InvoicePayment::class);
 
         $payment = $this->createPayment();

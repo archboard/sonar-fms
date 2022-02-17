@@ -6,6 +6,7 @@ use App\Factories\UuidFactory;
 use App\Http\Requests\SaveRefundRequest;
 use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\CreateInvoicePdf;
+use App\Jobs\MakeReceipt;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
@@ -1059,8 +1060,11 @@ class Invoice extends Model implements Searchable
         // Update the DB to prevent events and
         // modifying the updated timestamp
         DB::table($payment->getTable())
-            ->where('id', $payment->id)
+            ->where('uuid', $payment->uuid)
             ->update(['remaining_balance' => $parent->remaining_balance]);
+
+        // Generate the receipt
+        MakeReceipt::dispatch($payment->uuid);
 
         return $this;
     }

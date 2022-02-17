@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateInvoicePaymentRequest;
+use App\Http\Requests\UpdatePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
 use App\Http\Resources\PaymentMethodDriverResource;
 use App\Http\Resources\UserResource;
@@ -163,36 +164,9 @@ class InvoicePaymentController extends Controller
         ])->withViewData(compact('title'));
     }
 
-    public function update(Request $request, School $school, InvoicePayment $payment)
+    public function update(UpdatePaymentRequest $request, InvoicePayment $payment)
     {
-        $data = $request->validate([
-            'payment_method_id' => [
-                'nullable',
-                Rule::exists('payment_methods', 'id')
-                    ->where('school_id', $school->id),
-            ],
-            'paid_at' => ['required', 'date'],
-            'amount' => [
-                'required',
-                'integer',
-                'min:1',
-                'max:' . ($payment->invoice->remaining_balance + $payment->amount), // Factor in the original payment
-            ],
-            'made_by' => [
-                'nullable',
-                Rule::exists('users', 'uuid')
-                    ->where('tenant_id', $payment->tenant_id),
-            ],
-            'invoice_payment_term_uuid' => [
-                'nullable',
-                Rule::exists('invoice_payment_terms', 'uuid')
-                    ->where('invoice_uuid', $payment->invoice_uuid),
-            ],
-            'transaction_details' => 'nullable',
-            'notes' => 'nullable',
-        ]);
-
-        $payment->update($data);
+        $payment->updateFromRequest($request);
 
         session()->flash('success', __('Payment updated successfully.'));
 

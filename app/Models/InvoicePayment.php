@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Requests\UpdatePaymentRequest;
 use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\MakeReceipt;
 use App\Traits\BelongsToInvoice;
@@ -231,15 +232,19 @@ class InvoicePayment extends Model
 
     public function makeReceipt(User $user): Receipt
     {
-        $count = Str::padLeft($this->receipts()->count(), 2, '0');
+        $count = Str::padLeft($this->receipts()->count() + 1, 2, '0');
 
-        return new Receipt([
+        $receipt = new Receipt([
             'tenant_id' => $this->tenant_id,
             'school_id' => $this->school_id,
             'user_uuid' => $user->uuid,
             'invoice_payment_uuid' => $this->uuid,
             'receipt_number' => "{$this->invoice->invoice_number}-R{$count}",
         ]);
+        $receipt->path = $this->generatePdfPath($receipt);
+        $receipt->save();
+
+        return $receipt;
     }
 
     public static function getReceiptDisk(): \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter
@@ -276,8 +281,6 @@ class InvoicePayment extends Model
 
         $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
         $disk = static::getReceiptDisk();
-        $receipt->path = $this->generatePdfPath($receipt);
-
         $disk->makeDirectory(dirname($receipt->path));
 
         Browsershot::html($content)
@@ -296,8 +299,6 @@ class InvoicePayment extends Model
             ->hideFooter()
             ->savePdf($disk->path($receipt->path));
 
-        $receipt->save();
-
         return $receipt;
     }
 
@@ -313,5 +314,19 @@ class InvoicePayment extends Model
             'amount' => $this->amount,
             'notes' => $this->notes,
         ];
+    }
+
+    public function updateFromRequest(UpdatePaymentRequest $request): static
+    {
+        $data = $request->validated();
+        $balanceWithoutPayment = $this->invoice->remaining_balance + $this->amount;
+
+        $this->fill($data);
+        $this->remaining_balance = $balanceWithoutPayment - $this->amount;
+        $this->save();
+
+        MakeReceipt::dispatch($this->uuid);
+
+        return $this;
     }
 }
