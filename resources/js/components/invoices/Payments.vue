@@ -1,8 +1,11 @@
 <template>
   <section v-if="can('payments.viewAny')">
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
-      <div class="pb-4">
+      <div class="pb-4 flex justify-between">
         <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
+        <div>
+          <Button :href="`/payments/create?invoice_uuid=${invoice.uuid}`" component="InertiaLink" size="sm">{{ __('Record payment') }}</Button>
+        </div>
       </div>
       <div class="pt-6">
         <Loader v-if="loading" />
@@ -106,9 +109,11 @@ import Copy from '@/components/Copy'
 import HelpText from '@/components/HelpText'
 import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
 import checksPermissions from '@/composition/checksPermissions'
+import Button from '@/components/Button'
 
 export default defineComponent({
   components: {
+    Button,
     PaymentDetailsModal,
     HelpText,
     Copy,
