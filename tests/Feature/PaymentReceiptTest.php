@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\InvoicePayment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 use Tests\Traits\CreatesPayments;

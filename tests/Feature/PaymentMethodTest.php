@@ -6,7 +6,7 @@ use App\Models\PaymentMethod;
 use App\PaymentMethods\Cash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class PaymentMethodTest extends TestCase

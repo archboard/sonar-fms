@@ -6,7 +6,7 @@ use App\Models\Activity;
 use App\Models\Invoice;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 

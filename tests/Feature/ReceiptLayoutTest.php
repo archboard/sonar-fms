@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\ReceiptLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ReceiptLayoutTest extends TestCase

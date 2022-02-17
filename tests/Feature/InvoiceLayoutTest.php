@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\InvoiceLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 

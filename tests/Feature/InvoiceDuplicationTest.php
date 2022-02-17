@@ -9,7 +9,7 @@ use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Inertia\Testing\Assert;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 use Tests\Traits\SignsIn;
