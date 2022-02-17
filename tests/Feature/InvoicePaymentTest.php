@@ -23,6 +23,13 @@ class InvoicePaymentTest extends TestCase
 
     protected bool $signIn = true;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake(config('filesystems.receipts'));
+    }
+
     public function test_cant_list_all_payments_without_permissions()
     {
         $this->get('/payments')
@@ -57,7 +64,6 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_save_payment_to_invoice_without_associating_term()
     {
-        Storage::fake(config('filesystems.receipts'));
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
@@ -96,7 +102,6 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_save_payment_to_invoice_with_associating_term()
     {
-        $this->withoutExceptionHandling();
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
