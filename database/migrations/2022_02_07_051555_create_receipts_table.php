@@ -18,7 +18,7 @@ class CreateReceiptsTable extends Migration
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->uuid('invoice_payment_uuid')->index();
-            $table->foreign('invoice_payment_uuid')->references('uuid')->on('invoices')->onDelete('cascade');
+            $table->foreign('invoice_payment_uuid')->references('uuid')->on('invoice_payments')->onDelete('cascade');
             $table->string('receipt_number');
             $table->string('path');
             $table->uuid('user_uuid')->nullable();
