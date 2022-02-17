@@ -104,7 +104,7 @@
           <Button type="submit" :loading="form.processing">
             {{ __('Save') }}
           </Button>
-          <Button is="InertiaLink" href="/payments" color="white">
+          <Button component="InertiaLink" href="/payments" color="white">
             {{ __('Cancel') }}
           </Button>
         </CardAction>
