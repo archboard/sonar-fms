@@ -748,10 +748,10 @@ class Invoice extends Model implements Searchable
         // Add all the payments made to this invoice
         // and any child invoices since they could be
         // recorded independently of the parent
-        $childrenPaymentTotal = $this->children->reduce(function (int $total, Invoice $child) {
+        $childrenPaymentTotal = $this->countableChildren()->reduce(function (int $total, Invoice $child) {
                 return $total + $child->invoicePayments->sum('amount');
             }, $total);
-        $childrenRefunds = $this->children->reduce(function (int $total, Invoice $child) {
+        $childrenRefunds = $this->countableChildren()->reduce(function (int $total, Invoice $child) {
                 return $total + $child->invoiceRefunds->sum('amount');
             }, 0);
 
@@ -764,7 +764,8 @@ class Invoice extends Model implements Searchable
         // invoices before recalculating this one
         if ($this->is_parent) {
             $this->loadChildren()
-                ->children->each(function (Invoice $invoice) use ($save) { // @phpstan-ignore-line
+                ->countableChildren()
+                ->each(function (Invoice $invoice) use ($save) { // @phpstan-ignore-line
                     $invoice->setCalculatedAttributes($save);
                 });
         }
@@ -1079,8 +1080,8 @@ class Invoice extends Model implements Searchable
 
     public function getChildrenPayments(InvoicePayment $payment): array
     {
-        $children = $this->children->keyBy('uuid');
-        $remainingBalances = $this->children->pluck('remaining_balance', 'uuid');
+        $children = $this->countableChildren()->keyBy('uuid');
+        $remainingBalances = $this->countableChildren()->pluck('remaining_balance', 'uuid');
         $distributions = $children->reduce(function (array $distributions, Invoice $invoice) use ($payment) {
             // This is the ratio of child:parent remaining balance,
             // which we'll use to assign the distribution amount
