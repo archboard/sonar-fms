@@ -104,7 +104,7 @@
           <Button type="submit" :loading="form.processing">
             {{ __('Save') }}
           </Button>
-          <Button component="InertiaLink" href="/payments" color="white">
+          <Button component="InertiaLink" :href="cancelUrl" color="white">
             {{ __('Cancel') }}
           </Button>
         </CardAction>
@@ -143,8 +143,10 @@ import Textarea from '@/components/forms/Textarea'
 import PaymentMethodSelector from '@/components/forms/PaymentMethodSelector'
 import cloneDeep from 'lodash/cloneDeep'
 import dayjs from '@/plugins/dayjs'
+import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
+  mixins: [PageProps],
   components: {
     PaymentMethodSelector,
     Textarea,
@@ -184,7 +186,7 @@ export default defineComponent({
     method: {
       type: String,
       default: 'post',
-    }
+    },
   },
 
   setup (props) {
@@ -229,6 +231,7 @@ export default defineComponent({
       }, {})
     })
     const { displayCurrency } = displaysCurrency()
+    const cancelUrl = ref(props.breadcrumbs[props.breadcrumbs.length - 2].route)
 
     return {
       form,
@@ -238,6 +241,7 @@ export default defineComponent({
       displayDate,
       displayCurrency,
       selectedTerm,
+      cancelUrl,
     }
   }
 })
