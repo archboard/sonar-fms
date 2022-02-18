@@ -119,6 +119,7 @@ class InvoicePaymentController extends Controller
         $data['recorded_by'] = $request->id();
         $data['original_amount'] = $data['amount'];
 
+        /** @var InvoicePayment $payment */
         $payment = InvoicePayment::create($data);
         $payment->invoice->recordPayment($payment);
 
