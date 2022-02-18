@@ -143,13 +143,14 @@
 <script>
 import { defineComponent } from 'vue'
 import displaysDate from '@/composition/displaysDate'
-import { BellIcon, PencilIcon, ReceiptRefundIcon } from '@heroicons/vue/solid'
+import { BellIcon, PencilIcon, ReceiptRefundIcon, CashIcon } from '@heroicons/vue/solid'
 
 export default defineComponent({
   components: {
     BellIcon,
     PencilIcon,
     ReceiptRefundIcon,
+    CashIcon,
   },
   props: {
     activities: {
