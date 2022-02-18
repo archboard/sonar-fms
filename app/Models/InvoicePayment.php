@@ -232,14 +232,15 @@ class InvoicePayment extends Model
 
     public function makeReceipt(User $user): Receipt
     {
-        $count = Str::padLeft($this->receipts()->count() + 1, 2, '0');
+        $count = $this->invoice->receipts()->count();
+        $countPadded = Str::padLeft($count + 1, 2, '0');
 
         $receipt = new Receipt([
             'tenant_id' => $this->tenant_id,
             'school_id' => $this->school_id,
             'user_uuid' => $user->uuid,
             'invoice_payment_uuid' => $this->uuid,
-            'receipt_number' => "{$this->invoice->invoice_number}-R{$count}",
+            'receipt_number' => "{$this->invoice->invoice_number}-R{$countPadded}",
         ]);
         $receipt->path = $this->generatePdfPath($receipt);
         $receipt->save();
