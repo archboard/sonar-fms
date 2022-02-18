@@ -289,9 +289,6 @@ Route::middleware('tenant')->group(function () {
 
                 Route::resource('/payments', \App\Http\Controllers\InvoicePaymentController::class);
 
-                Route::get('/payments/{payment}/receipt', \App\Http\Controllers\PaymentReceiptController::class)
-                    ->name('payments.receipt');
-
                 /**
                  * Other stuff
                  */
@@ -317,6 +314,9 @@ Route::middleware('tenant')->group(function () {
 
                 Route::middleware(['receipt_layout'])
                     ->group(function () {
+                        Route::get('/payments/{payment}/receipt', \App\Http\Controllers\PaymentReceiptController::class)
+                            ->name('payments.receipt');
+
                         Route::get('/layouts/receipts/{layout}/preview', \App\Http\Controllers\PreviewReceiptLayoutController::class)
                             ->name('receipt-layouts.preview');
                     });
