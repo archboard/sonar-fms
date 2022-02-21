@@ -91,6 +91,9 @@ Route::middleware('tenant')->group(function () {
                             ->name('guardians.sync');
 
                         Route::resource('/invoices', \App\Http\Controllers\Students\StudentInvoiceController::class);
+
+                        Route::middleware('can:comment,student')
+                            ->resource('/comments', \App\Http\Controllers\StudentCommentController::class);
                     });
 
                 /**

@@ -514,6 +514,11 @@ class User extends Authenticatable implements HasLocalePreference
                             'label' => __('Delete'),
                             'can' => $this->can('delete', Student::class),
                         ],
+                        [
+                            'permission' => 'comment',
+                            'label' => __('Comment'),
+                            'can' => $this->can('comment', Student::class),
+                        ],
                     ],
                 ],
                 [

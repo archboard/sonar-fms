@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongsToTenant;
 use App\Traits\UsesUuid;
+use BeyondCode\Comments\Traits\HasComments;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +27,7 @@ class Student extends Model implements Searchable
     use HasFactory;
     use BelongsToTenant;
     use UsesUuid;
+    use HasComments;
 
     protected $guarded = [];
 
