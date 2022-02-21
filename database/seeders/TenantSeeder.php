@@ -20,7 +20,9 @@ class TenantSeeder extends Seeder
     public function run()
     {
         /** @var Tenant $tenant */
-        $tenant = Tenant::factory()->testing()->create();
+        $tenant = Tenant::factory()->testing()->make();
+        Tenant::where('domain', $tenant->domain)->delete();
+        $tenant->save();
 
         $tenant->schools->each(function (School $school) use ($tenant) {
             $school->terms()->save(Term::factory()->make(['tenant_id' => $tenant->id]));
