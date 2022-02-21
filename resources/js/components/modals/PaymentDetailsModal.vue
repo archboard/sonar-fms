@@ -34,7 +34,11 @@ export default defineComponent({
     const $http = inject('$http')
     const localPayment = ref({})
     const viewReceipt = () => {
-      window.open(`/payments/${props.payment.id}/receipt`, '_blank')
+      const receipt = localPayment.value.receipts[localPayment.value.receipts.length - 1]
+
+      if (receipt) {
+        window.open(`/payments/${receipt.id}/receipt`, '_blank')
+      }
     }
 
     $http.get(`/payments/${props.payment.id}`).then(({ data }) => {

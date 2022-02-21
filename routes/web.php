@@ -319,7 +319,19 @@ Route::middleware('tenant')->group(function () {
 
                         Route::get('/layouts/receipts/{layout}/preview', \App\Http\Controllers\PreviewReceiptLayoutController::class)
                             ->name('receipt-layouts.preview');
+
+                        Route::get('/receipts/{receipt}', [\App\Http\Controllers\ReceiptController::class, 'show'])
+                            ->name('receipts.show');
                     });
+
+                Route::delete('/receipts/{receipt}', [\App\Http\Controllers\ReceiptController::class, 'destroy'])
+                    ->name('receipts.destroy');
+
+                Route::get('/invoices/{invoice}/receipts', \App\Http\Controllers\InvoiceReceiptController::class)
+                    ->name('invoices.receipts');
+
+                Route::get('/payments/{payment}/receipts', \App\Http\Controllers\FetchPaymentReceiptsController::class)
+                    ->name('payments.receipts');
 
                 Route::resource('/layouts/invoices', \App\Http\Controllers\InvoiceLayoutController::class)
                     ->parameters([

@@ -222,6 +222,7 @@ class InvoicePayment extends Model
             'invoicePaymentSchedule.invoicePaymentTerms',
             'invoicePaymentTerm',
             'paymentMethod',
+            'receipts',
         ];
     }
 
@@ -248,11 +249,6 @@ class InvoicePayment extends Model
         return $receipt;
     }
 
-    public static function getReceiptDisk(): \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter
-    {
-        return Storage::disk(config('filesystems.receipts'));
-    }
-
     public function generatePdfPath(Receipt $receipt): string
     {
         $parameters = [
@@ -267,9 +263,9 @@ class InvoicePayment extends Model
         return Str::replaceArray('?', $parameters, '?/?/?/?/?/?.pdf');
     }
 
-    public function saveReceiptPdf(?ReceiptLayout $layout = null): Receipt
+    public function saveReceiptPdf(?ReceiptLayout $layout = null, ?Receipt $receipt = null): Receipt
     {
-        $receipt = $this->makeReceipt($this->recordedBy);
+        $receipt = $receipt ?? $this->makeReceipt($this->recordedBy);
         $layout = $layout ?? $this->school->getDefaultReceiptLayout();
         $title = __('Receipt :number', ['number' => $receipt->receipt_number]);
 
@@ -281,7 +277,7 @@ class InvoicePayment extends Model
         ])->render();
 
         $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
-        $disk = static::getReceiptDisk();
+        $disk = Receipt::getDisk();
         $disk->makeDirectory(dirname($receipt->path));
 
         Browsershot::html($content)

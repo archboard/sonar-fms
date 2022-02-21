@@ -95,6 +95,19 @@
           {{ payment.made_by?.full_name }}
         </template>
       </DescriptionItem>
+      <DescriptionItem v-if="payment.receipts.length > 0">
+        <template #dt>
+          {{ __('Receipts') }}
+        </template>
+        <template #dd>
+          <ul>
+            <li v-for="receipt in payment.receipts" :key="receipt.id">
+              <Link is="a" :href="`/receipts/${receipt.id}`">{{ receipt.receipt_number }}</Link>
+            </li>
+          </ul>
+          {{ payment.made_by?.full_name }}
+        </template>
+      </DescriptionItem>
       <DescriptionItem>
         <template #dt>
           <strong class="text-gray-900 dark:text-gray-100">{{ __('Remaining balance at time of payment') }}</strong>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @mixin IdeHelperReceipt
@@ -35,5 +36,15 @@ class Receipt extends Model
             'invoice_payment_uuid',
             'invoice_uuid'
         );
+    }
+
+    public static function getDisk(): \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter
+    {
+        return Storage::disk(config('filesystems.receipts'));
+    }
+
+    public function download(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        return static::getDisk()->download($this->path);
     }
 }

@@ -34,6 +34,7 @@ class InvoicePaymentResource extends JsonResource
             'payment_method' => new PaymentMethodResource($this->whenLoaded('paymentMethod')),
             'created_at' => Timezone::convertToLocal($this->created_at, 'M j, Y'),
             'activities' => ActivityResource::collection($this->whenLoaded('activities')),
+            'receipts' => ReceiptResource::collection($this->whenLoaded('receipts')),
         ];
     }
 }
