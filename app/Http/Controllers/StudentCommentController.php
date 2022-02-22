@@ -2,30 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Student;
+use App\Traits\SendsApiResponses;
 use Illuminate\Http\Request;
 
 class StudentCommentController extends Controller
 {
+    use SendsApiResponses;
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Student $student)
     {
-        //
-    }
+        $comments = $student->comments()
+            ->orderBy('created_at')
+            ->with('commentator')
+            ->get();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return CommentResource::collection($comments);
     }
 
     /**
@@ -39,7 +38,15 @@ class StudentCommentController extends Controller
     {
         $data = $request->validate(['comment' => ['required', 'string']]);
 
-        $student->commentAsUser($request->user(), $data['comment']);
+        $comment = $student->commentAsUser($request->user(), $data['comment']);
+
+//        $comment->load('commentator');
+//        return $this->success(
+//            __('Comment created successfully.'),
+//            [
+//                'comment' => $comment->toResource(),
+//            ]
+//        );
 
         session()->flash('success', __('Comment created successfully.'));
 
@@ -50,22 +57,11 @@ class StudentCommentController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(Comment $comment)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        //
+        return $comment->toResource();
     }
 
     /**

@@ -6,21 +6,23 @@ use Illuminate\Http\JsonResponse;
 
 trait SendsApiResponses
 {
-    protected function success(string $message = ''): JsonResponse
+    protected function success(string $message = '', array $data = []): JsonResponse
     {
         return response()
             ->json([
                 'level' => 'success',
-                'message' => $message
+                'message' => $message,
+                'data' => $data,
             ]);
     }
 
-    protected function error(string $message = ''): JsonResponse
+    protected function error(string $message = '', array $data = []): JsonResponse
     {
         return response()
             ->json([
                 'level' => 'error',
-                'message' => $message
+                'message' => $message,
+                'data' => $data,
             ]);
     }
 }

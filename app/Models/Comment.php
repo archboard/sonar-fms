@@ -2,10 +2,30 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use BeyondCode\Comments\Comment as Model;
+use Illuminate\Support\Str;
 
+/**
+ * @mixin IdeHelperComment
+ */
 class Comment extends Model
 {
     use HasFactory;
+    use HasResource;
+
+    public function markdown(): Attribute
+    {
+        return Attribute::get(fn () => Str::markdown($this->comment));
+    }
+
+    public function diff(): Attribute
+    {
+        return Attribute::get(
+            fn () => $this->created_at->diffForHumans(['options' => Carbon::JUST_NOW])
+        );
+    }
 }

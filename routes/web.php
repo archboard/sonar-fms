@@ -93,7 +93,8 @@ Route::middleware('tenant')->group(function () {
                         Route::resource('/invoices', \App\Http\Controllers\Students\StudentInvoiceController::class);
 
                         Route::middleware('can:comment,student')
-                            ->resource('/comments', \App\Http\Controllers\StudentCommentController::class);
+                            ->resource('/comments', \App\Http\Controllers\StudentCommentController::class)
+                            ->except('create', 'edit');
                     });
 
                 /**

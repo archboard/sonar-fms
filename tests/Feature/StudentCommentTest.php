@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Comment;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -20,6 +21,13 @@ class StudentCommentTest extends TestCase
         parent::setUp();
 
         $this->student = $this->createStudent();
+    }
+
+    protected function createComment(): Comment
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->student
+            ->commentAsUser($this->user, $this->faker->paragraph());
     }
 
     public function test_authorization()
@@ -46,10 +54,28 @@ class StudentCommentTest extends TestCase
         $this->post(route('students.comments.store', $this->student), $data)
             ->assertSessionHas('success')
             ->assertRedirect();
+//            ->assertJsonStructure(['level', 'message', 'data']);
 
         $this->assertEquals(1, $this->student->comments()->count());
         $comment = $this->student->comments()->first();
 
+        $this->assertEquals($data['comment'], $comment->comment);
+    }
+
+    public function test_can_edit_a_comment()
+    {
+        $this->withoutExceptionHandling();
+        $this->assignPermission('comment', Student::class);
+        $comment = $this->createComment();
+        $data = [
+            'comment' => $this->faker->paragraphs(asText: true),
+        ];
+
+        $this->put(route('students.comments.update', [$this->student, $comment]), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect();
+
+        $comment->refresh();
         $this->assertEquals($data['comment'], $comment->comment);
     }
 }
