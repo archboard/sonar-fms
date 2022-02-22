@@ -51,6 +51,7 @@ export default defineComponent({
     })
     const save = close => {
       form[props.method](props.endpoint, {
+        preserveScroll: true,
         onSuccess () {
           close()
         }

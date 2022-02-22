@@ -91,4 +91,25 @@ class StudentCommentTest extends TestCase
         $this->put(route('students.comments.update', [$this->student, $comment]), $data)
             ->assertForbidden();
     }
+
+    public function test_can_delete_a_comment()
+    {
+        $this->assignPermission('comment', Student::class);
+        $comment = $this->createComment();
+
+        $this->delete(route('students.comments.update', [$this->student, $comment]))
+            ->assertJsonStructure(['level', 'message']);
+
+        $this->assertModelMissing($comment);
+    }
+
+    public function test_cant_delete_comment_by_someone_else()
+    {
+        $this->assignPermission('comment', Student::class);
+        $user = $this->createUser();
+        $comment = $this->createComment($user);
+
+        $this->delete(route('students.comments.update', [$this->student, $comment]))
+            ->assertForbidden();
+    }
 }

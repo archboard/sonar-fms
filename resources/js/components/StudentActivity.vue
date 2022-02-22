@@ -34,6 +34,7 @@
                       <div class="mt-2 text-sm text-gray-700 dark:text-gray-300 comment-content" v-html="comment.markdown"></div>
                       <div v-if="comment.user.uuid === user.uuid" class="hidden group-hover:flex items-start space-x-2 w-full absolute -bottom-6 inset-x-0 text-xs">
                         <Link is="button" @click.prevent="editComment(comment)">{{ __('Edit') }}</Link>
+                        <Link is="button" @click.prevent="promptDelete(comment)">{{ __('Delete') }}</Link>
                       </div>
                     </div>
                   </div>
@@ -138,6 +139,11 @@
       :endpoint="`/students/${student.uuid}/comments/${currentComment.id}`"
       method="put"
     />
+    <ConfirmationModal
+      v-if="deleting"
+      @close="modalClosed"
+      @confirmed="deleteComment"
+    />
   </section>
 </template>
 
@@ -155,9 +161,12 @@ import displaysDate from '@/composition/displaysDate'
 import usesUser from '@/composition/usesUser'
 import Link from '@/components/Link'
 import CommentModal from '@/components/modals/CommentModal'
+import ConfirmationModal from '@/components/modals/ConfirmationModal'
+import { Inertia } from '@inertiajs/inertia'
 
 export default defineComponent({
   components: {
+    ConfirmationModal,
     CommentModal,
     Link,
     HelpText,
@@ -207,6 +216,9 @@ export default defineComponent({
       currentComment.value = comment
       deleting.value = true
     }
+    const deleteComment = async () => {
+      await $http.delete(`/students/${student.uuid}/comments/${currentComment.value.id}`)
+    }
     const modalClosed = () => {
       fetchComments()
       editing.value = false
@@ -228,6 +240,7 @@ export default defineComponent({
       deleting,
       modalClosed,
       promptDelete,
+      deleteComment,
     }
   }
 })

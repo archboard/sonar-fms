@@ -452,6 +452,11 @@ class User extends Authenticatable implements HasLocalePreference
             ->get();
     }
 
+    public function ownsComment(Comment $comment): bool
+    {
+        return $this->uuid === $comment->user_id;
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [

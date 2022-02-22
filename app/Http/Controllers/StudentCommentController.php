@@ -74,7 +74,7 @@ class StudentCommentController extends Controller
     public function update(Request $request, Student $student, Comment $comment)
     {
         abort_if(
-            $request->user()->uuid !== $comment->user_id,
+            !$request->user()->ownsComment($comment),
             403,
             __("You don't have permission to edit this comment.")
         );
@@ -91,10 +91,18 @@ class StudentCommentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Comment $comment)
+    public function destroy(Request $request, Student $student, Comment $comment)
     {
-        //
+        abort_if(
+            !$request->user()->ownsComment($comment),
+            403,
+            __("You don't have permission to edit this comment.")
+        );
+
+        $comment->delete();
+
+        return $this->success(__('Comment deleted successfully.'));
     }
 }
