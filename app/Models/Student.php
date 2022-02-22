@@ -185,46 +185,47 @@ class Student extends Model implements Searchable
                 ->keyBy('school_number');
         }
 
-        $users = collect($response)->reduce(function ($users, $contact) use ($schools) {
-            if (empty($contact->emails)) {
+        $users = $response->collect()
+            ->reduce(function ($users, $contact) use ($schools) {
+                if (empty($contact['emails'])) {
+                    return $users;
+                }
+
+                // Get the primary or first email address
+                $email = Arr::first(
+                    $contact['emails'],
+                    fn ($emails) => $emails['primary'],
+                    Arr::first($contact['emails'])
+                )['address'];
+
+                // If no name or email, don't process this relationship
+                if (!$contact['firstName'] || !$contact['lastName'] || !$email) {
+                    return $users;
+                }
+
+                $contactStudents = Arr::first($contact['contactStudents']);
+                $details = Arr::first($contactStudents['studentDetails']);
+
+                /** @var User $user */
+                $user = User::updateOrCreate([
+                    'tenant_id' => $this->tenant_id,
+                    'email' => strtolower($email),
+                ], [
+                    'first_name' => $contact['firstName'],
+                    'last_name' => $contact['lastName'],
+                    'school_id' => optional($schools->get($contactStudents['schoolNumber']))->id,
+                    'contact_id' => $contact['contactId'],
+                    'guardian_id' => $contactStudents['guardianId'],
+                ]);
+
+                $user->assign('guardian');
+
+                $users[$user->id] = [
+                    'relationship' => $details['relationship'] ?? null,
+                ];
+
                 return $users;
-            }
-
-            // Get the primary or first email address
-            $email = Arr::first(
-                $contact->emails,
-                fn ($emails) => $emails->primary,
-                Arr::first($contact->emails)
-            )->address;
-
-            // If no name or email, don't process this relationship
-            if (!$contact->firstName || !$contact->lastName || !$email) {
-                return $users;
-            }
-
-            $contactStudents = Arr::first($contact->contactStudents);
-            $details = Arr::first($contactStudents->studentDetails);
-
-            /** @var User $user */
-            $user = User::updateOrCreate([
-                'tenant_id' => $this->tenant_id,
-                'email' => strtolower($email),
-            ], [
-                'first_name' => $contact->firstName,
-                'last_name' => $contact->lastName,
-                'school_id' => optional($schools->get($contactStudents->schoolNumber))->id,
-                'contact_id' => $contact->contactId,
-                'guardian_id' => $contactStudents->guardianId,
-            ]);
-
-            $user->assign('guardian');
-
-            $users[$user->id] = [
-                'relationship' => optional($details)->relationship,
-            ];
-
-            return $users;
-        }, []);
+            }, []);
 
         $this->users()->syncWithoutDetaching($users);
 
