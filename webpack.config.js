@@ -11,7 +11,19 @@ const config = {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),
     },
-  }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(postcss)$/,
+        use: [
+          'vue-style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader'
+        ]
+      }
+    ],
+  },
 }
 
 if (
@@ -19,6 +31,10 @@ if (
   process.env.NODE_ENV !== 'production'
 ) {
   const url = new URL(process.env.APP_URL)
+
+  // config.stats = {
+  //   children: true
+  // }
 
   config.devServer = {
     host: url.host,
