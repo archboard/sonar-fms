@@ -37,7 +37,7 @@ abstract class TestCase extends BaseTestCase
         \Bouncer::scope()->to($this->school->id);
         \Bouncer::allow('school admin')->everything();
         \Bouncer::refresh();
-        \Bouncer::dontCache();
+//        \Bouncer::dontCache();
 
         $this->app->bind(School::class, fn () => $this->school);
         $this->app->bind(Tenant::class, fn () => $this->tenant);

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Comment;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -23,11 +24,11 @@ class StudentCommentTest extends TestCase
         $this->student = $this->createStudent();
     }
 
-    protected function createComment(): Comment
+    protected function createComment(User $user = null): Comment
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->student
-            ->commentAsUser($this->user, $this->faker->paragraph());
+            ->commentAsUser($user ?? $this->user, $this->faker->paragraph());
     }
 
     public function test_authorization()
@@ -64,7 +65,6 @@ class StudentCommentTest extends TestCase
 
     public function test_can_edit_a_comment()
     {
-        $this->withoutExceptionHandling();
         $this->assignPermission('comment', Student::class);
         $comment = $this->createComment();
         $data = [
@@ -77,5 +77,18 @@ class StudentCommentTest extends TestCase
 
         $comment->refresh();
         $this->assertEquals($data['comment'], $comment->comment);
+    }
+
+    public function test_cant_edit_comment_by_someone_else()
+    {
+        $this->assignPermission('comment', Student::class);
+        $user = $this->createUser();
+        $comment = $this->createComment($user);
+        $data = [
+            'comment' => $this->faker->paragraphs(asText: true),
+        ];
+
+        $this->put(route('students.comments.update', [$this->student, $comment]), $data)
+            ->assertForbidden();
     }
 }

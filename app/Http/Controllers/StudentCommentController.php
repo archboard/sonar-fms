@@ -69,11 +69,22 @@ class StudentCommentController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, Student $student, Comment $comment)
     {
-        //
+        abort_if(
+            $request->user()->uuid !== $comment->user_id,
+            403,
+            __("You don't have permission to edit this comment.")
+        );
+
+        $data = $request->validate(['comment' => ['required', 'string']]);
+        $comment->update($data);
+
+        session()->flash('success', __('Comment updated successfully.'));
+
+        return back();
     }
 
     /**

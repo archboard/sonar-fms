@@ -12,6 +12,7 @@
               <li
                 v-for="comment in comments"
                 :key="comment.id"
+                class="group"
               >
                 <div class="relative pb-8">
                   <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-300" aria-hidden="true"></span>
@@ -21,7 +22,7 @@
                         <ChatAltIcon class="h-5 w-5 text-gray-500 dark:text-gray-400" />
                       </div>
                     </div>
-                    <div class="min-w-0 flex-1">
+                    <div class="min-w-0 flex-1 relative">
                       <div>
                         <div class="text-sm">
                           <span class="font-medium text-gray-900 dark:text-gray-100">{{ comment.user.full_name }}</span>
@@ -31,9 +32,13 @@
                         </p>
                       </div>
                       <div class="mt-2 text-sm text-gray-700 dark:text-gray-300 comment-content" v-html="comment.markdown"></div>
+                      <div v-if="comment.user.uuid === user.uuid" class="hidden group-hover:flex items-start space-x-2 w-full absolute -bottom-6 inset-x-0 text-xs">
+                        <Link is="button" @click.prevent="editComment(comment)">{{ __('Edit') }}</Link>
+                      </div>
                     </div>
                   </div>
                 </div>
+
               </li>
 
 <!--              <li>-->
@@ -96,7 +101,7 @@
 <!--              </li>-->
             </ul>
           </div>
-          <div class="mt-6">
+          <div class="mt-8">
             <div class="flex space-x-3">
               <div class="flex-shrink-0">
                 <div class="relative px-1">
@@ -125,6 +130,14 @@
         </div>
       </div>
     </div>
+
+    <CommentModal
+      v-if="editing"
+      @close="modalClosed"
+      :comment="currentComment"
+      :endpoint="`/students/${student.uuid}/comments/${currentComment.id}`"
+      method="put"
+    />
   </section>
 </template>
 
@@ -139,9 +152,14 @@ import Error from '@/components/forms/Error'
 import Loader from '@/components/Loader'
 import HelpText from '@/components/HelpText'
 import displaysDate from '@/composition/displaysDate'
+import usesUser from '@/composition/usesUser'
+import Link from '@/components/Link'
+import CommentModal from '@/components/modals/CommentModal'
 
 export default defineComponent({
   components: {
+    CommentModal,
+    Link,
     HelpText,
     Loader,
     Error,
@@ -155,7 +173,11 @@ export default defineComponent({
   },
 
   setup ({ student }) {
+    const { user } = usesUser()
     const fetching = ref(false)
+    const editing = ref(false)
+    const deleting = ref(false)
+    const currentComment = ref({})
     const comments = ref([])
     const $http = inject('$http')
     const form = useForm({
@@ -177,6 +199,20 @@ export default defineComponent({
       comments.value = data
       fetching.value = false
     }
+    const editComment = comment => {
+      currentComment.value = comment
+      editing.value = true
+    }
+    const promptDelete = comment => {
+      currentComment.value = comment
+      deleting.value = true
+    }
+    const modalClosed = () => {
+      fetchComments()
+      editing.value = false
+      deleting.value = false
+      currentComment.value = {}
+    }
     fetchComments()
 
     return {
@@ -185,6 +221,13 @@ export default defineComponent({
       comments,
       fetching,
       displayDate,
+      user,
+      currentComment,
+      editComment,
+      editing,
+      deleting,
+      modalClosed,
+      promptDelete,
     }
   }
 })
