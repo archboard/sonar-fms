@@ -17,6 +17,8 @@
             :key="invoice.id"
             :invoice="invoice"
             :show-student="false"
+            @editStatus="selectedInvoice = invoice"
+            @convertToTemplate="convertInvoice = invoice"
           />
           <tr v-if="invoices.data.length === 0">
             <Td colspan="5" class="text-center">
@@ -33,6 +35,17 @@
         />
       </div>
     </div>
+
+    <InvoiceStatusModal
+      v-if="can('invoices.update') && selectedInvoice.uuid"
+      @close="selectedInvoice = {}"
+      :invoice="selectedInvoice"
+    />
+    <ConvertInvoiceModal
+      v-if="convertInvoice.uuid"
+      @close="convertInvoice = {}"
+      :endpoint="`/invoices/${convertInvoice.uuid}/convert`"
+    />
   </section>
 </template>
 
@@ -48,9 +61,14 @@ import checksPermissions from '../composition/checksPermissions'
 import Link from './Link'
 import Loader from './Loader'
 import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
+import qs from 'qs'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
 
 export default defineComponent({
   components: {
+    ConvertInvoiceModal,
+    InvoiceStatusModal,
     InvoiceTableRow,
     Loader,
     VerticalDotMenu,
@@ -60,20 +78,19 @@ export default defineComponent({
     SonarMenuItem,
     Link,
   },
-  emit: ['edit'],
   props: {
     student: Object,
     permissions: Object,
   },
 
   setup (props) {
-    const $route = inject('$route')
     const $http = inject('$http')
     const loading = ref(true)
+    const selectedInvoice = ref({})
+    const convertInvoice = ref({})
     const { can, canAny } = checksPermissions()
     const filters = reactive({
       page: 1,
-      random: 'hello',
     })
     const { displayCurrency } = displaysCurrency()
     const invoices = ref({
@@ -81,18 +98,12 @@ export default defineComponent({
       meta: {},
       links: {}
     })
-    const fetchInvoices = () => {
+    const fetchInvoices = async () => {
       loading.value = true
-      const params = {
-        ...filters,
-        student: props.student,
-      }
-      const route = $route('students.invoices.index', params)
 
-      $http.get(route).then(({ data }) => {
-        invoices.value = data
-        loading.value = false
-      })
+      const { data } = await $http.get(`/students/${props.student.uuid}/invoices?${qs.stringify(filters)}`)
+      invoices.value = data
+      loading.value = false
     }
     const paged = page => {
       filters.page = page
@@ -101,7 +112,6 @@ export default defineComponent({
     watch(filters, () => {
       fetchInvoices()
     })
-
     fetchInvoices()
 
     return {
@@ -113,6 +123,8 @@ export default defineComponent({
       paged,
       fetchInvoices,
       loading,
+      selectedInvoice,
+      convertInvoice,
     }
   }
 })
