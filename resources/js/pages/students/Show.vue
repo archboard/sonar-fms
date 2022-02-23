@@ -212,7 +212,6 @@ export default defineComponent({
   },
 
   setup ({ student }) {
-    const $route = inject('$route')
     const enrolledAt = dayjs(student.initial_district_entry_date)
     const showSlideout = ref(false)
     const syncingGuardians = ref(false)
@@ -221,7 +220,8 @@ export default defineComponent({
     const syncGuardians = () => {
       syncingGuardians.value = true
 
-      Inertia.post($route('students.guardians.sync', student), null, {
+      Inertia.post(`/students/${student.uuid}/guardians/sync`, null, {
+        preserveScroll: true,
         onFinish () {
           syncingGuardians.value = false
         }
