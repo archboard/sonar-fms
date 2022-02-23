@@ -2,25 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\School;
+use App\Http\Resources\TagResource;
 use App\Models\Student;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class StudentTagController extends Controller
 {
-    public function index(Request $request, School $school, Student $student)
+    public function index(Request $request, Student $student)
     {
         $this->authorize('viewAny', $student);
 
         $tags = $student->tags()
-            ->select('name')
+            ->select('name', 'color')
             ->ordered()
-            ->get()
-            ->map
-            ->name;
+            ->get();
 
-        return response()->json($tags);
+        return TagResource::collection($tags);
     }
 
     public function store(Request $request, Student $student)

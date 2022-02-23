@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GrantHolle\Http\Resources\Traits\HasResource;
 use Spatie\Tags\Tag as Model;
 
 /**
@@ -9,6 +10,8 @@ use Spatie\Tags\Tag as Model;
  */
 class Tag extends Model
 {
+    use HasResource;
+
     public static function student(School $school): string
     {
         return "students-{$school->id}";

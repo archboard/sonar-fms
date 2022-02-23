@@ -36,7 +36,7 @@ class StudentTagTest extends TestCase
             ->json();
 
         foreach ($json as $item) {
-            $this->assertTrue($this->tags->some(fn ($tag) => $tag->name === $item));
+            $this->assertTrue($this->tags->some(fn ($tag) => $tag->name === $item['name']));
         }
     }
 
@@ -58,7 +58,7 @@ class StudentTagTest extends TestCase
             ->json();
 
         $this->assertCount(1, $json);
-        $this->assertEquals($tag, $json[0]);
+        $this->assertEquals($tag, $json[0]['name']);
     }
 
     public function test_can_set_student_tags()

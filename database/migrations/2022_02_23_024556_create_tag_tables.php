@@ -13,6 +13,7 @@ class CreateTagTables extends Migration
 
             $table->json('name');
             $table->json('slug');
+            $table->string('color')->default('gray');
             $table->string('type')->nullable();
             $table->integer('order_column')->nullable();
 
