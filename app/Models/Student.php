@@ -8,6 +8,7 @@ use BeyondCode\Comments\Traits\HasComments;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -88,36 +89,39 @@ class Student extends Model implements Searchable
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function getAccountBalanceAttribute(): int
+    public function accountBalance(): Attribute
     {
-        return $this->invoices()
+        return Attribute::get(fn (): int => $this->invoices()
             ->isNotVoid()
             ->published()
             ->unpaid()
-            ->sum('remaining_balance');
+            ->sum('remaining_balance')
+        );
     }
 
-    public function getUnpaidInvoicesAttribute(): int
+    public function unpaidInvoices(): Attribute
     {
-        return $this->invoices()
+        return Attribute::get(fn (): int => $this->invoices()
             ->isNotVoid()
             ->published()
             ->unpaid()
-            ->count();
+            ->count()
+        );
     }
 
-    public function getRevenueAttribute(): int
+    public function revenue(): Attribute
     {
-        return $this->invoices()
+        return Attribute::get(fn (): int => $this->invoices()
             ->isNotVoid()
             ->published()
-            ->sum('total_paid');
+            ->sum('total_paid')
+        );
     }
 
-    public function getGradeLevelShortFormattedAttribute()
+    public function getGradeLevelShortFormattedAttribute(): string
     {
         if ($this->grade_level > 0) {
-            return $this->grade_level;
+            return (string) $this->grade_level;
         }
 
         if ($this->grade_level === 0) {
@@ -127,7 +131,7 @@ class Student extends Model implements Searchable
         return __('PK:age', ['age' => 5 + $this->grade_level]);
     }
 
-    public function getGradeLevelFormattedAttribute()
+    public function getGradeLevelFormattedAttribute(): string
     {
         if ($this->grade_level > 0) {
             return __('Grade :grade', ['grade' => $this->grade_level]);
