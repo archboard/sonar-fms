@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\UsesUuid;
 use BeyondCode\Comments\Traits\HasComments;
@@ -28,6 +29,7 @@ class Student extends Model implements Searchable
     use HasResource;
     use HasFactory;
     use BelongsToTenant;
+    use BelongsToSchool;
     use UsesUuid;
     use HasComments;
     use HasTags;

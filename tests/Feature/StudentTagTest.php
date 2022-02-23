@@ -60,4 +60,45 @@ class StudentTagTest extends TestCase
         $this->assertCount(1, $json);
         $this->assertEquals($tag, $json[0]);
     }
+
+    public function test_can_set_student_tags()
+    {
+        $this->assignPermission('update', Student::class);
+
+        $tag = $this->tags->first()->name;
+        $this->student->attachTag($tag, Tag::student($this->school));
+        $data = [
+            'tags' => [$tag, 'new tag'],
+        ];
+
+        $this->post(route('students.tags.store', $this->student), $data)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $tags = $this->student->tags();
+        $this->assertEquals(2, $tags->count());
+
+        $tags->each(function (Tag $tag) use ($data) {
+            $this->assertTrue(in_array($tag->name, $data['tags']));
+            $this->assertEquals(Tag::student($this->school), $tag->type);
+        });
+    }
+
+    public function test_can_set_student_tags_to_be_empty()
+    {
+        $this->assignPermission('update', Student::class);
+
+        $tag = $this->tags->first()->name;
+        $this->student->attachTag($tag, Tag::student($this->school));
+
+        $data = [
+            'tags' => [],
+        ];
+
+        $this->post(route('students.tags.store', $this->student), $data)
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertTrue($this->student->tags()->doesntExist());
+    }
 }

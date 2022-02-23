@@ -11,7 +11,7 @@ class StudentTagController extends Controller
 {
     public function index(Request $request, School $school, Student $student)
     {
-        $this->authorize('viewAny', Student::class);
+        $this->authorize('viewAny', $student);
 
         $tags = $student->tags()
             ->select('name')
@@ -25,6 +25,14 @@ class StudentTagController extends Controller
 
     public function store(Request $request, Student $student)
     {
+        $this->authorize('update', $student);
+
         $data = $request->validate(['tags' => ['array']]);
+
+        $student->syncTagsWithType($data['tags'], Tag::student($student->school));
+
+        session()->flash('success', __('Tags saved successfully.'));
+
+        return back();
     }
 }
