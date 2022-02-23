@@ -47,7 +47,7 @@
                   </div>
 
                   <div class="mt-4 flex items-start space-x-3 md:mt-0">
-                    <Button component="inertia-link" size="sm" :href="$route('students.invoices.create', student)">
+                    <Button component="inertia-link" size="sm" :href="`/students/${student.uuid}/invoices/create`">
                       {{ __('New invoice') }}
                     </Button>
                   </div>
@@ -135,8 +135,9 @@
             <section aria-labelledby="invoice-table" class="mt-8 xl:mt-10">
               <div>
                 <div class="divide-y divide-gray-300 dark:divide-gray-600">
-                  <div class="pb-4">
+                  <div class="pb-4 flex justify-between items-start">
                     <h2 id="invoice-table" class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Invoices') }}</h2>
+                    <Button component="InertiaLink" :href="`/students/${student.uuid}/invoices/create`" size="sm">{{ __('New invoice') }}</Button>
                   </div>
                   <div class="pt-6">
                     <div class="max-w-none">
