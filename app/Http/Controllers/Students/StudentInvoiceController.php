@@ -32,7 +32,6 @@ class StudentInvoiceController extends Controller
         $invoices = $student->invoices()
             ->with([
                 'currency',
-                'student',
                 'parent',
             ])
             ->orderBy('created_at', 'desc')
