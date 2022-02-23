@@ -40,7 +40,7 @@
                           <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
                         </svg>
                         <span class="text-sm font-medium">
-                          {{ __('Entered district on :date', { date: enrolledAt.format('MMM D, YYYY') }) }}
+                          {{ __('Entered district on :date', { date: displayDate(student.initial_district_entry_date, 'abbr_date') }) }}
                         </span>
                       </div>
                     </div>
@@ -145,7 +145,6 @@
                         ref="studentTable"
                         :student="student"
                         :permissions="permissions"
-                        @edit="editInvoice"
                       />
                     </div>
                   </div>
@@ -158,39 +157,29 @@
           </div>
         </div>
       </div>
-
-      <StudentInvoiceSlideout
-        v-if="showSlideout"
-        @close="slideoutClosed"
-        :student="student"
-        :invoice="selectedInvoice"
-      />
     </template>
   </Authenticated>
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '@/layouts/Authenticated'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import { CalculatorIcon } from '@heroicons/vue/solid'
-import dayjs from 'dayjs'
 import Spinner from '@/components/icons/spinner'
 import OutlineBadge from '@/components/OutlineBadge'
 import Button from '@/components/Button'
 import Textarea from '@/components/forms/Textarea'
-import StudentInvoiceSlideout from '@/components/slideouts/StudentInvoiceSlideout'
 import StudentInvoiceTable from '@/components/StudentInvoiceTable'
-import cloneDeep from 'lodash/cloneDeep'
 import displaysCurrency from '@/composition/displaysCurrency'
 import StudentActivity from '@/components/StudentActivity'
+import displaysDate from '@/composition/displaysDate'
 
 export default defineComponent({
   components: {
     StudentActivity,
     StudentInvoiceTable,
-    StudentInvoiceSlideout,
     Button,
     OutlineBadge,
     Spinner,
@@ -213,8 +202,7 @@ export default defineComponent({
   },
 
   setup ({ student }) {
-    const enrolledAt = dayjs(student.initial_district_entry_date)
-    const showSlideout = ref(false)
+    const { displayDate } = displaysDate()
     const syncingGuardians = ref(false)
     const studentTable = ref(null)
     const selectedInvoice = ref({})
@@ -228,25 +216,14 @@ export default defineComponent({
         }
       })
     }
-    const slideoutClosed = () => {
-      showSlideout.value = false
-      studentTable.value.fetchInvoices()
-    }
-    const editInvoice = invoice => {
-      selectedInvoice.value = cloneDeep(invoice)
-      showSlideout.value = true
-    }
     const { displayCurrency } = displaysCurrency()
 
     return {
-      enrolledAt,
+      displayDate,
       syncingGuardians,
       syncGuardians,
-      showSlideout,
       studentTable,
-      slideoutClosed,
       selectedInvoice,
-      editInvoice,
       displayCurrency,
     }
   }
