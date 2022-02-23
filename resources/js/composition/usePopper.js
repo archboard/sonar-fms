@@ -17,8 +17,8 @@ export default (options) => {
         return
       }
 
-      let popperEl = container.value.el || container.value
-      let referenceEl = trigger.value.el || trigger.value
+      let popperEl = container.value.el || container.value.$el || container.value
+      let referenceEl = trigger.value.el || trigger.value.$el || trigger.value
 
       if (
         !(referenceEl instanceof HTMLElement) ||
