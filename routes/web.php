@@ -95,6 +95,9 @@ Route::middleware('tenant')->group(function () {
                         Route::middleware('can:comment,student')
                             ->resource('/comments', \App\Http\Controllers\StudentCommentController::class)
                             ->except('create', 'edit');
+
+                        Route::resource('/tags', \App\Http\Controllers\StudentTagController::class)
+                            ->only('index', 'store');
                     });
 
                 /**
@@ -356,6 +359,8 @@ Route::middleware('tenant')->group(function () {
                 Route::put('/combine/{invoice}', [\App\Http\Controllers\CombineInvoiceController::class, 'update']);
 
                 Route::delete('/child/{invoice}', \App\Http\Controllers\RemoveChildInvoiceController::class);
+
+                Route::get('/tags/students', \App\Http\Controllers\FetchStudentTagsController::class);
 
                 /**
                  * User Routes

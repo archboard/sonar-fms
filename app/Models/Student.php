@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
+use Spatie\Tags\HasTags;
 
 /**
  * @mixin IdeHelperStudent
@@ -29,6 +30,7 @@ class Student extends Model implements Searchable
     use BelongsToTenant;
     use UsesUuid;
     use HasComments;
+    use HasTags;
 
     protected $guarded = [];
 
