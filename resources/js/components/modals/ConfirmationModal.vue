@@ -14,7 +14,7 @@
       <div class="mt-3 text-center sm:mt-5 w-full">
         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-headline">
           <slot name="headline">
-            {{ __('Are you sure ?') }}
+            {{ __('Are you sure?') }}
           </slot>
         </h3>
         <div class="mt-2">
