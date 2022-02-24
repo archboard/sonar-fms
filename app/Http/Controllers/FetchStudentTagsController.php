@@ -18,7 +18,7 @@ class FetchStudentTagsController extends Controller
     public function __invoke(Request $request, School $school)
     {
         $tags = Tag::query()
-            ->select('name', 'color')
+            ->select('id', 'name', 'color')
             ->where('type', Tag::student($school))
             ->ordered()
             ->get();

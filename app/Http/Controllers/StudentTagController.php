@@ -14,7 +14,7 @@ class StudentTagController extends Controller
         $this->authorize('viewAny', $student);
 
         $tags = $student->tags()
-            ->select('name', 'color')
+            ->select('id', 'name', 'color')
             ->ordered()
             ->get();
 
