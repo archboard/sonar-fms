@@ -2,13 +2,14 @@
   <input
     v-model="localValue"
     :type="type"
-    class="shadow-sm focus:ring-2 focus:ring-primary-500 focus:ring-offset-primary-500 focus:border-primary-500 block w-full border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-900 dark:focus:border-primary-500 transition duration-150 ease-in-out"
+    :class="classes.input"
     ref="input"
   >
 </template>
 
 <script>
 import { computed, onMounted, ref } from 'vue'
+import inputClasses from '@/composition/inputClasses'
 
 export default {
   props: {
@@ -27,6 +28,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, { emit }) {
+    const classes = inputClasses()
     const input = ref(null)
     const localValue = computed({
       get: () => props.modelValue,
@@ -40,6 +42,7 @@ export default {
     }
 
     return {
+      classes,
       input,
       localValue,
     }
