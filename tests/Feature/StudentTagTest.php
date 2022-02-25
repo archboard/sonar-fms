@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -68,7 +69,16 @@ class StudentTagTest extends TestCase
         $tag = $this->tags->first()->name;
         $this->student->attachTag($tag, Tag::student($this->school));
         $data = [
-            'tags' => [$tag, 'new tag'],
+            'tags' => [
+                [
+                    'name' => $tag,
+                    'color' => 'purple',
+                ],
+                [
+                    'name' => 'new tag',
+                    'color' => 'green',
+                ],
+            ],
         ];
 
         $this->post(route('students.tags.store', $this->student), $data)
@@ -78,8 +88,11 @@ class StudentTagTest extends TestCase
         $tags = $this->student->tags();
         $this->assertEquals(2, $tags->count());
 
-        $tags->each(function (Tag $tag) use ($data) {
-            $this->assertTrue(in_array($tag->name, $data['tags']));
+        $tagsByName = Arr::keyBy($data['tags'], 'name');
+        $tags->each(function (Tag $tag) use ($data, $tagsByName) {
+            $currentTag = $tagsByName[$tag->name];
+            $this->assertEquals($currentTag['name'], $tag->name);
+            $this->assertEquals($currentTag['color'], $tag->color);
             $this->assertEquals(Tag::student($this->school), $tag->type);
         });
     }

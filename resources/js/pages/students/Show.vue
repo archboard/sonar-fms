@@ -112,18 +112,24 @@
                       </ul>
                     </div>
                     <div>
-                      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">Tags</h2>
-                      <ul class="mt-2 leading-8 space-x-2">
-                        <li class="inline">
-                          <OutlineBadge is="a" href="#" color="bg-rose-500">
-                            Bug
-                          </OutlineBadge>
-                        </li>
-                        <li class="inline">
-                          <OutlineBadge is="a" href="#" color="bg-primary-500">
-                            Accessibility
-                          </OutlineBadge>
-                        </li>
+                      <div class="flex items-end space-x-3">
+                        <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('Tags') }}</h2>
+                        <button v-if="student.tags.length > 0 && can('students.update')" @click.prevent="editTags = true" class="font-normal text-sm text-gray-500 dark:text-gray-300">
+                          {{ __('Edit') }}
+                        </button>
+                      </div>
+                      <ul class="mt-2 leading-8 space-x-2 flex">
+                        <HelpText v-if="student.tags.length === 0">
+                          {{ __('No tags for this student.') }} <Link is="button" @click.prevent="editTags = true">{{ __('Add some') }}</Link>.
+                        </HelpText>
+
+                        <OutlineBadge
+                          v-for="tag in student.tags"
+                          :key="tag.id"
+                          :color="tag.color"
+                        >
+                          {{ tag.name }}
+                        </OutlineBadge>
                       </ul>
                     </div>
                   </div>
@@ -159,6 +165,14 @@
       </div>
     </template>
   </Authenticated>
+
+  <TagModal
+    v-if="editTags"
+    @close="editTags = false"
+    search-url="/tags/students"
+    :fetch-url="`/students/${student.uuid}/tags`"
+    :save-url="`/students/${student.uuid}/tags`"
+  />
 </template>
 
 <script>
@@ -175,9 +189,16 @@ import StudentInvoiceTable from '@/components/StudentInvoiceTable'
 import displaysCurrency from '@/composition/displaysCurrency'
 import StudentActivity from '@/components/StudentActivity'
 import displaysDate from '@/composition/displaysDate'
+import TagModal from '@/components/modals/TagModal'
+import HelpText from '@/components/HelpText'
+import Link from '@/components/Link'
+import checksPermissions from '@/composition/checksPermissions'
 
 export default defineComponent({
   components: {
+    Link,
+    HelpText,
+    TagModal,
     StudentActivity,
     StudentInvoiceTable,
     Button,
@@ -202,8 +223,10 @@ export default defineComponent({
   },
 
   setup ({ student }) {
+    const { can } = checksPermissions()
     const { displayDate } = displaysDate()
     const syncingGuardians = ref(false)
+    const editTags = ref(true)
     const studentTable = ref(null)
     const selectedInvoice = ref({})
     const syncGuardians = () => {
@@ -225,6 +248,8 @@ export default defineComponent({
       studentTable,
       selectedInvoice,
       displayCurrency,
+      editTags,
+      can,
     }
   }
 })

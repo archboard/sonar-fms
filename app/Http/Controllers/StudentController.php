@@ -59,7 +59,7 @@ class StudentController extends Controller
     public function show(Request $request, Student $student)
     {
         $title = $student->full_name;
-        $student->load('users');
+        $student->load('users', 'tags');
         $unpaidInvoices = $student->unpaid_invoices;
         $unpaidAmount = $student->account_balance;
         $revenue = $student->revenue;

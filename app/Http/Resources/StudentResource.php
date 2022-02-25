@@ -34,6 +34,7 @@ class StudentResource extends JsonResource
             'initial_school_entry_date' => $this->initial_school_entry_date,
             'users' => UserResource::collection($this->whenLoaded('users')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
         ];
     }
 }
