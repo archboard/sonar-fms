@@ -6,7 +6,6 @@
     :headline="__('Convert invoice to template')"
     :action-loading="templateForm.processing"
     :initial-focus="input"
-    ref="modal"
   >
     <form @submit.prevent="save">
       <HelpText class="mb-4">
@@ -50,22 +49,22 @@ export default defineComponent({
   emits: ['close'],
 
   setup (props) {
-    const modal = ref()
     const input = ref()
     const templateForm = useForm({
       name: '',
     })
-    const save = async () => {
+    const save = close => {
       templateForm.post(props.endpoint, {
         preserveScroll: true,
-        onSuccess: () => modal.value?.close()
+        onSuccess () {
+          close()
+        }
       })
     }
 
     return {
       templateForm,
       save,
-      modal,
       input,
     }
   }
