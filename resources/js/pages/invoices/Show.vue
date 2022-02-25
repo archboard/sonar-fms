@@ -171,7 +171,7 @@
   <ConvertInvoiceModal
     v-if="convert"
     @close="convert = false"
-    :endpoint="$route('invoices.convert', invoice)"
+    :endpoint="`/invoices/${invoice.uuid}/convert`"
   />
 </template>
 
