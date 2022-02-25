@@ -26,6 +26,14 @@
         >
           {{ displayLongGrade(grade) }}
         </DismissibleBadge>
+
+        <DismissibleBadge
+          v-for="(tag, index) in filters.tags"
+          :key="tag"
+          @dismiss="filters.tags.splice(index, 1)"
+        >
+          {{ tag }}
+        </DismissibleBadge>
       </FadeInGroup>
     </div>
 
@@ -91,6 +99,12 @@
         </tr>
       </Thead>
       <Tbody>
+        <tr v-if="students.data.length === 0">
+          <Td colspan="5" class="text-center">
+            {{ __('No results found.') }}
+          </Td>
+        </tr>
+
         <tr
           v-for="(student, index) in students.data"
           :key="student.id"
@@ -218,6 +232,7 @@ export default defineComponent({
         orderBy: 'last_name',
         orderDir: 'asc',
         grades: [],
+        tags: [],
         status: 'enrolled',
       },
       `/students`,

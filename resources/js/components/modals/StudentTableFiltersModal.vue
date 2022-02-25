@@ -14,6 +14,7 @@
           <option value="100">100</option>
         </Select>
       </InputWrap>
+
       <InputWrap>
         <Label>{{ __('Grade levels') }}</Label>
         <div class="grid grid-cols-6 gap-2">
@@ -23,6 +24,22 @@
           </CheckboxWrapper>
         </div>
       </InputWrap>
+
+      <InputWrap v-if="allTags.length > 0">
+        <Label>{{ __('Tags') }}</Label>
+        <div class="grid grid-cols-3 gap-2">
+          <CheckboxWrapper v-for="tag in allTags">
+            <Checkbox v-model:checked="localFilters.tags" :value="tag.name" />
+            <CheckboxText>
+              <span class="flex items-center space-x-2">
+                <span class="h-2 w-2 rounded-full" :class="colors[tag.color]" aria-hidden="true"></span>
+                <span>{{ tag.name }}</span>
+              </span>
+            </CheckboxText>
+          </CheckboxWrapper>
+        </div>
+      </InputWrap>
+
       <InputWrap>
         <Label for="enrolled">{{ __('Enrollment Status') }}</Label>
         <Select id="enrolled" v-model="localFilters.status">
@@ -36,7 +53,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, inject, reactive } from 'vue'
 import Modal from '@/components/Modal'
 import InputWrap from '@/components/forms/InputWrap'
 import Label from '@/components/forms/Label'
@@ -45,6 +62,8 @@ import Checkbox from '@/components/forms/Checkbox'
 import CheckboxText from '@/components/forms/CheckboxText'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
 import displaysGrades from '@/composition/displaysGrades'
+import fetchesStudentTags from '@/composition/fetchesStudentTags'
+import tagColorKey from '@/composition/tagColorKey'
 
 export default defineComponent({
   emits: ['close', 'apply'],
@@ -64,6 +83,7 @@ export default defineComponent({
   },
 
   setup (props, { emit }) {
+    const $http = inject('$http')
     const modalClosed = () => {
       emit('close')
     }
@@ -73,12 +93,17 @@ export default defineComponent({
     }
     const localFilters = reactive(Object.assign({}, props.filters))
     const { displayShortGrade } = displaysGrades()
+    const { allTags, fetchAllTags } = fetchesStudentTags()
+    const colors = tagColorKey()
+    fetchAllTags()
 
     return {
       modalClosed,
       localFilters,
       applyFilters,
       displayShortGrade,
+      allTags,
+      colors,
     }
   }
 })

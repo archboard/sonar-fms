@@ -52,6 +52,8 @@ class Student extends Model implements Searchable
             $builder->whereIn('grade_level', $grades);
         })->when(isset($filters['ids']), function (Builder $builder) use ($filters) {
             $builder->whereIn('uuid', $filters['ids']);
+        })->when($filters['tags'] ?? null, function (Builder $builder, array $tags) {
+            $builder->withAnyTags($tags, Tag::student(School::current()));
         });
 
         // Enrollment status
