@@ -226,7 +226,7 @@ export default defineComponent({
     const { can } = checksPermissions()
     const { displayDate } = displaysDate()
     const syncingGuardians = ref(false)
-    const editTags = ref(true)
+    const editTags = ref(false)
     const studentTable = ref(null)
     const selectedInvoice = ref({})
     const syncGuardians = () => {
