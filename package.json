@@ -29,6 +29,8 @@
     "cross-env": "^7.0",
     "dayjs": "^1.10.4",
     "dotenv": "^8.4.0",
+    "just-capitalize": "^3.0.1",
+    "just-random": "^3.0.1",
     "laravel-mix": "^6.0.18",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.22",
