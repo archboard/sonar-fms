@@ -81,6 +81,7 @@ import OutlineBadge from '@/components/OutlineBadge'
 import HelpText from '@/components/HelpText'
 import menuItemClasses from '@/composition/menuItemClasses'
 import inputClasses from '@/composition/inputClasses'
+import fetchesStudentTags from '@/composition/fetchesStudentTags'
 import { nanoid } from 'nanoid'
 import isEmpty from 'lodash/isEmpty'
 import random from 'just-random'
@@ -124,7 +125,7 @@ export default defineComponent({
     const query = ref('')
     const tags = ref([])
     const selectedTag = ref()
-    const remoteTags = ref([])
+    const { fetchAllTags, allTags } = fetchesStudentTags()
     const comboInput = ref()
     const colors = tagColorKey()
     const form = useForm({
@@ -137,12 +138,8 @@ export default defineComponent({
 
       fetching.value = false
     }
-    const fetchAllTags = async () => {
-      const { data } = await $http.get(`/tags/students`)
-      remoteTags.value = data
-    }
     const filteredTags = computed(() => {
-      return remoteTags.value.filter(t => t.name.toLowerCase().includes(query.value.toLowerCase()))
+      return allTags.value.filter(t => t.name.toLowerCase().includes(query.value.toLowerCase()))
     })
     const save = close => {
       form.tags = { ...tags.value }
