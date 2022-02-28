@@ -17,6 +17,7 @@ use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Hidehalo\Nanoid\Client;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -412,6 +413,19 @@ class Invoice extends Model implements Searchable
     public function invoiceRefunds(): HasMany
     {
         return $this->hasMany(InvoiceRefund::class);
+    }
+
+    public function hasLargerQuantities(): Attribute
+    {
+        return Attribute::get(function (): bool {
+            if (!$this->relationLoaded('invoiceItems')) {
+                return true;
+            }
+
+            return $this->invoiceItems->some(
+                fn (InvoiceItem $item) => $item->quantity > 1
+            );
+        });
     }
 
     public function getIsVoidAttribute(): bool

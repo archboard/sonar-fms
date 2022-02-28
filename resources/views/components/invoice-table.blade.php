@@ -45,7 +45,9 @@
           <tr>
             <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
             <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
-            <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
+            @if ($invoice->has_larger_quantities)
+              <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
+            @endif
             <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Amount') }}</th>
           </tr>
         </thead>
@@ -54,12 +56,14 @@
             <tr>
               <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
               <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
-              <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
+              @if ($invoice->has_larger_quantities)
+                <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
+              @endif
               <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount, $currency) }}</td>
             </tr>
           @endforeach
           <tr>
-            <td class="font-bold text-left px-4 py-2 text-sm" colspan="3">
+            <td class="font-bold text-left px-4 py-2 text-sm" colspan="@if($invoice->has_larger_quantities) 3 @else 2 @endif">
               {{ __('Subtotal') }}
             </td>
             <td class="font-bold text-right px-4 py-2 text-sm">
