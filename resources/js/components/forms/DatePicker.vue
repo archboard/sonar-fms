@@ -36,6 +36,7 @@ import Input from './Input'
 import FadeIn from '../transitions/FadeIn'
 import { CalendarIcon, TrashIcon } from '@heroicons/vue/outline'
 import displaysDate from '@/composition/displaysDate'
+import 'v-calendar/dist/style.css'
 
 export default defineComponent({
   components: {
