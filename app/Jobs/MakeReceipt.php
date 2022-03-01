@@ -31,6 +31,7 @@ class MakeReceipt implements ShouldQueue
      */
     public function handle()
     {
+        /** @var InvoicePayment $payment */
         $payment = InvoicePayment::find($this->paymentUuid);
         $payment->saveReceiptPdf();
     }

@@ -105,7 +105,6 @@
               <Link is="a" :href="`/receipts/${receipt.id}`">{{ receipt.receipt_number }}</Link>
             </li>
           </ul>
-          {{ payment.made_by?.full_name }}
         </template>
       </DescriptionItem>
       <DescriptionItem>

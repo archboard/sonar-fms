@@ -27,7 +27,13 @@
       @foreach($layout->layout_data['rows'] as $row)
         @if($row['isContentTable'])
           <div>
-            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ $payment->receipt?->receipt_number ?? $title }}</h3>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+              @if($payment->receipt?->receipt_number)
+                {{ __('Receipt :number', ['number' => $payment->receipt->receipt_number]) }}
+              @else
+                {{ $title }}
+              @endif
+            </h3>
             <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ __('Paid on :date', ['date' => $payment->paid_at->format('F j, Y')]) }}</p>
           </div>
           <div class="mt-5 border-t border-gray-200">
@@ -38,26 +44,41 @@
                   <span class="flex-grow">{{ $payment->invoice->invoice_number }}</span>
                 </dd>
               </div>
-              <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm font-medium text-gray-500">
-                  @if($payment->invoice->students->isNotEmpty())
-                    {{ __('Students') }}
-                  @else
-                    {{ __('Student') }}
-                  @endif
-                </dt>
-                <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  @if($payment->invoice->students->isNotEmpty())
-                    <ul>
-                      @foreach($payment->invoice->students as $student)
-                        <li>{{ $student->full_name }} ({{ $student->student_number }})</li>
+              <div class="py-4 sm:py-5">
+                @if($invoice->children->isEmpty())
+                  <x-invoice-table :invoice="$invoice" :currency="$currency" :show-schedule="false" :show-total="false" />
+                @else
+                  <x-invoice-table :invoice="$invoice" :currency="$currency" :show-schedule="false" :show-total="false">
+                    <div class="bg-gray-50 p-6 rounded-2xl space-y-6 my-6">
+                      @foreach($invoice->children as $child)
+                        @if(!$child->is_void)
+                          <x-invoice-table :invoice="$child" :currency="$currency" :show-schedule="false" :show-total="false" />
+                        @endif
                       @endforeach
-                    </ul>
-                  @else
-                    {{ $payment->invoice->student->full_name }} ({{ $payment->invoice->student->student_number }})
-                  @endif
-                </dd>
+                    </div>
+                  </x-invoice-table>
+                @endif
               </div>
+{{--              <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">--}}
+{{--                <dt class="text-sm font-medium text-gray-500">--}}
+{{--                  @if($payment->invoice->students->isNotEmpty())--}}
+{{--                    {{ __('Students') }}--}}
+{{--                  @else--}}
+{{--                    {{ __('Student') }}--}}
+{{--                  @endif--}}
+{{--                </dt>--}}
+{{--                <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">--}}
+{{--                  @if($payment->invoice->students->isNotEmpty())--}}
+{{--                    <ul>--}}
+{{--                      @foreach($payment->invoice->students as $student)--}}
+{{--                        <li>{{ $student->full_name }} ({{ $student->student_number }})</li>--}}
+{{--                      @endforeach--}}
+{{--                    </ul>--}}
+{{--                  @else--}}
+{{--                    {{ $payment->invoice->student->full_name }} ({{ $payment->invoice->student->student_number }})--}}
+{{--                  @endif--}}
+{{--                </dd>--}}
+{{--              </div>--}}
               <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Payment amount') }}</dt>
                 <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">

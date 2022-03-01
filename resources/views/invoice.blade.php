@@ -31,7 +31,9 @@
             <x-invoice-table :invoice="$invoice" :currency="$currency">
               <div class="bg-gray-50 p-6 rounded-2xl space-y-6 my-6">
                 @foreach($invoice->children as $child)
-                  <x-invoice-table :invoice="$child" :currency="$currency" />
+                  @if(!$child->is_void)
+                    <x-invoice-table :invoice="$child" :currency="$currency" />
+                  @endif
                 @endforeach
               </div>
             </x-invoice-table>

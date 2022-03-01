@@ -45,6 +45,13 @@ class Receipt extends Model
 
     public function download(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
+        $disk = static::getDisk();
+
+        // If the pdf doesn't exist, try creating it
+        if (!$disk->exists($this->path)) {
+            $this->invoicePayment->saveReceiptPdf(receipt: $this);
+        }
+
         return static::getDisk()->download($this->path);
     }
 }

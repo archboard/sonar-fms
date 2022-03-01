@@ -263,18 +263,29 @@ class InvoicePayment extends Model
         return Str::replaceArray('?', $parameters, '?/?/?/?/?/?.pdf');
     }
 
-    public function saveReceiptPdf(?ReceiptLayout $layout = null, ?Receipt $receipt = null): Receipt
+    public function receiptView(?ReceiptLayout $layout = null, ?Receipt $receipt = null)
     {
         $receipt = $receipt ?? $this->makeReceipt($this->recordedBy);
         $layout = $layout ?? $this->school->getDefaultReceiptLayout();
         $title = __('Receipt :number', ['number' => $receipt->receipt_number]);
+        $invoice = $this->invoice;
+        $invoice->fullLoad()->loadChildren();
 
-        $content = view('receipt', [
+        return view('receipt', [
             'title' => $title,
-            'currency' => $this->currency,
+            'invoice' => $invoice->toResource(),
+            'currency' => $invoice->currency,
             'layout' => $layout,
             'payment' => $this,
-        ])->render();
+        ]);
+    }
+
+    public function saveReceiptPdf(?ReceiptLayout $layout = null, ?Receipt $receipt = null): Receipt
+    {
+        $receipt = $receipt ?? $this->makeReceipt($this->recordedBy);
+        $layout = $layout ?? $this->school->getDefaultReceiptLayout();
+
+        $content = $this->receiptView($layout, $receipt)->render();
 
         $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
         $disk = Receipt::getDisk();

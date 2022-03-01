@@ -2,7 +2,7 @@
 /** @var \App\Models\Invoice $invoice */
 @endphp
 
-@props(['invoice' => [], 'currency'])
+@props(['invoice' => [], 'currency', 'showSchedule' => true, 'showTotal' => true])
 
 <div class="space-y-8">
   <div class="relative">
@@ -45,6 +45,7 @@
           <tr>
             <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
             <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
+            @dump($invoice->has_larger_quantities)
             @if ($invoice->has_larger_quantities)
               <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
             @endif
@@ -56,6 +57,7 @@
             <tr>
               <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
               <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
+              @dump($invoice->has_larger_quantities)
               @if ($invoice->has_larger_quantities)
                 <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
               @endif
@@ -140,7 +142,7 @@
       </div>
     @endif
 
-    @if(!$invoice->parent_uuid)
+    @if(!$invoice->parent_uuid && $showTotal)
       <table class="w-full mt-4 border-2 border-gray-500">
         <tbody>
           <tr>
@@ -158,7 +160,7 @@
         </tbody>
       </table>
 
-      @if($invoice->invoicePaymentSchedules->isNotEmpty())
+      @if($invoice->invoicePaymentSchedules->isNotEmpty() && $showSchedule)
         <div class="my-6 relative">
           <div class="absolute inset-0 flex items-center" aria-hidden="true">
             <div class="w-full border-t border-gray-300"></div>
