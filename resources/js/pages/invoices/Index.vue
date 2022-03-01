@@ -18,15 +18,18 @@
       </Dropdown>
     </template>
 
-    <div class="mb-2 flex space-x-4">
-      <div class="relative w-full">
+    <div class="mb-2 flex flex-wrap lg:space-x-4">
+      <div class="relative flex-1 w-full mb-4 lg:mb-0 lg:w-auto">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search for invoice by title, number or student')" />
       </div>
-      <FilterButton @click.prevent="showFilters = true" />
-      <ClearFilterButton @click.prevent="resetFilters" />
+      <div class="w-full lg:w-auto space-x-2 lg:space-x-4 flex">
+        <FilterButton @click.prevent="showFilters = true" />
+        <ClearFilterButton @click.prevent="resetFilters" />
+        <ExportButton @click.prevent="promptExport = true" />
+      </div>
     </div>
 
     <div class="space-x-2 pt-1 flex flex-wrap">
@@ -163,6 +166,12 @@
     @apply="applyFilters"
     :filters="filters"
   />
+  <ExportPromptModal
+    v-if="promptExport"
+    @close="promptExport = false"
+    url="/export/invoices"
+    :filters="filters"
+  />
 </template>
 
 <script>
@@ -201,10 +210,14 @@ import DismissibleBadge from '@/components/DismissibleBadge'
 import InvoiceDismissibleBadges from '@/components/InvoiceDismissibleBadges'
 import FilterButton from '@/components/FilterButton'
 import ClearFilterButton from '@/components/ClearFilterButton'
+import ExportPromptModal from '@/components/modals/ExportPromptModal'
+import ExportButton from '@/components/ExportButton'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ExportButton,
+    ExportPromptModal,
     ClearFilterButton,
     FilterButton,
     InvoiceDismissibleBadges,
@@ -247,6 +260,7 @@ export default defineComponent({
   setup (props) {
     const $http = inject('$http')
     const showFilters = ref(false)
+    const promptExport = ref(false)
     const selectedInvoice = ref({})
     const selectAll = ref(props.user.invoice_selection.length > 0)
     const { can } = checksPermissions()
@@ -315,6 +329,7 @@ export default defineComponent({
       selectAll,
       selectInvoice,
       clearSelection,
+      promptExport,
     }
   }
 })

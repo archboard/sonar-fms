@@ -1,18 +1,18 @@
 <template>
   <button :class="tables">
-    <AdjustmentsIcon class="w-5 h-5 md:w-6 md:h-6 mr-2" />
-    <span>{{ __('Filters') }}</span>
+    <CloudDownloadIcon class="w-5 h-5 md:w-6 md:h-6 mr-2" />
+    <span>{{ __('Export') }}</span>
   </button>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import { AdjustmentsIcon } from '@heroicons/vue/outline'
+import { CloudDownloadIcon } from '@heroicons/vue/outline'
 import buttonClasses from '@/composition/buttonClasses'
 
 export default defineComponent({
   components: {
-    AdjustmentsIcon,
+    CloudDownloadIcon,
   },
 
   setup () {

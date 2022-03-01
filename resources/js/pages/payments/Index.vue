@@ -21,16 +21,18 @@
       </Dropdown>
     </template>
 
-    <div class="flex mb-2 space-x-4">
-      <div class="relative w-full">
+    <div class="mb-2 flex flex-wrap lg:space-x-4">
+      <div class="relative flex-1 w-full mb-4 lg:mb-0 lg:w-auto">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <SearchIcon class="h-5 w-5 text-gray-500" />
         </div>
         <Input v-model="searchTerm" class="pl-12" type="search" :placeholder="__('Search by invoice or student')" />
       </div>
-
-      <FilterButton @click.prevent="showFilters = true" />
-      <ClearFilterButton @click.prevent="resetFilters" />
+      <div class="w-full lg:w-auto space-x-2 lg:space-x-4 flex">
+        <FilterButton @click.prevent="showFilters = true" />
+        <ClearFilterButton @click.prevent="resetFilters" />
+<!--        <ExportButton @click.prevent="promptExport = true" />-->
+      </div>
     </div>
 
     <div class="space-x-2 pt-1 flex flex-wrap">
