@@ -25,6 +25,11 @@ axios.interceptors.response.use(response => {
   return response
 }, async err => {
   const status = get(err, 'response.status')
+  const ignoredStatus = [409]
+
+  if (ignoredStatus.includes(status)) {
+    return Promise.resolve(err.response)
+  }
 
   if (status === 419) {
     const config = err.response.config

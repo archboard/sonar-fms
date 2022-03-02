@@ -388,6 +388,13 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/payment-methods/all', \App\Http\Controllers\FetchPaymentMethodsController::class);
                 Route::resource('/payment-methods', \App\Http\Controllers\PaymentMethodController::class)
                     ->except('destroy');
+
+                /**
+                 * Record exports
+                 */
+                Route::post('/export/{type}', \App\Http\Controllers\ExportRecordsController::class);
+                Route::get('/exports/{export}', \App\Http\Controllers\DownloadExportController::class)
+                    ->name('exports.download');
             });
 
         /**

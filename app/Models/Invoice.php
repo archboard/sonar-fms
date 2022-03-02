@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\Exportable;
 use App\Factories\UuidFactory;
 use App\Http\Requests\SaveRefundRequest;
 use App\Jobs\CalculateInvoiceAttributes;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -39,7 +41,7 @@ use Spatie\Searchable\SearchResult;
 /**
  * @mixin IdeHelperInvoice
  */
-class Invoice extends Model implements Searchable
+class Invoice extends Model implements Searchable, Exportable
 {
     use BelongsToTenant;
     use BelongsToSchool;
@@ -1418,5 +1420,89 @@ class Invoice extends Model implements Searchable
         }
 
         return $refund;
+    }
+
+    public static function getExportHeadings(): array
+    {
+        return [
+            __('Invoice number'),
+            __('Combined invoice number'),
+            __('Student'),
+            __('Student number'),
+            __('Grade'),
+//            __('Contact'),
+//            __('Contact email'),
+            __('Title'),
+            __('Status'),
+            __('Invoice date'),
+            __('Availability'),
+            __('Due date'),
+            __('Voided'),
+            __('Term'),
+            __('Amount due'),
+            __('Remaining balance'),
+        ];
+    }
+
+    public function toRow(): array
+    {
+        return [
+            $this->invoice_number,
+            $this->parent?->invoice_number,
+            $this->student?->full_name,
+            $this->student?->student_number,
+            $this->student?->grade_level_short_formatted,
+//            $this->user?->full_name,
+//            $this->user?->email,
+            $this->title,
+            $this->status_label,
+            $this->invoice_date?->format('Y-m-d'),
+            $this->available_at?->format('Y-m-d'),
+            $this->due_at?->format('Y-m-d'),
+            $this->voided_at?->format('Y-m-d'),
+            $this->term?->name,
+            $this->amount_due_formatted,
+            $this->remaining_balance_formatted,
+        ];
+    }
+
+    public function getExportRow(): array
+    {
+        $row = $this->toRow();
+
+        if ($this->children->isEmpty()) {
+            return $row;
+        }
+
+        return [
+            $row,
+            ...$this->children->map(
+                fn (Invoice $invoice) => $invoice->toRow()
+            )->toArray(),
+        ];
+    }
+
+    public static function getExportQuery(RecordExport $export): \Illuminate\Database\Query\Builder|Builder|Relation
+    {
+        $query = $export->school
+            ->invoices()
+            ->notAChild()
+            ->orderBy('invoice_date', 'desc')
+            ->with([
+                'student',
+                'students',
+                'currency',
+                'term',
+                'children.student',
+                'children.parent',
+                'children.students',
+                'children.currency',
+            ]);
+
+        if ($export->apply_filters) {
+            $query->filter($export->filters);
+        }
+
+        return $query;
     }
 }

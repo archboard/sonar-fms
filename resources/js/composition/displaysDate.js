@@ -19,6 +19,7 @@ export default () => {
   const formats = {
     full: `MMMM D, YYYY ${timeFormat.value}`,
     abbr: `MMM D, YYYY ${timeFormat.value}`,
+    short: `MMM D ${timeFormat.value}`,
     time: timeFormat.value,
     abbr_date: 'MMM D, YYYY',
   }
