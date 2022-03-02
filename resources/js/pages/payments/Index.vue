@@ -31,7 +31,7 @@
       <div class="w-full lg:w-auto space-x-2 lg:space-x-4 flex">
         <FilterButton @click.prevent="showFilters = true" />
         <ClearFilterButton @click.prevent="resetFilters" />
-<!--        <ExportButton @click.prevent="promptExport = true" />-->
+        <ExportButton @click.prevent="promptExport = true" />
       </div>
     </div>
 
@@ -173,6 +173,13 @@
       :payment="currentPayment"
     />
   </Authenticated>
+
+  <ExportPromptModal
+    v-if="promptExport"
+    @close="promptExport = false"
+    url="/export/payments"
+    :filters="filters"
+  />
 </template>
 
 <script>
@@ -208,10 +215,14 @@ import Button from '@/components/Button'
 import PaymentTableFiltersModal from '@/components/modals/PaymentTableFiltersModal'
 import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
 import PaymentActionItems from '@/components/PaymentActionItems'
+import ExportButton from '@/components/ExportButton'
+import ExportPromptModal from '@/components/modals/ExportPromptModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ExportPromptModal,
+    ExportButton,
     PaymentActionItems,
     PaymentDetailsModal,
     PaymentTableFiltersModal,
@@ -254,6 +265,7 @@ export default defineComponent({
     const $route = inject('$route')
     const showFilters = ref(false)
     const selectAll = ref(false)
+    const promptExport = ref(false)
     const currentPayment = ref({})
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
@@ -307,6 +319,7 @@ export default defineComponent({
       can,
       displayLongGrade,
       currentPayment,
+      promptExport,
     }
   }
 })

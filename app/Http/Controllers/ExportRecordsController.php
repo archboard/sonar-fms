@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RecordsExportRequest;
 use App\Models\Invoice;
+use App\Models\InvoicePayment;
 use App\Models\RecordExport;
 use Inertia\Inertia;
 
@@ -19,6 +20,7 @@ class ExportRecordsController extends Controller
     {
         $configuration = [
             'invoices' => Invoice::class,
+            'payments' => InvoicePayment::class,
         ];
         $model = $configuration[$type] ?? null;
 

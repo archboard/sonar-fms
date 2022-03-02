@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Concerns\Exportable;
 use App\Http\Requests\UpdatePaymentRequest;
 use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\MakeReceipt;
 use App\Traits\BelongsToInvoice;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
-use App\Traits\HasActivities;
 use App\Traits\HasAmountAttribute;
 use App\Traits\UsesUuid;
 use Brick\Money\Money;
@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -31,7 +31,7 @@ use Spatie\Browsershot\Browsershot;
 /**
  * @mixin IdeHelperInvoicePayment
  */
-class InvoicePayment extends Model
+class InvoicePayment extends Model implements Exportable
 {
     use HasFactory;
     use HasResource;
@@ -336,5 +336,65 @@ class InvoicePayment extends Model
         MakeReceipt::dispatch($this->uuid);
 
         return $this;
+    }
+
+    public static function getExportHeadings(): array
+    {
+        return [
+            __('Invoice number'),
+            __('Title'),
+            __('Student'),
+            __('Student number'),
+            __('Grade'),
+            __('Payment method'),
+            __('Transaction details'),
+            __('Date paid'),
+            __('Amount'),
+            __('Paid by'),
+            __('Paid by email'),
+            __('Recorded by'),
+            __('Notes'),
+        ];
+    }
+
+    public function getExportRow(): array
+    {
+        return [
+            $this->invoice->invoice_number,
+            $this->invoice->title,
+            $this->invoice->student?->full_name,
+            $this->invoice->student?->student_number,
+            $this->invoice->student?->grade_level_short_formatted,
+            $this->paymentMethod?->name,
+            $this->transaction_details,
+            $this->paid_at->toDateString(),
+            $this->amount_formatted,
+            $this->madeBy?->full_name,
+            $this->madeBy?->email,
+            $this->recordedBy->full_name,
+            $this->notes,
+        ];
+    }
+
+    public static function getExportQuery(RecordExport $export): \Illuminate\Database\Query\Builder|Builder|Relation
+    {
+        $query = $export->school
+            ->invoicePayments()
+            ->with([
+                'invoice',
+                'currency',
+                'paymentMethod',
+                'madeBy',
+                'recordedBy',
+                'invoice.student',
+                'invoice.currency',
+            ])
+            ->orderBy('paid_at', 'desc');
+
+        if ($export->apply_filters) {
+            $query->filter($export->filters);
+        }
+
+        return $query;
     }
 }
