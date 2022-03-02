@@ -45,7 +45,6 @@
           <tr>
             <th class="text-left px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Item') }}</th>
             <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Price') }}</th>
-            @dump($invoice->has_larger_quantities)
             @if ($invoice->has_larger_quantities)
               <th class="text-right px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 border">{{ __('Quantity') }}</th>
             @endif
@@ -57,7 +56,6 @@
             <tr>
               <td class="text-left px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->name }}</td>
               <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ displayCurrency($invoiceItem->amount_per_unit, $currency) }}</td>
-              @dump($invoice->has_larger_quantities)
               @if ($invoice->has_larger_quantities)
                 <td class="text-right px-4 py-2 text-sm text-gray-900 border-b">{{ $invoiceItem->quantity }}</td>
               @endif
