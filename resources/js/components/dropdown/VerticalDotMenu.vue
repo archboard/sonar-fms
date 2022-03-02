@@ -19,7 +19,7 @@
       </button>
     </MenuButton>
 
-    <teleport to="body">
+    <teleport to="#tooltip-container">
       <div ref="container" class="w-56 z-10">
         <transition
           enter-active-class="transition duration-100 ease-out"

@@ -5,9 +5,21 @@ export default (options) => {
   const trigger = ref(null)
   const container = ref(null)
   let updatePopper = null
+  let updatePopperOptions = null
   const update = () => {
     if (typeof updatePopper === 'function') {
       updatePopper()
+    }
+  }
+  const toggleEventListener = (enabled) => {
+    if (typeof updatePopperOptions === 'function') {
+      updatePopperOptions(options => ({
+        ...options,
+        modifiers: [
+          ...options.modifiers,
+          { name: 'eventListeners', enabled }
+        ]
+      }))
     }
   }
 
@@ -38,5 +50,6 @@ export default (options) => {
     trigger,
     container,
     update,
+    toggleEventListener,
   }
 }
