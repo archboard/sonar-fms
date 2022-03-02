@@ -110,6 +110,7 @@ class CreateInvoiceForStudentTest extends TestCase
         $invoice = $student->invoices()->first();
         $this->assertNotNull($invoice->invoice_number);
         $this->assertEquals($invoiceData['title'], $invoice->title);
+        $this->assertEquals($invoiceData['title'], $invoice->raw_title);
         $this->assertEquals($invoiceData['description'], $invoice->description);
         $this->assertEquals($invoiceData['term_id'], $invoice->term_id);
         $this->assertEquals($invoiceData['notify'], $invoice->notify);

@@ -900,6 +900,7 @@ class Invoice extends Model implements Searchable, Exportable
             ->getData(true);
 
         $data = Arr::only($resource, static::$formAttributes);
+        $data['title'] = $this->raw_title;
 
         $data['items'] = array_map(
             fn ($item) => Arr::only($item, InvoiceItem::$formAttributes),

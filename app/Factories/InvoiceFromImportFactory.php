@@ -263,6 +263,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             'uuid' => $this->rowInvoiceUuid,
             'invoice_number' => Invoice::generateInvoiceNumber($this->invoiceNumberPrefix),
             'title' => $this->getMapValue('title'),
+            'raw_title' => $this->getMapValue('title'),
             'description' => $this->getMapValue('description'),
             'invoice_date' => $this->getMapValue('invoice_date', 'date') ?? $this->userNow,
             'due_at' => $this->getMapValue('due_at', 'date time'),

@@ -615,6 +615,7 @@ class InvoiceImportTest extends TestCase
             $this->assertEquals(1, $invoice->invoiceItems->count());
 
             $this->assertEquals("{$student->last_name}, {$student->first_name} {$term->abbreviation} Invoice", $invoice->title);
+            $this->assertEquals("{last_name}, {first_name} {term} Invoice", $invoice->raw_title);
             $this->assertNotNull($invoice->invoice_number);
             $this->assertNull($invoice->term_id);
             $this->assertNotNull($invoice->invoiceImport);

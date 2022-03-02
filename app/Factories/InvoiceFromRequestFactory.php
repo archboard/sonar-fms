@@ -83,6 +83,8 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             : now($this->user->timezone)->format('Y-m-d');
         $this->invoiceAttributes['created_at'] = $this->now;
         $this->invoiceAttributes['updated_at'] = $this->now;
+        // Store the original, un-compiled title
+        $this->invoiceAttributes['raw_title'] = $this->invoiceAttributes['title'];
 
         $this->preTaxTotal = $this->calculateInvoicePreTaxTotal();
 

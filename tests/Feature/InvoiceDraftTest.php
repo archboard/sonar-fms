@@ -50,6 +50,7 @@ class InvoiceDraftTest extends TestCase
 
         $this->assertNotNull($invoice);
         $this->assertNull($invoice->published_at);
+        $this->assertEquals($data['title'], $invoice->raw_title);
 
         /** @var Activity $activity */
         $activity = $invoice->activities()->with('causer')->first();
