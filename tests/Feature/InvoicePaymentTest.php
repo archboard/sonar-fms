@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\MakeReceipt;
+use App\Jobs\SetStudentAccountBalance;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
@@ -115,6 +116,9 @@ class InvoicePaymentTest extends TestCase
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);
 
         Queue::assertPushed(MakeReceipt::class);
+        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($invoice) {
+            return $job->studentUuid === $invoice->student_uuid;
+        });
     }
 
     public function test_can_save_payment_to_invoice_with_associating_term()
@@ -257,6 +261,9 @@ class InvoicePaymentTest extends TestCase
         $this->assertTrue(
             $parent->activities->some(fn ($a) => Str::contains($a->description, "made to {$child->invoice_number}"))
         );
+        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($child) {
+            return $job->studentUuid === $child->student_uuid;
+        });
     }
 
     public function test_can_make_simple_payment_to_combined_invoice()
@@ -308,8 +315,10 @@ class InvoicePaymentTest extends TestCase
             if ($child->amount_due > 0) {
                 $this->assertTrue($child->amount_due > $child->remaining_balance);
                 $this->assertEquals(1, $child->invoicePayments()->count());
+                $this->assertTrue($child->student->account_balance < $child->amount_due);
             } else {
                 $this->assertEquals(0, $child->invoicePayments()->count());
+                $this->assertEquals($child->amount_due, $child->student->account_balance);
             }
         }
 
@@ -363,6 +372,9 @@ class InvoicePaymentTest extends TestCase
         foreach ($invoice->children as $child) {
             $this->assertEquals(0, $child->remaining_balance);
             $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
+            Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($child) {
+                return $job->studentUuid === $child->student_uuid;
+            });
         }
 
         Queue::assertPushed(MakeReceipt::class);
@@ -426,6 +438,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_update_existing_payment()
     {
+        Queue::fake();
         $this->assignPermission('update', InvoicePayment::class);
         $invoice = $this->createInvoice(paymentSchedules: 1);
         $payment = $this->createPayment(invoice: $invoice);

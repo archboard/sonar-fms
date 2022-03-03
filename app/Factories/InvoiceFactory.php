@@ -4,6 +4,7 @@ namespace App\Factories;
 
 use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Jobs\SetStudentAccountBalance;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
@@ -238,7 +239,21 @@ abstract class InvoiceFactory extends BaseImportFactory
             }
         });
 
-        // Start the batch for the pdfs
+        $uuids = $this->invoices->map(function (array $invoice) {
+            if ($invoice['notify'] && !$this->asDraft) {
+                SendNewInvoiceNotification::dispatch($invoice['uuid'])
+                    ->delay(Carbon::parse($invoice['notify_at']));
+            }
+
+            // Kick off caching account balances
+            if (!$this->asDraft && $invoice['student_uuid']) {
+                SetStudentAccountBalance::dispatch($invoice['student_uuid']);
+            }
+
+            return $invoice['uuid'];
+        });
+
+        // Start the batch for the pdfs after dispatching the account balance jobs
         if (!$this->asDraft) {
             $batch = Bus::batch(
                     $this->invoices->pluck('uuid')
@@ -256,15 +271,6 @@ abstract class InvoiceFactory extends BaseImportFactory
             $this->pdfBatchId = $batch->id;
         }
 
-        return $this->invoices->map(function (array $invoice) {
-            if ($invoice['notify'] && !$this->asDraft) {
-                SendNewInvoiceNotification::dispatch($invoice['uuid'])
-                    ->delay(Carbon::parse($invoice['notify_at']));
-            }
-
-//            CreateInvoicePdf::dispatch($invoice['uuid']);
-
-            return $invoice['uuid'];
-        });
+        return $uuids;
     }
 }

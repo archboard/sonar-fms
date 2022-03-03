@@ -98,6 +98,9 @@ Route::middleware('tenant')->group(function () {
 
                         Route::resource('/tags', \App\Http\Controllers\StudentTagController::class)
                             ->only('index', 'store');
+
+                        Route::put('/balance', \App\Http\Controllers\SetStudentAccountBalanceController::class)
+                            ->name('balance');
                     });
 
                 /**

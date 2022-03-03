@@ -95,16 +95,6 @@ class Student extends Model implements Searchable
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function accountBalance(): Attribute
-    {
-        return Attribute::get(fn (): int => $this->invoices()
-            ->isNotVoid()
-            ->published()
-            ->unpaid()
-            ->sum('remaining_balance')
-        );
-    }
-
     public function unpaidInvoices(): Attribute
     {
         return Attribute::get(fn (): int => $this->invoices()
@@ -249,5 +239,16 @@ class Student extends Model implements Searchable
             $this->full_name,
             route('students.show', $this)
         );
+    }
+
+    public function setAccountBalance(): static
+    {
+        $this->account_balance = $this->invoices()
+            ->isNotVoid()
+            ->published()
+            ->unpaid()
+            ->sum('remaining_balance');
+
+        return $this;
     }
 }

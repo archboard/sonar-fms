@@ -9,6 +9,7 @@ use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\CreateInvoicePdf;
 use App\Jobs\MakeReceipt;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Jobs\SetStudentAccountBalance;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
@@ -155,6 +156,11 @@ class Invoice extends Model implements Searchable, Exportable
             if ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at')) {
                 if ($invoice->parent_uuid) {
                     dispatch(new CalculateInvoiceAttributes($invoice->parent_uuid));
+                }
+
+                // Update cached values
+                if ($invoice->student_uuid) {
+                    SetStudentAccountBalance::dispatch($invoice->student_uuid);
                 }
 
                 dispatch(new CreateInvoicePdf($invoice->uuid));
@@ -1080,6 +1086,11 @@ class Invoice extends Model implements Searchable, Exportable
             ->where('uuid', $payment->uuid)
             ->update(['remaining_balance' => $parent->remaining_balance]);
 
+        // Update account balance
+        if ($this->student_uuid) {
+            SetStudentAccountBalance::dispatch($this->student_uuid);
+        }
+
         // Generate the receipt
         MakeReceipt::dispatch($payment->uuid);
 
@@ -1174,6 +1185,11 @@ class Invoice extends Model implements Searchable, Exportable
                 'remaining_balance' => $remaining,
                 'paid_at' => $remaining > 0 ? null : now()
             ]);
+
+            // Update account balances
+            if ($child->student_uuid) {
+                SetStudentAccountBalance::dispatch($child->student_uuid);
+            }
         }
 
         return $childPayments;

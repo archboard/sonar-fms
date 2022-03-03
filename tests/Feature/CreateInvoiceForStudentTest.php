@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
+use App\Jobs\SetStudentAccountBalance;
 use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
@@ -130,7 +131,6 @@ class CreateInvoiceForStudentTest extends TestCase
 
     public function test_can_create_invoice_for_student_without_notify_now()
     {
-        $this->withoutExceptionHandling();
         $this->assignPermission('create', Invoice::class);
 
         Queue::fake();
@@ -175,6 +175,9 @@ class CreateInvoiceForStudentTest extends TestCase
             ->assertSessionHas('success');
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
+        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($student) {
+            return $job->studentUuid === $student->uuid;
+        });
 
         $this->assertEquals(1, $student->invoices()->count());
 

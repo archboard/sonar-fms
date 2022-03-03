@@ -56,8 +56,9 @@
                 <div>
                   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div class="px-4 py-5 bg-gradient-to-br from-primary-500 to-fuchsia-600 dark:from-primary-700 dark:to-fuchsia-600 shadow rounded-lg overflow-hidden sm:p-6">
-                      <dt class="text-sm font-medium text-primary-100 dark:text-gray-300 truncate">
-                        {{ __('Account Balance') }}
+                      <dt class="text-sm font-medium text-primary-100 dark:text-gray-300 truncate flex items-center space-x-1">
+                        <span>{{ __('Account Balance') }}</span>
+                        <InertiaLink v-if="can('students.update')" :href="`/students/${student.uuid}/balance`" method="put" preserve-scroll as="button"><RefreshIcon class="w-4 h-4" /></InertiaLink>
                       </dt>
                       <dd class="mt-1 text-3xl font-semibold text-white">
                         {{ displayCurrency(unpaidAmount) }}
@@ -180,7 +181,7 @@ import { defineComponent, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '@/layouts/Authenticated'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
-import { CalculatorIcon } from '@heroicons/vue/solid'
+import { CalculatorIcon, RefreshIcon } from '@heroicons/vue/solid'
 import Spinner from '@/components/icons/spinner'
 import OutlineBadge from '@/components/OutlineBadge'
 import Button from '@/components/Button'
@@ -209,6 +210,7 @@ export default defineComponent({
     Authenticated,
     Textarea,
     CalculatorIcon,
+    RefreshIcon,
   },
 
   props: {
