@@ -11,8 +11,9 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class RecordsExport implements Responsable, FromQuery, WithHeadings, WithMapping
+class RecordsExport implements Responsable, FromQuery, WithHeadings, WithMapping, WithStrictNullComparison
 {
     use Exportable;
 
