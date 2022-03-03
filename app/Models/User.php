@@ -308,10 +308,33 @@ class User extends Authenticatable implements HasLocalePreference
         return $this;
     }
 
-    public function syncStudents()
+    public function setSchool(): static
+    {
+        if (
+            !$this->school_id ||
+            !$this->schools->contains('id', $this->school_id)
+        ) {
+            $school = $this->schools->first();
+
+            if ($school) {
+                $this->school_id = $school->id;
+
+                return $this;
+            }
+
+            // If there aren't any initial schools attached yet,
+            // attach any student
+            ray('No school')->red();
+//            throw new \Exception("You do not have any schools configured for your account. Please contact your district admin for help.");
+        }
+
+        return $this;
+    }
+
+    public function syncStudents(): static
     {
         if (!$this->contact_id) {
-            return;
+            return $this;
         }
 
         $contactStudents = PowerSchool::get("/ws/contacts/{$this->contact_id}/students")
@@ -346,7 +369,9 @@ class User extends Authenticatable implements HasLocalePreference
             $studentUsers[] = [
                 'student_uuid' => $studentUuid,
                 'user_uuid' => $this->uuid,
-                'relationship' => optional($student['studentDetails'][0] ?? null)->relationship,
+                'relationship' => ($student['studentDetails'][0] ?? null)
+                    ? $student['studentDetails'][0]['relationship']
+                    : null,
             ];
 
             return $studentUsers;
@@ -354,6 +379,8 @@ class User extends Authenticatable implements HasLocalePreference
 
         ray($studentUsers)->green();
         DB::table('student_user')->insert($studentUsers);
+
+        return $this;
     }
 
     public function setContactId(): static
