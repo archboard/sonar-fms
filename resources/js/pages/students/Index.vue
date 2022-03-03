@@ -47,12 +47,15 @@
         <span v-else>
           {{ __(':count students selected', { count: user.student_selection.length }) }}
         </span>
-        <div class="space-x-3 ml-3">
+        <div class="flex items-center space-x-3 ml-3">
           <Link is="button" @click.prevent="selectAll = false">
             {{ __('Remove selection') }}
           </Link>
           <Link :href="`/selection/invoices/create`">
             {{ __('Create invoice') }}
+          </Link>
+          <Link :href="`/student-selection/balances`" method="put" as="button">
+            {{ __('Set balances') }}
           </Link>
         </div>
       </div>

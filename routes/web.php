@@ -109,6 +109,9 @@ Route::middleware('tenant')->group(function () {
                 /**
                  * Selections
                  */
+                Route::put('/student-selection/balances', \App\Http\Controllers\UpdateStudentSelectionBalancesController::class)
+                    ->name('student-selection.balances');
+
                 Route::resource('/student-selection', \App\Http\Controllers\StudentSelectionController::class)
                     ->except('create', 'show', 'edit');
 
