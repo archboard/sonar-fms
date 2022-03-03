@@ -73,8 +73,8 @@ return [
             'email' => 'email',
             'dcid' => 'guardian_id',
             'ps_dcid' => 'guardian_id',
-            'first_name' => 'first_name',
-            'last_name' => 'last_name',
+            'given_name' => 'first_name',
+            'family_name' => 'last_name',
         ],
         'guard' => 'web',
         'identifying_attributes' => [
