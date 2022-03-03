@@ -47,8 +47,8 @@
       </div>
 
       <p>
-        <InertiaLink v-if="canResetPassword" :href="$route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 transition">
-          {{ __('Forgot your password ?') }}
+        <InertiaLink v-if="canResetPassword" :href="$route('password.request')" class="hover:underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 transition">
+          {{ __('Forgot your password?') }}
         </InertiaLink>
       </p>
     </form>
