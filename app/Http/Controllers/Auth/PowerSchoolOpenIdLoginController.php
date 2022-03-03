@@ -43,7 +43,9 @@ class PowerSchoolOpenIdLoginController extends Controller
         if ($data->get('usertype') === 'guardian') {
             // Get the contact id if there isn't one set
             $user->setContactId()
-                ->syncStudents();
+                ->syncStudents()
+                ->setSchool()
+                ->save();
         }
     }
 
