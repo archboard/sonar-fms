@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\MakeReceipt;
-use App\Jobs\SetStudentAccountBalance;
+use App\Jobs\SetStudentCachedValues;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\InvoicePaymentTerm;
@@ -116,7 +116,7 @@ class InvoicePaymentTest extends TestCase
         $this->assertEquals($invoice->amount_due - $data['amount'], $invoice->refresh()->remaining_balance);
 
         Queue::assertPushed(MakeReceipt::class);
-        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($invoice) {
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($invoice) {
             return $job->studentUuid === $invoice->student_uuid;
         });
     }
@@ -261,7 +261,7 @@ class InvoicePaymentTest extends TestCase
         $this->assertTrue(
             $parent->activities->some(fn ($a) => Str::contains($a->description, "made to {$child->invoice_number}"))
         );
-        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($child) {
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($child) {
             return $job->studentUuid === $child->student_uuid;
         });
     }
@@ -372,7 +372,7 @@ class InvoicePaymentTest extends TestCase
         foreach ($invoice->children as $child) {
             $this->assertEquals(0, $child->remaining_balance);
             $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
-            Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($child) {
+            Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($child) {
                 return $job->studentUuid === $child->student_uuid;
             });
         }

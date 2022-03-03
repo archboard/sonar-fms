@@ -101,6 +101,9 @@ Route::middleware('tenant')->group(function () {
 
                         Route::put('/balance', \App\Http\Controllers\SetStudentAccountBalanceController::class)
                             ->name('balance');
+
+                        Route::put('/revenue', \App\Http\Controllers\SetStudentRevenueController::class)
+                            ->name('revenue');
                     });
 
                 /**

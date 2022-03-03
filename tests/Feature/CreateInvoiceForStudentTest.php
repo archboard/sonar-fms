@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
-use App\Jobs\SetStudentAccountBalance;
+use App\Jobs\SetStudentCachedValues;
 use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
@@ -175,7 +175,7 @@ class CreateInvoiceForStudentTest extends TestCase
             ->assertSessionHas('success');
 
         Queue::assertNotPushed(SendNewInvoiceNotification::class);
-        Queue::assertPushed(SetStudentAccountBalance::class, function ($job) use ($student) {
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($student) {
             return $job->studentUuid === $student->uuid;
         });
 

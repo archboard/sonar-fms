@@ -4,7 +4,7 @@ namespace App\Factories;
 
 use App\Jobs\CreateInvoicePdf;
 use App\Jobs\SendNewInvoiceNotification;
-use App\Jobs\SetStudentAccountBalance;
+use App\Jobs\SetStudentCachedValues;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
 use App\Models\InvoiceItem;
@@ -247,7 +247,7 @@ abstract class InvoiceFactory extends BaseImportFactory
 
             // Kick off caching account balances
             if (!$this->asDraft && $invoice['student_uuid']) {
-                SetStudentAccountBalance::dispatch($invoice['student_uuid']);
+                SetStudentCachedValues::dispatch($invoice['student_uuid']);
             }
 
             return $invoice['uuid'];

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SetStudentAccountBalance implements ShouldQueue
+class SetStudentCachedValues implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -34,6 +34,12 @@ class SetStudentAccountBalance implements ShouldQueue
         /** @var Student|null $student */
         $student = Student::find($this->studentUuid);
         $student->setAccountBalance()
+            ->setRevenue()
             ->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->studentUuid;
     }
 }

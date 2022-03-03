@@ -105,15 +105,6 @@ class Student extends Model implements Searchable
         );
     }
 
-    public function revenue(): Attribute
-    {
-        return Attribute::get(fn (): int => $this->invoices()
-            ->isNotVoid()
-            ->published()
-            ->sum('total_paid')
-        );
-    }
-
     public function getGradeLevelShortFormattedAttribute(): string
     {
         if ($this->grade_level > 0) {
@@ -248,6 +239,16 @@ class Student extends Model implements Searchable
             ->published()
             ->unpaid()
             ->sum('remaining_balance');
+
+        return $this;
+    }
+
+    public function setRevenue(): static
+    {
+        $this->revenue = $this->invoices()
+            ->isNotVoid()
+            ->published()
+            ->sum('total_paid');
 
         return $this;
     }

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SetStudentCachedValues;
 use App\Models\Activity;
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 use Tests\Traits\SignsIn;
@@ -45,6 +47,7 @@ class ChangeInvoiceStatusTest extends TestCase
 
     public function test_can_void_and_duplicate()
     {
+        Queue::fake();
         $this->assignPermission('update', Invoice::class);
 
         $invoice = $this->createInvoice();
@@ -63,10 +66,14 @@ class ChangeInvoiceStatusTest extends TestCase
 
         $activity = Activity::latest()->with('causer')->get();
         $this->assertTrue($activity->contains('description', "Invoice voided by {$this->user->full_name}."));
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($invoice) {
+            return $job->studentUuid === $invoice->student_uuid;
+        });
     }
 
     public function test_can_void_and_not_duplicate()
     {
+        Queue::fake();
         $this->assignPermission('update', Invoice::class);
 
         $invoice = $this->createInvoice();
@@ -82,5 +89,8 @@ class ChangeInvoiceStatusTest extends TestCase
 
         $invoice->refresh();
         $this->assertNotNull($invoice->voided_at);
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($invoice) {
+            return $job->studentUuid === $invoice->student_uuid;
+        });
     }
 }

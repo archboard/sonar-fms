@@ -9,7 +9,7 @@ use App\Jobs\CalculateInvoiceAttributes;
 use App\Jobs\CreateInvoicePdf;
 use App\Jobs\MakeReceipt;
 use App\Jobs\SendNewInvoiceNotification;
-use App\Jobs\SetStudentAccountBalance;
+use App\Jobs\SetStudentCachedValues;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
@@ -160,7 +160,7 @@ class Invoice extends Model implements Searchable, Exportable
 
                 // Update cached values
                 if ($invoice->student_uuid) {
-                    SetStudentAccountBalance::dispatch($invoice->student_uuid);
+                    SetStudentCachedValues::dispatch($invoice->student_uuid);
                 }
 
                 dispatch(new CreateInvoicePdf($invoice->uuid));
@@ -1088,7 +1088,7 @@ class Invoice extends Model implements Searchable, Exportable
 
         // Update account balance
         if ($this->student_uuid) {
-            SetStudentAccountBalance::dispatch($this->student_uuid);
+            SetStudentCachedValues::dispatch($this->student_uuid);
         }
 
         // Generate the receipt
@@ -1188,7 +1188,7 @@ class Invoice extends Model implements Searchable, Exportable
 
             // Update account balances
             if ($child->student_uuid) {
-                SetStudentAccountBalance::dispatch($child->student_uuid);
+                SetStudentCachedValues::dispatch($child->student_uuid);
             }
         }
 
