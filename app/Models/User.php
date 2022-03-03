@@ -315,18 +315,28 @@ class User extends Authenticatable implements HasLocalePreference
             !$this->schools->contains('id', $this->school_id)
         ) {
             $school = $this->schools->first();
+            $this->school_id = $school?->id;
 
-            if ($school) {
-                $this->school_id = $school->id;
-
-                return $this;
+            if (!$this->school_id) {
+                throw new \Exception("You do not have any schools configured for your account. Please contact your district admin for help.");
             }
-
-            // If there aren't any initial schools attached yet,
-            // attach any student
-            ray('No school')->red();
-//            throw new \Exception("You do not have any schools configured for your account. Please contact your district admin for help.");
         }
+
+        return $this;
+    }
+
+    public function setSchoolStaffSchools(): static
+    {
+        if (!$this->sis_id) {
+            return $this;
+        }
+
+        $schoolNumbers = PowerSchool::pq('com.archboard.sonarfms.staff.schools', ['dcid' => $this->sis_id])
+            ->collect()
+            ->pluck('schoolid');
+
+        $schools = School::whereIn('school_number', $schoolNumbers)->pluck('id');
+        $this->schools()->syncWithoutDetaching($schools);
 
         return $this;
     }

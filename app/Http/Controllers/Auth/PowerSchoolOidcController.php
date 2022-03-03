@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
+use App\Models\User;
 use GrantHolle\PowerSchool\Auth\Traits\AuthenticatesUsingPowerSchoolWithOidc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -41,8 +42,19 @@ class PowerSchoolOidcController extends Controller
         return redirect($tenant->ps_url);
     }
 
-    protected function authenticated(Request $request, $user, Collection $data)
+    protected function authenticated(Request $request, User $user, Collection $data)
     {
+        if ($data->get('persona') === 'staff') {
+            $user->setSchoolStaffSchools();
+        }
+
+        if ($data->get('persona') === 'parent') {
+            $user->setContactId()
+                ->syncStudents();
+        }
+
+        $user->setSchool()
+            ->save();
     }
 
     /**

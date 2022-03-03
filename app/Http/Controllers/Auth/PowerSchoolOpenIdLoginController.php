@@ -37,16 +37,17 @@ class PowerSchoolOpenIdLoginController extends Controller
         if ($schoolId = $data->get('schoolID')) {
             $school = School::where('school_number', $schoolId)
                 ->first();
-            $user->update(['school_id' => $school->id]);
+            $user->school_id = $school->id;
         }
 
         if ($data->get('usertype') === 'guardian') {
             // Get the contact id if there isn't one set
             $user->setContactId()
                 ->syncStudents()
-                ->setSchool()
-                ->save();
+                ->setSchool();
         }
+
+        $user->save();
     }
 
     /**
