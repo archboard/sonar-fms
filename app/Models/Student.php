@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\Exportable;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\UsesUuid;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +26,7 @@ use Spatie\Tags\HasTags;
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Searchable
+class Student extends Model implements Searchable, Exportable
 {
     use HasResource;
     use HasFactory;
@@ -273,5 +275,57 @@ class Student extends Model implements Searchable
             ->sum('total_paid');
 
         return $this;
+    }
+
+    public static function getExportHeadings(): array
+    {
+        return [
+            __('Student number'),
+            __('First name'),
+            __('Last name'),
+            __('Grade'),
+            __('Account balance'),
+            __('Revenue'),
+            __('Paid invoices'),
+            __('Unpaid invoices'),
+        ];
+    }
+
+    public function getExportRow(): array
+    {
+        return [
+            $this->student_number,
+            $this->first_name,
+            $this->last_name,
+            $this->grade_level_short_formatted,
+            $this->account_balance / pow(10, $this->currency->digits),
+            $this->revenue / pow(10, $this->currency->digits),
+            $this->paid_invoices_count,
+            $this->unpaid_invoices_count,
+        ];
+    }
+
+    public static function getExportQuery(RecordExport $export): \Illuminate\Database\Query\Builder|Builder|Relation
+    {
+        $query = $export->school
+            ->students()
+            ->with('currency')
+            ->withCount([
+                'invoices as paid_invoices_count' =>
+                    fn ($query) => $query->where('remaining_balance', 0)
+                        ->isNotVoid()
+                        ->published(),
+                'invoices as unpaid_invoices_count' =>
+                    fn ($query) => $query->where('remaining_balance', '>', 0)
+                        ->isNotVoid()
+                        ->published(),
+            ])
+            ->orderBy('last_name');
+
+        if ($export->apply_filters) {
+            $query->filter($export->filters);
+        }
+
+        return $query;
     }
 }

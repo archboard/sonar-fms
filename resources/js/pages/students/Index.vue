@@ -10,7 +10,7 @@
       <div class="w-full lg:w-auto space-x-2 lg:space-x-4 flex">
         <FilterButton @click.prevent="showFilters = true" />
         <ClearFilterButton @click.prevent="resetFilters" />
-<!--        <ExportButton @click.prevent="promptExport = true" />-->
+        <ExportButton @click.prevent="promptExport = true" />
       </div>
     </div>
 
@@ -103,11 +103,11 @@
           <Th>
             <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('account_balance')">
               <span>
-                {{ __('Account Balance') }}
+                {{ __('Account balance') }}
               </span>
-              <span class="relative h-4 w-4 ml-2">
-                <SortAscendingIcon v-if="filters.orderBy === 'account_balance' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
-                <SortDescendingIcon v-if="filters.orderBy === 'account_balance' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              <span v-if="filters.orderBy === 'account_balance'" class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
               </span>
             </div>
           </Th>
@@ -161,15 +161,21 @@
     </Table>
 
     <Pagination :meta="students.meta" :links="students.links" />
-
-    <StudentTableFiltersModal
-      v-if="showFilters"
-      @close="showFilters = false"
-      @apply="applyFilters"
-      :filters="filters"
-      :school="school"
-    />
   </Authenticated>
+
+  <StudentTableFiltersModal
+    v-if="showFilters"
+    @close="showFilters = false"
+    @apply="applyFilters"
+    :filters="filters"
+    :school="school"
+  />
+  <ExportPromptModal
+    v-if="promptExport"
+    @close="promptExport = false"
+    url="/export/students"
+    :filters="filters"
+  />
 </template>
 
 <script>
@@ -200,11 +206,15 @@ import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysGrades from '@/composition/displaysGrades'
 import FilterButton from '@/components/FilterButton'
 import ClearFilterButton from '@/components/ClearFilterButton'
+import ExportButton from '@/components/ExportButton'
 import displaysCurrency from '@/composition/displaysCurrency'
+import ExportPromptModal from '@/components/modals/ExportPromptModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    ExportPromptModal,
+    ExportButton,
     ClearFilterButton,
     FilterButton,
     FadeInGroup,
@@ -239,6 +249,7 @@ export default defineComponent({
   setup (props) {
     const $http = inject('$http')
     const showFilters = ref(false)
+    const promptExport = ref(false)
     const selectAll = ref(props.user.student_selection.length > 0)
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
@@ -283,6 +294,7 @@ export default defineComponent({
       selectStudent,
       sortColumn,
       showFilters,
+      promptExport,
       clearSelection,
       applyFilters,
       resetFilters,

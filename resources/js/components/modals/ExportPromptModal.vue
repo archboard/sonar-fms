@@ -81,7 +81,7 @@ export default defineComponent({
     const { displayDate } = displaysDate()
     const __ = inject('$translate')
     const form = useForm({
-      name: __('Invoice Export :date', { date: displayDate(new Date, 'short') }),
+      name: __('Export :date', { date: displayDate(new Date, 'short') }),
       format: 'xlsx',
       apply_filters: true,
       filters: props.filters,
