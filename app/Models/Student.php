@@ -131,6 +131,28 @@ class Student extends Model implements Searchable
         return __('Pre-Kindergarten age :age', ['age' => 5 + $this->grade_level]);
     }
 
+    public function accountBalanceFormatted(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if ($this->relationLoaded('currency')) {
+                return displayCurrency($this->account_balance, $this->currency);
+            }
+
+            return '';
+        });
+    }
+
+    public function revenueFormatted(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if ($this->relationLoaded('currency')) {
+                return displayCurrency($this->revenue, $this->currency);
+            }
+
+            return '';
+        });
+    }
+
     public function sections(): BelongsToMany
     {
         return $this->belongsToMany(Section::class);
