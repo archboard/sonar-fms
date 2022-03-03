@@ -100,6 +100,17 @@
               </span>
             </div>
           </Th>
+          <Th>
+            <div class="flex items-center justify-end cursor-pointer" @click="sortColumn('account_balance')">
+              <span>
+                {{ __('Account Balance') }}
+              </span>
+              <span class="relative h-4 w-4 ml-2">
+                <SortAscendingIcon v-if="filters.orderBy === 'account_balance' && filters.orderDir === 'asc'" class="top-0 left-0 w-4 h-4 absolute" />
+                <SortDescendingIcon v-if="filters.orderBy === 'account_balance' && filters.orderDir === 'desc'" class="top-0 left-0 w-4 h-4 absolute" />
+              </span>
+            </div>
+          </Th>
           <th></th>
         </tr>
       </Thead>
@@ -132,6 +143,7 @@
           </Td>
           <Td>{{ student.student_number }}</Td>
           <Td>{{ student.grade_level_short_formatted }}</Td>
+          <Td class="text-right">{{ displayCurrency(student.account_balance )}}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
@@ -188,6 +200,7 @@ import FadeInGroup from '@/components/transitions/FadeInGroup'
 import displaysGrades from '@/composition/displaysGrades'
 import FilterButton from '@/components/FilterButton'
 import ClearFilterButton from '@/components/ClearFilterButton'
+import displaysCurrency from '@/composition/displaysCurrency'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -229,6 +242,7 @@ export default defineComponent({
     const selectAll = ref(props.user.student_selection.length > 0)
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
+    const { displayCurrency } = displaysCurrency()
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters(
       {
         s: '',
@@ -276,6 +290,7 @@ export default defineComponent({
       searchTerm,
       can,
       displayLongGrade,
+      displayCurrency,
     }
   }
 })
