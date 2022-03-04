@@ -146,14 +146,7 @@
           <Td class="text-right">{{ displayCurrency(student.account_balance )}}</Td>
           <Td class="text-right">
             <VerticalDotMenu>
-              <div class="p-1">
-                <SonarMenuItem v-if="can('students.view')" is="inertia-link" :href="`/students/${student.id}`">
-                  {{ __('View') }}
-                </SonarMenuItem>
-                <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/students/${student.uuid}/invoices/create`">
-                  {{ __('New invoice') }}
-                </SonarMenuItem>
-              </div>
+              <StudentActionItems :student="student" />
             </VerticalDotMenu>
           </Td>
         </tr>
@@ -198,7 +191,6 @@ import Link from '@/components/Link'
 import checksPermissions from '@/composition/checksPermissions'
 import PageProps from '@/mixins/PageProps'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import FadeIn from '@/components/transitions/FadeIn'
 import TableLink from '@/components/tables/TableLink'
 import DismissibleBadge from '@/components/DismissibleBadge'
@@ -209,10 +201,12 @@ import ClearFilterButton from '@/components/ClearFilterButton'
 import ExportButton from '@/components/ExportButton'
 import displaysCurrency from '@/composition/displaysCurrency'
 import ExportPromptModal from '@/components/modals/ExportPromptModal'
+import StudentActionItems from '@/components/StudentActionItems'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    StudentActionItems,
     ExportPromptModal,
     ExportButton,
     ClearFilterButton,
@@ -221,7 +215,6 @@ export default defineComponent({
     DismissibleBadge,
     TableLink,
     FadeIn,
-    SonarMenuItem,
     VerticalDotMenu,
     XCircleIcon,
     StudentTableFiltersModal,
