@@ -47,9 +47,11 @@ class User extends Authenticatable implements HasLocalePreference
 
     protected $casts = [
         'manages_tenancy' => 'boolean',
+        'needs_to_register' => 'boolean',
         'sis_id' => 'int',
         'contact_id' => 'int',
         'guardian_id' => 'int',
+        'registered_at' => 'datetime',
     ];
 
     public function scopeFilter(Builder $builder, array $filters)
@@ -356,6 +358,15 @@ class User extends Authenticatable implements HasLocalePreference
         $originalScope = \Bouncer::scope()->get();
         $contactStudents = PowerSchool::get("/ws/contacts/{$this->contact_id}/students")
             ->collect();
+        $hasDataAccess = $contactStudents->some('canAccessData', true);
+
+        // Check to see if this user doesn't have data access
+        // to any of the students. If the conditions are right
+        // they will need to receive registration access
+        // to ensure they can access invoices
+        if (!$hasDataAccess && !$this->password) {
+            $this->update(['needs_to_register' => true]);
+        }
 
         $students = Student::whereIn('sis_id', $contactStudents->pluck('dcid'))
             ->pluck('uuid', 'sis_id');
