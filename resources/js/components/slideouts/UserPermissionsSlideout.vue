@@ -93,7 +93,6 @@ export default {
 
   setup (props) {
     let firstFetch = true
-    const $route = inject('$route')
     const $http = inject('$http')
 
     const page = usePage()
@@ -105,7 +104,7 @@ export default {
     const saving = ref(false)
 
     const getPermissions = () => {
-      $http.get($route('users.permissions', props.user)).then(({ data }) => {
+      $http.get(`/users/${props.user.uuid}/permissions`).then(({ data }) => {
         permissions.value = data
         managesTenancy.value = data.manages_tenancy
         managesSchool.value = data.manages_school
@@ -117,7 +116,7 @@ export default {
     const savePermissions = (close) => {
       saving.value = true
 
-      $http.put($route('users.permissions', props.user), permissions.value).then(() => {
+      $http.put(`/users/${props.user.uuid}/permissions`, permissions.value).then(() => {
         saving.value = false
         close()
       })
@@ -125,7 +124,7 @@ export default {
 
     watch(managesTenancy, (newVal) => {
       props.user.manages_tenancy = newVal
-      $http.put($route('users.tenancy_manager', props.user)).then(getPermissions)
+      $http.put(`/users/${props.user.uuid}/manager`).then(getPermissions)
     })
 
     watch(managesSchool, () => {
@@ -134,7 +133,7 @@ export default {
         !firstFetch &&
         (currentUser.value.manages_tenancy || props.authUserManagesSchool)
       ) {
-        $http.put($route('users.school-admin', props.user)).then(getPermissions)
+        $http.put(`/users/${props.user.uuid}/school-admin`).then(getPermissions)
       }
     })
 
