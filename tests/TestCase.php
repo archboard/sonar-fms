@@ -100,6 +100,18 @@ abstract class TestCase extends BaseTestCase
         return $this->createUser();
     }
 
+    public function setUpContact(int $students = 2): Collection
+    {
+        $this->user->assign('contact');
+
+        return Collection::times($students)
+            ->map(fn () => $this->createStudent())
+            ->each(function (Student $student) {
+                $this->user->allow('view', $student);
+                $this->user->students()->attach($student);
+            });
+    }
+
     public function createStudent(array $attributes = []): Student
     {
         $attributes = array_merge(

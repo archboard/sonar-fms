@@ -33,6 +33,7 @@ class StudentResource extends JsonResource
             'initial_district_entry_date' => $this->initial_district_entry_date,
             'initial_school_entry_date' => $this->initial_school_entry_date,
             'account_balance' => $this->account_balance,
+            'account_balance_formatted' => $this->account_balance_formatted,
             'revenue' => $this->revenue,
             'users' => UserResource::collection($this->whenLoaded('users')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),

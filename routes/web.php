@@ -69,6 +69,9 @@ Route::middleware('tenant')->group(function () {
         Route::post('/preview-template', \App\Http\Controllers\PreviewTemplateController::class)
             ->name('preview.template');
 
+        Route::get('/my-students', [\App\Http\Controllers\MyStudentController::class, 'index'])
+            ->name('my-students.index');
+
         Route::middleware('school_settings')
             ->group(function () {
                 /**
