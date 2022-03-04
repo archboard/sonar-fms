@@ -3,7 +3,6 @@ import qs from 'qs'
 import { Inertia } from '@inertiajs/inertia'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
-import debounce from 'lodash/debounce'
 
 export default (defaultFilters, route, casts = {}) => {
   const castValues = object => {
@@ -48,6 +47,8 @@ export default (defaultFilters, route, casts = {}) => {
   const resetFilters = () => applyFilters(defaultFilters)
 
   const sortColumn = column => {
+    filters.page = 1
+
     if (column === filters.orderBy) {
       filters.orderDir = filters.orderDir === 'asc'
         ? 'desc'
