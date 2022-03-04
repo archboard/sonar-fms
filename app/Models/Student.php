@@ -190,7 +190,7 @@ class Student extends Model implements Searchable, Exportable
      * @throws \GrantHolle\PowerSchool\Api\Exception\MissingClientCredentialsException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function syncGuardians(Collection $schools = null): array
+    public function syncContacts(Collection $schools = null): array
     {
         $response = PowerSchool::get("/ws/contacts/student/{$this->sis_id}");
 

@@ -18,7 +18,7 @@ class SyncStudentGuardiansController extends Controller
     {
         $this->authorize('view', $student);
 
-        $student->syncGuardians();
+        $student->syncContacts();
 
         session()->flash('success', __('Guardians synced successfully.'));
 

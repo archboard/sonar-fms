@@ -33,6 +33,6 @@ class SyncStudentContacts implements ShouldQueue
      */
     public function handle()
     {
-        $this->student->syncGuardians();
+        $this->student->syncContacts();
     }
 }
