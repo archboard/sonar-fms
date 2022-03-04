@@ -233,7 +233,7 @@ class Student extends Model implements Searchable, Exportable
                     'guardian_id' => $contactStudents['guardianId'],
                 ]);
 
-                $user->assign('guardian');
+                $user->assign('contact');
 
                 $users[$user->id] = [
                     'relationship' => $details['relationship'] ?? null,
