@@ -2,11 +2,19 @@
 
 namespace App\Providers;
 
+use App\Models\Department;
+use App\Models\Fee;
+use App\Models\FeeCategory;
 use App\Models\Invoice;
 use App\Models\InvoiceImport;
+use App\Models\InvoiceLayout;
 use App\Models\InvoicePayment;
 use App\Models\InvoiceRefund;
 use App\Models\PaymentImport;
+use App\Models\PaymentMethod;
+use App\Models\Receipt;
+use App\Models\ReceiptLayout;
+use App\Models\Scholarship;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
@@ -78,6 +86,14 @@ class AppServiceProvider extends ServiceProvider
             'payment' => InvoicePayment::class,
             'invoice_import' => InvoiceImport::class,
             'payment_import' => PaymentImport::class,
+            'fee' => Fee::class,
+            'fee_category' => FeeCategory::class,
+            'scholarship' => Scholarship::class,
+            'receipt' => Receipt::class,
+            'payment_method' => PaymentMethod::class,
+            'department' => Department::class,
+            'invoice_layout' => InvoiceLayout::class,
+            'receipt_layout' => ReceiptLayout::class,
         ]);
 
         ActivityLogger::macro('component', function (string $component) {
