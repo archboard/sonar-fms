@@ -14,11 +14,7 @@ class MyStudentController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $students = $user->students()
-            ->with('currency')
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+        $students = $user->getMyStudents();
 
         return inertia('my-students/Index', [
             'title' => $title,

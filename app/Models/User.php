@@ -526,6 +526,15 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->uuid === $comment->user_id;
     }
 
+    public function getMyStudents(): Collection
+    {
+        return $this->students()
+            ->with('currency')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [
