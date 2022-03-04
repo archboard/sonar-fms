@@ -627,6 +627,7 @@ class PowerSchoolProvider implements SisProvider
     public function fullSchoolSync($sisId)
     {
         $school = $this->tenant->getSchoolFromSisId($sisId);
+        \Bouncer::scope()->to($school->id);
         \Bouncer::cache();
 
         ray()->newScreen("Sync for {$school->name}");
