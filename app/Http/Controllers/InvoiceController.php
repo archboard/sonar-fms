@@ -154,12 +154,12 @@ class InvoiceController extends Controller
                 'students' => $user->getPermissions(Student::class),
                 'payments' => [
                     'create' => $user->can('create', InvoicePayment::class),
-                    'viewAny' => $user->can('viewAny', InvoicePayment::class),
+                    'view' => $user->can('view', InvoicePayment::class),
                     'update' => $user->can('update', InvoicePayment::class),
                 ],
                 'refunds' => [
                     'create' => $user->can('create', InvoiceRefund::class),
-                    'viewAny' => $user->can('viewAny', InvoiceRefund::class),
+                    'view' => $user->can('view', InvoiceRefund::class),
                 ],
             ],
         ])->withViewData(compact('title'));

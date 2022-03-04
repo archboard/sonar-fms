@@ -16,7 +16,7 @@ class StudentFetchController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $this->authorize('viewAny', Student::class);
+        $this->authorize('view', Student::class);
 
         $students = $request->school()
             ->students()

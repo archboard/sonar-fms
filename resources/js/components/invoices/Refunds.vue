@@ -1,5 +1,5 @@
 <template>
-  <section v-if="can('refunds.viewAny')">
+  <section v-if="can('refunds.view')">
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
       <div class="pb-4 flex justify-between">
         <h2 class="text-lg font-medium">{{ __('Refunds') }}</h2>
@@ -129,7 +129,7 @@ export default defineComponent({
     const relatedRefunds = ref([])
     const { can } = checksPermissions()
 
-    if (can('refunds.viewAny')) {
+    if (can('refunds.view')) {
       $http.get(`/invoices/${invoice.uuid}/refunds`)
         .then(({ data }) => {
           refunds.value = data

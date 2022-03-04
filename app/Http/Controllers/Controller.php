@@ -19,8 +19,8 @@ class Controller extends BaseController
     protected function resourceAbilityMap(): array
     {
         return [
-            'index' => 'viewAny',
-            'show' => 'viewAny',
+            'index' => 'view',
+            'show' => 'view',
             'create' => 'create',
             'store' => 'create',
             'edit' => 'update',

@@ -17,7 +17,7 @@ class RecordsExportTest extends TestCase
 
     public function test_can_create_a_new_invoice_export()
     {
-        $this->assignPermission('viewAny', Invoice::class);
+        $this->assignPermission('view', Invoice::class);
         $data = [
             'name' => Str::random(),
             'format' => 'xlsx',

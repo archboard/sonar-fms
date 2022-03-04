@@ -61,8 +61,8 @@
           <Td class="text-right align-middle">
             <div class="flex items-center justify-end">
               <VerticalDotMenu>
-                <div class="px-1 py-1" v-if="canAny('viewAny', 'edit permissions')">
-<!--                  <SonarMenuItem v-if="can('viewAny')">-->
+                <div class="px-1 py-1" v-if="canAny('view', 'edit permissions')">
+<!--                  <SonarMenuItem v-if="can('view')">-->
 <!--                    {{ __('Edit') }}-->
 <!--                  </SonarMenuItem>-->
                   <SonarMenuItem @click="togglePermissions(schoolUser)" v-if="can('edit permissions')">

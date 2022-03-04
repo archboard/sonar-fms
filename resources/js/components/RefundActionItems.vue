@@ -6,10 +6,10 @@
     <SonarMenuItem is="a" target="_blank" :href="`/refunds/${refund.id}/receipt`">
       {{ __('Receipt') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('invoices.viewAny') && refund.invoice" is="inertia-link" :href="`/invoices/${refund.invoice.uuid}`">
+    <SonarMenuItem v-if="can('invoices.view') && refund.invoice" is="inertia-link" :href="`/invoices/${refund.invoice.uuid}`">
       {{ __('View invoice') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('students.viewAny') && refund.invoice" is="inertia-link" :href="`/students/${refund.invoice.student_uuid}`">
+    <SonarMenuItem v-if="can('students.view') && refund.invoice" is="inertia-link" :href="`/students/${refund.invoice.student_uuid}`">
       {{ __('View student') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="refund.invoice" @click.prevent="copy(refund.invoice.invoice_number)">

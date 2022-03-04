@@ -506,9 +506,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Users'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', User::class),
+                            'can' => $this->can('view', User::class),
                         ],
                         [
                             'permission' => 'create',
@@ -537,9 +537,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Students'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Student::class),
+                            'can' => $this->can('view', Student::class),
                         ],
                         [
                             'permission' => 'create',
@@ -568,9 +568,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Fee categories'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', FeeCategory::class),
+                            'can' => $this->can('view', FeeCategory::class),
                         ],
                         [
                             'permission' => 'create',
@@ -594,9 +594,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Departments'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Department::class),
+                            'can' => $this->can('view', Department::class),
                         ],
                         [
                             'permission' => 'create',
@@ -620,9 +620,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Fees'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Fee::class),
+                            'can' => $this->can('view', Fee::class),
                         ],
                         [
                             'permission' => 'create',
@@ -646,9 +646,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Scholarships'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Scholarship::class),
+                            'can' => $this->can('view', Scholarship::class),
                         ],
                         [
                             'permission' => 'create',
@@ -672,9 +672,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Invoices'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Invoice::class),
+                            'can' => $this->can('view', Invoice::class),
                         ],
                         [
                             'permission' => 'create',
@@ -698,9 +698,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Invoice imports'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', InvoiceImport::class),
+                            'can' => $this->can('view', InvoiceImport::class),
                         ],
                         [
                             'permission' => 'create',
@@ -729,9 +729,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Invoice payments'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', InvoicePayment::class),
+                            'can' => $this->can('view', InvoicePayment::class),
                         ],
                         [
                             'permission' => 'create',
@@ -755,9 +755,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Receipts'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', Receipt::class),
+                            'can' => $this->can('view', Receipt::class),
                         ],
                         [
                             'permission' => 'create',
@@ -781,9 +781,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Payment imports'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', PaymentImport::class),
+                            'can' => $this->can('view', PaymentImport::class),
                         ],
                         [
                             'permission' => 'create',
@@ -812,9 +812,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Invoice refunds'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', InvoiceRefund::class),
+                            'can' => $this->can('view', InvoiceRefund::class),
                         ],
                         [
                             'permission' => 'create',
@@ -848,9 +848,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Invoice layouts'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', InvoiceLayout::class),
+                            'can' => $this->can('view', InvoiceLayout::class),
                         ],
                         [
                             'permission' => 'create',
@@ -874,9 +874,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Receipt layouts'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', ReceiptLayout::class),
+                            'can' => $this->can('view', ReceiptLayout::class),
                         ],
                         [
                             'permission' => 'create',
@@ -900,9 +900,9 @@ class User extends Authenticatable implements HasLocalePreference
                     'label' => __('Payment methods'),
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'label' => __('View'),
-                            'can' => $this->can('viewAny', PaymentMethod::class),
+                            'can' => $this->can('view', PaymentMethod::class),
                         ],
                         [
                             'permission' => 'create',

@@ -12,7 +12,7 @@ class StudentTagController extends Controller
 {
     public function index(Request $request, Student $student)
     {
-        $this->authorize('viewAny', $student);
+        $this->authorize('view', $student);
 
         $tags = $student->tags()
             ->select('id', 'name', 'color')

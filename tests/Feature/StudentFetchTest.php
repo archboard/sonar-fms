@@ -20,7 +20,7 @@ class StudentFetchTest extends TestCase
 
     public function test_can_fetch_students_based_on_search()
     {
-        $this->assignPermission('viewAny', Student::class);
+        $this->assignPermission('view', Student::class);
 
         $this->createStudent(['first_name' => 'ASDFASDF']);
 
@@ -33,7 +33,7 @@ class StudentFetchTest extends TestCase
 
     public function test_only_get_10_results()
     {
-        $this->assignPermission('viewAny', Student::class);
+        $this->assignPermission('view', Student::class);
 
         $this->createStudents(['first_name' => 'John'], 11);
 

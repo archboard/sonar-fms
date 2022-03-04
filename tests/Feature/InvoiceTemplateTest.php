@@ -21,7 +21,7 @@ class InvoiceTemplateTest extends TestCase
 
     public function test_can_get_the_invoice_templates()
     {
-        $this->assignPermission('viewAny', InvoiceTemplate::class);
+        $this->assignPermission('view', InvoiceTemplate::class);
 
         InvoiceTemplate::factory()->count(3)->create([
             'school_id' => $this->school->id,

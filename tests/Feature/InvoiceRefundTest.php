@@ -111,7 +111,7 @@ class InvoiceRefundTest extends TestCase
 
     public function test_can_fetch_refunds()
     {
-        $this->assignPermission('viewAny', InvoiceRefund::class);
+        $this->assignPermission('view', InvoiceRefund::class);
 
         $this->invoice->invoiceRefunds()
             ->save(InvoiceRefund::factory()->make(['amount' => (int) round($this->invoice->total_paid / 2)]));
@@ -124,7 +124,7 @@ class InvoiceRefundTest extends TestCase
     public function test_can_fetch_related_refunds()
     {
         $this->withoutExceptionHandling();
-        $this->assignPermission('viewAny', InvoiceRefund::class);
+        $this->assignPermission('view', InvoiceRefund::class);
 
         $invoice = $this->createCombinedInvoice();
         /** @var Invoice $child */

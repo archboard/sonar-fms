@@ -16,7 +16,7 @@ class UserSearchController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $this->authorize('viewAny', User::class);
+        $this->authorize('view', User::class);
 
         $users = User::filter($request->all())
             ->limit(10)

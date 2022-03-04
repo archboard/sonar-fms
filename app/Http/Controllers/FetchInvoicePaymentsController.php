@@ -16,7 +16,7 @@ class FetchInvoicePaymentsController extends Controller
      */
     public function __invoke(Request $request, string $invoice)
     {
-        $this->authorize('viewAny', InvoicePayment::class);
+        $this->authorize('view', InvoicePayment::class);
 
         $payments = InvoicePayment::forInvoice($invoice)
             ->with(

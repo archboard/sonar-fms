@@ -16,7 +16,7 @@ class FetchRelatedRefundsController extends Controller
      */
     public function __invoke(Request $request, string $invoice)
     {
-        $this->authorize('viewAny', InvoiceRefund::class);
+        $this->authorize('view', InvoiceRefund::class);
 
         $refunds = InvoiceRefund::whereHas('invoice', function (Builder $builder) use ($invoice) {
                 $builder->select('uuid')

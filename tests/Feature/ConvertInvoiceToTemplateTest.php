@@ -19,7 +19,7 @@ class ConvertInvoiceToTemplateTest extends TestCase
 
     public function test_can_save_invoice_as_invoice_template()
     {
-        $this->assignPermission('viewAny', Invoice::class);
+        $this->assignPermission('view', Invoice::class);
         $this->assignPermission('create', InvoiceTemplate::class);
 
         $invoice = $this->createInvoice();

@@ -29,7 +29,7 @@ class InvoiceLayoutTest extends TestCase
 
     public function test_can_get_to_layouts_page()
     {
-        $this->assignPermission('viewAny', InvoiceLayout::class);
+        $this->assignPermission('view', InvoiceLayout::class);
 
         $this->get(route('layouts.index'))
             ->assertOk()

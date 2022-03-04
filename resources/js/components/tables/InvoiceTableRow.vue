@@ -16,7 +16,7 @@
         <InvoiceStatusBadge :invoice="invoice" size="sm" />
       </div>
     </Td>
-    <Td :lighter="false" v-if="can('students.viewAny') && showStudent" class="truncate">
+    <Td :lighter="false" v-if="can('students.view') && showStudent" class="truncate">
       <InertiaLink v-if="invoice.student" :href="`/students/${invoice.student_uuid}`" class="hover:underline">
         {{ invoice.student.full_name }}
       </InertiaLink>

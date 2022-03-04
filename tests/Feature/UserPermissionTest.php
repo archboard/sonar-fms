@@ -30,7 +30,7 @@ class UserPermissionTest extends TestCase
                     'model' => User::class,
                     'permissions' => [
                         [
-                            'permission' => 'viewAny',
+                            'permission' => 'view',
                             'can' => true,
                         ],
                         [
@@ -54,7 +54,7 @@ class UserPermissionTest extends TestCase
             ],
         ];
 
-        $this->assertFalse($user->can('viewAny', User::class));
+        $this->assertFalse($user->can('view', User::class));
         $this->assertFalse($user->can('create', User::class));
         $this->assertFalse($user->can('update', User::class));
         $this->assertFalse($user->can('delete', User::class));
@@ -66,7 +66,7 @@ class UserPermissionTest extends TestCase
                 'level', 'message'
             ]);
 
-        $this->assertTrue($user->can('viewAny', User::class));
+        $this->assertTrue($user->can('view', User::class));
         $this->assertTrue($user->can('create', User::class));
         $this->assertTrue($user->can('update', User::class));
         $this->assertTrue($user->can('delete', User::class));

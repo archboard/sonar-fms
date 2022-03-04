@@ -1,12 +1,12 @@
 <template>
   <div class="p-1">
-    <SonarMenuItem v-if="can('invoices.viewAny') && showView" is="inertia-link" :href="`/invoices/${invoice.uuid}`">
+    <SonarMenuItem v-if="can('invoices.view') && showView" is="inertia-link" :href="`/invoices/${invoice.uuid}`">
       {{ __('View invoice') }}
     </SonarMenuItem>
     <SonarMenuItem @click.prevent="copy(invoice.invoice_number)">
       {{ __('Copy invoice number') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('students.viewAny') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}`">
+    <SonarMenuItem v-if="can('students.view') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}`">
       {{ __('View student') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.create') && invoice.student" is="inertia-link" :href="`/students/${invoice.student.uuid}/invoices/create`">
@@ -42,10 +42,10 @@
     </SonarMenuItem>
   </div>
   <div class="p-1">
-    <SonarMenuItem v-if="invoice.published_at && can('invoices.viewAny')" is="a" :href="`/invoices/${invoice.uuid}/preview`" target="_blank">
+    <SonarMenuItem v-if="invoice.published_at && can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/preview`" target="_blank">
       {{ __('Preview PDF') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="invoice.published_at && can('invoices.viewAny')" is="a" :href="`/invoices/${invoice.uuid}/pdf`" target="_blank">
+    <SonarMenuItem v-if="invoice.published_at && can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/pdf`" target="_blank">
       {{ __('Download PDF') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/invoices/${invoice.uuid}/duplicate`">

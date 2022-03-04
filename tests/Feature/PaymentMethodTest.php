@@ -28,7 +28,7 @@ class PaymentMethodTest extends TestCase
 
     public function test_can_access_payment_method_index_page()
     {
-        $this->assignPermission('viewAny', PaymentMethod::class);
+        $this->assignPermission('view', PaymentMethod::class);
 
         $this->get(route('payment-methods.index'))
             ->assertOk()

@@ -47,7 +47,7 @@ class InvoicePaymentTest extends TestCase
 
     public function test_can_list_payments_with_permission()
     {
-        $this->assignPermission('viewAny', InvoicePayment::class);
+        $this->assignPermission('view', InvoicePayment::class);
 
         $this->get('/payments')
             ->assertInertia(fn (Assert $page) => $page
@@ -383,7 +383,7 @@ class InvoicePaymentTest extends TestCase
     public function test_can_fetch_payments_for_invoice()
     {
         Queue::fake();
-        $this->assignPermission('viewAny', InvoicePayment::class);
+        $this->assignPermission('view', InvoicePayment::class);
 
         $invoice = $this->createInvoice();
         $this->createPayment(invoice: $invoice);
@@ -397,7 +397,7 @@ class InvoicePaymentTest extends TestCase
     public function test_can_fetch_related_payments()
     {
         Queue::fake();
-        $this->assignPermission('viewAny', InvoicePayment::class);
+        $this->assignPermission('view', InvoicePayment::class);
 
         $invoice = $this->createCombinedInvoice();
         $this->createPayment(invoice: $invoice);

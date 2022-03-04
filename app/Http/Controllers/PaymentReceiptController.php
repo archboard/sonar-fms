@@ -17,7 +17,7 @@ class PaymentReceiptController extends Controller
      */
     public function __invoke(Request $request, InvoicePayment $payment)
     {
-        $this->authorize('viewAny', $payment);
+        $this->authorize('view', $payment);
 
         return $payment->receiptView();
     }

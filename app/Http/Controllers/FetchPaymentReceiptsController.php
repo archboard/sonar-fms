@@ -17,7 +17,7 @@ class FetchPaymentReceiptsController extends Controller
      */
     public function __invoke(Request $request, InvoicePayment $payment)
     {
-        $this->authorize('viewAny', Receipt::class);
+        $this->authorize('view', Receipt::class);
 
         $receipts = $payment->receipts()
             ->orderBy('created_at')

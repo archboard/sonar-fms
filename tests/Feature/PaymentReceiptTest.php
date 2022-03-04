@@ -27,7 +27,7 @@ class PaymentReceiptTest extends TestCase
 
     public function test_can_view_payment_receipt()
     {
-        $this->assignPermission('viewAny', InvoicePayment::class);
+        $this->assignPermission('view', InvoicePayment::class);
         $payment = $this->createPayment();
 
         $this->get("/payments/{$payment->id}/receipt")

@@ -1,5 +1,5 @@
 <template>
-  <section v-if="can('payments.viewAny')">
+  <section v-if="can('payments.view')">
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
       <div class="pb-4 flex justify-between">
         <h2 class="text-lg font-medium">{{ __('Payments') }}</h2>
@@ -140,7 +140,7 @@ export default defineComponent({
     const relatedPayments = ref([])
     const { can } = checksPermissions()
 
-    if (can('payments.viewAny')) {
+    if (can('payments.view')) {
       $http.get(`/invoices/${invoice.uuid}/payments`)
         .then(({ data }) => {
           payments.value = data

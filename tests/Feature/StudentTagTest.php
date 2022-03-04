@@ -49,7 +49,7 @@ class StudentTagTest extends TestCase
 
     public function test_can_fetch_tags_for_student()
     {
-        $this->assignPermission('viewAny', Student::class);
+        $this->assignPermission('view', Student::class);
 
         $tag = $this->tags->first()->name;
         $this->student->attachTag($tag, Tag::student($this->school));

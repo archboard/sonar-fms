@@ -15,7 +15,7 @@ class DownloadInvoiceImportFileController extends Controller
      */
     public function __invoke(Request $request, InvoiceImport $import)
     {
-        $this->authorize('viewAny', $import);
+        $this->authorize('view', $import);
 
         return $import->download();
     }

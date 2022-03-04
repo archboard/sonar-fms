@@ -15,7 +15,7 @@ class DownloadPaymentImportFileController extends Controller
      */
     public function __invoke(Request $request, PaymentImport $import)
     {
-        $this->authorize('viewAny', $import);
+        $this->authorize('view', $import);
 
         return $import->download();
     }

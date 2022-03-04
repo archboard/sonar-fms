@@ -42,7 +42,7 @@ class PaymentImportTest extends TestCase
 
     public function test_can_view_imports_with_permission()
     {
-        $this->assignPermission('viewAny', PaymentImport::class);
+        $this->assignPermission('view', PaymentImport::class);
 
         $this->get('/payments/imports')
             ->assertOk()
@@ -255,7 +255,7 @@ class PaymentImportTest extends TestCase
 
     public function test_can_view_import_show_page()
     {
-        $this->assignPermission('viewAny', PaymentImport::class);
+        $this->assignPermission('view', PaymentImport::class);
         $import = $this->createImport();
 
         $this->get(route('payments.imports.show', $import))
@@ -577,7 +577,7 @@ class PaymentImportTest extends TestCase
 
     public function test_can_download_payment_import_file()
     {
-        $this->assignPermission('viewAny', PaymentImport::class);
+        $this->assignPermission('view', PaymentImport::class);
         Storage::fake();
         $import = $this->createImport(attributes: [
             'heading_row' => 1,

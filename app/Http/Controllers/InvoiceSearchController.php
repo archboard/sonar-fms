@@ -16,7 +16,7 @@ class InvoiceSearchController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $this->authorize('viewAny', Invoice::class);
+        $this->authorize('view', Invoice::class);
 
         $invoices = Invoice::filter($request->all())
             ->with([

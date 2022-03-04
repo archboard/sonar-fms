@@ -87,7 +87,7 @@
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem v-if="can('viewAny')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}`">
+                <SonarMenuItem v-if="can('view')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}`">
                   {{ __('View') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/payments/imports/${paymentImport.id}/edit`">

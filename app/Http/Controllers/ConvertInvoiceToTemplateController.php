@@ -17,7 +17,7 @@ class ConvertInvoiceToTemplateController extends Controller
      */
     public function __invoke(Request $request, School $school, Invoice $invoice)
     {
-        $this->authorize('viewAny', $invoice);
+        $this->authorize('view', $invoice);
         $this->authorize('create', InvoiceTemplate::class);
 
         $data = $request->validate([

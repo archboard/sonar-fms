@@ -147,7 +147,7 @@
           <Td class="text-right">
             <VerticalDotMenu>
               <div class="p-1">
-                <SonarMenuItem v-if="can('students.viewAny')" is="inertia-link" :href="`/students/${student.id}`">
+                <SonarMenuItem v-if="can('students.view')" is="inertia-link" :href="`/students/${student.id}`">
                   {{ __('View') }}
                 </SonarMenuItem>
                 <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/students/${student.uuid}/invoices/create`">

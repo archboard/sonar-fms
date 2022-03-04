@@ -31,7 +31,7 @@ class ExportRecordsController extends Controller
             return back();
         }
 
-        $this->authorize('viewAny', $model);
+        $this->authorize('view', $model);
 
         $data = $request->validated();
         $data['school_id'] = $request->school()->id;

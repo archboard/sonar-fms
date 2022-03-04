@@ -22,7 +22,7 @@ class ReceiptLayoutTest extends TestCase
 
     public function test_can_access_listing_with_permission()
     {
-        $this->assignPermission('viewAny', ReceiptLayout::class);
+        $this->assignPermission('view', ReceiptLayout::class);
 
         $this->get(route('receipt-layouts.index'))
             ->assertOk()

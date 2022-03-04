@@ -51,7 +51,7 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_access_import_with_permission()
     {
-        $this->assignPermission('viewAny', InvoiceImport::class);
+        $this->assignPermission('view', InvoiceImport::class);
 
         $this->get(route('invoices.imports.index'))
             ->assertOk()
@@ -132,7 +132,7 @@ class InvoiceImportTest extends TestCase
 
     public function test_can_view_download_import_file()
     {
-        $this->assignPermission('viewAny', InvoiceImport::class);
+        $this->assignPermission('view', InvoiceImport::class);
         $path = (new InvoiceImport)->storeFile($this->getUploadedFile('sonar-import.xls'), $this->school);
         $import = InvoiceImport::create([
             'user_uuid' => $this->user->id,

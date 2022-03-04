@@ -21,7 +21,7 @@ class ScholarshipTest extends TestCase
 
     public function test_can_see_all_scholarships()
     {
-        $this->assignPermission('viewAny', Scholarship::class);
+        $this->assignPermission('view', Scholarship::class);
 
         $this->get(route('scholarships.index'))
             ->assertOk();

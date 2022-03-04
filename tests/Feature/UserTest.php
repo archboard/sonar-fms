@@ -17,7 +17,7 @@ class UserTest extends TestCase
     public function test_can_get_to_users_index()
     {
         $this->withoutExceptionHandling();
-        $this->assignPermission('viewAny', User::class);
+        $this->assignPermission('view', User::class);
 
         $this->get(route('users.index'))
             ->assertOk();

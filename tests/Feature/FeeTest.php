@@ -24,7 +24,7 @@ class FeeTest extends TestCase
 
     public function test_index_is_ok()
     {
-        $this->assignPermission('viewAny', Fee::class);
+        $this->assignPermission('view', Fee::class);
 
         $this->get(route('fees.index'))
             ->assertOk();

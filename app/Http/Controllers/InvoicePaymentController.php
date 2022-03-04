@@ -43,10 +43,10 @@ class InvoicePaymentController extends Controller
             'payments' => InvoicePaymentResource::collection($payments),
             'permissions' => [
                 'invoices' => [
-                    'viewAny' => $user->can('viewAny', Invoice::class),
+                    'view' => $user->can('view', Invoice::class),
                 ],
                 'students' => [
-                    'viewAny' => $user->can('viewAny', Student::class),
+                    'view' => $user->can('view', Student::class),
                 ],
                 'payments' => $user->getPermissions(Student::class),
             ],

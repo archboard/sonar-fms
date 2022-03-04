@@ -16,7 +16,7 @@ class PreviewLayoutController extends Controller
      */
     public function __invoke(Request $request, InvoiceLayout $layout)
     {
-        $this->authorize('viewAny', $layout);
+        $this->authorize('view', $layout);
 
         /** @var Invoice $invoice */
         $invoice = $request->school()

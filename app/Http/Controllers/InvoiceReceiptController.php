@@ -17,7 +17,7 @@ class InvoiceReceiptController extends Controller
      */
     public function __invoke(Request $request, Invoice $invoice)
     {
-        $this->authorize('viewAny', Receipt::class);
+        $this->authorize('view', Receipt::class);
 
         $receipts = $invoice->receipts()
             ->orderBy('created_at')

@@ -1,12 +1,12 @@
 <template>
   <div class="p-1">
-    <SonarMenuItem v-if="showView && can('viewAny')" is="inertia-link" :href="`/invoices/imports/${invoiceImport.id}`">
+    <SonarMenuItem v-if="showView && can('view')" is="inertia-link" :href="`/invoices/imports/${invoiceImport.id}`">
       {{ __('View') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/invoices/imports/${invoiceImport.id}/edit`">
       {{ __('Edit import file') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="can('viewAny')" is="a" :href="`/invoices/imports/${invoiceImport.id}/download`">
+    <SonarMenuItem v-if="can('view')" is="a" :href="`/invoices/imports/${invoiceImport.id}/download`">
       {{ __('Download file') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('update')" is="inertia-link" :href="`/invoices/imports/${invoiceImport.id}/map`">

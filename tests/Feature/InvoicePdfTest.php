@@ -21,7 +21,7 @@ class InvoicePdfTest extends TestCase
     {
         parent::setUp();
 
-        $this->assignPermission('viewAny', Invoice::class);
+        $this->assignPermission('view', Invoice::class);
     }
 
     public function test_can_generate_invoice_in_download_route()

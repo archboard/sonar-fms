@@ -21,7 +21,7 @@ class FeeCategoryTest extends TestCase
 
     public function test_can_get_all_categories()
     {
-        $this->assignPermission('viewAny', FeeCategory::class);
+        $this->assignPermission('view', FeeCategory::class);
 
         $this->tenant->feeCategories()
             ->saveMany(FeeCategory::factory()->count(2)->make());
@@ -51,7 +51,7 @@ class FeeCategoryTest extends TestCase
 
     public function test_can_get_single_fee_category()
     {
-        $this->assignPermission('viewAny', FeeCategory::class);
+        $this->assignPermission('view', FeeCategory::class);
 
         /** @var FeeCategory $category */
         $category = $this->tenant->feeCategories()

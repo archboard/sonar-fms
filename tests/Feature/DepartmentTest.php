@@ -20,7 +20,7 @@ class DepartmentTest extends TestCase
 
     public function test_can_get_all_departments_with_permission()
     {
-        $this->assignPermission('viewAny', Department::class);
+        $this->assignPermission('view', Department::class);
 
         $this->tenant->departments()
             ->saveMany(Department::factory()->count(3)->make());
@@ -52,7 +52,7 @@ class DepartmentTest extends TestCase
 
     public function test_can_get_existing_department()
     {
-        $this->assignPermission('viewAny', Department::class);
+        $this->assignPermission('view', Department::class);
 
         /** @var Department $department */
         $department = $this->tenant->departments()
