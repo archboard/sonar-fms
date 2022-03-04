@@ -46,6 +46,7 @@
               </span>
             </div>
           </Th>
+          <Th>{{ __('Roles') }}</Th>
           <th></th>
         </tr>
       </Thead>
@@ -58,6 +59,16 @@
             {{ schoolUser.full_name }}
           </Td>
           <Td>{{ schoolUser.email }}</Td>
+          <Td>
+            <SolidBadge v-if="schoolUser.manages_tenancy" color="primary" class="mr-1">{{ __('Manages tenancy') }}</SolidBadge>
+            <SolidBadge
+              v-for="role in schoolUser.roles"
+              :key="role"
+              class="mr-1"
+            >
+              {{ role }}
+            </SolidBadge>
+          </Td>
           <Td class="text-right align-middle">
             <div class="flex items-center justify-end">
               <VerticalDotMenu>
@@ -72,20 +83,6 @@
                     {{ __('School access') }}
                   </SonarMenuItem>
                 </div>
-<!--                <div class="px-1 py-1">-->
-<!--                  <SonarMenuItem>-->
-<!--                    Archive-->
-<!--                  </SonarMenuItem>-->
-<!--                  <SonarMenuItem>-->
-<!--                    Move-->
-<!--                  </SonarMenuItem>-->
-<!--                </div>-->
-
-<!--                <div class="px-1 py-1" v-if="can('delete')">-->
-<!--                  <SonarMenuItem v-slot="{ active }">-->
-<!--                    <span :class="[active ? '' : 'text-red-500 dark:text-red-400']">Delete</span>-->
-<!--                  </SonarMenuItem>-->
-<!--                </div>-->
               </VerticalDotMenu>
             </div>
           </Td>
@@ -146,9 +143,11 @@ import SonarMenuItem from '../../components/forms/SonarMenuItem'
 import UserPermissionsSlideout from '../../components/slideouts/UserPermissionsSlideout'
 import checksPermissions from '../../composition/checksPermissions'
 import SchoolAccessSlideOut from '@/components/slideouts/SchoolAccessSlideOut'
+import SolidBadge from '@/components/SolidBadge'
 
 export default defineComponent({
   components: {
+    SolidBadge,
     SchoolAccessSlideOut,
     MenuItem,
     UserPermissionsSlideout,

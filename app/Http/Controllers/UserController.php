@@ -26,6 +26,7 @@ class UserController extends Controller
         $user = $request->user();
 
         $users = $school->users()
+            ->with('roles')
             ->filter($request->all())
             ->paginate($request->input('perPage', 25));
 

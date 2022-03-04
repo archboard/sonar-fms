@@ -30,6 +30,7 @@ class UserResource extends JsonResource
             'manages_tenancy' => $this->manages_tenancy,
             'schools' => SchoolResource::collection($this->whenLoaded('activeSchools')),
             'school' => new SchoolResource($this->whenLoaded('school')),
+            'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name'), []),
         ];
     }
 }
