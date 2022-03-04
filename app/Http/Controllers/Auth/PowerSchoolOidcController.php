@@ -45,12 +45,14 @@ class PowerSchoolOidcController extends Controller
     protected function authenticated(Request $request, User $user, Collection $data)
     {
         if ($data->get('persona') === 'staff') {
-            $user->setSchoolStaffSchools();
+            $user->setSchoolStaffSchools()
+                ->assign('staff');
         }
 
         if ($data->get('persona') === 'parent') {
             $user->setContactId()
-                ->syncStudents();
+                ->syncStudents()
+                ->assign('contact');
         }
 
         $user->setSchool()

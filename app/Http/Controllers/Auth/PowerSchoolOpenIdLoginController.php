@@ -32,6 +32,7 @@ class PowerSchoolOpenIdLoginController extends Controller
             $schools = School::whereIn('school_number', $adminSchools)
                 ->pluck('id');
             $user->schools()->syncWithoutDetaching($schools);
+            $user->assign('staff');
         }
 
         if ($schoolId = $data->get('schoolID')) {
@@ -44,7 +45,8 @@ class PowerSchoolOpenIdLoginController extends Controller
             // Get the contact id if there isn't one set
             $user->setContactId()
                 ->syncStudents()
-                ->setSchool();
+                ->setSchool()
+                ->assign('contact');
         }
 
         $user->save();
