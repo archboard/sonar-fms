@@ -16,6 +16,6 @@ class ScopeBouncer implements SwitchTenantTask
 
     public function forgetCurrent(): void
     {
-        BouncerFacade::scope();
+        BouncerFacade::scope()->remove();
     }
 }
