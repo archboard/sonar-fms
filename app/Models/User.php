@@ -341,12 +341,19 @@ class User extends Authenticatable implements HasLocalePreference
         return $this;
     }
 
+    /**
+     * This does a complete sync of a Contact's
+     * student access and sets Bouncer permissions
+     *
+     * @return $this
+     */
     public function syncStudents(): static
     {
         if (!$this->contact_id) {
             return $this;
         }
 
+        $originalScope = \Bouncer::scope()->get();
         $contactStudents = PowerSchool::get("/ws/contacts/{$this->contact_id}/students")
             ->collect();
 
@@ -354,24 +361,30 @@ class User extends Authenticatable implements HasLocalePreference
             ->pluck('uuid', 'sis_id');
         $schools = School::whereIn('school_number', $contactStudents->pluck('schoolNumber'))
             ->pluck('id', 'school_number');
-        $studentUser = DB::table('student_user')
+
+        // We're doing a clean sync because Contacts
+        // is the single source of truth of access.
+        // Remove access and then delete directly.
+        $this->students
+            ->each(fn ($student) => $this->disallow('view', $student));
+        $this->unsetRelation('students');
+
+        DB::table('student_user')
             ->where('user_uuid', $this->uuid)
-            ->pluck('student_uuid');
+            ->delete();
 
         // Attach the school relationship
         $this->schools()->syncWithoutDetaching($schools->values());
 
-        $studentUsers = $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students, $studentUser) {
+        $studentUsers = $contactStudents->reduce(function ($studentUsers, $student) use ($schools, $students) {
             $studentUuid = $students->get($student['dcid']);
 
             // If the school doesn't exist
             // or the student doesn't exist
-            // or we already have the relationship
             // don't do anything
             if (
                 !$schools->has($student['schoolNumber']) ||
-                !$studentUuid ||
-                $studentUser->contains($studentUuid)
+                !$studentUuid
             ) {
                 return $studentUsers;
             }
@@ -387,8 +400,16 @@ class User extends Authenticatable implements HasLocalePreference
             return $studentUsers;
         }, []);
 
-        ray($studentUsers)->green();
+        // Re-associate all the students
         DB::table('student_user')->insert($studentUsers);
+
+
+        // Give fresh permission for these students
+        \Bouncer::scope()->remove();
+        $this->students()
+            ->select('uuid')
+            ->each(fn ($student) => $this->allow('view', $student));
+        \Bouncer::scope()->to($originalScope);
 
         return $this;
     }
