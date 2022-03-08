@@ -350,7 +350,6 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                     $subtotal,
                 );
 
-                ray('tax item', $subtotal, $pretax);
                 $pretax = $pretax < 0 ? 0 : $pretax;
                 $taxRate = NumberUtility::convertPercentageFromUser($taxItem['tax_rate']);
 
