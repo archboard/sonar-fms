@@ -25,14 +25,14 @@
                     <div class="min-w-0 flex-1 relative">
                       <div>
                         <div class="text-sm">
-                          <span class="font-medium text-gray-900 dark:text-gray-100">{{ comment.user.full_name }}</span>
+                          <span class="font-medium text-gray-900 dark:text-gray-100">{{ comment.user?.full_name }}</span>
                         </div>
                         <p class="mt-0.5 text-sm text-gray-500" :title="displayDate(comment.created_at, 'full')">
                           {{ comment.diff }}
                         </p>
                       </div>
                       <div class="mt-2 text-sm text-gray-700 dark:text-gray-300 comment-content" v-html="comment.markdown"></div>
-                      <div v-if="comment.user.uuid === user.uuid" class="hidden group-hover:flex items-start space-x-2 w-full absolute -bottom-6 inset-x-0 text-xs">
+                      <div v-if="comment.user?.uuid === user.uuid" class="hidden group-hover:flex items-start space-x-2 w-full absolute -bottom-6 inset-x-0 text-xs">
                         <Link is="button" @click.prevent="editComment(comment)">{{ __('Edit') }}</Link>
                         <Link is="button" @click.prevent="promptDelete(comment)">{{ __('Delete') }}</Link>
                       </div>
