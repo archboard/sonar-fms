@@ -19,6 +19,7 @@ use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class InvoiceFromImportFactory extends InvoiceFactory
@@ -657,6 +658,28 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $this->rowTaxDue = $this->buildTaxItemAttributes();
 
                 // After everything, generate the invoice attributes and add them to the collection
+                $invoiceAttributes = $this->getInvoiceAttributes();
+                $validator = Validator::make($invoiceAttributes, Invoice::getValidationRules());
+
+                // If the attributes fail validation,
+                // don't commit anything and set the reasons
+                if ($validator->fails()) {
+                    $message = collect($validator->errors()->toArray())
+                        ->reduce(function (string $message, $errors, $key) {
+                            if (!empty($message)) {
+                                $message .=', ';
+                            }
+
+                            $attribute = ucfirst($key);
+                            $error = $errors[0];
+                            $message .= "{$attribute}: {$error}";
+                            return $message;
+                        }, '');
+                    $this->addResult($message, false);
+                    $this->resetLocalStores();
+                    return;
+                }
+
                 $this->localInvoices->push($this->getInvoiceAttributes());
 
                 // Add the successful result

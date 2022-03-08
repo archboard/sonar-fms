@@ -1522,4 +1522,16 @@ class Invoice extends Model implements Searchable, Exportable
 
         return $query;
     }
+
+    public static function getValidationRules(): array
+    {
+        return [
+            'title' => ['required', 'max:255'],
+            'due_at' => ['nullable', 'date'],
+            'invoice_date' => ['date'],
+            'available_at' => ['nullable', 'date'],
+            'notify' => ['nullable', 'boolean'],
+            'tax_rate' => ['nullable', 'numeric'],
+        ];
+    }
 }

@@ -624,6 +624,77 @@ class InvoiceImportTest extends TestCase
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 
+    public function test_invoice_attribute_validation()
+    {
+        Storage::fake();
+        Event::fake();
+        Bus::fake();
+
+        $originalPath = (new InvoiceImport)->storeFile(
+            $this->getUploadedFile('small_invalid.csv'),
+            $this->school
+        );
+
+        /** @var InvoiceImport $import */
+        $import = InvoiceImport::make([
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField('name'),
+                'description' => $this->makeMapField(),
+                'invoice_date' => $this->makeMapField(),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField(value: 'Item one', isManual: true),
+                        'amount_per_unit' => $this->makeMapField('amount'),
+                        'quantity' => $this->makeMapField('quantity'),
+                    ],
+                ],
+                'scholarships' => [],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
+            });
+
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+
+        $import->refresh();
+        $this->assertEquals($import->total_records, $import->failed_records);
+
+        foreach ($import->results as $result) {
+            $this->assertFalse($result['successful']);
+            $this->assertStringContainsString('Title', $result['result']);
+        }
+
+        Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
     public function test_can_get_simple_xls_as_models()
     {
         $this->withoutExceptionHandling();
