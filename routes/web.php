@@ -75,6 +75,9 @@ Route::middleware('tenant')->group(function () {
         Route::get('/my-students/{student}', [\App\Http\Controllers\MyStudentController::class, 'show'])
             ->name('my-students.show');
 
+        Route::get('/my-invoices', [\App\Http\Controllers\MyInvoiceController::class, 'index'])
+            ->name('my-invoices.index');
+
         Route::middleware('school_settings')
             ->group(function () {
                 /**

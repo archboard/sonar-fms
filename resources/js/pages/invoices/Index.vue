@@ -59,7 +59,7 @@
     <Table class="mt-6">
       <Thead>
         <tr>
-          <th class="w-8 text-left pl-6">
+          <th v-if="canSelect" class="w-8 text-left pl-6">
             <Checkbox v-model:checked="selectAll" />
           </th>
           <Th class="w-1">
@@ -129,7 +129,7 @@
           @convert-to-template="useAsTemplate(invoice)"
         >
           <template #prepend>
-            <td class="pl-6 py-4 text-sm">
+            <td v-if="canSelect" class="pl-6 py-4 text-sm">
               <Checkbox
                 v-model:checked="user.invoice_selection"
                 @change="selectInvoice(invoice)"
@@ -256,6 +256,14 @@ export default defineComponent({
     invoices: Object,
     user: Object,
     school: Object,
+    endpoint: {
+      type: String,
+      default: '/invoices',
+    },
+    canSelect: {
+      type: Boolean,
+      default: () => true,
+    }
   },
 
   setup (props) {
@@ -278,7 +286,7 @@ export default defineComponent({
       due_start: null,
       due_end: null,
       types: [],
-    }, `/invoices`)
+    }, props.endpoint)
     const { searchTerm } = searchesItems(filters)
     const { displayCurrency } = displaysCurrency()
 
