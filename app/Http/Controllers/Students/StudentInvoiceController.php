@@ -17,11 +17,6 @@ use Illuminate\Support\Facades\DB;
 
 class StudentInvoiceController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(Invoice::class, 'invoice');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -29,6 +24,8 @@ class StudentInvoiceController extends Controller
      */
     public function index(Student $student)
     {
+        $this->authorize('view', $student);
+
         $invoices = $student->invoices()
             ->with([
                 'currency',
@@ -49,6 +46,8 @@ class StudentInvoiceController extends Controller
      */
     public function create(Request $request, Student $student)
     {
+        $this->authorize('create', Invoice::class);
+
         $title = __('Create a new invoice');
         $breadcrumbs = [
             [
@@ -83,6 +82,8 @@ class StudentInvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request, Student $student)
     {
+        $this->authorize('create', Invoice::class);
+
         InvoiceFromRequestFactory::make($request)
             ->build();
 
@@ -100,6 +101,8 @@ class StudentInvoiceController extends Controller
      */
     public function show(Request $request, Student $student, Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
+
         $title = $invoice->title;
         $invoice->fullLoad();
         $student->load('users');
