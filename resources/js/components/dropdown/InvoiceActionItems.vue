@@ -51,7 +51,7 @@
     <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/invoices/${invoice.uuid}/duplicate`">
       {{ __('Duplicate') }}
     </SonarMenuItem>
-    <SonarMenuItem @click.prevent="$emit('convertToTemplate')">
+    <SonarMenuItem v-if="can('invoices.create')" @click.prevent="$emit('convertToTemplate')">
       {{ __('Convert to template') }}
     </SonarMenuItem>
   </div>
