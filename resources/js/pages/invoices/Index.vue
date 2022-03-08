@@ -2,6 +2,7 @@
   <Authenticated>
     <template v-slot:actions>
       <Dropdown
+        v-if="can('invoices.create')"
         size="sm"
         :menu-items="[
           {
