@@ -101,8 +101,13 @@ export default defineComponent({
     const fetchInvoices = async () => {
       loading.value = true
 
-      const { data } = await $http.get(`/students/${props.student.uuid}/invoices?${qs.stringify(filters)}`)
-      invoices.value = data
+      try {
+        const { data } = await $http.get(`/students/${props.student.uuid}/invoices?${qs.stringify(filters)}`)
+        invoices.value = data
+      } catch (e) {
+        //
+      }
+
       loading.value = false
     }
     const paged = page => {
