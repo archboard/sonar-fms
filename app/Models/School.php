@@ -200,18 +200,22 @@ class School extends Model
         return range($this->low_grade, $this->high_grade);
     }
 
-    public function getDefaultInvoiceLayout(): ?InvoiceLayout
+    public function getDefaultInvoiceLayout(): InvoiceLayout
     {
-        return $this->invoiceLayouts()
+        $layout = $this->invoiceLayouts()
             ->default()
             ->first();
+
+        return $layout ?? InvoiceLayout::makeDefault();
     }
 
-    public function getDefaultReceiptLayout(): ?ReceiptLayout
+    public function getDefaultReceiptLayout(): ReceiptLayout
     {
-        return $this->receiptLayouts()
+        $layout = $this->receiptLayouts()
             ->default()
             ->first();
+
+        return $layout ?? ReceiptLayout::makeDefault();
     }
 
     public function syncDataFromSis()

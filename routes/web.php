@@ -255,13 +255,11 @@ Route::middleware('tenant')->group(function () {
                         Route::get('payments/related', \App\Http\Controllers\FetchRelatedPaymentsController::class)
                             ->name('payments.related');
 
-                        Route::middleware('needs_layout')->group(function () {
-                            Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
-                                ->name('preview');
+                        Route::get('preview', \App\Http\Controllers\PreviewInvoiceController::class)
+                            ->name('preview');
 
-                            Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
-                                ->name('download');
-                        });
+                        Route::get('pdf', \App\Http\Controllers\DownloadInvoicePdfController::class)
+                            ->name('download');
 
                         Route::resource('refunds', \App\Http\Controllers\InvoiceRefundController::class)
                             ->names('refunds')
@@ -291,10 +289,8 @@ Route::middleware('tenant')->group(function () {
                             ->name('map');
                         Route::put('/map', [\App\Http\Controllers\MapPaymentImportController::class, 'update']);
 
-                        Route::middleware('needs_layout')->group(function () {
-                            Route::post('/start', \App\Http\Controllers\StartPaymentImportController::class)
-                                ->name('start');
-                        });
+                        Route::post('/start', \App\Http\Controllers\StartPaymentImportController::class)
+                            ->name('start');
 
                         Route::post('/reverse', \App\Http\Controllers\RollBackPaymentImportController::class)
                             ->name('rollback');
@@ -331,7 +327,7 @@ Route::middleware('tenant')->group(function () {
                 Route::post('/layouts/receipts/{layout}/default', \App\Http\Controllers\MakeReceiptLayoutDefault::class)
                     ->name('receipt-layouts.default');
 
-                Route::middleware(['receipt_layout'])
+                Route::middleware([])
                     ->group(function () {
                         Route::get('/payments/{payment}/receipt', \App\Http\Controllers\PaymentReceiptController::class)
                             ->name('payments.receipt');

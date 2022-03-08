@@ -7,6 +7,7 @@ use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,14 +46,16 @@ class LayoutBase extends Model
         $builder->where('is_default', $status);
     }
 
-    public function getMaxWidthAttribute(): string
+    public function maxWidth(): Attribute
     {
         $pages = [
             'Letter' => '8.5in',
             'A4' => '8.27in',
         ];
 
-        return $pages[$this->paper_size];
+        return Attribute::get(
+            fn (): string => $pages[$this->paper_size]
+        );
     }
 
     public static function saveFromRequest(SaveLayoutRequest $request): static
@@ -68,5 +71,21 @@ class LayoutBase extends Model
             ->doesntExist();
 
         return static::create($data);
+    }
+
+    public static function makeDefault(): static
+    {
+        return new static([
+            'paper_size' => 'A4',
+            'is_default' => true,
+            'layout_data' => [
+                'rows' => [
+                    [
+                        'isContentTable' => true,
+                        'columns' => [],
+                    ],
+                ],
+            ],
+        ]);
     }
 }
