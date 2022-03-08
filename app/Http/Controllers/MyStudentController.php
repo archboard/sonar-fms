@@ -29,6 +29,13 @@ class MyStudentController extends Controller
         $this->authorize('view', $student);
 
         $title = $student->full_name;
+        $student->load('currency');
+        $invoiceCount = $student->invoices()
+            ->unpaid()
+            ->published()
+            ->isNotVoid()
+            ->count();
+
         /** @var User $user */
         $user = $request->user();
 
@@ -38,6 +45,7 @@ class MyStudentController extends Controller
 
         return inertia('my-students/Show', [
             'title' => $title,
+            'invoiceCount' => $invoiceCount,
             'student' => $student->toResource(),
             'permissions' => [
                 'invoices' => $invoicePermissions,

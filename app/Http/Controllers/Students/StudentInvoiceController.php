@@ -22,17 +22,27 @@ class StudentInvoiceController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Student $student)
+    public function index(Request $request, Student $student)
     {
         $this->authorize('view', $student);
+        /** @var User $user */
+        $user = $request->user();
 
-        $invoices = $student->invoices()
+        $query = $student->invoices()
             ->with([
                 'currency',
                 'parent',
             ])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
+
+        // Prevent certain users from seeing draft invoices
+        if ($user->cant('view', Invoice::class)) {
+            $query->published();
+        }
+
+        $invoices = $query
+            ->paginate(10)
+            ->withQueryString();
 
         return InvoiceResource::collection($invoices);
     }
