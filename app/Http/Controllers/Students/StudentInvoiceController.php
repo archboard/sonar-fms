@@ -60,18 +60,9 @@ class StudentInvoiceController extends Controller
 
         $title = __('Create a new invoice');
         $breadcrumbs = [
-            [
-                'label' => __('Students'),
-                'route' => route('students.index'),
-            ],
-            [
-                'label' => $student->full_name,
-                'route' => route('students.show', $student),
-            ],
-            [
-                'label' => __('New invoice'),
-                'route' => route('students.invoices.create', $student),
-            ],
+            $this->makeBreadcrumb(__('Students'), route('students.index')),
+            $this->makeBreadcrumb($student->full_name, route('students.show', $student)),
+            $this->makeBreadcrumb(__('New invoice'), route('students.invoices.create', $student)),
         ];
 
         return inertia('invoices/Create', [
@@ -118,18 +109,9 @@ class StudentInvoiceController extends Controller
         $student->load('users');
 
         $breadcrumbs = [
-            [
-                'label' => __('Students'),
-                'route' => route('students.index'),
-            ],
-            [
-                'label' => $student->full_name,
-                'route' => route('students.show', $student),
-            ],
-            [
-                'label' => $invoice->title,
-                'route' => route('students.invoices.show', [$student, $invoice]),
-            ],
+            $this->makeBreadcrumb(__('Students'), route('students.index')),
+            $this->makeBreadcrumb($student->full_name, route('students.show', $student)),
+            $this->makeBreadcrumb($invoice->title, route('students.invoices.show', [$student, $invoice])),
         ];
 
         /** @var User $user */
