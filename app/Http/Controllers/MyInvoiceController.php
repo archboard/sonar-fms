@@ -16,13 +16,7 @@ class MyInvoiceController extends Controller
         /** @var User $user */
         $user = $request->user();
         $title = __('My invoices');
-        $invoices = Invoice::leftJoin('invoice_user', function (JoinClause $join) use ($user) {
-                $join->on('invoices.uuid', '=', 'invoice_user.invoice_uuid');
-            })
-            ->where(function (Builder $builder) use ($user) {
-                $builder->where('invoice_user.user_uuid', $user->uuid)
-                    ->orWhereIn('student_uuid', $user->students->pluck('uuid'));
-            })
+        $invoices = Invoice::forUser($user)
             ->published()
             ->with('student', 'currency')
             ->filter($request->all())

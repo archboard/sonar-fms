@@ -7,6 +7,9 @@ use App\Models\Invoice;
 use App\Models\Scholarship;
 use App\Models\School;
 use App\Models\Student;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Spatie\Searchable\ModelSearchAspect;
 use Spatie\Searchable\Search;
@@ -22,14 +25,26 @@ class GlobalSearchController extends Controller
      */
     public function __invoke(Request $request, School $school)
     {
-        $results = (new Search())
-            ->registerModel(Invoice::class, function (ModelSearchAspect $aspect) use ($school) {
+        /** @var User $user */
+        $user = $request->user();
+        $search = new Search;
+
+        if ($user->can('view', Invoice::class) || $user->students->isNotEmpty()) {
+            $search->registerModel(Invoice::class, function (ModelSearchAspect $aspect) use ($school, $user) {
                 $aspect->addSearchableAttribute('invoice_number')
                     ->addSearchableAttribute('title')
                     ->where('school_id', $school->id)
                     ->with('student', 'students', 'currency');
-            })
-            ->registerModel(Student::class, function (ModelSearchAspect $aspect) use ($school) {
+
+                if ($user->cant('view', Invoice::class)) {
+                    $aspect->forUser($user)
+                        ->published();
+                }
+            });
+        }
+
+        if ($user->can('view', Student::class) || $user->students->isNotEmpty()) {
+            $search->registerModel(Student::class, function (ModelSearchAspect $aspect) use ($school, $user) {
                 $aspect->addSearchableAttribute('first_name')
                     ->addSearchableAttribute('last_name')
                     ->addSearchableAttribute('student_number')
@@ -37,17 +52,29 @@ class GlobalSearchController extends Controller
                     ->orderBy('enrolled', 'desc')
                     ->orderBy('last_name')
                     ->orderBy('first_name');
-            })
-            ->registerModel(Fee::class, function (ModelSearchAspect $aspect) use ($school) {
+
+                if ($user->cant('view', Student::class)) {
+                    $aspect->whereIn('students.uuid', $user->students->pluck('uuid'));
+                }
+            });
+        }
+
+        if ($user->can('view', Fee::class)) {
+            $search->registerModel(Fee::class, function (ModelSearchAspect $aspect) use ($school) {
                 $aspect->addSearchableAttribute('name')
                     ->with('currency');
-            })
-            ->registerModel(Scholarship::class, function (ModelSearchAspect $aspect) use ($school) {
+            });
+        }
+
+        if ($user->can('view', Scholarship::class)) {
+            $search->registerModel(Scholarship::class, function (ModelSearchAspect $aspect) use ($school) {
                 $aspect->addSearchableAttribute('name')
                     ->where('school_id', $school->id)
                     ->with('currency');
-            })
-            ->limitAspectResults(10)
+            });
+        }
+
+        $results = $search->limitAspectResults(10)
             ->search($request->input('s'))
             ->map(function (SearchResult $result) {
                 // Each result should have the HasResource trait
