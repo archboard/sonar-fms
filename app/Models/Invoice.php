@@ -1546,4 +1546,10 @@ class Invoice extends Model implements Searchable, Exportable
             'tax_rate' => ['nullable', 'numeric'],
         ];
     }
+
+    public function isPublic(): bool
+    {
+        return $this->published_at &&
+            $this->available_at <= now();
+    }
 }
