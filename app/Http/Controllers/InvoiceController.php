@@ -16,6 +16,11 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Invoice::class, 'invoice');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,8 +28,6 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('view', Invoice::class);
-
         $title = __('Invoices');
         $invoices = $request->school()
             ->invoices()
@@ -67,8 +70,6 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Invoice::class);
-
         $title = __('Create a new invoice');
         $breadcrumbs = [
             $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
@@ -90,8 +91,6 @@ class InvoiceController extends Controller
      */
     public function store(CreateInvoiceRequest $request)
     {
-        $this->authorize('create', Invoice::class);
-
         $results = InvoiceFromRequestFactory::make($request)
             ->build();
 
@@ -107,8 +106,6 @@ class InvoiceController extends Controller
      */
     public function show(Request $request, Invoice $invoice)
     {
-        $this->authorize('view invoice', $invoice);
-
         $title = $invoice->title . ': ' . $invoice->invoice_number;
         $invoice->load([
             'student',
@@ -158,8 +155,6 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice)
     {
-        $this->authorize('update', $invoice);
-
         if ($invoice->children()->exists()) {
             return redirect("/combine/{$invoice->uuid}");
         }
@@ -192,8 +187,6 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        $this->authorize('update', $invoice);
-
         $results = InvoiceFromRequestFactory::make($request)
             ->build();
 
@@ -205,8 +198,6 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice): RedirectResponse
     {
-        $this->authorize('delete', $invoice);
-
         $invoice->delete();
 
         session()->flash('success', __('Invoice deleted successfully.'));
