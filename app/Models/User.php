@@ -535,6 +535,27 @@ class User extends Authenticatable implements HasLocalePreference
             ->get();
     }
 
+    public function canViewInvoice(Invoice $invoice): bool
+    {
+        // Admins can view any invoice,
+        // otherwise check if it's published and
+        // other parameters about the invoice
+        return $this->can('view', $invoice) ||
+            (
+                $invoice->isPublic() &&
+                $invoice->student_uuid &&
+                $this->students()
+                    ->where('students.uuid', $invoice->student_uuid)
+                    ->exists()
+            ) ||
+            (
+                $invoice->isPublic() &&
+                $invoice->users()
+                    ->where('users.uuid', $this->uuid)
+                    ->exists()
+            );
+    }
+
     public function getPermissionsMatrix(): array
     {
         return [
