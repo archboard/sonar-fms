@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -276,6 +277,17 @@ class Invoice extends Model implements Searchable, Exportable
                     $builder->search($search); // @phpstan-ignore-line
                 });
         });
+    }
+
+    public function scopeForUser(Builder $builder, User $user)
+    {
+        $builder->leftJoin('invoice_user', function (JoinClause $join) use ($user) {
+                $join->on('invoices.uuid', '=', 'invoice_user.invoice_uuid');
+            })
+            ->where(function (Builder $builder) use ($user) {
+                $builder->where('invoice_user.user_uuid', $user->uuid)
+                    ->orWhereIn('student_uuid', $user->students->pluck('uuid'));
+            });
     }
 
     public function scopeIsNotVoid(Builder $builder)
