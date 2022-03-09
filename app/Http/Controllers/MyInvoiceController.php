@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 
 class MyInvoiceController extends Controller
