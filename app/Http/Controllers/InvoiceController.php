@@ -72,14 +72,8 @@ class InvoiceController extends Controller
     {
         $title = __('Create a new invoice');
         $breadcrumbs = [
-            [
-                'label' => __('Invoices'),
-                'route' => route('invoices.index'),
-            ],
-            [
-                'label' => __('New invoice'),
-                'route' => route('invoices.create'),
-            ],
+            $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
+            $this->makeBreadcrumb(__('New invoice'), route('invoices.create')),
         ];
 
         return inertia('invoices/Create', [
@@ -132,14 +126,8 @@ class InvoiceController extends Controller
         ->loadChildren();
 
         $breadcrumbs = [
-            [
-                'label' => __('Invoices'),
-                'route' => route('invoices.index'),
-            ],
-            [
-                'label' => $invoice->invoice_number,
-                'route' => route('invoices.show', $invoice),
-            ]
+            $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
+            $this->makeBreadcrumb($invoice->invoice_number, route('invoices.show', $invoice)),
         ];
 
         /** @var User $user */
@@ -173,18 +161,9 @@ class InvoiceController extends Controller
 
         $title = __('Update invoice');
         $breadcrumbs = [
-            [
-                'label' => __('Invoices'),
-                'route' => route('invoices.index'),
-            ],
-            [
-                'label' => $invoice->title,
-                'route' => route('invoices.show', $invoice),
-            ],
-            [
-                'label' => __('Edit'),
-                'route' => route('invoices.edit', $invoice),
-            ],
+            $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
+            $this->makeBreadcrumb($invoice->title, route('invoices.show', $invoice)),
+            $this->makeBreadcrumb(__('Edit'), route('invoices.edit', $invoice)),
         ];
 
         return inertia('invoices/Create', [
