@@ -41,13 +41,25 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define(
             'view invoice payments',
             fn (User $user, Invoice $invoice) => $user->can('view', InvoicePayment::class) ||
-                $user->canViewInvoice($invoice)
+                $user->hasImplicitAccessToInvoice($invoice)
+        );
+
+        Gate::define(
+            'view invoice payment',
+            fn (User $user, InvoicePayment $payment) => $user->can('view', InvoicePayment::class) ||
+                $user->hasImplicitAccessToInvoice($payment->invoice)
         );
 
         Gate::define(
             'view invoice refunds',
             fn (User $user, Invoice $invoice) => $user->can('view', InvoiceRefund::class) ||
-                $user->canViewInvoice($invoice)
+                $user->hasImplicitAccessToInvoice($invoice)
+        );
+
+        Gate::define(
+            'view invoice refund',
+            fn (User $user, InvoiceRefund $refund) => $user->can('view', $refund) ||
+                $user->hasImplicitAccessToInvoice($refund->invoice)
         );
     }
 }

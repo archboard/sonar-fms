@@ -10,14 +10,11 @@ use Illuminate\Http\Request;
 
 class InvoiceRefundController extends Controller
 {
-    public function __construct()
+    public function index(Request $request, Invoice $invoice)
     {
-        $this->authorizeResource(InvoiceRefund::class, 'refund');
-    }
+        $this->authorize('view invoice refunds', $invoice);
 
-    public function index(Request $request, string $invoice)
-    {
-        $refunds = InvoiceRefund::forInvoice($invoice)
+        $refunds = $invoice->invoiceRefunds()
             ->orderBy('refunded_at', 'desc')
             ->with('user', 'currency')
             ->get();
@@ -27,6 +24,8 @@ class InvoiceRefundController extends Controller
 
     public function create(Invoice $invoice)
     {
+        $this->authorize('create', InvoiceRefund::class);
+
         if ($invoice->invoicePayments->isEmpty()) {
             session()->flash('error', __('No payments have been made yet.'));
             return redirect()->route('invoices.show', $invoice);
@@ -64,6 +63,8 @@ class InvoiceRefundController extends Controller
 
     public function store(SaveRefundRequest $request, Invoice $invoice)
     {
+        $this->authorize('create', InvoiceRefund::class);
+
         $invoice->recordRefund($request);
 
         session()->flash('success', __('Refund saved successfully.'));
@@ -73,6 +74,8 @@ class InvoiceRefundController extends Controller
 
     public function show(string $invoice, InvoiceRefund $refund)
     {
+        $this->authorize('view invoice refund', $refund);
+
         $refund->load(
             'currency',
             'invoice',
