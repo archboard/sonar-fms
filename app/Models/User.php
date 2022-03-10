@@ -543,17 +543,23 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->can('view', $invoice) ||
             (
                 $invoice->isPublic() &&
-                $invoice->student_uuid &&
-                $this->students()
-                    ->where('students.uuid', $invoice->student_uuid)
-                    ->exists()
-            ) ||
-            (
-                $invoice->isPublic() &&
-                $invoice->users()
-                    ->where('users.uuid', $this->uuid)
-                    ->exists()
+                $this->hasImplicitAccessToInvoice($invoice)
             );
+    }
+
+    public function hasImplicitAccessToInvoice(Invoice $invoice): bool
+    {
+        return (
+            $invoice->student_uuid &&
+            $this->students()
+                ->where('students.uuid', $invoice->student_uuid)
+                ->exists()
+        ) ||
+        (
+            $invoice->users()
+                ->where('users.uuid', $this->uuid)
+                ->exists()
+        );
     }
 
     public function getPermissionsMatrix(): array
