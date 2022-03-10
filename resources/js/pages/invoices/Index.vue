@@ -181,26 +181,17 @@ import { Inertia } from '@inertiajs/inertia'
 import handlesFilters from '@/composition/handlesFilters'
 import searchesItems from '@/composition/searchesItems'
 import Authenticated from '@/layouts/Authenticated'
-import Table from '@/components/tables/Table'
-import Thead from '@/components/tables/Thead'
-import Th from '@/components/tables/Th'
-import Tbody from '@/components/tables/Tbody'
-import Td from '@/components/tables/Td'
+import tables from '@/components/tables'
 import Checkbox from '@/components/forms/Checkbox'
-import Pagination from '@/components/tables/Pagination'
 import Input from '@/components/forms/Input'
-import { SearchIcon, SortAscendingIcon, SortDescendingIcon, XCircleIcon } from '@heroicons/vue/outline'
+import { SearchIcon, SortAscendingIcon, SortDescendingIcon } from '@heroicons/vue/outline'
 import Link from '@/components/Link'
 import HelpText from '@/components/HelpText'
 import Button from '@/components/Button'
-import FeeFormModal from '@/components/modals/FeeFormModal'
 import displaysCurrency from '@/composition/displaysCurrency'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
 import Dropdown from '@/components/forms/Dropdown'
 import PageProps from '@/mixins/PageProps'
 import checksPermissions from '@/composition/checksPermissions'
-import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
@@ -229,25 +220,15 @@ export default defineComponent({
     ConvertInvoiceModal,
     InvoiceStatusModal,
     InvoiceActionItems,
-    SonarMenuItem,
-    VerticalDotMenu,
     Dropdown,
-    InvoiceStatusBadge,
-    FeeFormModal,
     Button,
     HelpText,
-    XCircleIcon,
     SearchIcon,
     Input,
     SortDescendingIcon,
     SortAscendingIcon,
-    Pagination,
     Checkbox,
-    Td,
-    Tbody,
-    Th,
-    Thead,
-    Table,
+    ...tables,
     Authenticated,
     Link,
   },
