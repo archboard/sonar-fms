@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
+use Tests\Traits\CreatesInvoice;
 
 class MyInvoicesTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesInvoice;
 
     protected bool $signIn = true;
 
@@ -27,10 +29,24 @@ class MyInvoicesTest extends TestCase
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->has('title')
                 ->has('endpoint')
-                ->where('canSelect', false)
                 ->has('invoices')
+                ->component('my-invoices/Index')
+            );
+    }
+
+    public function test_can_view_invoice_page()
+    {
+        $student = $this->user->students->random();
+        $invoice = $this->createInvoice(['student_uuid' => $student->uuid]);
+
+        $this->get(route('my-invoices.show', $invoice))
+            ->assertOk()
+            ->assertViewHas('title')
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('title')
+                ->has('invoice')
                 ->has('permissions')
-                ->component('invoices/Index')
+                ->component('my-invoices/Show')
             );
     }
 }
