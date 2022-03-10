@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Invoice;
+use App\Models\InvoicePayment;
+use App\Models\InvoiceRefund;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -34,6 +36,18 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define(
             'view invoice',
             fn (User $user, Invoice $invoice) => $user->canViewInvoice($invoice)
+        );
+
+        Gate::define(
+            'view invoice payments',
+            fn (User $user, Invoice $invoice) => $user->can('view', InvoicePayment::class) ||
+                $user->canViewInvoice($invoice)
+        );
+
+        Gate::define(
+            'view invoice refunds',
+            fn (User $user, Invoice $invoice) => $user->can('view', InvoiceRefund::class) ||
+                $user->canViewInvoice($invoice)
         );
     }
 }
