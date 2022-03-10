@@ -12,7 +12,7 @@
         {{ __('Actions') }}
 
         <template #dropdown>
-          <InvoiceActionItems
+          <GuardianInvoiceActions
             :invoice="invoice"
           />
         </template>
@@ -161,16 +161,16 @@ import Dropdown from '@/components/forms/Dropdown'
 import SonarMenuItem from '@/components/forms/SonarMenuItem'
 import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
 import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
-import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
 import Alert from '@/components/Alert'
 import GuardianInvoiceDetails from '@/components/GuardianInvoiceDetails'
+import GuardianInvoiceActions from '@/components/GuardianInvoiceActions'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    GuardianInvoiceActions,
     GuardianInvoiceDetails,
     Alert,
-    InvoiceActionItems,
     ConvertInvoiceModal,
     InvoiceStatusModal,
     Dropdown,
