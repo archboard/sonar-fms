@@ -116,4 +116,23 @@ class InvoiceSelectionTest extends TestCase
 
         $this->assertEquals(0, $this->user->selectedInvoices()->count());
     }
+
+    public function test_can_check_published_status()
+    {
+        $batchId = $this->createBatchInvoices();
+        $invoices = Invoice::batch($batchId)->get();
+        $this->setInvoiceSelection($invoices);
+        $invoices->random()->update(['published_at' => null]);
+
+        $this->get(route('invoice-selection.published'))
+            ->assertOk()
+            ->assertJson(['published' => false]);
+
+        Invoice::whereIn('uuid', $invoices->pluck('uuid'))
+            ->update(['published_at' => now()]);
+
+        $this->get(route('invoice-selection.published'))
+            ->assertOk()
+            ->assertJson(['published' => true]);
+    }
 }

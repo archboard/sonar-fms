@@ -136,6 +136,9 @@ Route::middleware('tenant')->group(function () {
                 Route::delete('/invoice-selection', \App\Http\Controllers\RemoveInvoiceSelectionController::class)
                     ->name('invoice-selection.remove');
 
+                Route::get('/invoice-selection/published', \App\Http\Controllers\CheckPublishedStatusController::class)
+                    ->name('invoice-selection.published');
+
                 /**
                  * Fee-related routes
                  */
