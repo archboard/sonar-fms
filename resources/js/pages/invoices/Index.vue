@@ -52,6 +52,9 @@
           <Link href="/combine">
             {{ __('Combine') }}
           </Link>
+          <Link v-if="!selectionPublished && can('invoices.update')" href="#">
+            {{ __('Publish') }}
+          </Link>
         </div>
       </div>
     </FadeIn>
@@ -251,6 +254,7 @@ export default defineComponent({
     const $http = inject('$http')
     const showFilters = ref(false)
     const promptExport = ref(false)
+    const selectionPublished = ref(true)
     const selectedInvoice = ref({})
     const selectAll = ref(props.user.invoice_selection.length > 0)
     const { can } = checksPermissions()
@@ -273,24 +277,33 @@ export default defineComponent({
 
     // Selection
     const selectInvoice = invoice => {
-      nextTick(() => {
+      nextTick(async () => {
         const add = props.user.invoice_selection.includes(invoice.uuid)
         const method = add ? 'put' : 'delete'
 
-        $http[method](`/invoice-selection/${invoice.uuid}`)
+        await $http[method](`/invoice-selection/${invoice.uuid}`)
+        checkPublicationStatus()
       })
     }
     const clearSelection = async () => {
       await $http.delete('/invoice-selection')
       props.user.invoice_selection = []
     }
+    const checkPublicationStatus = async () => {
+      const { data } = await $http.get('/invoice-selection/published')
+      selectionPublished.value = data.published
+    }
     watch(selectAll, (newVal) => {
       if (newVal) {
         Inertia.post(`/invoice-selection`, filters, {
-          preserveState: true
+          preserveState: true,
+          onSuccess () {
+            checkPublicationStatus()
+          }
         })
       } else {
         clearSelection()
+        selectionPublished.value = true
       }
     })
 
@@ -302,6 +315,8 @@ export default defineComponent({
     const useAsTemplate = invoice => {
       convertInvoice.value = invoice
     }
+
+    checkPublicationStatus()
 
     return {
       filters,
@@ -320,6 +335,7 @@ export default defineComponent({
       selectInvoice,
       clearSelection,
       promptExport,
+      selectionPublished,
     }
   }
 })
