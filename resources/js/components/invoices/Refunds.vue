@@ -3,7 +3,7 @@
     <div class="divide-y divide-gray-300 dark:divide-gray-600">
       <div class="pb-4 flex justify-between">
         <h2 class="text-lg font-medium">{{ __('Refunds') }}</h2>
-        <div>
+        <div v-if="can('refunds.create')">
           <Button :href="`/invoices/${invoice.uuid}/refunds/create`" component="InertiaLink" size="sm">{{ __('Record refund') }}</Button>
         </div>
       </div>
@@ -37,7 +37,7 @@
               </tr>
             </Tbody>
           </Table>
-          <p v-else class="text-sm">{{ __('No refunds have been recorded yet.') }} <Link :href="`/invoices/${invoice.uuid}/refunds/create`">{{ __('Record a refund') }}</Link>.</p>
+          <p v-else class="text-sm">{{ __('No refunds have been recorded yet.') }} <span v-if="can('refunds.create')"><Link :href="`/invoices/${invoice.uuid}/refunds/create`">{{ __('Record a refund') }}</Link>.</span></p>
         </div>
       </div>
     </div>
