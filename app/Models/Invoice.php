@@ -1513,10 +1513,14 @@ class Invoice extends Model implements Searchable, Exportable
 
     public static function getExportQuery(RecordExport $export): \Illuminate\Database\Query\Builder|Builder|Relation
     {
-        $query = $export->school
-            ->invoices()
-            ->notAChild()
-            ->orderBy('invoice_date', 'desc')
+        $query = $export->user->can('view', Invoice::class)
+            ? $export->school
+                ->invoices()
+                ->notAChild()
+            : Invoice::forUser($export->user)
+                ->published();
+
+        $query->orderBy('invoice_date', 'desc')
             ->with([
                 'student',
                 'students',
