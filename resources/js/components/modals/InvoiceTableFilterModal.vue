@@ -119,6 +119,10 @@ export default defineComponent({
 
   props: {
     filters: Object,
+    blockedStatuses: {
+      type: Array,
+      default: () => []
+    },
   },
 
   setup (props, { emit }) {
@@ -131,7 +135,7 @@ export default defineComponent({
     }
     const localFilters = reactive(Object.assign({}, props.filters))
     const { displayShortGrade } = displaysGrades()
-    const { statuses } = invoiceStatuses()
+    const { statuses } = invoiceStatuses(props.blockedStatuses)
     const { school } = useSchool()
     const types = invoiceTypes()
 

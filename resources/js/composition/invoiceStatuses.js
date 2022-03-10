@@ -1,6 +1,6 @@
 import { inject } from 'vue'
 
-export default () => {
+export default (blockedStatuses = []) => {
   const __ = inject('$translate')
   const statuses = {
     unpaid: __('Unpaid'),
@@ -13,6 +13,13 @@ export default () => {
   }
 
   return {
-    statuses,
+    statuses: Object.keys(statuses).reduce((carry, status) => {
+      if (blockedStatuses.includes(status)) {
+        return carry
+      }
+
+      carry[status] = statuses[status]
+      return carry
+    }, {}),
   }
 }
