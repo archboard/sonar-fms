@@ -20,9 +20,18 @@ class ExportRecordsController extends Controller
     public function __invoke(RecordsExportRequest $request, string $type)
     {
         $configuration = [
-            'invoices' => Invoice::class,
-            'payments' => InvoicePayment::class,
-            'students' => Student::class,
+            'invoices' => [
+                'class' => Invoice::class,
+                'authorize' => fn () => true,
+            ],
+            'payments' => [
+                'class' => InvoicePayment::class,
+                'authorize' => fn () => $this->authorize('view', InvoicePayment::class),
+            ],
+            'students' => [
+                'class' => Student::class,
+                'authorize' => fn () => $this->authorize('view', Student::class),
+            ],
         ];
         $model = $configuration[$type] ?? null;
 
@@ -31,12 +40,12 @@ class ExportRecordsController extends Controller
             return back();
         }
 
-//        $this->authorize('view', $model);
+        $model['authorize']();
 
         $data = $request->validated();
         $data['school_id'] = $request->school()->id;
         $data['user_uuid'] = $request->user()->uuid;
-        $data['model'] = $model;
+        $data['model'] = $model['class'];
 
         $export = RecordExport::create($data);
 
