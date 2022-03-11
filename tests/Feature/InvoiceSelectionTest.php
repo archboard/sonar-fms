@@ -135,4 +135,30 @@ class InvoiceSelectionTest extends TestCase
             ->assertOk()
             ->assertJson(['published' => true]);
     }
+
+    public function test_publish_selected()
+    {
+        $this->withoutExceptionHandling();
+        $batchId = $this->createBatchInvoices();
+        $invoices = Invoice::batch($batchId)->get();
+        $this->setInvoiceSelection($invoices);
+        $invoices->random()->update(['published_at' => null]);
+
+        $this->assertFalse(
+            $this->user->selectedInvoices()
+                ->whereNull('published_at')
+                ->doesntExist()
+        );
+
+        $this->put(route('invoice-selection.publish'))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertTrue(
+            $this->user->selectedInvoices()
+                ->whereNull('published_at')
+                ->doesntExist()
+        );
+        $this->assertEquals($invoices->count(), $this->user->selectedInvoices()->count());
+    }
 }

@@ -130,6 +130,9 @@ Route::middleware('tenant')->group(function () {
                 Route::delete('/student-selection', \App\Http\Controllers\RemoveStudentSelectionController::class)
                     ->name('student-selection.remove');
 
+                Route::put('/invoice-selection/publish', \App\Http\Controllers\PublishSelectedInvoicesController::class)
+                    ->name('invoice-selection.publish');
+
                 Route::resource('/invoice-selection', \App\Http\Controllers\InvoiceSelectionController::class)
                     ->except('create', 'show', 'edit');
 

@@ -52,7 +52,7 @@
           <Link href="/combine">
             {{ __('Combine') }}
           </Link>
-          <Link v-if="!selectionPublished && can('invoices.update')" href="#">
+          <Link v-if="!selectionPublished && can('invoices.update')" href="/invoice-selection/publish" method="put" as="button">
             {{ __('Publish') }}
           </Link>
         </div>
