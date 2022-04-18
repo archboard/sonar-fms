@@ -31,7 +31,7 @@ export default defineComponent({
   },
 
   setup (props) {
-    const { currency, locale } = displaysCurrency()
+    const { currency, locale, displayCurrency } = displaysCurrency()
     const currencyOptions = {
       currency: currency.code,
       locale,
@@ -46,7 +46,6 @@ export default defineComponent({
       autoSign: true,
       useGrouping: true,
     }
-    const { displayCurrency } = displaysCurrency()
     const {
       inputRef,
       setValue
