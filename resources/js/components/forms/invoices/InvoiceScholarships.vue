@@ -37,15 +37,15 @@
                 </HelpText>
               </InputWrap>
 
-              <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">
-                <CheckboxWrapper>
-                  <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />
-                  <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>
-                </CheckboxWrapper>
-                <HelpText>
-                  {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}
-                </HelpText>
-              </InputWrap>
+<!--              <InputWrap v-if="item.scholarship_id" :error="form.errors[`scholarships.${index}.sync_with_scholarship`]">-->
+<!--                <CheckboxWrapper>-->
+<!--                  <Checkbox v-model:checked="item.sync_with_scholarship" @change="scholarshipSyncChanged(item)" />-->
+<!--                  <CheckboxText>{{ __('Sync details with associated scholarship.') }}</CheckboxText>-->
+<!--                </CheckboxWrapper>-->
+<!--                <HelpText>-->
+<!--                  {{ __("This option will keep the scholarship name, amount, percentage and resolution strategy in sync with the associated scholarship. This means that if you change the scholarship's name or amount, this line item will reflect those changes. If it is not enabled, the details set below will be set unless changed manually later.") }}-->
+<!--                </HelpText>-->
+<!--              </InputWrap>-->
 
               <InputWrap v-if="!item.sync_with_scholarship" :error="form.errors[`scholarships.${index}.name`]">
                 <Label :for="`scholarship_name_${index}`" :required="true">{{ __('Name') }}</Label>
