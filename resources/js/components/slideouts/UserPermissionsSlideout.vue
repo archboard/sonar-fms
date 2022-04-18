@@ -133,7 +133,7 @@ export default {
         !firstFetch &&
         (currentUser.value.manages_tenancy || props.authUserManagesSchool)
       ) {
-        $http.put(`/users/${props.user.uuid}/school-admin`).then(getPermissions)
+        $http.put(`/settings/users/${props.user.uuid}/school-admin`).then(getPermissions)
       }
     })
 
