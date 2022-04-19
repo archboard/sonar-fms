@@ -124,7 +124,7 @@ export default {
 
     watch(managesTenancy, (newVal) => {
       props.user.manages_tenancy = newVal
-      $http.put(`/users/${props.user.uuid}/manager`).then(getPermissions)
+      $http.put(`/settings/users/${props.user.uuid}/manager`).then(getPermissions)
     })
 
     watch(managesSchool, () => {
@@ -133,7 +133,7 @@ export default {
         !firstFetch &&
         (currentUser.value.manages_tenancy || props.authUserManagesSchool)
       ) {
-        $http.put(`/settings/users/${props.user.uuid}/school-admin`).then(getPermissions)
+        $http.put(`/users/${props.user.uuid}/school-admin`).then(getPermissions)
       }
     })
 
