@@ -42,10 +42,10 @@
     </SonarMenuItem>
   </div>
   <div class="p-1">
-    <SonarMenuItem v-if="invoice.published_at && can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/preview`" target="_blank">
+    <SonarMenuItem v-if="can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/preview`" target="_blank">
       {{ __('Preview PDF') }}
     </SonarMenuItem>
-    <SonarMenuItem v-if="invoice.published_at && can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/pdf`" target="_blank">
+    <SonarMenuItem v-if="can('invoices.view')" is="a" :href="`/invoices/${invoice.uuid}/pdf`" target="_blank">
       {{ __('Download PDF') }}
     </SonarMenuItem>
     <SonarMenuItem v-if="can('invoices.create')" is="inertia-link" :href="`/invoices/${invoice.uuid}/duplicate`">

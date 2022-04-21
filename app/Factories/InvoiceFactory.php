@@ -254,22 +254,20 @@ abstract class InvoiceFactory extends BaseImportFactory
         });
 
         // Start the batch for the pdfs after dispatching the account balance jobs
-        if (!$this->asDraft) {
-            $batch = Bus::batch(
-                    $this->invoices->pluck('uuid')
-                        ->map(fn ($uuid) => new CreateInvoicePdf($uuid))
-                )
-                ->then(function (Batch $batch) {
-                    InvoiceImport::where('pdf_batch_id', $batch->id)
-                        ->update(['pdf_batch_id' => null]);
-                })
-                ->catch(function (Batch $batch, \Throwable $e) {
-                    Log::error($e->getMessage());
-                })
-                ->dispatch();
+        $batch = Bus::batch(
+                $this->invoices->pluck('uuid')
+                    ->map(fn ($uuid) => new CreateInvoicePdf($uuid))
+            )
+            ->then(function (Batch $batch) {
+                InvoiceImport::where('pdf_batch_id', $batch->id)
+                    ->update(['pdf_batch_id' => null]);
+            })
+            ->catch(function (Batch $batch, \Throwable $e) {
+                Log::error($e->getMessage());
+            })
+            ->dispatch();
 
-            $this->pdfBatchId = $batch->id;
-        }
+        $this->pdfBatchId = $batch->id;
 
         return $uuids;
     }
