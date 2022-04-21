@@ -27,8 +27,8 @@
                         <div class="text-sm">
                           <span class="font-medium text-gray-900 dark:text-gray-100">{{ comment.user?.full_name }}</span>
                         </div>
-                        <p class="mt-0.5 text-sm text-gray-500" :title="displayDate(comment.created_at, 'full')">
-                          {{ comment.diff }}
+                        <p class="mt-0.5 text-sm text-gray-500">
+                          {{ displayDate(comment.created_at, 'full') }} ({{ comment.diff }})
                         </p>
                       </div>
                       <div class="mt-2 text-sm text-gray-700 dark:text-gray-300 comment-content" v-html="comment.markdown"></div>
