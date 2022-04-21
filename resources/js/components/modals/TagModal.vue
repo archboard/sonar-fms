@@ -7,7 +7,6 @@
     @action="save"
     :auto-close="false"
   >
-    <pre>{{ selectedTag }}</pre>
     <Combobox as="div" v-slot="{ open }" class="relative" v-model="selectedTag">
       <ComboboxInput
         ref="comboInput"
