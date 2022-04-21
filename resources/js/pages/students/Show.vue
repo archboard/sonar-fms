@@ -67,7 +67,7 @@
 
                     <div class="px-4 py-5 bg-gradient-to-br from-gray-500 to-gray-600 dark:from-gray-700 dark:to-gray-600 shadow rounded-lg overflow-hidden sm:p-6">
                       <dt class="text-sm font-medium text-gray-100 dark:text-gray-300 truncate flex items-center space-x-1">
-                        <span>{{ __('Revenue') }}</span>
+                        <span>{{ __('Total payments/receipts') }}</span>
                         <InertiaLink v-if="can('students.update')" :href="`/students/${student.uuid}/revenue`" method="put" preserve-scroll as="button"><RefreshIcon class="w-4 h-4" /></InertiaLink>
                       </dt>
                       <dd class="mt-1 text-3xl font-semibold text-white">

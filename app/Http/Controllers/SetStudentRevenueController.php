@@ -20,7 +20,7 @@ class SetStudentRevenueController extends Controller
         $student->setRevenue()
             ->save();
 
-        session()->flash('success', __('Revenue updated.'));
+        session()->flash('success', __('Payments/receipts updated.'));
 
         return back();
     }

@@ -285,7 +285,7 @@ class Student extends Model implements Searchable, Exportable
             __('Last name'),
             __('Grade'),
             __('Account balance'),
-            __('Revenue'),
+            __('Payments/receipts'),
             __('Paid invoices'),
             __('Unpaid invoices'),
         ];
