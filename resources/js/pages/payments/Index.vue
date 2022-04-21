@@ -8,11 +8,11 @@
         size="sm"
         :menu-items="[
           {
-            label: __('By hand'),
+            label: __('Create manually'),
             route: `/payments/create`,
           },
           {
-            label: __('From import'),
+            label: __('Import'),
             route: `/payments/imports/create`,
           },
         ]"

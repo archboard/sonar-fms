@@ -6,11 +6,11 @@
         size="sm"
         :menu-items="[
           {
-            label: __('By hand'),
+            label: __('Create manually'),
             route: `/invoices/create`,
           },
           {
-            label: __('From import'),
+            label: __('Import'),
             route: `/invoices/imports/create`,
           },
         ]"
