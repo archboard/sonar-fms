@@ -62,6 +62,14 @@
             </div>
             <Error v-if="form.errors.users">{{ form.errors.users }}</Error>
           </div>
+
+          <div class="mt-4">
+            <InputWrap>
+              <Label for="user_search">{{ __('Add a user') }}</Label>
+              <UserTypeahead v-model="searchedUser" id="user_search" />
+              <HelpText>{{ __('Find additional users to which to assign this invoice.') }}</HelpText>
+            </InputWrap>
+          </div>
         </div>
 
         <div class="pt-8">
@@ -107,7 +115,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, inject, ref } from 'vue'
+import { computed, defineComponent, inject, ref, watch } from 'vue'
 import Authenticated from '@/layouts/Authenticated'
 import PageProps from '@/mixins/PageProps'
 import { useForm } from '@inertiajs/inertia-vue3'
@@ -135,10 +143,16 @@ import Modal from '@/components/Modal'
 import CombineInvoiceSummary from '@/components/CombineInvoiceSummary'
 import isUndefined from 'lodash/isUndefined'
 import Error from '@/components/forms/Error'
+import InputWrap from '@/components/forms/InputWrap'
+import Label from '@/components/forms/Label'
+import UserTypeahead from '@/components/forms/UserTypeahead'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    UserTypeahead,
+    Label,
+    InputWrap,
     CombineInvoiceSummary,
     Modal,
     InvoicePaymentSchedules,
@@ -222,6 +236,17 @@ export default defineComponent({
       () => props.selection.reduce((total, invoice) => total + invoice.amount_due, 0)
     )
 
+    const searchedUser = ref()
+    watch(searchedUser, (value) => {
+      if (value) {
+        if (!props.suggestedUsers.some(u => u.id === value.id)) {
+          props.suggestedUsers.push(value)
+          form.users.push(value.id)
+        }
+        searchedUser.value = null
+      }
+    })
+
     return {
       form,
       combine,
@@ -230,6 +255,7 @@ export default defineComponent({
       reviewing,
       saveAsDraft,
       isNew,
+      searchedUser,
     }
   }
 })

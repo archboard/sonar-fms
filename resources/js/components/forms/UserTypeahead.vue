@@ -4,12 +4,18 @@
       ref="comboInput"
       @change="query = $event.target.value"
       :class="input"
-      :display-value="(user) => user.full_name"
+      :display-value="(user) => user?.full_name || ''"
       :id="id"
       :placeholder="__('Search by name or email')"
     />
     <DropIn>
-      <ComboboxOptions class="absolute z-10 origin-top-left p-1 mt-2 w-full space-y-1 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none">
+      <ComboboxOptions
+        v-slot="{ open }"
+        class="absolute z-10 origin-top-left mt-2 w-full space-y-1 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+        :class="{
+          'p-1': open,
+        }"
+      >
         <ComboboxOption
           as="template"
           v-for="user in users"
