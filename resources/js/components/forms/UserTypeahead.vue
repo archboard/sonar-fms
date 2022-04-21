@@ -1,97 +1,87 @@
 <template>
-  <Typeahead
-    v-model="userDisplay"
-    :items="users"
-    :placeholder="__('Search by name or email')"
-    @selected="userSelected"
-    @blur="onBlur"
-  >
-    <template v-slot:item="{ item, active }">
-      <div
-        class="flex items-center justify-between rounded w-full px-3 py-1.5 truncate"
-        :class="{
-          'bg-gradient-to-bl from-fuchsia-500 to-fuchsia-600 dark:from-fuchsia-600 dark:to-fuchsia-700 text-white': active
-        }"
-      >
-        <div class="flex items-center space-x-2">
-          <span>{{ item.full_name }}</span>
-        </div>
-      </div>
-    </template>
-  </Typeahead>
+  <Combobox as="div" v-slot="{ open }" class="relative" v-model="localValue">
+    <ComboboxInput
+      ref="comboInput"
+      @change="query = $event.target.value"
+      :class="input"
+      :display-value="(user) => user.full_name"
+      :id="id"
+      :placeholder="__('Search by name or email')"
+    />
+    <DropIn>
+      <ComboboxOptions class="absolute z-10 origin-top-left p-1 mt-2 w-full space-y-1 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <ComboboxOption
+          as="template"
+          v-for="user in users"
+          :key="user.id"
+          :value="user"
+          v-slot="{ active, selected }"
+        >
+          <li
+            :class="[
+              (active || selected) ? classes.active : classes.inactive,
+              classes.always,
+              'flex space-x-2',
+            ]"
+          >
+            <span>{{ user.full_name }}</span>
+          </li>
+        </ComboboxOption>
+      </ComboboxOptions>
+    </DropIn>
+  </Combobox>
 </template>
 
 <script>
-import { defineComponent, inject, ref, watch, computed, nextTick } from 'vue'
+import { defineComponent, inject, ref, watch } from 'vue'
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
 import hasModelValue from '@/composition/hasModelValue'
-import cloneDeep from 'lodash/cloneDeep'
-import Typeahead from '@/components/forms/Typeahead'
+import menuItemClasses from '@/composition/menuItemClasses'
 import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import inputClasses from '@/composition/inputClasses'
 import debounce from 'lodash/debounce'
+import DropIn from '@/components/transitions/DropIn'
 
 export default defineComponent({
   components: {
+    DropIn,
     InvoiceStatusBadge,
-    Typeahead,
+    Combobox,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
   },
   props: {
     modelValue: [Object],
-    invoice: {
-      type: Object,
-      default: () => ({})
-    }
+    id: String,
   },
   emits: ['update:modelValue'],
 
   setup (props, { emit }) {
-    const $http = inject('$http')
+    const { input } = inputClasses()
     const { localValue } = hasModelValue(props, emit)
-    const searchTerm = ref('')
-    const selectedUser = ref(cloneDeep(localValue.value))
+    const classes = menuItemClasses()
+    const $http = inject('$http')
+    const fetching = ref(false)
+    const query = ref('')
     const users = ref([])
-    const userDisplay = computed({
-      get: () => selectedUser.value.id
-          ? selectedUser.value.full_name
-          : searchTerm.value,
-      set: value => {
-        searchTerm.value = value
-      }
-    })
-    const userSelected = item => {
-      nextTick(() => {
-        const user = item || {}
-        selectedUser.value = user
-        localValue.value = user
+    const comboInput = ref()
+    const search = debounce(async (term) => {
+       const { data } = await $http.post('/search/users', {
+        s: term,
       })
-    }
-    const onBlur = () => {
-      // If there isn't a search value on blur,
-      // assume that the value is cleared out
-      // and we need to remove the value
-      if (!searchTerm.value) {
-        localValue.value = {}
-      }
-    }
-
-    watch(searchTerm, debounce(async value => {
-      if (!value) {
-        users.value = []
-        return
-      }
-
-      const { data } = await $http.post('/search/users', {
-        s: value,
-      })
-
       users.value = data
-    }, 500))
+    }, 250)
+    watch(query, search)
 
     return {
-      searchTerm,
       users,
-      userDisplay,
-      userSelected,
-      onBlur,
+      input,
+      localValue,
+      classes,
+      comboInput,
+      query,
+      fetching,
     }
   }
 })
