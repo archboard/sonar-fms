@@ -82,7 +82,7 @@
                     <div>
                       <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex">
                         <span>
-                          {{ __('Guardians') }}
+                          {{ __('Contacts and guardians') }}
                         </span>
                         <button
                           class="ml-3 font-normal focus:outline-none relative inline-flex items-center justify-center"
@@ -109,7 +109,7 @@
                           </a>
                         </li>
                         <li v-if="student.users.length === 0" class="text-sm">
-                          {{ __('No guardians are associated with :name. Make sure that their contacts in PowerSchool have a name and email address saved for their contact account.', { name: student.first_name }) }}
+                          {{ __('No contacts or guardians are associated with :name. Make sure that their contacts in PowerSchool have a name and email address saved for their contact account.', { name: student.first_name }) }}
                         </li>
                       </ul>
                     </div>
