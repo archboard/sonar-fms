@@ -38,6 +38,7 @@ class StudentResource extends JsonResource
             'users' => UserResource::collection($this->whenLoaded('users')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
+            'family' => new FamilyResource($this->whenLoaded('family')),
         ];
     }
 }

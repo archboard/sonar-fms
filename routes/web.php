@@ -92,6 +92,7 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/search/students', \App\Http\Controllers\StudentFetchController::class)
                     ->name('students.search');
                 Route::post('/search/students', \App\Http\Controllers\StudentFetchController::class);
+                Route::post('/search/families', \App\Http\Controllers\GetStudentsFamiliesController::class);
 
                 Route::prefix('/students/{student}')
                     ->name('students.')
@@ -117,6 +118,11 @@ Route::middleware('tenant')->group(function () {
                         Route::put('/revenue', \App\Http\Controllers\SetStudentRevenueController::class)
                             ->name('revenue');
                     });
+
+                /**
+                 * Families
+                 */
+                Route::post('/families', \App\Http\Controllers\SaveStudentFamilyController::class);
 
                 /**
                  * Selections

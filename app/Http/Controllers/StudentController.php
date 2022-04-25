@@ -59,7 +59,11 @@ class StudentController extends Controller
     public function show(Request $request, Student $student)
     {
         $title = $student->full_name;
-        $student->load('users', 'tags');
+        $student->load([
+            'users',
+            'tags',
+            'family.students' => fn ($q) => $q->where('uuid', '!=', $student->uuid),
+        ]);
         $unpaidInvoices = $student->unpaid_invoices;
         $unpaidAmount = $student->account_balance;
         $revenue = $student->revenue;
@@ -75,6 +79,8 @@ class StudentController extends Controller
         ];
         /** @var User $user */
         $user = $request->user();
+
+        ray($student->family->students);
 
         return inertia('students/Show', [
             'title' => $title,

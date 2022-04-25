@@ -57,6 +57,9 @@
           <Link :href="`/student-selection/balances`" method="put" as="button">
             {{ __('Set balances') }}
           </Link>
+          <Link is="button" @click.prevent="joinFamily = true">
+            {{ __('Join family') }}
+          </Link>
         </div>
       </div>
     </FadeIn>
@@ -169,6 +172,11 @@
     url="/export/students"
     :filters="filters"
   />
+  <JoinFamilyModal
+    v-if="joinFamily"
+    @close="joinFamily = false"
+    :students="user.student_selection"
+  />
 </template>
 
 <script>
@@ -202,10 +210,12 @@ import ExportButton from '@/components/ExportButton'
 import displaysCurrency from '@/composition/displaysCurrency'
 import ExportPromptModal from '@/components/modals/ExportPromptModal'
 import StudentActionItems from '@/components/StudentActionItems'
+import JoinFamilyModal from '@/components/modals/JoinFamilyModal'
 
 export default defineComponent({
   mixins: [PageProps],
   components: {
+    JoinFamilyModal,
     StudentActionItems,
     ExportPromptModal,
     ExportButton,
@@ -243,6 +253,7 @@ export default defineComponent({
     const $http = inject('$http')
     const showFilters = ref(false)
     const promptExport = ref(false)
+    const joinFamily = ref(false)
     const selectAll = ref(props.user.student_selection.length > 0)
     const { displayLongGrade } = displaysGrades()
     const { can } = checksPermissions(props.permissions)
@@ -284,6 +295,7 @@ export default defineComponent({
 
     return {
       filters,
+      joinFamily,
       selectStudent,
       sortColumn,
       showFilters,

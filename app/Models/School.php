@@ -132,6 +132,11 @@ class School extends Model
         return $this->hasMany(PaymentImportTemplate::class);
     }
 
+    public function families(): HasMany
+    {
+        return $this->hasMany(Family::class);
+    }
+
     public function getCurrentTerm(?Carbon $date = null): Term
     {
         if ($this->currentTerm) {
