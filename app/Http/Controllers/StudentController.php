@@ -80,8 +80,6 @@ class StudentController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        ray($student->family->students);
-
         return inertia('students/Show', [
             'title' => $title,
             'student' => $student->toResource(),
