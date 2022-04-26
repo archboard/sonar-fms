@@ -120,14 +120,14 @@
                       </h2>
                       <ul class="mt-3 space-y-3">
                         <li
-                          v-for="student in student.family.students"
+                          v-for="student in student.family?.students"
                           :key="student.uuid"
                         >
                           <InertiaLink :href="`/students/${student.uuid}`" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:underline">
                             {{ student.full_name }}
                           </InertiaLink>
                         </li>
-                        <li v-if="student.family.students === 0" class="text-sm">
+                        <li v-if="student.family?.students === 0" class="text-sm">
                           {{ __('No family members have been associated yet.') }}
                         </li>
                       </ul>
