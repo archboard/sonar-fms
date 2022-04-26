@@ -55,7 +55,7 @@
             {{ __('Create invoice') }}
           </Link>
           <Link :href="`/student-selection/balances`" method="put" as="button">
-            {{ __('Set balances') }}
+            {{ __('Calculate balances') }}
           </Link>
           <Link is="button" @click.prevent="joinFamily = true">
             {{ __('Join family') }}
