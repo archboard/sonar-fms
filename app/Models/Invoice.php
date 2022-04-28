@@ -1341,6 +1341,7 @@ class Invoice extends Model implements Searchable, Exportable
     public function savePdf(?InvoiceLayout $layout = null): InvoicePdf
     {
         $this->load([
+            'invoiceItems',
             'invoiceScholarships.appliesTo',
             'invoicePaymentSchedules.invoicePaymentTerms',
         ]);
@@ -1405,8 +1406,12 @@ class Invoice extends Model implements Searchable, Exportable
         ]);
     }
 
-    public function latestPdf(): InvoicePdf
+    public function latestPdf(bool $recreate = false): InvoicePdf
     {
+        if ($recreate) {
+            return $this->savePdf();
+        }
+
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->invoicePdfs()
             ->latest()

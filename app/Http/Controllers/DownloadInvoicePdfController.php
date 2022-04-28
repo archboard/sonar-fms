@@ -19,7 +19,7 @@ class DownloadInvoicePdfController extends Controller
     {
         $this->authorize('view invoice', $invoice);
 
-        $pdf = $invoice->latestPdf();
+        $pdf = $invoice->latestPdf($request->boolean('force'));
 
         return Invoice::getPdfDisk()
             ->download($pdf->relative_path, $invoice->invoice_number . '.pdf');
