@@ -23,6 +23,7 @@ use App\Models\Term;
 use Illuminate\Bus\Batch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
@@ -1557,6 +1558,149 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(3, $import->imported_records);
         $this->assertEquals(1, $import->failed_records);
         $this->assertCount(4, $import->results);
+        Event::assertDispatched(InvoiceImportFinished::class);
+    }
+
+    public function test_will_skip_scholarship_without_name()
+    {
+        $this->withoutExceptionHandling();
+        Storage::fake();
+        Event::fake();
+        Bus::fake();
+        Queue::fake();
+
+        $originalPath = (new InvoiceImport)->storeFile(
+            $this->getUploadedFile('sonar-import.xls'),
+            $this->school
+        );
+        /** @var Term $term */
+        $term = $this->school->terms()
+            ->save(
+                Term::factory()->make()
+            );
+        $import = InvoiceImport::make([
+            'user_uuid' => $this->user->id,
+            'school_id' => $this->school->id,
+            'file_path' => $originalPath,
+            'heading_row' => 1,
+            'starting_row' => 2,
+            'mapping' => [
+                'student_attribute' => 'student_number',
+                'student_column' => 'student number',
+                'title' => $this->makeMapField(value: 'Invoice title', isManual: true),
+                'description' => $this->makeMapField(),
+                'invoice_date' => $this->makeMapField('invoice date'),
+                'due_at' => $this->makeMapField('due date'),
+                'available_at' => $this->makeMapField('available date'),
+                'term_id' => $this->makeMapField(null, $term->id, true),
+                'notify' => false,
+                'items' => [
+                    [
+                        'id' => $this->uuid(),
+                        'fee_id' => $this->makeMapField(),
+                        'name' => $this->makeMapField('invoice name'),
+                        'amount_per_unit' => $this->makeMapField('invoice amount'),
+                        'quantity' => $this->makeMapField(value: 1, isManual: true),
+                    ],
+                ],
+                'scholarships' => [
+                    [
+                        'id' => $this->uuid(),
+                        'name' => $this->makeMapField(value: '', isManual: true),
+                        'use_amount' => false,
+                        'amount' => $this->makeMapField(),
+                        'percentage' => $this->makeMapField('discount'),
+                        'applies_to' => [],
+                    ]
+                ],
+                'payment_schedules' => [],
+            ]
+        ]);
+        $import->mapping_valid = $import->hasValidMapping();
+        $import->setTotalRecords();
+        $import->save();
+
+        // Change the students to match the student numbers
+        $students = $this->school->students->random($import->total_records);
+
+        $import->getImportContents()
+            ->each(function (Collection $row, $index) use ($students) {
+                $studentNumber = $row->get('student number');
+
+                if (!blank($studentNumber)) {
+                    $students->get($index)->update(['student_number' => $row->get('student number')]);
+                }
+            });
+
+        $job = new ProcessInvoiceImport($import);
+        $job->handle();
+
+        $import->refresh();
+        $contents = $import->getImportContents();
+        $contentsByStudentNumber = $contents->keyBy('student number');
+
+        $values = $contents
+            ->pluck('student number')
+            ->filter(fn ($value) => !is_null($value));
+
+        $students = $import->school->students()
+            ->whereIn('student_number', $values)
+            ->get();
+
+        $students->each(function (Student $student, int $index) use ($import, $contentsByStudentNumber, $term) {
+            $this->assertEquals(1, $student->invoices->count());
+            /** @var Invoice $invoice */
+            $invoice = $student->invoices->first();
+            $this->assertEquals(1, $invoice->invoiceItems->count());
+            $row = $contentsByStudentNumber->get($student->student_number);
+            $total = $row['invoice amount'] * 100;
+            $discount = 0;
+
+            if (!empty($row['discount'])) {
+                $this->assertEquals(0, $invoice->invoiceScholarships->count());
+                $result = Arr::first($import->results, fn ($e) => $e['result'] === $invoice->uuid);
+                $this->assertCount(1, $result['warnings']);
+            }
+
+            /** @var InvoiceItem $item */
+            $item = $invoice->invoiceItems->first();
+            $this->assertEquals($total, $item->amount);
+            $this->assertEquals($total, $item->amount_per_unit);
+
+            $due = $total - $discount;
+            if ($due < 0) {
+                $due = 0;
+            }
+            $this->assertNotNull($invoice->invoice_number);
+            $this->assertEquals($term->id, $invoice->term_id);
+            $this->assertEquals($due, $invoice->amount_due);
+            $this->assertEquals($due, $invoice->remaining_balance);
+            $this->assertEquals($total, $invoice->subtotal);
+            $this->assertEquals($discount, $invoice->discount_total);
+            $this->assertNotNull($invoice->invoiceImport);
+            $this->assertTrue(
+                Carbon::create(2021, 10, 1 + $index, 0, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->due_at)
+            );
+            $this->assertTrue(
+                Carbon::create(2021, 9, 1, 8, 0, 0, $this->user->timezone)
+                    ->equalTo($invoice->available_at)
+            );
+            $this->assertEquals(
+                '2021-09-01',
+                $invoice->invoice_date->format('Y-m-d')
+            );
+        });
+
+        Bus::assertBatched(function (PendingBatchFake $batch) {
+            return $batch->jobs->count() === 3;
+        });
+        $this->assertNotNull($import->pdf_batch_id);
+
+        $this->assertEquals(3, $import->imported_records);
+        $this->assertEquals(1, $import->failed_records);
+        $this->assertCount(4, $import->results);
+        $this->assertEquals(3, Activity::count());
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 }

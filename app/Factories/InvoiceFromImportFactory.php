@@ -396,6 +396,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
                     return $total;
                 }
 
+                $name = trim($this->getMapValue("scholarships.{$index}.name"));
+
+                if (empty($name)) {
+                    $this->addWarning("Scholarship missing name. Please add a name value to the spreadsheet or enter a manual value.");
+                    return $total;
+                }
+
                 $attributes = [
                     'batch_id' => $this->batchId,
                     'invoice_uuid' => $this->rowInvoiceUuid,
