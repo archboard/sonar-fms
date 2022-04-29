@@ -289,18 +289,18 @@ class PowerSchoolProvider implements SisProvider
 
         return [
             'student_number' => $student['local_id'],
-            'first_name' => $student['name']['first_name'] ?? null,
-            'last_name' => $student['name']['last_name'] ?? null,
+            'first_name' => Arr::get($student, 'name.first_name') ?? null,
+            'last_name' => Arr::get($student, 'name.last_name') ?? null,
             'email' => $email ?: null,
-            'grade_level' => $student['school_enrollment']['grade_level'],
-            'enrolled' => $student['school_enrollment']['enroll_status_code'] === 0,
-            'enroll_status' => $student['school_enrollment']['enroll_status_code'],
-            'current_entry_date' => $student['school_enrollment']['entry_date'],
-            'current_exit_date' => $student['school_enrollment']['exit_date'],
-            'initial_district_entry_date' => $student['initial_enrollment']['district_entry_date'],
-            'initial_school_entry_date' => $student['initial_enrollment']['school_entry_date'],
-            'initial_district_grade_level' => $student['initial_enrollment']['district_entry_grade_level'],
-            'initial_school_grade_level' => $student['initial_enrollment']['school_entry_grade_level'],
+            'grade_level' => Arr::get($student, 'school_enrollment.grade_level'),
+            'enrolled' => Arr::get($student, 'school_enrollment.enroll_status_code') === 0,
+            'enroll_status' => Arr::get($student, 'school_enrollment.enroll_status_code'),
+            'current_entry_date' => Arr::get($student, 'school_enrollment.entry_date'),
+            'current_exit_date' => Arr::get($student, 'school_enrollment.exit_date'),
+            'initial_district_entry_date' => Arr::get($student, 'initial_enrollment.district_entry_date'),
+            'initial_school_entry_date' => Arr::get($student, 'initial_enrollment.school_entry_date'),
+            'initial_district_grade_level' => Arr::get($student, 'initial_enrollment.district_entry_grade_level'),
+            'initial_school_grade_level' => Arr::get($student, 'initial_enrollment.school_entry_grade_level'),
         ];
     }
 
