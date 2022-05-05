@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
-class GetStudentsFamiliesController extends Controller
+class SearchFamiliesController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -17,12 +17,11 @@ class GetStudentsFamiliesController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $data = $request->validate(['students' => ['array', 'required']]);
+        $this->authorize('view', Student::class);
 
-        $families = Family::whereHas('students', function (Builder $builder) use ($data) {
-                $builder->whereIn('students.uuid', $data['students']);
-            })
-            ->get();
+        $families = Family::filter($request->all())
+            ->orderBy('families.name')
+            ->orderBy('families.id');
 
         return FamilyResource::collection($families);
     }

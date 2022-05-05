@@ -92,7 +92,7 @@ Route::middleware('tenant')->group(function () {
                 Route::get('/search/students', \App\Http\Controllers\StudentFetchController::class)
                     ->name('students.search');
                 Route::post('/search/students', \App\Http\Controllers\StudentFetchController::class);
-                Route::post('/search/families', \App\Http\Controllers\GetStudentsFamiliesController::class);
+                Route::post('/search/families', \App\Http\Controllers\SearchFamiliesController::class);
 
                 Route::prefix('/students/{student}')
                     ->name('students.')
