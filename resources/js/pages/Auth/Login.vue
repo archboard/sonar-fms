@@ -8,16 +8,9 @@
         </a>
       </span>
 
-      <div v-if="tenant.allow_oidc_login && tenant.allow_password_auth" class="my-6 relative">
-        <div class="absolute inset-0 flex items-center" aria-hidden="true">
-          <div class="w-full border-t border-gray-300 dark:border-gray-400"></div>
-        </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300">
-            Or continue with
-          </span>
-        </div>
-      </div>
+      <BorderSeparator v-if="tenant.allow_oidc_login && tenant.allow_password_auth" class="my-6">
+        {{ __('Or continue with') }}
+      </BorderSeparator>
     </div>
 
     <form v-if="tenant.allow_password_auth" @submit.prevent="submit" data-cy="form">
@@ -66,9 +59,11 @@ import Button from '@/components/Button'
 import ValidationErrors from '@/components/ValidationErrors'
 import Alert from '../../components/Alert'
 import CheckboxText from '../../components/forms/CheckboxText'
+import BorderSeparator from '@/components/BorderSeparator'
 
 export default {
   components: {
+    BorderSeparator,
     CheckboxText,
     Alert,
     Layout,
