@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Family;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
-class SaveStudentFamilyController extends Controller
+class FamilyController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function __invoke(Request $request)
+    public function show(Family $family)
+    {
+        $this->authorize('show', Student::class);
+
+        $family->load('students');
+
+        return $family->toResource();
+    }
+
+    public function store(Request $request)
     {
         $this->authorize('update', Student::class);
         $school = $request->school();

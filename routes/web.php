@@ -122,7 +122,10 @@ Route::middleware('tenant')->group(function () {
                 /**
                  * Families
                  */
-                Route::post('/families', \App\Http\Controllers\SaveStudentFamilyController::class);
+                Route::post('/families', [\App\Http\Controllers\FamilyController::class, 'store']);
+                Route::get('/families/{family}', [\App\Http\Controllers\FamilyController::class, 'show']);
+//                Route::post('/families/{family}/students/{studentUuid}');
+//                Route::delete('/families/{family}/students/{studentUuid}');
 
                 /**
                  * Selections
