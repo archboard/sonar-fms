@@ -20,6 +20,7 @@ class FamiliesTest extends TestCase
         parent::setUp();
 
         $this->assignPermission('update', Student::class);
+        $this->assignPermission('view', Student::class);
     }
 
     public function test_can_create_new_family()
@@ -72,5 +73,50 @@ class FamiliesTest extends TestCase
                 ->where('family_id', $family->id)
                 ->exists()
         );
+    }
+
+    public function test_can_get_family()
+    {
+        /** @var Family $family */
+        $family = Family::factory()->create();
+
+        $this->get("/families/{$family->id}")
+            ->assertJsonStructure([
+                'name',
+                'students',
+            ]);
+    }
+
+    public function test_can_add_student_to_existing_family()
+    {
+        /** @var Family $family */
+        $family = Family::factory()->create();
+        /** @var Student $student */
+        $student = $this->school->students->random();
+
+        $this->assertNull($student->family_id);
+
+        $this->post("/families/{$family->id}/students/{$student->uuid}")
+            ->assertJsonStructure(['level', 'message']);
+
+        $student->refresh();
+        $this->assertEquals($family->id, $student->family_id);
+    }
+
+    public function test_can_remove_student_from_existing_family()
+    {
+        /** @var Family $family */
+        $family = Family::factory()->create();
+        /** @var Student $student */
+        $student = $this->school->students->random();
+        $student->update(['family_id' => $family->id]);
+
+        $this->assertEquals($family->id, $student->family_id);
+
+        $this->delete("/families/{$family->id}/students/{$student->uuid}")
+            ->assertJsonStructure(['level', 'message']);
+
+        $student->refresh();
+        $this->assertNull($student->family_id);
     }
 }

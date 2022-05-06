@@ -1,7 +1,7 @@
 <template>
   <Modal
     @close="$emit('close')"
-    :headline="__('Join to family')"
+    :headline="__('Family')"
     @action="save"
     :action-loading="familyForm.processing"
     :auto-close="false"
@@ -18,36 +18,45 @@
         <div>
           <RadioWrapper>
             <Radio v-model:checked="familyForm.family_id" :value="null" />
-            <CheckboxText>{{ __('Create new family' )}}</CheckboxText>
+            <CheckboxText>{{ __('Create a new family' )}}</CheckboxText>
           </RadioWrapper>
+
+          <FadeIn>
+            <div v-if="familyForm.family_id === null" class="mt-4 space-y-4">
+              <InputWrap v-if="familyForm.family_id === null" :error="familyForm.errors.name">
+                <Label for="name" required>{{ __('Name') }}</Label>
+                <Input v-model="familyForm.name" id="name" />
+                <HelpText>
+                  {{ __("This can just be a name to describe the family, not necessarily the family's surname.") }}
+                </HelpText>
+              </InputWrap>
+
+              <InputWrap v-if="familyForm.family_id === null" :error="familyForm.errors.notes">
+                <Label for="notes">{{ __('Notes') }}</Label>
+                <Textarea v-model="familyForm.notes" />
+                <HelpText>
+                  {{ __("These are internal notes.") }}
+                </HelpText>
+              </InputWrap>
+            </div>
+          </FadeIn>
         </div>
       </RadioGroup>
 
-      <FadeIn>
-        <InputWrap v-if="familyForm.family_id === null" :error="familyForm.errors.name">
-          <Label for="name" required>{{ __('Name') }}</Label>
-          <Input v-model="familyForm.name" id="name" />
-          <HelpText>
-            {{ __("This can just be a name to describe the family, not necessarily the family's surname.") }}
-          </HelpText>
-        </InputWrap>
-      </FadeIn>
+      <BorderSeparator class="my-6" background="bg-white dark:bg-gray-600">
+        {{ __('Or find another family') }}
+      </BorderSeparator>
 
-      <FadeIn>
-        <InputWrap v-if="familyForm.family_id === null" :error="familyForm.errors.notes">
-          <Label for="notes">{{ __('Notes') }}</Label>
-          <Textarea v-model="familyForm.notes" />
-          <HelpText>
-            {{ __("These are internal notes.") }}
-          </HelpText>
-        </InputWrap>
-      </FadeIn>
+      <InputWrap>
+        <Label for="family_search">{{ __('Search for family') }}</Label>
+        <FamilyTypeahead v-model="existingFamily" id="family_search" />
+      </InputWrap>
     </div>
   </Modal>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import Modal from '@/components/Modal'
 import managesFamilies from '@/composition/managesFamilies'
 import RadioGroup from '@/components/forms/RadioGroup'
@@ -60,9 +69,13 @@ import Label from '@/components/forms/Label'
 import Input from '@/components/forms/Input'
 import Textarea from '@/components/forms/Textarea'
 import FadeIn from '@/components/transitions/FadeIn'
+import BorderSeparator from '@/components/BorderSeparator'
+import FamilyTypeahead from '@/components/forms/FamilyTypeahead'
 
 export default defineComponent({
   components: {
+    FamilyTypeahead,
+    BorderSeparator,
     FadeIn,
     Textarea,
     Input,
@@ -83,9 +96,13 @@ export default defineComponent({
   setup (props) {
     const { fetchFamilies, familyForm, saveStudentsFamily } = managesFamilies(props.students)
     const families = ref([])
+    const existingFamily = ref({})
     const save = (close) => {
       saveStudentsFamily(close)
     }
+    watch(existingFamily, value => {
+      familyForm.family_id = value.id
+    })
 
     fetchFamilies(familyForm.students)
       .then(data => {
@@ -96,6 +113,7 @@ export default defineComponent({
       familyForm,
       families,
       save,
+      existingFamily,
     }
   }
 })

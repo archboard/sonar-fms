@@ -12,7 +12,7 @@ class FamilyController extends Controller
 {
     public function show(Family $family)
     {
-        $this->authorize('show', Student::class);
+        $this->authorize('view', Student::class);
 
         $family->load('students');
 

@@ -57,6 +57,8 @@ class Student extends Model implements Searchable, Exportable
             $builder->whereIn('uuid', $filters['ids']);
         })->when($filters['tags'] ?? null, function (Builder $builder, array $tags) {
             $builder->withAnyTags($tags, Tag::student(School::current()));
+        })->when($filters['exclude'] ?? null, function (Builder $builder, $exclude) {
+            $builder->whereNotIn('uuid', Arr::wrap($exclude));
         });
 
         // Enrollment status

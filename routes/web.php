@@ -124,8 +124,8 @@ Route::middleware('tenant')->group(function () {
                  */
                 Route::post('/families', [\App\Http\Controllers\FamilyController::class, 'store']);
                 Route::get('/families/{family}', [\App\Http\Controllers\FamilyController::class, 'show']);
-//                Route::post('/families/{family}/students/{studentUuid}');
-//                Route::delete('/families/{family}/students/{studentUuid}');
+                Route::post('/families/{family}/students/{student}', [\App\Http\Controllers\FamilyStudentController::class, 'store']);
+                Route::delete('/families/{family}/students/{student}', [\App\Http\Controllers\FamilyStudentController::class, 'destroy']);
 
                 /**
                  * Selections

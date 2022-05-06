@@ -20,8 +20,10 @@ class SearchFamiliesController extends Controller
         $this->authorize('view', Student::class);
 
         $families = Family::filter($request->all())
+            ->where('school_id', $request->school()->id)
             ->orderBy('families.name')
-            ->orderBy('families.id');
+            ->orderBy('families.id')
+            ->get();
 
         return FamilyResource::collection($families);
     }

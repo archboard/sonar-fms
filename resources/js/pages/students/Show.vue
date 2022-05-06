@@ -35,6 +35,16 @@
                       </div>
 
                       <div class="flex items-center space-x-2">
+                        <HomeIcon class="h-5 w-5 text-gray-400" />
+                        <span class="text-sm font-medium" v-if="student.family">
+                          {{ student.family.name }}
+                        </span>
+                        <span v-else class="text-sm font-medium">
+                          {{ __('No family') }}
+                        </span>
+                      </div>
+
+                      <div class="flex items-center space-x-2">
                         <!-- Heroicon name: solid/calendar -->
                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
@@ -115,10 +125,15 @@
                     </div>
 
                     <div>
-                      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex">
-                        {{ __('Family members') }}
-                      </h2>
-                      <ul class="mt-3 space-y-3">
+                      <div class="flex items-end space-x-3">
+                        <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 flex">
+                          {{ __('Family members') }}
+                        </h2>
+                        <button v-if="can('students.update')" @click.prevent="manageFamily = true" class="font-normal text-sm text-gray-500 dark:text-gray-300">
+                          {{ __('Manage') }}
+                        </button>
+                      </div>
+                      <ul class="mt-3 space-y-1">
                         <li
                           v-for="student in student.family?.students"
                           :key="student.uuid"
@@ -127,7 +142,7 @@
                             {{ student.full_name }}
                           </InertiaLink>
                         </li>
-                        <li v-if="student.family?.students === 0" class="text-sm">
+                        <li v-if="!student.family || student.family?.students?.length === 0" class="text-sm">
                           {{ __('No family members have been associated yet.') }}
                         </li>
                       </ul>
@@ -195,6 +210,16 @@
     :fetch-url="`/students/${student.uuid}/tags`"
     :save-url="`/students/${student.uuid}/tags`"
   />
+  <ManageFamilyModal
+    v-if="manageFamily && student.family_id && can('students.update')"
+    @close="closeRefreshFamily"
+    :family-id="student.family_id"
+  />
+  <JoinFamilyModal
+    v-if="manageFamily && !student.family_id && can('students.update')"
+    @close="manageFamily = false"
+    :students="[student.uuid]"
+  />
 </template>
 
 <script>
@@ -202,7 +227,7 @@ import { defineComponent, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import Authenticated from '@/layouts/Authenticated'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
-import { CalculatorIcon, RefreshIcon } from '@heroicons/vue/solid'
+import { CalculatorIcon, RefreshIcon, HomeIcon } from '@heroicons/vue/solid'
 import Spinner from '@/components/icons/spinner'
 import OutlineBadge from '@/components/OutlineBadge'
 import Button from '@/components/Button'
@@ -215,9 +240,14 @@ import TagModal from '@/components/modals/TagModal'
 import HelpText from '@/components/HelpText'
 import Link from '@/components/Link'
 import checksPermissions from '@/composition/checksPermissions'
+import ManageFamilyModal from '@/components/modals/ManageFamilyModal'
+import JoinFamilyModal from '@/components/modals/JoinFamilyModal'
 
 export default defineComponent({
   components: {
+    JoinFamilyModal,
+    ManageFamilyModal,
+    HomeIcon,
     Link,
     HelpText,
     TagModal,
@@ -250,6 +280,7 @@ export default defineComponent({
     const { displayDate } = displaysDate()
     const syncingGuardians = ref(false)
     const editTags = ref(false)
+    const manageFamily = ref(false)
     const studentTable = ref(null)
     const selectedInvoice = ref({})
     const syncGuardians = () => {
@@ -263,6 +294,10 @@ export default defineComponent({
       })
     }
     const { displayCurrency } = displaysCurrency()
+    const closeRefreshFamily = () => {
+      manageFamily.value = false
+      Inertia.reload()
+    }
 
     return {
       displayDate,
@@ -273,6 +308,8 @@ export default defineComponent({
       displayCurrency,
       editTags,
       can,
+      manageFamily,
+      closeRefreshFamily,
     }
   }
 })

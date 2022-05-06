@@ -1,7 +1,7 @@
 import { inject } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 
-export default (studentUuids) => {
+export default (studentUuids = []) => {
   const $http = inject('$http')
   const familyForm = useForm({
     family_id: null,
@@ -20,6 +20,14 @@ export default (studentUuids) => {
       return []
     }
   }
+  const fetchFamily = async (familyId) => {
+    try {
+      const { data } = await $http.get(`/families/${familyId}`)
+      return data
+    } catch (e) {
+      return {}
+    }
+  }
   const saveStudentsFamily = (callback) => {
     familyForm.post('/families', {
       preserve_scroll: true,
@@ -35,5 +43,6 @@ export default (studentUuids) => {
     familyForm,
     fetchFamilies,
     saveStudentsFamily,
+    fetchFamily,
   }
 }
