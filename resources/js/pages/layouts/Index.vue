@@ -64,7 +64,7 @@
                 <SonarMenuItem v-if="can('layouts.update')" :href="`/layouts/invoices/${layout.id}/edit`" is="InertiaLink">
                   {{ __('Edit') }}
                 </SonarMenuItem>
-                <SonarMenuItem v-if="can('layouts.delete')" :href="`/layouts/invoices/${layout.id}`" is="button" @click.prevent="layoutToDelete = layout">
+                <SonarMenuItem v-if="can('layouts.delete')" @click.prevent="layoutToDelete = layout">
                   {{ __('Delete') }}
                 </SonarMenuItem>
               </div>
@@ -150,8 +150,11 @@ export default defineComponent({
     const { can } = checksPermissions()
     const layoutToDelete = ref({})
     const deleteLayout = () => {
-      Inertia.delete(`/layouts/invoices/${layoutToDelete.id}`, {
-        preserveScroll: true
+      Inertia.delete(`/layouts/invoices/${layoutToDelete.value.id}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+          layoutToDelete.value = {}
+        }
       })
     }
 
