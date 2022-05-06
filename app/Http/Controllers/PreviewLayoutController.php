@@ -8,12 +8,6 @@ use Illuminate\Http\Request;
 
 class PreviewLayoutController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
     public function __invoke(Request $request, InvoiceLayout $layout)
     {
         $this->authorize('view', $layout);
@@ -23,6 +17,11 @@ class PreviewLayoutController extends Controller
             ->invoices()
             ->inRandomOrder()
             ->first();
+
+        if (!$invoice) {
+            session()->flash('error', __('No invoices exist to preview.'));
+            return to_route('layouts.index');
+        }
 
         $invoice->load([
             'invoiceScholarships.appliesTo',
