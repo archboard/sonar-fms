@@ -2,6 +2,7 @@
   <div class="w-full">
     <ckeditor
       :editor="Editor"
+      :config="config"
       v-model="localValue"
       @ready="editorReady"
     />
@@ -27,10 +28,50 @@ export default defineComponent({
       get: () => props.modelValue,
       set: (value) => emit('update:modelValue', value)
     })
+    const config = {
+      toolbar: {
+        shouldNotGroupWhenFull: true,
+        items: [
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'link',
+          'bulletedList',
+          'numberedList',
+          '|',
+          'outdent',
+          'indent',
+          '|',
+          'imageUpload',
+          'blockQuote',
+          'insertTable',
+          'undo',
+          'redo'
+        ]
+      },
+      language: 'en',
+      image: {
+        toolbar: [
+          'imageTextAlternative',
+          'imageStyle:inline',
+          'imageStyle:block',
+          'imageStyle:side'
+        ]
+      },
+      table: {
+        contentToolbar: [
+          'tableColumn',
+          'tableRow',
+          'mergeTableCells'
+        ]
+      }
+    }
 
     return {
       localValue,
       Editor,
+      config,
     }
   }
 })

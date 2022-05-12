@@ -8,10 +8,10 @@ const config = {
     chunkFilename: 'js/[name].js?id=[chunkhash]'
   },
   plugins: [
-    new CKEditorWebpackPlugin({
-      language: 'en',
-      additionalLanguages: ['ko', 'ar', 'zh'],
-    })
+    // new CKEditorWebpackPlugin({
+    //   language: 'en',
+    //   // additionalLanguages: ['ko', 'ar', 'zh'],
+    // })
   ],
   resolve: {
     alias: {
