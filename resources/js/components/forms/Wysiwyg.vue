@@ -1,9 +1,8 @@
 <template>
   <div class="w-full">
     <ckeditor
-      :editor="InlineEditor"
+      :editor="Editor"
       v-model="localValue"
-      :config="config"
       @ready="editorReady"
     />
   </div>
@@ -11,12 +10,12 @@
 
 <script>
 import { computed, defineComponent } from 'vue'
-import { component } from '@ckeditor/ckeditor5-vue'
-import InlineEditor from '@/plugins/ckeditor'
+import ckeditor from '@ckeditor/ckeditor5-vue'
+import Editor from '@/plugins/ckeditor'
 
 export default defineComponent({
   components: {
-    ckeditor: component
+    ckeditor: ckeditor.component
   },
   props: {
     modelValue: String,
@@ -28,69 +27,10 @@ export default defineComponent({
       get: () => props.modelValue,
       set: (value) => emit('update:modelValue', value)
     })
-    const config = {
-      toolbar: {
-        items: [
-          'undo',
-          'redo',
-          '|',
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'underline',
-          // 'strikethrough',
-          // '|',
-          // 'fontColor',
-          'fontSize',
-          // 'fontFamily',
-          // 'highlight',
-          '|',
-          'alignment',
-          'bulletedList',
-          'numberedList',
-          'link',
-          '|',
-          'outdent',
-          'indent',
-          '|',
-          // '-',
-          'imageInsert',
-          // 'insertTable',
-          // '|',
-          // 'pageBreak',
-          // 'horizontalLine',
-          // 'sourceEditing',
-        ],
-        shouldNotGroupWhenFull: true
-      },
-      language: 'en',
-      image: {
-        toolbar: [
-          'imageTextAlternative',
-          'imageStyle:inline',
-          'imageStyle:block',
-          'imageStyle:side'
-        ]
-      },
-      table: {
-        contentToolbar: [
-          'tableColumn',
-          'tableRow',
-          'mergeTableCells'
-        ]
-      },
-    }
-    const editorReady = e => {
-      //
-    }
 
     return {
       localValue,
-      // ClassicEditor,
-      InlineEditor,
-      config,
-      editorReady,
+      Editor,
     }
   }
 })

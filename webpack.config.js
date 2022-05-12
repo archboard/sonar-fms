@@ -1,12 +1,18 @@
 const path = require('path')
 const fs = require('fs')
+const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin')
 require('dotenv').config()
 
 const config = {
   output: {
     chunkFilename: 'js/[name].js?id=[chunkhash]'
   },
-  plugins: [],
+  plugins: [
+    new CKEditorWebpackPlugin({
+      language: 'en',
+      additionalLanguages: ['ko', 'ar', 'zh'],
+    })
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),
