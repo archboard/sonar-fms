@@ -13,7 +13,7 @@
         </div>
       </div>
     @endif
-    @if(!$invoice->published_at)
+    @if(!$invoice->published_at && $invoice->school->include_draft_stamp)
       <div class="absolute z-0 inset-0 flex items-center justify-center">
         <div class="border-[1rem] border-gray-200 text-gray-200 rotate-6 text-9xl font-bold tracking-wider p-8 rounded-3xl">
           DRAFT

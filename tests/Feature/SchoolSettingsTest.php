@@ -48,6 +48,7 @@ class SchoolSettingsTest extends TestCase
             'currency_id' => Currency::where('id', '!=', $this->school->currency_id)->inRandomOrder()->pluck('id')->first(),
             'timezone' => 'Antarctica/Troll',
             'collect_tax' => true,
+            'include_draft_stamp' => false,
             'tax_rate' => '8',
             'tax_label' => 'Nunya',
             'invoice_number_template' => 'INV--',

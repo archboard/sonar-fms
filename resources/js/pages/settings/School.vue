@@ -84,6 +84,16 @@
                 </div>
 
                 <Fieldset>
+                  <InputWrap :error="form.errors.include_draft_stamp">
+                    <CheckboxWrapper>
+                      <Checkbox v-model:checked="form.include_draft_stamp" />
+                      <CheckboxText>{{ __('Include draft stamp on draft invoices.') }}</CheckboxText>
+                    </CheckboxWrapper>
+                    <HelpText>
+                      {{ __('When enabled there will be a large "DRAFT" indicating that the invoice is incomplete.') }}
+                    </HelpText>
+                  </InputWrap>
+
                   <InputWrap :error="form.errors.invoice_number_template">
                     <Label for="invoice_number_template">{{ __('Invoice number prefix') }}</Label>
                     <TemplateBuilder v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
@@ -235,6 +245,7 @@ export default defineComponent({
       currency_id: school.currency_id,
       timezone: school.timezone,
       collect_tax: school.collect_tax,
+      include_draft_stamp: school.include_draft_stamp,
       tax_rate: school.tax_rate_converted,
       tax_label: school.tax_label,
       invoice_number_template: school.invoice_number_template,

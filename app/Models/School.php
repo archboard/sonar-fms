@@ -32,6 +32,7 @@ class School extends Model
     protected $casts = [
         'active_at' => 'datetime',
         'collect_tax' => 'boolean',
+        'include_draft_stamp' => 'boolean',
         'tax_rate' => 'float',
     ];
 
