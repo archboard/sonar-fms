@@ -1,37 +1,21 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Sonar FMS
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Prerequisites
 
-# Laravel Inertia Starter
+This uses headless Chrome to render and save the PDF files. This gives us the full HTML and CSS freedom to display a good PDF. There are some prerequisites required:
 
-This is a starting point for new projects using [Inertia](https://inertiajs.com/) with Vue 3 and Tailwindcss. It uses Laravel Mix v6 to compile the assets. It does not include anything for authentication, but would suggest using [Laravel Fortify](https://laravel.com/docs/fortify) to provide all of the routes and login logic for authentication. This template is meant to give you a head start in starting a new project from scratch.
-
-Also included is [grantholle/api-resource-detection](https://github.com/grantholle/api-resource-detection) that helps with returning API resources to your Vue components, which I find very ergonomic and one of the best features of Inertia.
-
-Here's the full list of what's included in this starter:
-
-- Laravel Mix v6
-- Inertiajs
-- Tailwindcss
-- Requires `facade/ignition`
-- `grantholle/api-resource-detection`
-- Laravel Telescope (local environment only)
-
-## Usage
-
-First, start your project by using [degit](https://github.com/Rich-Harris/degit).
-
+```bash
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget libgbm-dev libxshmfence-dev
+sudo npm install --location=global --unsafe-perm puppeteer
+sudo chmod -R o+rx /usr/lib/node_modules/puppeteer/.local-chromium
 ```
-npx degit grantholle/laravel-inertia#main [your project name]
-```
+
+## First time set up
 
 Then perform your usual "getting started" tasks for Laravel:
 
+- Clone the repo
 - `composer install`
 - `cp .env.example .env`
 - `php artisan key:generate`
