@@ -88,7 +88,7 @@
                     <Label for="invoice_number_template">{{ __('Invoice number prefix') }}</Label>
                     <TemplateBuilder v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
                     <HelpText class="mb-3">
-                      {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-EIXVYSL0` }) }}
+                      {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-001` }) }}
                     </HelpText>
                     <HelpText>
                       {{ __('Modifying the prefix now will only affect new invoices and will not change previously generated invoice numbers.') }}

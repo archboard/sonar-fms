@@ -128,7 +128,7 @@ class CombineInvoiceFactory extends InvoiceFactory
         $this->invoiceAttributes['batch_id'] = $this->batchId;
         $this->invoiceAttributes['tenant_id'] = $this->school->tenant_id;
         $this->invoiceAttributes['school_id'] = $this->school->id;
-        $this->invoiceAttributes['invoice_number'] = Invoice::generateInvoiceNumber($this->invoiceNumberPrefix);
+        $this->invoiceAttributes['invoice_number'] = Invoice::generateInvoiceNumber($this->school->id, $this->invoiceNumberPrefix);
         $this->invoiceAttributes['user_uuid'] = $this->user->id;
         $this->invoiceAttributes['is_parent'] = true;
         // Invoice date is tricky because it isn't a datetime, just a date
