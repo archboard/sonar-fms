@@ -64,7 +64,7 @@
 import { defineComponent, ref, watchEffect } from 'vue'
 import invoiceFormComponent from '@/composition/invoiceFormComponent.js'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
-import tables from '@/components/tables.vue'
+import tables from '@/components/tables'
 import fetchesStudents from '@/composition/fetchesStudents.js'
 import { TrashIcon, ExternalLinkIcon } from '@heroicons/vue/outline'
 import AddThingButton from '@/components/forms/AddThingButton.vue'

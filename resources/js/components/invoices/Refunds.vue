@@ -95,7 +95,7 @@
 import { defineComponent, ref, inject } from 'vue'
 import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu.vue'
 import RefundActionItems from '@/components/RefundActionItems.vue'
-import tables from '@/components/tables.vue'
+import tables from '@/components/tables'
 import RefundDetailsModal from '@/components/modals/RefundDetailsModal.vue'
 import Loader from '@/components/Loader.vue'
 import checksPermissions from '@/composition/checksPermissions.js'
