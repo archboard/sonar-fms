@@ -347,7 +347,6 @@ export default defineComponent({
 
     let syncCheckInterval
     const startSyncPoll = () => {
-      console.log('starting poll')
       clearInterval(syncCheckInterval)
       $http.get($route('sis.sync.batch')).then(res => {
         batch.value = res.data
@@ -359,7 +358,6 @@ export default defineComponent({
         if (sisSyncing.value) {
           $http.get($route('sis.sync.batch')).then(res => {
             batch.value = res.data
-            console.log('batch', res.data)
 
             if (
               !res.data ||
