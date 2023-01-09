@@ -101,8 +101,8 @@ import Alert from '@/components/Alert.vue'
 import Modal from '@/components/Modal.vue'
 import ConfirmButton from '@/components/ConfirmButton.vue'
 import authCheck from '../mixins/AuthCheck'
-import Authenticated from '../layouts/Authenticated'
-import Input from '../components/forms/Input'
+import Authenticated from '@/layouts/Authenticated.vue'
+import Input from '@/components/forms/Input.vue'
 
 export default defineComponent({
   components: {

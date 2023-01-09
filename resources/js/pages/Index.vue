@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import { defineComponent, inject, ref } from 'vue'
-import Authenticated from '../layouts/Authenticated'
+import { defineComponent, inject } from 'vue'
+import Authenticated from '@/layouts/Authenticated.vue'
 import CardWrapper from '@/components/CardWrapper.vue'
 import CardPadding from '@/components/CardPadding.vue'
 import CardHeader from '@/components/CardHeader.vue'

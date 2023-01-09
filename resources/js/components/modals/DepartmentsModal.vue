@@ -35,16 +35,16 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import Modal from '../Modal'
+import { defineComponent } from 'vue'
+import Modal from '@/components/Modal.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import handlesDepartments from '../../composition/handlesDepartments'
-import Fieldset from '../forms/Fieldset'
-import Label from '../forms/Label'
-import InputWrap from '../forms/InputWrap'
-import Input from '../forms/Input'
-import ModalHeadline from './ModalHeadline'
-import Link from '../Link'
+import handlesDepartments from '@/composition/handlesDepartments'
+import Fieldset from '@/components/forms/Fieldset'
+import Label from '@/components/forms/Label'
+import InputWrap from '@/components/forms/InputWrap'
+import Input from '@/components/forms/Input'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
+import Link from '@/components/Link.vue'
 
 export default defineComponent({
   components: {

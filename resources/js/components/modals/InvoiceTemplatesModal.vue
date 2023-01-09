@@ -53,7 +53,7 @@ import Fieldset from '@/components/forms/Fieldset.vue'
 import Label from '@/components/forms/Label.vue'
 import InputWrap from '@/components/forms/InputWrap.vue'
 import Input from '@/components/forms/Input.vue'
-import ModalHeadline from './ModalHeadline'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
 import Link from '@/components/Link.vue'
 
 export default defineComponent({

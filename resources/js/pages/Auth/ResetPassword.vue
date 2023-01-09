@@ -36,7 +36,7 @@ import Label from '@/components/forms/Label.vue'
 import Input from '@/components/forms/Input.vue'
 import Button from '@/components/Button.vue'
 import ValidationErrors from '@/components/ValidationErrors.vue'
-import Layout from '../../layouts/Guest'
+import Layout from '@/layouts/Guest.vue'
 
 export default {
   components: {

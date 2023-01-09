@@ -31,13 +31,13 @@
 <script>
 import { defineComponent, inject, ref } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Modal from '../Modal'
-import Fieldset from '../forms/Fieldset'
-import InputWrap from '../forms/InputWrap'
-import Input from '../forms/Input'
-import Req from '../forms/Req'
-import Label from '../forms/Label'
-import HelpText from '../HelpText'
+import Modal from '@/components/Modal.vue'
+import Fieldset from '@/components/forms/Fieldset'
+import InputWrap from '@/components/forms/InputWrap'
+import Input from '@/components/forms/Input'
+import Req from '@/components/forms/Req'
+import Label from '@/components/forms/Label'
+import HelpText from '@/components/HelpText.vue'
 
 export default defineComponent({
   components: {

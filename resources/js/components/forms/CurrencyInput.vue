@@ -16,7 +16,7 @@
 <script>
 import { defineComponent, watch } from 'vue'
 import useCurrencyInput from 'vue-currency-input'
-import displaysCurrency from '../../composition/displaysCurrency'
+import displaysCurrency from '@/composition/displaysCurrency'
 import { CashIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({

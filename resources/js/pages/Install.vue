@@ -58,15 +58,15 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import CardWrapper from '../components/CardWrapper'
-import CardPadding from '../components/CardPadding'
-import CardHeader from '../components/CardHeader'
-import Fieldset from '../components/forms/Fieldset'
-import Button from '../components/Button'
-import Label from '../components/forms/Label'
-import Input from '../components/forms/Input'
-import HelpText from '../components/HelpText'
-import InputWrap from '../components/forms/InputWrap'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import CardHeader from '@/components/CardHeader.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import Button from '@/components/Button.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
+import HelpText from '@/components/HelpText.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
 
 export default defineComponent({
   components: {
