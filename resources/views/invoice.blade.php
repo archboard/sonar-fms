@@ -9,12 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
     <title>{{ $title }}</title>
-    <link href="{{ url('/css/ckeditor.css') }}" rel="stylesheet"/>
-    @if (app()->isLocal())
-    <link href="{{ mix('/css/pdf.css') }}" rel="stylesheet"/>
-    @else
-    <link href="{{ url('/css/pdf.css') }}" rel="stylesheet"/>
-    @endif
+    @vite(['resources/css/pdf.css', 'resources/css/ckeditor.css'])
     <style>
       html {
         font-size: 12px;
