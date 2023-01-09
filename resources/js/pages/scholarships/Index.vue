@@ -110,18 +110,18 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import handlesFilters from '@/composition/handlesFilters'
-import searchesItems from '@/composition/searchesItems'
-import Authenticated from '@/layouts/Authenticated'
-import TableComponents from '@/components/tables'
-import Checkbox from '@/components/forms/Checkbox'
-import Input from '@/components/forms/Input'
+import handlesFilters from '@/composition/handlesFilters.js'
+import searchesItems from '@/composition/searchesItems.js'
+import Authenticated from '@/layouts/Authenticated.vue'
+import TableComponents from '@/components/tables.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import Input from '@/components/forms/Input.vue'
 import { SearchIcon, SortAscendingIcon, SortDescendingIcon, AdjustmentsIcon, XCircleIcon } from '@heroicons/vue/outline'
-import Link from '@/components/Link'
-import HelpText from '@/components/HelpText'
-import Button from '@/components/Button'
-import displaysCurrency from '@/composition/displaysCurrency'
-import ScholarshipFormModal from '@/components/modals/ScholarshipFormModal'
+import Link from '@/components/Link.vue'
+import HelpText from '@/components/HelpText.vue'
+import Button from '@/components/Button.vue'
+import displaysCurrency from '@/composition/displaysCurrency.js'
+import ScholarshipFormModal from '@/components/modals/ScholarshipFormModal.vue'
 
 export default defineComponent({
   components: {

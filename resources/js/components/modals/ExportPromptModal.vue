@@ -35,20 +35,20 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import Modal from '@/components/Modal'
+import Modal from '@/components/Modal.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
-import displaysDate from '@/composition/displaysDate'
-import Select from '@/components/forms/Select'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
-import HelpText from '@/components/HelpText'
-import Alert from '@/components/Alert'
-import FadeIn from '@/components/transitions/FadeIn'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
+import displaysDate from '@/composition/displaysDate.js'
+import Select from '@/components/forms/Select.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import HelpText from '@/components/HelpText.vue'
+import Alert from '@/components/Alert.vue'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 
 export default defineComponent({
   components: {

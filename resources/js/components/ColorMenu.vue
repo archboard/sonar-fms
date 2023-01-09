@@ -34,13 +34,13 @@
 
 <script>
 import { computed, defineComponent, ref } from 'vue'
-import tagColorKey from '@/composition/tagColorKey'
+import tagColorKey from '@/composition/tagColorKey.js'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import capitalize from 'just-capitalize'
-import DropIn from '@/components/transitions/DropIn'
-import menuItemClasses from '@/composition/menuItemClasses'
-import usePopper from '@/composition/usePopper'
-import ScaleIn from '@/components/transitions/ScaleIn'
+import DropIn from '@/components/transitions/DropIn.vue'
+import menuItemClasses from '@/composition/menuItemClasses.js'
+import usePopper from '@/composition/usePopper.js'
+import ScaleIn from '@/components/transitions/ScaleIn.vue'
 
 export default defineComponent({
   components: {

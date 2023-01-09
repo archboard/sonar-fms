@@ -13,10 +13,10 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import Modal from '@/components/Modal'
-import Spinner from '@/components/icons/spinner'
-import Link from '@/components/Link'
-import PaymentDetails from '@/components/PaymentDetails'
+import Modal from '@/components/Modal.vue'
+import Spinner from '@/components/icons/spinner.vue'
+import Link from '@/components/Link.vue'
+import PaymentDetails from '@/components/PaymentDetails.vue'
 
 export default defineComponent({
   components: {

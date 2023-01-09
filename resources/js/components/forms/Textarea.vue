@@ -9,7 +9,7 @@
 
 <script>
 import { defineComponent, ref, onMounted, nextTick } from 'vue'
-import hasModelValue from '@/composition/hasModelValue'
+import hasModelValue from '@/composition/hasModelValue.js'
 
 export default defineComponent({
   props: {

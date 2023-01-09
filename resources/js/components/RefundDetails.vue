@@ -91,9 +91,9 @@
 
 <script>
 import { defineComponent } from 'vue'
-import DescriptionList from '@/components/tables/DescriptionList'
-import DescriptionItem from '@/components/tables/DescriptionItem'
-import Link from '@/components/Link'
+import DescriptionList from '@/components/tables/DescriptionList.vue'
+import DescriptionItem from '@/components/tables/DescriptionItem.vue'
+import Link from '@/components/Link.vue'
 
 export default defineComponent({
   components: {

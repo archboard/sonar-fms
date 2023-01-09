@@ -8,7 +8,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { AdjustmentsIcon } from '@heroicons/vue/outline'
-import buttonClasses from '@/composition/buttonClasses'
+import buttonClasses from '@/composition/buttonClasses.js'
 
 export default defineComponent({
   components: {

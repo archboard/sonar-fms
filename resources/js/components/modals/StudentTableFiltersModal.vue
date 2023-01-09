@@ -54,16 +54,16 @@
 
 <script>
 import { defineComponent, inject, reactive } from 'vue'
-import Modal from '@/components/Modal'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Select from '@/components/forms/Select'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import displaysGrades from '@/composition/displaysGrades'
-import fetchesStudentTags from '@/composition/fetchesStudentTags'
-import tagColorKey from '@/composition/tagColorKey'
+import Modal from '@/components/Modal.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Select from '@/components/forms/Select.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import displaysGrades from '@/composition/displaysGrades.js'
+import fetchesStudentTags from '@/composition/fetchesStudentTags.js'
+import tagColorKey from '@/composition/tagColorKey.js'
 
 export default defineComponent({
   emits: ['close', 'apply'],

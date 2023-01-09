@@ -13,7 +13,7 @@
 
 <script>
 import { computed, defineComponent, inject, ref } from 'vue'
-import Select from '@/components/forms/Select'
+import Select from '@/components/forms/Select.vue'
 
 export default defineComponent({
   components: {

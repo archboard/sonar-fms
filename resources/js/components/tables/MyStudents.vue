@@ -23,8 +23,8 @@
 
 <script>
 import { defineComponent } from 'vue'
-import tables from '@/components/tables/index'
-import Link from '@/components/Link'
+import tables from '@/components/tables/index.vue'
+import Link from '@/components/Link.vue'
 
 export default defineComponent({
   components: {

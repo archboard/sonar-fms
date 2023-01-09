@@ -124,15 +124,15 @@
 
 <script>
 import { defineComponent } from 'vue'
-import invoiceScholarshipForm from '@/composition/invoiceScholarshipForm'
-import invoiceFormComponent from '@/composition/invoiceFormComponent'
+import invoiceScholarshipForm from '@/composition/invoiceScholarshipForm.js'
+import invoiceFormComponent from '@/composition/invoiceFormComponent.js'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
-import AddThingButton from '@/components/forms/AddThingButton'
-import PercentInput from '@/components/forms/PercentInput'
-import fetchesResolutionStrategies from '@/composition/fetchesResolutionStrategies'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import AddThingButton from '@/components/forms/AddThingButton.vue'
+import PercentInput from '@/components/forms/PercentInput.vue'
+import fetchesResolutionStrategies from '@/composition/fetchesResolutionStrategies.js'
 
 export default defineComponent({
   components: {

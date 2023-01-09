@@ -30,10 +30,10 @@
 <script>
 import { Menu, MenuButton } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/solid'
-import Button from '../Button'
-import SonarMenuItems from '@/components/dropdown/SonarMenuItems'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
-import ScaleIn from '@/components/transitions/ScaleIn'
+import Button from '@/components/Button.vue'
+import SonarMenuItems from '@/components/dropdown/SonarMenuItems.vue'
+import SonarMenuItem from '@/components/forms/SonarMenuItem.vue'
+import ScaleIn from '@/components/transitions/ScaleIn.vue'
 
 export default {
   components: {

@@ -33,12 +33,12 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
+import Authenticated from '@/layouts/Authenticated.vue'
 import InvoiceForm from '@/pages/invoices/Form'
-import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal'
-import Button from '@/components/Button'
+import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal.vue'
+import Button from '@/components/Button.vue'
 import PageProps from '@/mixins/PageProps'
-import Alert from '@/components/Alert'
+import Alert from '@/components/Alert.vue'
 
 export default defineComponent({
   mixins: [PageProps],

@@ -28,9 +28,9 @@
 
 <script>
 import { defineComponent } from 'vue'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
-import checksPermissions from '@/composition/checksPermissions'
-import copiesToClipboard from '@/composition/copiesToClipboard'
+import SonarMenuItem from '@/components/forms/SonarMenuItem.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
+import copiesToClipboard from '@/composition/copiesToClipboard.js'
 
 export default defineComponent({
   components: {

@@ -45,7 +45,7 @@
 import { defineComponent, ref, watchEffect } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import { DotsVerticalIcon, PencilIcon } from '@heroicons/vue/outline'
-import usePopper from '@/composition/usePopper'
+import usePopper from '@/composition/usePopper.js'
 
 export default defineComponent({
   components: {

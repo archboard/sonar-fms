@@ -21,10 +21,10 @@
 
 <script>
 import PageProps from '@/mixins/PageProps'
-import setsTitle from '@/composition/setsTitle'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import Button from '@/components/Button'
+import setsTitle from '@/composition/setsTitle.js'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import Button from '@/components/Button.vue'
 
 export default {
   components: {Button, CardPadding, CardWrapper},

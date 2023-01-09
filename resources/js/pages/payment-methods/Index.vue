@@ -43,16 +43,16 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
+import Authenticated from '@/layouts/Authenticated.vue'
 import PageProps from '@/mixins/PageProps'
-import Button from '@/components/Button'
-import Table from '@/components/tables/Table'
-import Thead from '@/components/tables/Thead'
-import Th from '@/components/tables/Th'
-import Tbody from '@/components/tables/Tbody'
-import Td from '@/components/tables/Td'
-import Link from '@/components/Link'
-import SolidBadge from '@/components/SolidBadge'
+import Button from '@/components/Button.vue'
+import Table from '@/components/tables/Table.vue'
+import Thead from '@/components/tables/Thead.vue'
+import Th from '@/components/tables/Th.vue'
+import Tbody from '@/components/tables/Tbody.vue'
+import Td from '@/components/tables/Td.vue'
+import Link from '@/components/Link.vue'
+import SolidBadge from '@/components/SolidBadge.vue'
 
 export default defineComponent({
   mixins: [PageProps],

@@ -169,18 +169,18 @@
 
 <script>
 import { defineComponent } from 'vue'
-import DescriptionList from '@/components/tables/DescriptionList'
-import DescriptionItem from '@/components/tables/DescriptionItem'
-import Link from '@/components/Link'
-import HelpText from '@/components/HelpText'
-import ModalHeadline from '@/components/modals/ModalHeadline'
-import displaysDate from '@/composition/displaysDate'
-import Table from '@/components/tables/Table'
-import Thead from '@/components/tables/Thead'
-import Th from '@/components/tables/Th'
-import Tbody from '@/components/tables/Tbody'
-import Td from '@/components/tables/Td'
-import displaysCurrency from '@/composition/displaysCurrency'
+import DescriptionList from '@/components/tables/DescriptionList.vue'
+import DescriptionItem from '@/components/tables/DescriptionItem.vue'
+import Link from '@/components/Link.vue'
+import HelpText from '@/components/HelpText.vue'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
+import displaysDate from '@/composition/displaysDate.js'
+import Table from '@/components/tables/Table.vue'
+import Thead from '@/components/tables/Thead.vue'
+import Th from '@/components/tables/Th.vue'
+import Tbody from '@/components/tables/Tbody.vue'
+import Td from '@/components/tables/Td.vue'
+import displaysCurrency from '@/composition/displaysCurrency.js'
 
 export default defineComponent({
   components: {

@@ -33,7 +33,7 @@
 
     @routes
 
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
   </head>
   <body class="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 selection:text-white selection:bg-primary-800">
     @inertia

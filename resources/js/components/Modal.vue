@@ -40,8 +40,8 @@ import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import Button from './Button'
 import ModalHeadline from './modals/ModalHeadline'
-import ModalWrapper from '@/components/modals/ModalWrapper'
-import DropIn from '@/components/transitions/DropIn'
+import ModalWrapper from '@/components/modals/ModalWrapper.vue'
+import DropIn from '@/components/transitions/DropIn.vue'
 
 export default defineComponent({
   components: {

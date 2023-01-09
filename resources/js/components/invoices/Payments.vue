@@ -100,16 +100,16 @@
 <script>
 import { defineComponent, inject, ref } from 'vue'
 import { CollectionIcon, PencilIcon } from '@heroicons/vue/outline'
-import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import PaymentActionItems from '@/components/PaymentActionItems'
-import tables from '@/components/tables'
-import Link from '@/components/Link'
-import Loader from '@/components/Loader'
-import Copy from '@/components/Copy'
-import HelpText from '@/components/HelpText'
-import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal'
-import checksPermissions from '@/composition/checksPermissions'
-import Button from '@/components/Button'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu.vue'
+import PaymentActionItems from '@/components/PaymentActionItems.vue'
+import tables from '@/components/tables.vue'
+import Link from '@/components/Link.vue'
+import Loader from '@/components/Loader.vue'
+import Copy from '@/components/Copy.vue'
+import HelpText from '@/components/HelpText.vue'
+import PaymentDetailsModal from '@/components/modals/PaymentDetailsModal.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
+import Button from '@/components/Button.vue'
 
 export default defineComponent({
   components: {

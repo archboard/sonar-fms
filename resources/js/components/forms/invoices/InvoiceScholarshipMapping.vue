@@ -134,16 +134,16 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Error from '@/components/forms/Error'
+import Error from '@/components/forms/Error.vue'
 import InvoiceMappingFormCollection from '@/mixins/InvoiceMappingFormCollection'
-import hasModelValue from '@/composition/hasModelValue'
-import invoiceImportScholarshipForm from '@/composition/invoiceImportScholarshipForm'
-import RadioGroup from '@/components/forms/RadioGroup'
-import RadioWrapper from '@/components/forms/RadioWrapper'
-import Radio from '@/components/forms/Radio'
-import CheckboxText from '@/components/forms/CheckboxText'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import Checkbox from '@/components/forms/Checkbox'
+import hasModelValue from '@/composition/hasModelValue.js'
+import invoiceImportScholarshipForm from '@/composition/invoiceImportScholarshipForm.js'
+import RadioGroup from '@/components/forms/RadioGroup.vue'
+import RadioWrapper from '@/components/forms/RadioWrapper.vue'
+import Radio from '@/components/forms/Radio.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
 import { LinkIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({

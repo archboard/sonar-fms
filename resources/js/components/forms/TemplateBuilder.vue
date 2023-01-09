@@ -26,9 +26,9 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { CodeIcon, CursorClickIcon } from '@heroicons/vue/outline'
-import hasModelValue from '@/composition/hasModelValue'
-import Input from '@/components/forms/Input'
-import TemplateBuilderModal from '@/components/modals/TemplateBuilderModal'
+import hasModelValue from '@/composition/hasModelValue.js'
+import Input from '@/components/forms/Input.vue'
+import TemplateBuilderModal from '@/components/modals/TemplateBuilderModal.vue'
 
 export default defineComponent({
   inheritAttrs: false,

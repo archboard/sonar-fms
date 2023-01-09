@@ -62,11 +62,11 @@
 
 <script>
 import { defineComponent } from 'vue'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
-import checksPermissions from '@/composition/checksPermissions'
-import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
-import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
-import copiesToClipboard from '@/composition/copiesToClipboard'
+import SonarMenuItem from '@/components/forms/SonarMenuItem.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal.vue'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal.vue'
+import copiesToClipboard from '@/composition/copiesToClipboard.js'
 
 export default defineComponent({
   components: {

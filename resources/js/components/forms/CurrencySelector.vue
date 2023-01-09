@@ -13,7 +13,7 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue'
-import Select from '@/components/forms/Select'
+import Select from '@/components/forms/Select.vue'
 
 export default defineComponent({
   components: {

@@ -60,10 +60,10 @@ import SonarMenuItem from './forms/SonarMenuItem'
 import checksPermissions from '../composition/checksPermissions'
 import Link from './Link'
 import Loader from './Loader'
-import InvoiceTableRow from '@/components/tables/InvoiceTableRow'
+import InvoiceTableRow from '@/components/tables/InvoiceTableRow.vue'
 import qs from 'qs'
-import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal'
-import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal'
+import InvoiceStatusModal from '@/components/modals/InvoiceStatusModal.vue'
+import ConvertInvoiceModal from '@/components/modals/ConvertInvoiceModal.vue'
 
 export default defineComponent({
   components: {

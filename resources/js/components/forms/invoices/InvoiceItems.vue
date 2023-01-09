@@ -97,11 +97,11 @@
 
 <script>
 import { defineComponent } from 'vue'
-import invoiceItemForm from '@/composition/invoiceItemForm'
-import invoiceFormComponent from '@/composition/invoiceFormComponent'
+import invoiceItemForm from '@/composition/invoiceItemForm.js'
+import invoiceFormComponent from '@/composition/invoiceFormComponent.js'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
-import AddThingButton from '@/components/forms/AddThingButton'
-import Req from '@/components/forms/Req'
+import AddThingButton from '@/components/forms/AddThingButton.vue'
+import Req from '@/components/forms/Req.vue'
 
 export default defineComponent({
   components: {

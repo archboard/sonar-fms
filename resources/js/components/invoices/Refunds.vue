@@ -93,15 +93,15 @@
 
 <script>
 import { defineComponent, ref, inject } from 'vue'
-import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import RefundActionItems from '@/components/RefundActionItems'
-import tables from '@/components/tables'
-import RefundDetailsModal from '@/components/modals/RefundDetailsModal'
-import Loader from '@/components/Loader'
-import checksPermissions from '@/composition/checksPermissions'
-import Link from '@/components/Link'
-import HelpText from '@/components/HelpText'
-import Button from '@/components/Button'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu.vue'
+import RefundActionItems from '@/components/RefundActionItems.vue'
+import tables from '@/components/tables.vue'
+import RefundDetailsModal from '@/components/modals/RefundDetailsModal.vue'
+import Loader from '@/components/Loader.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
+import Link from '@/components/Link.vue'
+import HelpText from '@/components/HelpText.vue'
+import Button from '@/components/Button.vue'
 
 export default defineComponent({
   components: {

@@ -21,7 +21,7 @@
 <script>
 import { defineComponent } from 'vue'
 import store from '@/stores/notifications'
-import Notification from '@/components/Notification'
+import Notification from '@/components/Notification.vue'
 
 export default defineComponent({
   components: { Notification },

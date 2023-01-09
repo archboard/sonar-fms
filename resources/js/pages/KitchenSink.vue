@@ -96,10 +96,10 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Notifications from '@/components/Notifications'
-import Alert from '@/components/Alert'
-import Modal from '@/components/Modal'
-import ConfirmButton from '@/components/ConfirmButton'
+import Notifications from '@/components/Notifications.vue'
+import Alert from '@/components/Alert.vue'
+import Modal from '@/components/Modal.vue'
+import ConfirmButton from '@/components/ConfirmButton.vue'
 import authCheck from '../mixins/AuthCheck'
 import Authenticated from '../layouts/Authenticated'
 import Input from '../components/forms/Input'

@@ -49,17 +49,17 @@
 </template>
 
 <script>
-import Layout from '@/layouts/Guest'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
-import Checkbox from '@/components/forms/Checkbox'
-import Button from '@/components/Button'
-import ValidationErrors from '@/components/ValidationErrors'
-import Alert from '../../components/Alert'
-import CheckboxText from '../../components/forms/CheckboxText'
-import BorderSeparator from '@/components/BorderSeparator'
+import Layout from '@/layouts/Guest.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import Button from '@/components/Button.vue'
+import ValidationErrors from '@/components/ValidationErrors.vue'
+import Alert from '@/components/Alert.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import BorderSeparator from '@/components/BorderSeparator.vue'
 
 export default {
   components: {

@@ -71,7 +71,7 @@ import Checkbox from '../forms/Checkbox'
 import Label from '../forms/Label'
 import CheckboxText from '../forms/CheckboxText'
 import CheckboxWrapper from '../forms/CheckboxWrapper'
-import useSchool from '@/composition/useSchool'
+import useSchool from '@/composition/useSchool.js'
 
 export default {
   components: {

@@ -26,8 +26,8 @@
 
 <script>
 import { computed, defineComponent, ref } from 'vue'
-import tagColorKey from '@/composition/tagColorKey'
-import ColorMenu from '@/components/ColorMenu'
+import tagColorKey from '@/composition/tagColorKey.js'
+import ColorMenu from '@/components/ColorMenu.vue'
 
 export default defineComponent({
   components: {

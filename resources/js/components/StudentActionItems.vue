@@ -14,8 +14,8 @@
 
 <script>
 import { defineComponent } from 'vue'
-import SonarMenuItem from '@/components/forms/SonarMenuItem'
-import checksPermissions from '@/composition/checksPermissions'
+import SonarMenuItem from '@/components/forms/SonarMenuItem.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
 
 export default defineComponent({
   components: {

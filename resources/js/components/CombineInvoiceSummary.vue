@@ -146,17 +146,17 @@
 
 <script>
 import { computed } from 'vue'
-import CardHeader from '@/components/CardHeader'
-import HelpText from '@/components/HelpText'
-import Label from '@/components/forms/Label'
-import displaysCurrency from '@/composition/displaysCurrency'
-import Button from '@/components/Button'
-import CardSectionHeader from '@/components/CardSectionHeader'
-import displaysDate from '@/composition/displaysDate'
-import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import useSchool from '@/composition/useSchool'
+import CardHeader from '@/components/CardHeader.vue'
+import HelpText from '@/components/HelpText.vue'
+import Label from '@/components/forms/Label.vue'
+import displaysCurrency from '@/composition/displaysCurrency.js'
+import Button from '@/components/Button.vue'
+import CardSectionHeader from '@/components/CardSectionHeader.vue'
+import displaysDate from '@/composition/displaysDate.js'
+import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm.js'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import useSchool from '@/composition/useSchool.js'
 
 export default {
   components: {

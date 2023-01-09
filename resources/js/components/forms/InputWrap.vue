@@ -7,9 +7,9 @@
   </div>
 </template>
 <script>
-import Error from '@/components/forms/Error'
+import Error from '@/components/forms/Error.vue'
 import { computed } from 'vue'
-import FadeIn from '@/components/transitions/FadeIn'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 
 export default {
   components: {

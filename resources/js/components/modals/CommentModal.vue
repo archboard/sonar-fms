@@ -19,11 +19,11 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Modal from '@/components/Modal'
-import Textarea from '@/components/forms/Textarea'
-import Error from '@/components/forms/Error'
+import Modal from '@/components/Modal.vue'
+import Textarea from '@/components/forms/Textarea.vue'
+import Error from '@/components/forms/Error.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import HelpText from '@/components/HelpText'
+import HelpText from '@/components/HelpText.vue'
 
 export default defineComponent({
   components: {

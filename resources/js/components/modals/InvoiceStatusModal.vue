@@ -56,19 +56,19 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import Modal from '@/components/Modal'
+import Modal from '@/components/Modal.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import RadioWrapper from '@/components/forms/RadioWrapper'
-import Radio from '@/components/forms/Radio'
-import RadioGroup from '@/components/forms/RadioGroup'
-import CheckboxText from '@/components/forms/CheckboxText'
-import HelpText from '@/components/HelpText'
-import Alert from '@/components/Alert'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import Checkbox from '@/components/forms/Checkbox'
-import FadeIn from '@/components/transitions/FadeIn'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import RadioWrapper from '@/components/forms/RadioWrapper.vue'
+import Radio from '@/components/forms/Radio.vue'
+import RadioGroup from '@/components/forms/RadioGroup.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import HelpText from '@/components/HelpText.vue'
+import Alert from '@/components/Alert.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 
 export default defineComponent({
   components: {

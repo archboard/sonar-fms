@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import Logo from '@/components/ApplicationLogo'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import Alert from '../components/Alert'
-import Notifications from '../components/Notifications'
+import Logo from '@/components/ApplicationLogo.vue'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import Alert from '@/components/Alert.vue'
+import Notifications from '@/components/Notifications.vue'
 
 export default {
   components: {

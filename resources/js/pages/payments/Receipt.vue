@@ -7,10 +7,10 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Empty from '@/layouts/Empty'
+import Empty from '@/layouts/Empty.vue'
 import PageProps from '@/mixins/PageProps'
-import ModalHeadline from '@/components/modals/ModalHeadline'
-import PaymentDetails from '@/components/PaymentDetails'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
+import PaymentDetails from '@/components/PaymentDetails.vue'
 
 export default defineComponent({
   mixins: [PageProps],

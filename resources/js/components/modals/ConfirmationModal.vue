@@ -44,8 +44,8 @@
 
 <script>
 import { defineComponent, nextTick, onMounted, ref } from 'vue'
-import Modal from '@/components/Modal'
-import Button from '@/components/Button'
+import Modal from '@/components/Modal.vue'
+import Button from '@/components/Button.vue'
 import { ExclamationIcon } from '@heroicons/vue/outline'
 
 export default defineComponent({

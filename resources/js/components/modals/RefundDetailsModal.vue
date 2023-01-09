@@ -13,10 +13,10 @@
 
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import Modal from '@/components/Modal'
-import Link from '@/components/Link'
-import RefundDetails from '@/components/RefundDetails'
-import Loader from '@/components/Loader'
+import Modal from '@/components/Modal.vue'
+import Link from '@/components/Link.vue'
+import RefundDetails from '@/components/RefundDetails.vue'
+import Loader from '@/components/Loader.vue'
 
 export default defineComponent({
   components: {

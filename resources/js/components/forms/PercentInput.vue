@@ -16,8 +16,8 @@
 
 <script>
 import { defineComponent } from 'vue'
-import hasModelValue from '@/composition/hasModelValue'
-import Input from '@/components/forms/Input'
+import hasModelValue from '@/composition/hasModelValue.js'
+import Input from '@/components/forms/Input.vue'
 
 export default defineComponent({
   inheritAttrs: false,

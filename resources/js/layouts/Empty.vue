@@ -6,7 +6,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import setsTitle from '@/composition/setsTitle'
+import setsTitle from '@/composition/setsTitle.js'
 
 export default defineComponent({
   components: {

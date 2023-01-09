@@ -91,10 +91,10 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Error from '@/components/forms/Error'
+import Error from '@/components/forms/Error.vue'
 import InvoiceMappingFormCollection from '@/mixins/InvoiceMappingFormCollection'
-import hasModelValue from '@/composition/hasModelValue'
-import invoiceImportItemForm from '@/composition/invoiceImportItemForm'
+import hasModelValue from '@/composition/hasModelValue.js'
+import invoiceImportItemForm from '@/composition/invoiceImportItemForm.js'
 
 export default defineComponent({
   mixins: [InvoiceMappingFormCollection],

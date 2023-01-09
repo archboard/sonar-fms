@@ -71,7 +71,7 @@ import Link from '../Link'
 import DepartmentsModal from './DepartmentsModal'
 import FeeCategoriesModal from './FeeCategoriesModal'
 import CurrencyInput from '../forms/CurrencyInput'
-import PercentInput from '@/components/forms/PercentInput'
+import PercentInput from '@/components/forms/PercentInput.vue'
 
 export default defineComponent({
   components: {

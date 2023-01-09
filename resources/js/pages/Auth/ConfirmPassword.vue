@@ -24,12 +24,12 @@
 </template>
 
 <script>
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import Button from '@/components/Button'
-import ValidationErrors from '@/components/ValidationErrors'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Button from '@/components/Button.vue'
+import ValidationErrors from '@/components/ValidationErrors.vue'
 
 export default {
   components: {

@@ -39,12 +39,12 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
-import Button from '@/components/Button'
+import Authenticated from '@/layouts/Authenticated.vue'
+import Button from '@/components/Button.vue'
 import MapForm from '@/pages/invoices/imports/MapForm'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal.vue'
 import PageProps from '@/mixins/PageProps'
 
 export default defineComponent({
