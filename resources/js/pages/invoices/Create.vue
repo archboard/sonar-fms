@@ -34,7 +34,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated.vue'
-import InvoiceForm from '@/pages/invoices/Form'
+import InvoiceForm from '@/pages/invoices/Form.vue'
 import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal.vue'
 import Button from '@/components/Button.vue'
 import PageProps from '@/mixins/PageProps'

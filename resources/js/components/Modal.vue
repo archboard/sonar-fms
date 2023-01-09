@@ -38,8 +38,8 @@
 <script>
 import { defineComponent } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
-import Button from './Button'
-import ModalHeadline from './modals/ModalHeadline'
+import Button from '@/components/Button.vue'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
 import ModalWrapper from '@/components/modals/ModalWrapper.vue'
 import DropIn from '@/components/transitions/DropIn.vue'
 

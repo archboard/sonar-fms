@@ -15,7 +15,7 @@
 
 <script>
 import { defineComponent, watch } from 'vue'
-import useCurrencyInput from 'vue-currency-input'
+import { useCurrencyInput } from 'vue-currency-input'
 import displaysCurrency from '@/composition/displaysCurrency'
 import { CashIcon } from '@heroicons/vue/outline'
 
@@ -34,6 +34,7 @@ export default defineComponent({
     const { currency, locale, displayCurrency } = displaysCurrency()
     const currencyOptions = {
       currency: currency.code,
+      currencyDisplay: 'narrowSymbol',
       locale,
       valueRange: {
         min: 0
@@ -42,7 +43,7 @@ export default defineComponent({
       hideGroupingSeparatorOnFocus: true,
       hideNegligibleDecimalDigitsOnFocus: true,
       autoDecimalDigits: false,
-      exportValueAsInteger: true,
+      valueScaling: 'precision',
       autoSign: true,
       useGrouping: true,
     }
