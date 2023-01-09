@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InvoicePdf extends Model
 {
-    use HasFactory;
     use BelongsToTenant;
     use BelongsToSchool;
     use BelongsToUser;
