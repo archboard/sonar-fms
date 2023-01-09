@@ -31,7 +31,7 @@ import InputWrap from '@/components/forms/InputWrap.vue'
 import Label from '@/components/forms/Label.vue'
 import Input from '@/components/forms/Input.vue'
 import Layout from '@/layouts/Guest.vue'
-import Alert from '@/components/Alert'
+import Alert from '@/components/Alert.vue'
 
 export default {
   components: {

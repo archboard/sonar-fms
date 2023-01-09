@@ -21,11 +21,11 @@
 <script>
 import { defineComponent, reactive } from 'vue'
 import Modal from '@/components/Modal.vue'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Select from '@/components/forms/Select'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Select from '@/components/forms/Select.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
 
 export default defineComponent({
   emits: ['close', 'apply'],

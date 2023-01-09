@@ -41,7 +41,7 @@
 import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated.vue'
 import Button from '@/components/Button.vue'
-import MapForm from '@/pages/invoices/imports/MapForm'
+import MapForm from '@/pages/invoices/imports/MapForm.vue'
 import CardWrapper from '@/components/CardWrapper.vue'
 import CardPadding from '@/components/CardPadding.vue'
 import InvoiceTemplatesModal from '@/components/modals/InvoiceTemplatesModal.vue'

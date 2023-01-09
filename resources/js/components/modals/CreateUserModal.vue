@@ -32,11 +32,11 @@
 import { defineComponent, inject, ref } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import Modal from '@/components/Modal.vue'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import Input from '@/components/forms/Input'
-import Req from '@/components/forms/Req'
-import Label from '@/components/forms/Label'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Input from '@/components/forms/Input.vue'
+import Req from '@/components/forms/Req.vue'
+import Label from '@/components/forms/Label.vue'
 import HelpText from '@/components/HelpText.vue'
 
 export default defineComponent({
