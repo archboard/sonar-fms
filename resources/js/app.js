@@ -6,6 +6,7 @@ import get from 'lodash/get'
 import flashesNotifications from '@/plugins/flashesNotifications'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import './bootstrap'
+import '../css/app.css'
 
 createInertiaApp({
   title: title => title ? `${title} | ${process.env.APP_NAME}` : process.env.APP_NAME,

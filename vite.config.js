@@ -16,14 +16,19 @@ export default defineConfig({
   plugins: [
     laravel({
       input: [
-        'resources/css/app.css',
         'resources/css/pdf.css',
         'resources/css/ckeditor.css',
         'resources/js/app.js',
       ],
       refresh: true,
     }),
-    vue(),
+    vue({
+      template: {
+        transformAssetUrls: {
+          includeAbsolute: false,
+        },
+      },
+    }),
     // flare({
     //   key: 'imlZ812f4qb42S1yhjvJGl1zmlOuZuoO',
     // })
@@ -44,6 +49,9 @@ function detectServerConfig () {
 
     return {
       host: url.host,
+      hmr: {
+        host: url.host,
+      },
       https: {
         key: fs.readFileSync(process.env.APP_SSL_KEY),
         cert: fs.readFileSync(process.env.APP_SSL_CERT),
