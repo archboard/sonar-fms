@@ -13,7 +13,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import CardPadding from './CardPadding'
+import CardPadding from '@/components/CardPadding.vue'
 
 export default defineComponent({
   components: {
