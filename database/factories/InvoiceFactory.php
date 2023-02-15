@@ -43,7 +43,7 @@ class InvoiceFactory extends Factory
             'use_school_tax_defaults' => $this->faker->boolean,
             'tax_rate' => $this->faker->randomFloat(5, 0.001, 0.1),
             'tax_label' => $this->faker->word,
-            'published_at' => now(),
+            'published_at' => now()->subHour(),
             'is_parent' => false,
         ];
     }
