@@ -21,7 +21,7 @@ jobs:
           echo $RELEASE_VERSION
           echo ${{ steps.vars.outputs.tag }}
       - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
         with:
