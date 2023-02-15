@@ -30,7 +30,7 @@ jobs:
       - name: Install NPM dependencies
         run: npm install --silent
       - name: Compile assets for production
-        run: npm run production
+        run: npm run build
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
