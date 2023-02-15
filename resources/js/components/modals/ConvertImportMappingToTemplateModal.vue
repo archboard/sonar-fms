@@ -31,7 +31,7 @@ import InputWrap from '@/components/forms/InputWrap.vue'
 import Input from '@/components/forms/Input.vue'
 import ModalHeadline from '@/components/modals/ModalHeadline.vue'
 import HelpText from '@/components/HelpText.vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 
 export default defineComponent({
   components: {

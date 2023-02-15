@@ -61,7 +61,7 @@
 
 <script>
 import { computed, inject, nextTick, ref, watch } from 'vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import Slideout from '@/components/Slideout.vue'
 import CardHeader from '@/components/CardHeader.vue'
@@ -72,6 +72,7 @@ import Label from '@/components/forms/Label.vue'
 import CheckboxText from '@/components/forms/CheckboxText.vue'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
 import useSchool from '@/composition/useSchool.js'
+import usesUser from '@/composition/usesUser.js'
 
 export default {
   components: {
@@ -95,10 +96,9 @@ export default {
     let firstFetch = true
     const $http = inject('$http')
 
-    const page = usePage()
     const { school } = useSchool()
     const permissions = ref([])
-    const currentUser = computed(() => page.props.value.user)
+    const currentUser = usesUser().user
     const managesTenancy = ref(props.user.manages_tenancy)
     const managesSchool = ref(false)
     const saving = ref(false)

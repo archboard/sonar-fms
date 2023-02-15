@@ -301,10 +301,10 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref, watch, nextTick } from 'vue'
+<script setup>
+import { ref, watch, nextTick } from 'vue'
 import Notifications from '@/components/Notifications.vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 import TopSearch from '@/components/TopSearch.vue'
 import SchoolSwitcher from '@/components/SchoolSwitcher.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
@@ -313,36 +313,17 @@ import { HomeIcon } from '@heroicons/vue/solid'
 import { XIcon } from '@heroicons/vue/outline'
 import setsTitle from '@/composition/setsTitle.js'
 
-export default defineComponent({
-  components: {
-    SchoolSwitcher,
-    LocaleSelector,
-    TopSearch,
-    Notifications,
-    HomeIcon,
-    XIcon,
-  },
+setsTitle()
+const showMenu = ref(false)
+const showMenuWrapper = ref(false)
+const page = usePage()
+const props = page.props
 
-  setup () {
-    setsTitle()
-    const showMenu = ref(false)
-    const showMenuWrapper = ref(false)
-    const page = usePage()
-
-    watch(showMenuWrapper, (newVal) => {
-      if (newVal) {
-        nextTick(() => {
-          showMenu.value = true
-        })
-      }
+watch(showMenuWrapper, (newVal) => {
+  if (newVal) {
+    nextTick(() => {
+      showMenu.value = true
     })
-
-    return {
-      darkStore,
-      showMenu,
-      showMenuWrapper,
-      props: page.props,
-    }
   }
 })
 </script>

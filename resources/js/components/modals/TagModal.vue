@@ -86,7 +86,7 @@ import isEmpty from 'lodash/isEmpty'
 import random from 'just-random'
 import tagColorKey from '@/composition/tagColorKey.js'
 import DropIn from '@/components/transitions/DropIn.vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 
 export default defineComponent({
   components: {

@@ -44,7 +44,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated.vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import InputWrap from '@/components/forms/InputWrap.vue'
 import CardWrapper from '@/components/CardWrapper.vue'

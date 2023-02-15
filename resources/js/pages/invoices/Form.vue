@@ -79,7 +79,7 @@
 
 <script>
 import { computed, inject, ref, watch } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import CardHeader from '@/components/CardHeader.vue'
 import HelpText from '@/components/HelpText.vue'

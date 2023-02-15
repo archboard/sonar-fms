@@ -1,12 +1,12 @@
 import { computed, onUnmounted, ref } from 'vue'
 import dayjs from '@/plugins/dayjs'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 
 export default () => {
   const page = usePage()
   const timezone = computed(() =>
-    page.props.value.user?.timezone ||
-    page.props.value.school?.timezone ||
+    page.props.user?.timezone ||
+    page.props.school?.timezone ||
     'UTC'
   )
   const timeFormats = {
@@ -14,7 +14,7 @@ export default () => {
     '24': 'H:mm'
   }
   const timeFormat = computed(() => {
-    return timeFormats[page.props.value.user?.time_format] || timeFormats['12']
+    return timeFormats[page.props.user?.time_format] || timeFormats['12']
   })
   const formats = {
     full: `MMMM D, YYYY ${timeFormat.value}`,

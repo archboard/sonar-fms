@@ -224,7 +224,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import Authenticated from '@/layouts/Authenticated.vue'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import { CalculatorIcon, RefreshIcon, HomeIcon } from '@heroicons/vue/solid'
@@ -286,7 +286,7 @@ export default defineComponent({
     const syncGuardians = () => {
       syncingGuardians.value = true
 
-      Inertia.post(`/students/${student.uuid}/guardians/sync`, null, {
+      router.post(`/students/${student.uuid}/guardians/sync`, null, {
         preserveScroll: true,
         onFinish () {
           syncingGuardians.value = false
@@ -296,7 +296,7 @@ export default defineComponent({
     const { displayCurrency } = displaysCurrency()
     const closeRefreshFamily = () => {
       manageFamily.value = false
-      Inertia.reload()
+      router.reload()
     }
 
     return {

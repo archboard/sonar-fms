@@ -1,5 +1,5 @@
 import { inject, onBeforeUnmount } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 export default () => {
   const $http = inject('$http')
@@ -12,7 +12,7 @@ export default () => {
       await $http.get($route('auth.status'))
     } catch (err) {
       clearInterval(interval)
-      Inertia.visit($route('login'))
+      router.visit($route('login'))
     }
   }, 60000)
 

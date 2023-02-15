@@ -181,7 +181,7 @@
 
 <script>
 import { defineComponent, inject, nextTick, ref, watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import handlesFilters from '@/composition/handlesFilters.js'
 import searchesItems from '@/composition/searchesItems.js'
 import Authenticated from '@/layouts/Authenticated.vue'
@@ -287,7 +287,7 @@ export default defineComponent({
     }
     watch(selectAll, (newVal) => {
       if (newVal) {
-        Inertia.post(`/student-selection`, filters)
+        router.post(`/student-selection`, filters)
       } else {
         clearSelection()
       }

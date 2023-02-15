@@ -118,7 +118,7 @@
 import { computed, defineComponent, inject, ref, watch } from 'vue'
 import Authenticated from '@/layouts/Authenticated.vue'
 import PageProps from '@/mixins/PageProps'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper.vue'
 import CardSectionHeader from '@/components/CardSectionHeader.vue'
 import HelpText from '@/components/HelpText.vue'
@@ -133,7 +133,7 @@ import InvoiceDetailsForm from '@/components/forms/invoices/InvoiceDetailsForm.v
 import Button from '@/components/Button.vue'
 import { TrashIcon } from '@heroicons/vue/outline'
 import BaseButton from '@/components/BaseButton.vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
 import Checkbox from '@/components/forms/Checkbox.vue'
 import CheckboxText from '@/components/forms/CheckboxText.vue'
@@ -219,7 +219,7 @@ export default defineComponent({
         ? `/child/${invoice.uuid}`
         : $route('invoice-selection.update', invoice.uuid)
 
-      Inertia.delete(route, {
+      router.delete(route, {
         preserveScroll: true,
       })
     }

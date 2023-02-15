@@ -248,8 +248,8 @@
 
 <script>
 import { defineComponent, ref, inject, computed, onBeforeUnmount } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
-import { Inertia } from '@inertiajs/inertia'
+import { useForm } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import Authenticated from '@/layouts/Authenticated.vue'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import InputWrap from '@/components/forms/InputWrap.vue'
@@ -373,12 +373,12 @@ export default defineComponent({
       }, 5000)
     }
     const deleteSyncTime = time => {
-      Inertia.delete($route('sync-times.destroy', time), {
+      router.delete($route('sync-times.destroy', time), {
         preserveScroll: true,
       })
     }
     const syncNow = () => {
-      Inertia.post($route('sis.sync'), null, {
+      router.post($route('sis.sync'), null, {
         preserveScroll: true,
         onFinish () {
           if (!polling.value) {

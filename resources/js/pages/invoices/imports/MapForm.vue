@@ -197,7 +197,7 @@
 
 <script>
 import { computed, inject, ref, watch } from 'vue'
-import { useForm, usePage } from '@inertiajs/inertia-vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import { PlusSmIcon } from '@heroicons/vue/solid'
 import { TrashIcon, LinkIcon } from '@heroicons/vue/outline'
 import Fieldset from '@/components/forms/Fieldset.vue'
@@ -233,6 +233,7 @@ import InvoiceScholarshipMapping from '@/components/forms/invoices/InvoiceSchola
 import InvoicePaymentScheduleMapping from '@/components/forms/invoices/InvoicePaymentScheduleMapping.vue'
 import InvoiceTaxMapping from '@/components/forms/invoices/InvoiceTaxMapping.vue'
 import TemplateBuilder from '@/components/forms/TemplateBuilder.vue'
+import useSchool from '@/composition/useSchool.js'
 
 export default {
   components: {
@@ -323,7 +324,7 @@ export default {
     // Emit the initial value
     emit('update:invoiceForm', form)
 
-    const school = computed(() => page.props.value.school)
+    const { school } = useSchool()
 
     const { timezone, displayDate } = displaysDate()
     const { displayCurrency } = displaysCurrency()

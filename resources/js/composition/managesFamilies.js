@@ -1,5 +1,5 @@
 import { inject } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 
 export default (studentUuids = []) => {
   const $http = inject('$http')

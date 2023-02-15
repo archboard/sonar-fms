@@ -22,8 +22,7 @@
 <script>
 import { computed, inject, ref, watch } from 'vue'
 import { SelectorIcon } from '@heroicons/vue/solid'
-import { usePage } from '@inertiajs/inertia-vue3'
-import { Inertia } from '@inertiajs/inertia'
+import { router, usePage } from '@inertiajs/vue3'
 
 export default {
   components: {
@@ -33,11 +32,11 @@ export default {
   setup () {
     const $route = inject('$route')
     const { props } = usePage()
-    const locales = computed(() => props.value.locales)
-    const locale = ref(props.value.locale)
+    const locales = computed(() => props.locales)
+    const locale = ref(props.locale)
 
     watch(locale, (newVal) => {
-      Inertia.post($route('locale'), {
+      router.post($route('locale'), {
         locale: newVal,
       }, {
         preserveScroll: true

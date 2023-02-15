@@ -186,7 +186,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Authenticated from '@/layouts/Authenticated.vue'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import InputWrap from '@/components/forms/InputWrap.vue'

@@ -51,7 +51,7 @@
 
 <script>
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Authenticated from '@/layouts/Authenticated.vue'
 import pick from 'lodash/pick'
 import Fieldset from '@/components/forms/Fieldset.vue'

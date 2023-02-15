@@ -22,8 +22,7 @@
 <script>
 import { computed, inject, ref, watch } from 'vue'
 import { SelectorIcon } from '@heroicons/vue/solid'
-import { usePage } from '@inertiajs/inertia-vue3'
-import { Inertia } from '@inertiajs/inertia'
+import { router, usePage } from '@inertiajs/vue3'
 
 export default {
   components: {
@@ -33,10 +32,10 @@ export default {
   setup () {
     const $route = inject('$route')
     const { props } = usePage()
-    const schools = computed(() => props.value.user.schools)
-    const selectedSchool = ref(props.value.user.schools.find(s => s.id === props.value.user.school_id))
+    const schools = computed(() => usePage().props.user.schools)
+    const selectedSchool = ref(props.user.schools.find(s => s.id === props.user.school_id))
     watch(selectedSchool, (newVal, oldVal) => {
-      Inertia.put($route('schools.change'), {
+      router.put($route('schools.change'), {
         school_id: newVal.id,
       }, {
         preserveScroll: true,

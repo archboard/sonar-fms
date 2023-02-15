@@ -1,12 +1,12 @@
 import { onMounted } from 'vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 
 export default () => {
-  const page = usePage()
-
   onMounted(() => {
-    document.title = page.props.value.title
-      ? `${page.props.value.title} | Sonar FMS`
+    const page = usePage()
+
+    document.title = page.props.title
+      ? `${page.props.title} | Sonar FMS`
       : 'Sonar FMS'
   })
 }

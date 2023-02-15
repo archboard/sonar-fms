@@ -121,7 +121,7 @@
 import { MenuItem } from '@headlessui/vue'
 import { defineComponent, inject, ref } from 'vue'
 import searchesItems from '@/composition/searchesItems'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import handlesFilters from '@/composition/handlesFilters'
 import Authenticated from '@/layouts/Authenticated.vue'
 import Table from '@/components/tables/Table.vue'
@@ -197,7 +197,7 @@ export default defineComponent({
     }
     const closePermissions = () => {
       togglePermissions({})
-      Inertia.reload({ preserveScroll: true })
+      router.reload({ preserveScroll: true })
     }
 
     const { filters, applyFilters, resetFilters, sortColumn } = handlesFilters({

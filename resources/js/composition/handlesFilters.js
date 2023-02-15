@@ -1,6 +1,6 @@
 import { reactive, watch } from 'vue'
 import qs from 'qs'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
 
@@ -32,7 +32,7 @@ export default (defaultFilters, route, casts = {}) => {
     const data = pickBy(pick(filters, Object.keys(defaultFilters)))
     const url = `${route}?${qs.stringify(data)}`
 
-    Inertia.visit(url, {
+    router.visit(url, {
       preserveScroll: true,
       preserveState: true,
     })

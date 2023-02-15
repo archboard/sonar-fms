@@ -116,7 +116,7 @@
 <script>
 import { computed, defineComponent, ref } from 'vue'
 import Authenticated from '@/layouts/Authenticated.vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import CardWrapper from '@/components/CardWrapper.vue'
 import CardPadding from '@/components/CardPadding.vue'
 import CardAction from '@/components/CardAction.vue'

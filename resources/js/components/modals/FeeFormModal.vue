@@ -76,7 +76,7 @@
 
 <script>
 import { defineComponent, inject, ref, toRef } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Modal from '@/components/Modal.vue'
 import Fieldset from '@/components/forms/Fieldset.vue'
 import InputWrap from '@/components/forms/InputWrap.vue'

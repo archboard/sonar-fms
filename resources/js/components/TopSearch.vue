@@ -55,7 +55,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, watch, inject, comput
 import debounce from 'lodash/debounce'
 import { SearchIcon } from '@heroicons/vue/outline'
 import DropIn from '@/components/transitions/DropIn.vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import SearchResult from '@/components/SearchResult.vue'
 
 export default defineComponent({
@@ -136,7 +136,7 @@ export default defineComponent({
     )
     const goToPage = () => {
       if (currentItem.value) {
-        Inertia.visit(currentItem.value)
+        router.visit(currentItem.value)
       }
     }
     const goToResult = (diff) => {

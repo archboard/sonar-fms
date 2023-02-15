@@ -1,11 +1,11 @@
 import { inject, ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 export default () => {
   const rollingBackImport = ref({})
 
   const rollBack = (route) => {
-    Inertia.post(route, null, {
+    router.post(route, null, {
       preserveScroll: true,
       onFinish () {
         rollingBackImport.value = {}

@@ -152,7 +152,7 @@ import { defineComponent, inject, ref } from 'vue'
 import OutlineBadge from '@/components/OutlineBadge.vue'
 import Textarea from '@/components/forms/Textarea.vue'
 import Button from '@/components/Button.vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import { ChatAltIcon } from '@heroicons/vue/solid'
 import Error from '@/components/forms/Error.vue'
 import Loader from '@/components/Loader.vue'
@@ -162,7 +162,7 @@ import usesUser from '@/composition/usesUser.js'
 import Link from '@/components/Link.vue'
 import CommentModal from '@/components/modals/CommentModal.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 export default defineComponent({
   components: {

@@ -109,7 +109,7 @@ import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu.vue'
 import SonarMenuItem from '@/components/forms/SonarMenuItem.vue'
 import checksPermissions from '@/composition/checksPermissions.js'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 export default defineComponent({
   mixins: [PageProps],
@@ -150,7 +150,7 @@ export default defineComponent({
     const { can } = checksPermissions()
     const layoutToDelete = ref({})
     const deleteLayout = () => {
-      Inertia.delete(`/layouts/invoices/${layoutToDelete.value.id}`, {
+      router.delete(`/layouts/invoices/${layoutToDelete.value.id}`, {
         preserveScroll: true,
         onSuccess: () => {
           layoutToDelete.value = {}
