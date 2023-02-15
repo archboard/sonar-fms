@@ -8,7 +8,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { CloudDownloadIcon } from '@heroicons/vue/outline'
-import buttonClasses from '@/composition/buttonClasses'
+import buttonClasses from '@/composition/buttonClasses.js'
 
 export default defineComponent({
   components: {

@@ -303,15 +303,15 @@
 
 <script>
 import { defineComponent, ref, watch, nextTick } from 'vue'
-import Notifications from '@/components/Notifications'
+import Notifications from '@/components/Notifications.vue'
 import { usePage } from '@inertiajs/inertia-vue3'
-import TopSearch from '@/components/TopSearch'
-import SchoolSwitcher from '@/components/SchoolSwitcher'
-import LocaleSelector from '@/components/LocaleSelector'
+import TopSearch from '@/components/TopSearch.vue'
+import SchoolSwitcher from '@/components/SchoolSwitcher.vue'
+import LocaleSelector from '@/components/LocaleSelector.vue'
 import darkStore from '@/stores/theme'
 import { HomeIcon } from '@heroicons/vue/solid'
 import { XIcon } from '@heroicons/vue/outline'
-import setsTitle from '@/composition/setsTitle'
+import setsTitle from '@/composition/setsTitle.js'
 
 export default defineComponent({
   components: {

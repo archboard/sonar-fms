@@ -7,9 +7,9 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Select from '@/components/forms/Select'
-import hasModelValue from '@/composition/hasModelValue'
-import fetchesPaymentMethods from '@/composition/fetchesPaymentMethods'
+import Select from '@/components/forms/Select.vue'
+import hasModelValue from '@/composition/hasModelValue.js'
+import fetchesPaymentMethods from '@/composition/fetchesPaymentMethods.js'
 
 export default defineComponent({
   components: {

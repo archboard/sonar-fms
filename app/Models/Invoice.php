@@ -32,6 +32,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -1035,12 +1036,21 @@ class Invoice extends Model implements Searchable, Exportable
         return redirect()->route('invoices.index', ['batch_id' => $invoice->batch_id]);
     }
 
-    public static function generateInvoiceNumber(string $prefix = ''): string
+    public static function generateInvoiceNumber(int $schoolId, string $prefix = ''): string
     {
-        $id = (new Client(8))
-            ->formattedId(static::ALPHABET);
+        $key = "{$schoolId}_invoice_count";
+        // Fetch the count or set it initially
+        $currentCount = Cache::rememberForever(
+            $key,
+            fn () => Invoice::query()
+                ->where('school_id', $schoolId)
+                ->count()
+        );
+        // Increment the value
+        cache()->increment($key);
+        $invoiceNumber = $currentCount + 1;
 
-        return $prefix . $id;
+        return $prefix . Str::padLeft((string) $invoiceNumber, 3, '0');
     }
 
     public function migrateActivity(string $uuid): static

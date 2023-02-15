@@ -46,8 +46,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
-import StudentInvoiceTable from '@/components/StudentInvoiceTable'
+import Authenticated from '@/layouts/Authenticated.vue'
+import StudentInvoiceTable from '@/components/StudentInvoiceTable.vue'
 
 export default defineComponent({
   components: {

@@ -154,16 +154,16 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Error from '@/components/forms/Error'
+import Error from '@/components/forms/Error.vue'
 import InvoiceMappingFormCollection from '@/mixins/InvoiceMappingFormCollection'
-import hasModelValue from '@/composition/hasModelValue'
-import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm'
-import RadioGroup from '@/components/forms/RadioGroup'
-import RadioWrapper from '@/components/forms/RadioWrapper'
-import Radio from '@/components/forms/Radio'
-import CheckboxText from '@/components/forms/CheckboxText'
-import DatePicker from '@/components/forms/DatePicker'
-import Mocker from '@/components/Mocker'
+import hasModelValue from '@/composition/hasModelValue.js'
+import invoiceImportPaymentScheduleForm from '@/composition/invoiceImportPaymentScheduleForm.js'
+import RadioGroup from '@/components/forms/RadioGroup.vue'
+import RadioWrapper from '@/components/forms/RadioWrapper.vue'
+import Radio from '@/components/forms/Radio.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import DatePicker from '@/components/forms/DatePicker.vue'
+import Mocker from '@/components/Mocker.vue'
 
 export default defineComponent({
   mixins: [InvoiceMappingFormCollection],

@@ -47,14 +47,14 @@
 
 <script>
 import { defineComponent } from 'vue'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
-import Td from '@/components/tables/Td'
-import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu'
-import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems'
-import checksPermissions from '@/composition/checksPermissions'
-import TableLink from '@/components/tables/TableLink'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge.vue'
+import Td from '@/components/tables/Td.vue'
+import VerticalDotMenu from '@/components/dropdown/VerticalDotMenu.vue'
+import InvoiceActionItems from '@/components/dropdown/InvoiceActionItems.vue'
+import checksPermissions from '@/composition/checksPermissions.js'
+import TableLink from '@/components/tables/TableLink.vue'
 import { CollectionIcon } from '@heroicons/vue/outline'
-import Copy from '@/components/Copy'
+import Copy from '@/components/Copy.vue'
 
 export default defineComponent({
   components: {

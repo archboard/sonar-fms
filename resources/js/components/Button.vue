@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Spinner from './icons/spinner'
+import Spinner from '@/components/icons/spinner.vue'
 
 export default {
   components: {

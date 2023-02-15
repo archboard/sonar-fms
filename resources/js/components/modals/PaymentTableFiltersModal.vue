@@ -45,16 +45,16 @@
 
 <script>
 import { defineComponent, reactive } from 'vue'
-import Modal from '@/components/Modal'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Select from '@/components/forms/Select'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
-import CurrencyInput from '@/components/forms/CurrencyInput'
-import DatePicker from '@/components/forms/DatePicker'
-import HelpText from '@/components/HelpText'
+import Modal from '@/components/Modal.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Select from '@/components/forms/Select.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import CurrencyInput from '@/components/forms/CurrencyInput.vue'
+import DatePicker from '@/components/forms/DatePicker.vue'
+import HelpText from '@/components/HelpText.vue'
 
 export default defineComponent({
   emits: ['close', 'apply'],

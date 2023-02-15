@@ -83,7 +83,7 @@ class PaymentFromImportFactory extends BaseImportFactory
                 'is_parent',
                 'parent_uuid',
             ])
-            ->with('children:uuid,remaining_balance,parent_uuid')
+            ->with('children:uuid,remaining_balance,parent_uuid,published_at')
             ->get()
             ->keyBy('invoice_number');
 

@@ -71,7 +71,7 @@
 import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { XIcon } from '@heroicons/vue/outline'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
-import Button from './Button'
+import Button from '@/components/Button.vue'
 
 export default defineComponent({
   components: {

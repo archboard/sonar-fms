@@ -33,12 +33,12 @@
 
 <script>
 import { computed, defineComponent, inject, ref, watch } from 'vue'
-import Modal from '@/components/Modal'
-import managesFamilies from '@/composition/managesFamilies'
+import Modal from '@/components/Modal.vue'
+import managesFamilies from '@/composition/managesFamilies.js'
 import { TrashIcon } from '@heroicons/vue/outline'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import StudentTypeahead from '@/components/forms/StudentTypeahead'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import StudentTypeahead from '@/components/forms/StudentTypeahead.vue'
 
 export default defineComponent({
   components: {

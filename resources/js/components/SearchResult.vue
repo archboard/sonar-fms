@@ -101,7 +101,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/vue/outline'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge.vue'
 
 export default defineComponent({
   components: {

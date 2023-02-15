@@ -41,19 +41,19 @@
 
 <script>
 import { defineComponent, inject } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import CardAction from '@/components/CardAction'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
+import Authenticated from '@/layouts/Authenticated.vue'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import CardAction from '@/components/CardAction.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Button from '@/components/Button'
-import FileUpload from '@/components/forms/FileUpload'
-import Fieldset from '@/components/forms/Fieldset'
-import HelpText from '@/components/HelpText'
-import Alert from '@/components/Alert'
+import Button from '@/components/Button.vue'
+import FileUpload from '@/components/forms/FileUpload.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import HelpText from '@/components/HelpText.vue'
+import Alert from '@/components/Alert.vue'
 
 export default defineComponent({
   components: {

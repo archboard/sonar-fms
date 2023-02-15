@@ -246,7 +246,7 @@ abstract class InvoiceFactory extends BaseImportFactory
             }
 
             // Kick off caching account balances
-            if (!$this->asDraft && $invoice['student_uuid']) {
+            if (!$this->asDraft && ($invoice['student_uuid'] ?? false)) {
                 SetStudentCachedValues::dispatch($invoice['student_uuid']);
             }
 

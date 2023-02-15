@@ -4,23 +4,17 @@
   </SolidBadge>
 </template>
 
-<script>
-import { computed, defineComponent, inject, ref } from 'vue'
-import SolidBadge from './SolidBadge'
+<script setup>
+import SolidBadge from '@/components/SolidBadge.vue'
 
-export default defineComponent({
-  components: {
-    SolidBadge
+defineProps({
+  size: {
+    type: String,
+    default: 'base',
   },
-  props: {
-    size: {
-      type: String,
-      default: 'base',
-    },
-    invoice: {
-      type: Object,
-      default: () => ({})
-    }
-  },
+  invoice: {
+    type: Object,
+    default: () => ({})
+  }
 })
 </script>

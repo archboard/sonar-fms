@@ -42,12 +42,12 @@
 
 <script>
 import { defineComponent } from 'vue'
-import FadeInGroup from '@/components/transitions/FadeInGroup'
-import DismissibleBadge from '@/components/DismissibleBadge'
-import invoiceStatuses from '@/composition/invoiceStatuses'
-import displaysGrades from '@/composition/displaysGrades'
-import displaysDate from '@/composition/displaysDate'
-import invoiceTypes from '@/composition/invoiceTypes'
+import FadeInGroup from '@/components/transitions/FadeInGroup.vue'
+import DismissibleBadge from '@/components/DismissibleBadge.vue'
+import invoiceStatuses from '@/composition/invoiceStatuses.js'
+import displaysGrades from '@/composition/displaysGrades.js'
+import displaysDate from '@/composition/displaysDate.js'
+import invoiceTypes from '@/composition/invoiceTypes.js'
 
 export default defineComponent({
   components: {

@@ -46,20 +46,20 @@
 
 <script>
 import { defineComponent, inject, computed } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
+import Authenticated from '@/layouts/Authenticated.vue'
 import PageProps from '@/mixins/PageProps'
-import Button from '@/components/Button'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
+import Button from '@/components/Button.vue'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import HelpText from '@/components/HelpText'
-import LayoutBuilder from '@/pages/layouts/LayoutBuilder'
-import TwoColumnWrapper from '@/components/TwoColumnWrapper'
-import Select from '@/components/forms/Select'
-import Alert from '@/components/Alert'
+import HelpText from '@/components/HelpText.vue'
+import LayoutBuilder from '@/pages/layouts/LayoutBuilder.vue'
+import TwoColumnWrapper from '@/components/TwoColumnWrapper.vue'
+import Select from '@/components/forms/Select.vue'
+import Alert from '@/components/Alert.vue'
 
 export default defineComponent({
   mixins: [PageProps],

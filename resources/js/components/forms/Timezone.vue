@@ -1,45 +1,40 @@
 <template>
-  <Select v-model="localValue">
-    <option :value="null" disabled>{{ __('Select timezone') }}</option>
-    <option
-      v-for="(name, zone) in options"
-      :key="zone"
-      :value="zone"
-    >
-      {{ name }}
-    </option>
-  </Select>
+  <GenericObjectCombobox
+    v-model="timezone"
+    v-model:object-id="localValue"
+    :options="options"
+    search-attribute="name"
+  />
 </template>
 
-<script>
-import { computed, defineComponent, inject, ref } from 'vue'
-import Select from '@/components/forms/Select'
+<script setup>
+import { inject, ref } from 'vue'
+import reduce from 'just-reduce-object'
+import GenericObjectCombobox from '@/components/forms/GenericObjectCombobox.vue'
+import { useVModel } from '@vueuse/core'
 
-export default defineComponent({
-  components: {
-    Select,
-  },
-  props: {
-    modelValue: String,
-  },
-  emits: ['update:modelValue'],
+const props = defineProps({
+  modelValue: String,
+})
+const emit = defineEmits(['update:modelValue'])
+const localValue = useVModel(props, 'modelValue', emit)
+const $http = inject('$http')
+const options = ref([])
+const timezone = ref({})
 
-  setup (props, { emit }) {
-    const $route = inject('$route')
-    const $http = inject('$http')
-    const localValue = computed({
-      get: () => props.modelValue,
-      set: value => emit('update:modelValue', value)
+$http.get('/timezones').then(({ data }) => {
+  options.value = reduce(data, (carry, key, value) => {
+    carry.push({
+      id: key,
+      name: value,
     })
-    const options = ref([])
+    return carry
+  }, [])
 
-    $http.get($route('timezones')).then(({ data }) => {
-      options.value = data
-    })
-
-    return {
-      localValue,
-      options,
+  if (localValue.value) {
+    timezone.value = {
+      id: localValue.value,
+      name: data[localValue.value],
     }
   }
 })

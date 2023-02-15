@@ -6,8 +6,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Authenticated from '@/layouts/Authenticated'
-import MyStudents from '@/components/tables/MyStudents'
+import Authenticated from '@/layouts/Authenticated.vue'
+import MyStudents from '@/components/tables/MyStudents.vue'
 
 export default defineComponent({
   components: {

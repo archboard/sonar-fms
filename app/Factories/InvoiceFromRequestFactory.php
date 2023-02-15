@@ -374,7 +374,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
             $invoiceUuid = $this->studentInvoiceMap
                 ->get($student->uuid, $this->uuid());
             $invoiceNumber = $this->invoiceNumberMap
-                ->get($student->uuid, Invoice::generateInvoiceNumber($this->invoiceNumberPrefix));
+                ->get($student->uuid, Invoice::generateInvoiceNumber($this->school->id, $this->invoiceNumberPrefix));
             $title = $this->compileTitle
                 ? $this->school->compileTemplate($this->invoiceAttributes['title'], student: $student, term: $this->term)
                 : $this->invoiceAttributes['title'];

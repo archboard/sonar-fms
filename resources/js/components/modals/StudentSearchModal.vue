@@ -36,14 +36,14 @@
 import { defineComponent, nextTick, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import clickaway from '@/directives/clickaway'
-import fetchesStudents from '@/composition/fetchesStudents'
-import Input from '@/components/forms/Input'
-import Label from '@/components/forms/Label'
-import FadeIn from '@/components/transitions/FadeIn'
-import Loader from '@/components/Loader'
+import fetchesStudents from '@/composition/fetchesStudents.js'
+import Input from '@/components/forms/Input.vue'
+import Label from '@/components/forms/Label.vue'
+import FadeIn from '@/components/transitions/FadeIn.vue'
+import Loader from '@/components/Loader.vue'
 import debounce from 'lodash/debounce'
-import ModalWrapper from '@/components/modals/ModalWrapper'
-import DropIn from '@/components/transitions/DropIn'
+import ModalWrapper from '@/components/modals/ModalWrapper.vue'
+import DropIn from '@/components/transitions/DropIn.vue'
 
 export default defineComponent({
   directives: {

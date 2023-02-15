@@ -62,15 +62,15 @@
 
 <script>
 import { defineComponent, ref, watchEffect } from 'vue'
-import invoiceFormComponent from '@/composition/invoiceFormComponent'
+import invoiceFormComponent from '@/composition/invoiceFormComponent.js'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
 import tables from '@/components/tables'
-import fetchesStudents from '@/composition/fetchesStudents'
+import fetchesStudents from '@/composition/fetchesStudents.js'
 import { TrashIcon, ExternalLinkIcon } from '@heroicons/vue/outline'
-import AddThingButton from '@/components/forms/AddThingButton'
-import Error from '@/components/forms/Error'
-import StudentSearchModal from '@/components/modals/StudentSearchModal'
-import Req from '@/components/forms/Req'
+import AddThingButton from '@/components/forms/AddThingButton.vue'
+import Error from '@/components/forms/Error.vue'
+import StudentSearchModal from '@/components/modals/StudentSearchModal.vue'
+import Req from '@/components/forms/Req.vue'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],

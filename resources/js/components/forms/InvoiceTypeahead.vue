@@ -37,10 +37,10 @@
 
 <script>
 import { defineComponent, inject, ref, watch, computed, nextTick } from 'vue'
-import hasModelValue from '@/composition/hasModelValue'
+import hasModelValue from '@/composition/hasModelValue.js'
 import cloneDeep from 'lodash/cloneDeep'
-import Typeahead from '@/components/forms/Typeahead'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import Typeahead from '@/components/forms/Typeahead.vue'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge.vue'
 import debounce from 'lodash/debounce'
 
 export default defineComponent({

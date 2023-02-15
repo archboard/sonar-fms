@@ -40,12 +40,12 @@
 <script>
 import { defineComponent, inject, ref, watch } from 'vue'
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
-import hasModelValue from '@/composition/hasModelValue'
-import menuItemClasses from '@/composition/menuItemClasses'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
-import inputClasses from '@/composition/inputClasses'
+import hasModelValue from '@/composition/hasModelValue.js'
+import menuItemClasses from '@/composition/menuItemClasses.js'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge.vue'
+import inputClasses from '@/composition/inputClasses.js'
 import debounce from 'lodash/debounce'
-import DropIn from '@/components/transitions/DropIn'
+import DropIn from '@/components/transitions/DropIn.vue'
 
 export default defineComponent({
   components: {

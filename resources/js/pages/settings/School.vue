@@ -98,7 +98,7 @@
                     <Label for="invoice_number_template">{{ __('Invoice number prefix') }}</Label>
                     <TemplateBuilder v-model="form.invoice_number_template" placeholder="{year}-" class="font-mono" id="invoice_number_template" />
                     <HelpText class="mb-3">
-                      {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-EIXVYSL0` }) }}
+                      {{ __('Add a prefix to the auto-generated unique invoice number. Use {year} and/or {month} to create a dynamic invoice number based on the current year/month or use any desired static prefix. For example, the prefix "{year}{month}-" would create an invoice number that looks like :number.', { number: `${displayDate(new Date, 'YYYYMM')}-001` }) }}
                     </HelpText>
                     <HelpText>
                       {{ __('Modifying the prefix now will only affect new invoices and will not change previously generated invoice numbers.') }}
@@ -187,28 +187,28 @@
 <script>
 import { defineComponent } from 'vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Authenticated from '@/layouts/Authenticated'
-import Fieldset from '@/components/forms/Fieldset'
-import InputWrap from '@/components/forms/InputWrap'
-import Label from '@/components/forms/Label'
-import Input from '@/components/forms/Input'
-import Button from '@/components/Button'
-import CardWrapper from '@/components/CardWrapper'
-import CardPadding from '@/components/CardPadding'
-import HelpText from '@/components/HelpText'
-import CardAction from '@/components/CardAction'
-import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper'
-import CardSectionHeader from '@/components/CardSectionHeader'
-import Checkbox from '@/components/forms/Checkbox'
-import CheckboxText from '@/components/forms/CheckboxText'
-import CurrencySelector from '@/components/forms/CurrencySelector'
-import Timezone from '@/components/forms/Timezone'
-import CheckboxWrapper from '@/components/forms/CheckboxWrapper'
+import Authenticated from '@/layouts/Authenticated.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Input from '@/components/forms/Input.vue'
+import Button from '@/components/Button.vue'
+import CardWrapper from '@/components/CardWrapper.vue'
+import CardPadding from '@/components/CardPadding.vue'
+import HelpText from '@/components/HelpText.vue'
+import CardAction from '@/components/CardAction.vue'
+import FormMultipartWrapper from '@/components/forms/FormMultipartWrapper.vue'
+import CardSectionHeader from '@/components/CardSectionHeader.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import CurrencySelector from '@/components/forms/CurrencySelector.vue'
+import Timezone from '@/components/forms/Timezone.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
 import PageProps from '@/mixins/PageProps'
-import FadeInGroup from '@/components/transitions/FadeInGroup'
-import displaysDate from '@/composition/displaysDate'
-import PercentInput from '@/components/forms/PercentInput'
-import TemplateBuilder from '@/components/forms/TemplateBuilder'
+import FadeInGroup from '@/components/transitions/FadeInGroup.vue'
+import displaysDate from '@/composition/displaysDate.js'
+import PercentInput from '@/components/forms/PercentInput.vue'
+import TemplateBuilder from '@/components/forms/TemplateBuilder.vue'
 
 export default defineComponent({
   mixins: [PageProps],

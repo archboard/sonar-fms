@@ -24,13 +24,13 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Modal from '@/components/Modal'
-import Fieldset from '@/components/forms/Fieldset'
-import Label from '@/components/forms/Label'
-import InputWrap from '@/components/forms/InputWrap'
-import Input from '@/components/forms/Input'
-import ModalHeadline from './ModalHeadline'
-import HelpText from '@/components/HelpText'
+import Modal from '@/components/Modal.vue'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import Label from '@/components/forms/Label.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Input from '@/components/forms/Input.vue'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
+import HelpText from '@/components/HelpText.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 
 export default defineComponent({

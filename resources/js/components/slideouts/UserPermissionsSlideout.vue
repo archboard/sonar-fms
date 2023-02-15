@@ -60,18 +60,18 @@
 </template>
 
 <script>
-import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
-import Fieldset from '../forms/Fieldset'
-import Slideout from '../Slideout'
-import CardHeader from '../CardHeader'
-import HelpText from '../HelpText'
-import InputWrap from '../forms/InputWrap'
-import Checkbox from '../forms/Checkbox'
-import Label from '../forms/Label'
-import CheckboxText from '../forms/CheckboxText'
-import CheckboxWrapper from '../forms/CheckboxWrapper'
-import useSchool from '@/composition/useSchool'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import Slideout from '@/components/Slideout.vue'
+import CardHeader from '@/components/CardHeader.vue'
+import HelpText from '@/components/HelpText.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import Label from '@/components/forms/Label.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
+import CheckboxWrapper from '@/components/forms/CheckboxWrapper.vue'
+import useSchool from '@/composition/useSchool.js'
 
 export default {
   components: {

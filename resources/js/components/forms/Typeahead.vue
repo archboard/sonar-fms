@@ -35,9 +35,9 @@
 
 <script>
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue'
-import Input from '@/components/forms/Input'
+import Input from '@/components/forms/Input.vue'
 import { nanoid } from 'nanoid'
-import DropIn from '@/components/transitions/DropIn'
+import DropIn from '@/components/transitions/DropIn.vue'
 
 export default defineComponent({
   inheritAttrs: false,

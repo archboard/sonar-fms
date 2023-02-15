@@ -36,15 +36,15 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Modal from '../Modal'
+import Modal from '@/components/Modal.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import handlesFeeCategories from '../../composition/handlesFeeCategories'
-import Fieldset from '../forms/Fieldset'
-import Label from '../forms/Label'
-import InputWrap from '../forms/InputWrap'
-import Input from '../forms/Input'
-import ModalHeadline from './ModalHeadline'
-import Link from '../Link'
+import handlesFeeCategories from '@/composition/handlesFeeCategories'
+import Fieldset from '@/components/forms/Fieldset.vue'
+import Label from '@/components/forms/Label.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Input from '@/components/forms/Input.vue'
+import ModalHeadline from '@/components/modals/ModalHeadline.vue'
+import Link from '@/components/Link.vue'
 
 export default defineComponent({
   components: {

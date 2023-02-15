@@ -106,12 +106,12 @@
 
 <script>
 import { defineComponent } from 'vue'
-import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm'
-import invoiceFormComponent from '@/composition/invoiceFormComponent'
+import invoicePaymentScheduleForm from '@/composition/invoicePaymentScheduleForm.js'
+import invoiceFormComponent from '@/composition/invoiceFormComponent.js'
 import InvoiceFormCollection from '@/mixins/InvoiceFormCollection'
-import Mocker from '@/components/Mocker'
-import DatePicker from '@/components/forms/DatePicker'
-import AddThingButton from '@/components/forms/AddThingButton'
+import Mocker from '@/components/Mocker.vue'
+import DatePicker from '@/components/forms/DatePicker.vue'
+import AddThingButton from '@/components/forms/AddThingButton.vue'
 
 export default defineComponent({
   mixins: [InvoiceFormCollection],

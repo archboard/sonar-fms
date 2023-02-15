@@ -32,10 +32,10 @@
 import { computed, defineComponent } from 'vue'
 import { DatePicker } from 'v-calendar'
 import darkStore from '@/stores/theme'
-import Input from './Input'
-import FadeIn from '../transitions/FadeIn'
+import Input from '@/components/forms/Input.vue'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 import { CalendarIcon, TrashIcon } from '@heroicons/vue/outline'
-import displaysDate from '@/composition/displaysDate'
+import displaysDate from '@/composition/displaysDate.js'
 import 'v-calendar/dist/style.css'
 
 export default defineComponent({

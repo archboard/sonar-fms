@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import Authenticated from '../../layouts/Authenticated'
+import { defineComponent } from 'vue'
+import Authenticated from '@/layouts/Authenticated.vue'
 
 export default defineComponent({
   components: {

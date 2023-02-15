@@ -42,8 +42,8 @@
 <script>
 import { defineComponent } from 'vue'
 import { CashIcon, ExternalLinkIcon } from '@heroicons/vue/solid'
-import displaysCurrency from '@/composition/displaysCurrency'
-import InvoiceStatusBadge from '@/components/InvoiceStatusBadge'
+import displaysCurrency from '@/composition/displaysCurrency.js'
+import InvoiceStatusBadge from '@/components/InvoiceStatusBadge.vue'
 
 export default defineComponent({
   components: {

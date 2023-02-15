@@ -54,9 +54,9 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, watch, inject, computed } from 'vue'
 import debounce from 'lodash/debounce'
 import { SearchIcon } from '@heroicons/vue/outline'
-import DropIn from '@/components/transitions/DropIn'
+import DropIn from '@/components/transitions/DropIn.vue'
 import { Inertia } from '@inertiajs/inertia'
-import SearchResult from '@/components/SearchResult'
+import SearchResult from '@/components/SearchResult.vue'
 
 export default defineComponent({
   components: {

@@ -12,7 +12,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import ultralightCopy from 'copy-to-clipboard-ultralight'
-import FadeIn from '@/components/transitions/FadeIn'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 
 export default defineComponent({
   components: {FadeIn},

@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import Req from './Req'
+import { defineComponent } from 'vue'
+import Req from '@/components/forms/Req.vue'
 
 export default defineComponent({
   components: {Req},

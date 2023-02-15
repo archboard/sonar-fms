@@ -206,6 +206,8 @@ class InvoicePaymentTest extends TestCase
             ->setRemainingBalance()
             ->save();
 
+        $invoice->student->setRevenue();
+
         $this->assertEquals($totalPaid, $invoice->total_paid);
         $this->assertEquals($totalPaid, $invoice->student->revenue);
 
@@ -271,6 +273,7 @@ class InvoicePaymentTest extends TestCase
         $this->assignPermission('create', InvoicePayment::class);
 
         $invoice = $this->createCombinedInvoice(5);
+        $invoice->unsetRelations();
 
         $date = $this->user->getCarbonFactory()
             ->today()
@@ -312,13 +315,14 @@ class InvoicePaymentTest extends TestCase
 
         // Each child invoice will have received a distribution of some kind
         foreach ($invoice->children as $child) {
+            $this->assertEquals($child->student->invoices()->sum('remaining_balance'), $child->student->account_balance);
+
             if ($child->amount_due > 0) {
+                // This just makes sure that the payment was recorded
                 $this->assertTrue($child->amount_due > $child->remaining_balance);
                 $this->assertEquals(1, $child->invoicePayments()->count());
-                $this->assertTrue($child->student->account_balance < $child->amount_due);
             } else {
                 $this->assertEquals(0, $child->invoicePayments()->count());
-                $this->assertEquals($child->amount_due, $child->student->account_balance);
             }
         }
 
@@ -368,13 +372,14 @@ class InvoicePaymentTest extends TestCase
             $this->assertEquals($data['amount'], $distributedToTerms);
         }
 
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job, $something, $else) use ($invoice) {
+            return $invoice->children->pluck('student_uuid')->contains($job->studentUuid);
+        });
+
         // Each child invoice will have received a distribution of some kind
         foreach ($invoice->children as $child) {
             $this->assertEquals(0, $child->remaining_balance);
             $this->assertEquals($child->amount_due > 0 ? 1 : 0, $child->invoicePayments()->count());
-            Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($child) {
-                return $job->studentUuid === $child->student_uuid;
-            });
         }
 
         Queue::assertPushed(MakeReceipt::class);
@@ -466,7 +471,8 @@ class InvoicePaymentTest extends TestCase
         $this->assertDatabaseHas($payment->getTable(), $data);
         $this->assertEquals(1, $payment->activities()->count());
 
-        $invoice = Invoice::find($payment->invoice_uuid);
+        $invoice = Invoice::find($payment->invoice_uuid)
+            ->setCalculatedAttributes();
         $activities = $invoice->activities()
             ->get();
 

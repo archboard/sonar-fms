@@ -9,7 +9,7 @@
 
 <script>
 import { computed, onMounted, ref } from 'vue'
-import inputClasses from '@/composition/inputClasses'
+import inputClasses from '@/composition/inputClasses.js'
 
 export default {
   props: {

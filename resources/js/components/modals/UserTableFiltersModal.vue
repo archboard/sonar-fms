@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from 'vue'
-import Modal from '../Modal'
-import InputWrap from '../forms/InputWrap'
-import Label from '../forms/Label'
-import Select from '../forms/Select'
-import Checkbox from '../forms/Checkbox'
-import CheckboxText from '../forms/CheckboxText'
+import { defineComponent, reactive } from 'vue'
+import Modal from '@/components/Modal.vue'
+import InputWrap from '@/components/forms/InputWrap.vue'
+import Label from '@/components/forms/Label.vue'
+import Select from '@/components/forms/Select.vue'
+import Checkbox from '@/components/forms/Checkbox.vue'
+import CheckboxText from '@/components/forms/CheckboxText.vue'
 
 export default defineComponent({
   emits: ['close', 'apply'],

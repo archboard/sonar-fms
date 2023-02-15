@@ -33,12 +33,12 @@
 
 <script>
 import { defineComponent, inject, ref, watch } from 'vue'
-import Modal from '@/components/Modal'
-import Input from '@/components/forms/Input'
-import HelpText from '@/components/HelpText'
-import CodeText from '@/components/CodeText'
+import Modal from '@/components/Modal.vue'
+import Input from '@/components/forms/Input.vue'
+import HelpText from '@/components/HelpText.vue'
+import CodeText from '@/components/CodeText.vue'
 import { PlusIcon } from '@heroicons/vue/outline'
-import FadeIn from '@/components/transitions/FadeIn'
+import FadeIn from '@/components/transitions/FadeIn.vue'
 import debounce from 'lodash/debounce'
 
 export default defineComponent({

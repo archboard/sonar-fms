@@ -45,6 +45,8 @@ class Student extends Model implements Searchable, Exportable
         'current_exit_date' => 'date',
         'initial_district_entry_date' => 'date',
         'initial_school_entry_date' => 'date',
+        'account_balance' => 'integer',
+        'revenue' => 'integer',
     ];
 
     public function scopeFilter(Builder $builder, array $filters)
@@ -269,7 +271,6 @@ class Student extends Model implements Searchable, Exportable
         $this->account_balance = $this->invoices()
             ->isNotVoid()
             ->published()
-            ->unpaid()
             ->sum('remaining_balance');
 
         return $this;

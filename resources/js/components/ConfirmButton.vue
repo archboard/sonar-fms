@@ -52,7 +52,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Modal from '@/components/Modal'
+import Modal from '@/components/Modal.vue'
 
 export default defineComponent({
   components: {

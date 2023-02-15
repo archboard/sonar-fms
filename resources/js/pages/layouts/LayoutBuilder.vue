@@ -62,12 +62,12 @@
 
 <script>
 import { computed, defineComponent, inject, ref, watch } from 'vue'
-import Button from '@/components/Button'
+import Button from '@/components/Button.vue'
 import { nanoid } from 'nanoid'
-import FadeInGroup from '@/components/transitions/FadeInGroup'
+import FadeInGroup from '@/components/transitions/FadeInGroup.vue'
 import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/outline'
-import Wysiwyg from '@/components/forms/Wysiwyg'
-import WysiwygModal from '@/components/modals/WysiwygModal'
+import Wysiwyg from '@/components/forms/Wysiwyg.vue'
+import WysiwygModal from '@/components/modals/WysiwygModal.vue'
 
 export default defineComponent({
   components: {

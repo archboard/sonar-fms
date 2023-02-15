@@ -142,7 +142,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import displaysDate from '@/composition/displaysDate'
+import displaysDate from '@/composition/displaysDate.js'
 import { BellIcon, PencilIcon, ReceiptRefundIcon, CashIcon } from '@heroicons/vue/solid'
 
 export default defineComponent({

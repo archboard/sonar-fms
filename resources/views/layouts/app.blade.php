@@ -33,8 +33,7 @@
 
     @routes
 
-    <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
-    <script src="{{ mix('/js/app.js') }}" defer></script>
+    @vite('resources/js/app.js')
   </head>
   <body class="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 selection:text-white selection:bg-primary-800">
     @inertia

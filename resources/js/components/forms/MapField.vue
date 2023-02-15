@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue'
-import ColumnSelector from '@/components/forms/ColumnSelector'
+import { defineComponent, reactive, watch } from 'vue'
+import ColumnSelector from '@/components/forms/ColumnSelector.vue'
 
 export default defineComponent({
   components: {

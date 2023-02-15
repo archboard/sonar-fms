@@ -11,8 +11,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import Modal from '@/components/Modal'
-import Wysiwyg from '@/components/forms/Wysiwyg'
+import Modal from '@/components/Modal.vue'
+import Wysiwyg from '@/components/forms/Wysiwyg.vue'
 
 export default defineComponent({
   components: {

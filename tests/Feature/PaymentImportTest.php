@@ -387,6 +387,7 @@ class PaymentImportTest extends TestCase
         ]);
 
         $this->addPaymentInvoices($import, 'invoice number', true);
+        $import->unsetRelations();
 
         ray()->measure();
         (new ProcessPaymentImport($import, $this->user))
