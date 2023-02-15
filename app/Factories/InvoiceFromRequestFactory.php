@@ -222,7 +222,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                 $itemIds,
                 function ($total, $id) use ($discount) {
                     return $total +
-                        ($this->invoiceItemAttributes[$id]['amount'] / $this->subtotal) *
+                        ($this->subtotal > 0 ? $this->invoiceItemAttributes[$id]['amount'] / $this->subtotal : 0) *
                         $discount;
                 },
                 0,

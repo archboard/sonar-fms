@@ -1143,7 +1143,9 @@ class Invoice extends Model implements Searchable, Exportable
         $distributions = $children->reduce(function (array $distributions, Invoice $invoice) use ($payment) {
             // This is the ratio of child:parent remaining balance,
             // which we'll use to assign the distribution amount
-            $ratio = $invoice->remaining_balance / $this->remaining_balance;
+            $ratio = $this->remaining_balance > 0
+                ? $invoice->remaining_balance / $this->remaining_balance
+                : 0;
             // Always round down to avoid over-distribution
             // Will make up the difference later
             $distribution = (int) floor($ratio * $payment->amount);
