@@ -11,7 +11,7 @@ use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use JamesMills\LaravelTimezone\Facades\Timezone;
+use GrantHolle\Timezone\Facades\Timezone;
 
 /**
  * @mixin IdeHelperInvoiceRefund
@@ -39,6 +39,6 @@ class InvoiceRefund extends Model
             return '';
         }
 
-        return Timezone::convertToLocal($this->refunded_at, 'M j, Y');
+        return Timezone::toLocal($this->refunded_at, 'M j, Y');
     }
 }

@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use JamesMills\LaravelTimezone\Facades\Timezone;
+use GrantHolle\Timezone\Facades\Timezone;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
@@ -232,11 +232,11 @@ class Invoice extends Model implements Searchable, Exportable
                     ->orWhereHas('students', $gradeQuery);
             });
         })->when($filters['date_start'] ?? null, function (Builder $builder, $date) {
-            $parsed = Timezone::convertToLocal(Carbon::parse($date), 'Y-m-d');
+            $parsed = Timezone::toLocal(Carbon::parse($date), 'Y-m-d');
 
             $builder->where('invoice_date', '>=', $parsed);
         })->when($filters['date_end'] ?? null, function (Builder $builder, $date) {
-            $parsed = Timezone::convertToLocal(Carbon::parse($date), 'Y-m-d');
+            $parsed = Timezone::toLocal(Carbon::parse($date), 'Y-m-d');
 
             $builder->where('invoice_date', '<=', $parsed);
         })->when($filters['due_start'] ?? null, function (Builder $builder, $date) {

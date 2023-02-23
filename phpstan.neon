@@ -19,7 +19,7 @@ parameters:
         - '#^Call to method \w+\(\) on an unknown class Spatie\\RayBundle\\Ray\.$#'
         - '#^Attribute class JetBrains\\PhpStorm\\Pure does not exist.$#'
         - '#^Parameter \#2 \$currency of function displayCurrency expects App\\Models\\Currency\|null, Illuminate\\Database\\Eloquent\\Model\|null given.$#'
-        - '#^Parameter \#2 \$format of static method JamesMills\\LaravelTimezone\\Timezone::convertToLocal\(\) expects null, string given.$#'
+        - '#^Parameter \#2 \$format of static method JamesMills\\LaravelTimezone\\Timezone::toLocal\(\) expects null, string given.$#'
         - '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model*#'
         - '#^Access to an undefined property object::*#'
         - '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model*#'

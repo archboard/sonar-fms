@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use JamesMills\LaravelTimezone\Facades\Timezone;
+use GrantHolle\Timezone\Facades\Timezone;
 
 class InvoicePaymentResource extends JsonResource
 {
@@ -32,7 +32,7 @@ class InvoicePaymentResource extends JsonResource
             'schedule' => new InvoicePaymentScheduleResource($this->whenLoaded('invoicePaymentSchedule')),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
             'payment_method' => new PaymentMethodResource($this->whenLoaded('paymentMethod')),
-            'created_at' => Timezone::convertToLocal($this->created_at, 'M j, Y'),
+            'created_at' => Timezone::toLocal($this->created_at, 'M j, Y'),
             'activities' => ActivityResource::collection($this->whenLoaded('activities')),
             'receipts' => ReceiptResource::collection($this->whenLoaded('receipts')),
         ];

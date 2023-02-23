@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
-use JamesMills\LaravelTimezone\Facades\Timezone;
+use GrantHolle\Timezone\Facades\Timezone;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
