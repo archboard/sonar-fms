@@ -299,7 +299,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
         $attributes['amount_due'] = $amountDue;
         $attributes['remaining_balance'] = $amountDue;
 
-        $relativeTaxRate = $this->rowTaxDue / $amountDue;
+        $relativeTaxRate = $amountDue > 0 ? $this->rowTaxDue / $amountDue : 0;
         $attributes['relative_tax_rate'] = round($relativeTaxRate, 8);
 
         if ($attributes['notify']) {
@@ -604,7 +604,9 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 // Get the relative discount amount based on this item's
                 // proportion of the subtotal
-                $ratio = $itemSubtotal / $this->rowSubtotal;
+                $ratio = $this->rowSubtotal > 0
+                    ? $itemSubtotal / $this->rowSubtotal
+                    : 0;
                 $discount = round($amount * $ratio);
 
                 // If we're not using amount calculate the discount
