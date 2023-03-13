@@ -317,11 +317,16 @@ class User extends Authenticatable implements HasLocalePreference
             !$this->schools->contains('id', $this->school_id)
         ) {
             $school = $this->schools->first();
-            $this->school_id = $school?->id;
 
-            if (!$this->school_id) {
-                throw new \Exception("You do not have any schools configured for your account. Please contact your district admin for help.");
+            // If they're not assigned a school yet,
+            // check their students' for a school to assign
+            if (!$school) {
+                $school = $this->students()
+                    ->whereHas('school')
+                    ->first();
             }
+
+            $this->school_id = $school?->id;
         }
 
         return $this;
