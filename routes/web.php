@@ -44,7 +44,15 @@ Route::middleware('tenant')->group(function () {
     // Normal auth
     require __DIR__.'/auth.php';
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('auth')
+        ->group(function () {
+            // When the user is missing a school
+            Route::get('/select-school', [\App\Http\Controllers\MissingSchoolController::class, 'index'])
+                ->name('missing-school');
+            Route::put('/select-school', [\App\Http\Controllers\MissingSchoolController::class, 'update']);
+        });
+
+    Route::middleware(['auth', 'has_school'])->group(function () {
         Route::get('/ping', \App\Http\Controllers\CheckAuthStatusController::class)
             ->name('auth.status');
 

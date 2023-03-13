@@ -21,7 +21,7 @@ export default defineComponent({
 
   props: {
     checked: {
-      type: [Array, Boolean, String],
+      type: [Array, Boolean, String, Number],
       default: false,
     },
     value: {

@@ -6,6 +6,7 @@ use App\Http\Middleware\AllowsOidcLogins;
 use App\Http\Middleware\AllowsPasswordLogins;
 use App\Http\Middleware\CanInstall;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\HasSchoolSet;
 use App\Http\Middleware\Installed;
 use App\Http\Middleware\InvoiceNotPublished;
 use App\Http\Middleware\InvoicePublished;
@@ -99,5 +100,6 @@ class Kernel extends HttpKernel
         'school_settings' => SchoolSettingsSaved::class,
         'not_void' => NotVoid::class,
         'receipt_layout' => NeedsReceiptLayout::class,
+        'has_school' => HasSchoolSet::class,
     ];
 }
