@@ -327,6 +327,13 @@ class User extends Authenticatable implements HasLocalePreference
                     ->first();
             }
 
+            // If they still don't have a school,
+            // check if there's only one school for the tenant
+            if ($this->tenant->schools()->count() === 1) {
+                $school = $this->tenant->schools()
+                    ->first();
+            }
+
             $this->school_id = $school?->id;
         }
 
