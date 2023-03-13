@@ -20,6 +20,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Silber\Bouncer\BouncerFacade;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Spatie\Activitylog\Traits\CausesActivity;
 
@@ -473,8 +474,10 @@ class User extends Authenticatable implements HasLocalePreference
      */
     public function givePermissionForSchool(School $school, string $permission = '*', Model|string $model = '*'): static
     {
-        \Bouncer::scope()->to($school->id);
-        $this->allow($permission, $model);
+        \Bouncer::scope()
+            ->onceTo($school->id, fn () => $this->allow($permission, $model));
+
+        \Bouncer::refreshFor($this);
 
         return $this;
     }
