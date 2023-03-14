@@ -20,7 +20,7 @@
       </div>
 
       <CardAction negative-margin>
-        <Button type="submit"></Button>
+        <Button type="submit" :loading="form.processing" />
       </CardAction>
     </form>
   </Layout>
@@ -44,6 +44,8 @@ const form = useForm({
   school_id: null,
 })
 const save = () => {
-  //
+  form.put(`/select-school`, {
+    preserveScroll: true,
+  })
 }
 </script>

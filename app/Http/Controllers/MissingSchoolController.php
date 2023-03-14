@@ -40,7 +40,7 @@ class MissingSchoolController extends Controller
 
         $user->update($data);
         $user->schools()
-            ->attach($data['school_id']);
+            ->syncWithoutDetaching([$data['school_id']]);
         session()->flash('success', __('School set successfully.'));
 
         return redirect(RouteServiceProvider::HOME);
