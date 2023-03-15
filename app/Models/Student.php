@@ -87,8 +87,8 @@ class Student extends Model implements Searchable, Exportable
     {
         $builder->where(function (Builder $builder) use ($search) {
                 $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "${search}%")
-                    ->orWhere('student_number', 'ilike', "${search}%");
+                    ->orWhere('email', 'ilike', "{$search}%")
+                    ->orWhere('student_number', 'ilike', "{$search}%");
             });
     }
 
