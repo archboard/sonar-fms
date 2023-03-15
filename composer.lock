@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e1efdb590ff2109db47b098b986a550",
+    "content-hash": "ba7ed61244635a796f3188d6020b781a",
     "packages": [
         {
             "name": "beyondcode/laravel-comments",
@@ -1512,11 +1512,17 @@
         },
         {
             "name": "grantholle/powerschool-api",
-            "version": "dev-main",
+            "version": "4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grantholle/powerschool-api.git",
+                "reference": "f48edaad175d67c4d8a565315cd9195f1bb5b6d1"
+            },
             "dist": {
-                "type": "path",
-                "url": "/Users/grant/Projects/powerschool-api",
-                "reference": "f436b4915e5b5b7ec8ac544e72a336464a9f2849"
+                "type": "zip",
+                "url": "https://api.github.com/repos/grantholle/powerschool-api/zipball/f48edaad175d67c4d8a565315cd9195f1bb5b6d1",
+                "reference": "f48edaad175d67c4d8a565315cd9195f1bb5b6d1",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -1545,16 +1551,7 @@
                     "GrantHolle\\PowerSchool\\Api\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1569,9 +1566,11 @@
             "keywords": [
                 "powerschool"
             ],
-            "transport-options": {
-                "relative": false
-            }
+            "support": {
+                "issues": "https://github.com/grantholle/powerschool-api/issues",
+                "source": "https://github.com/grantholle/powerschool-api/tree/4.1.0"
+            },
+            "time": "2023-03-15T08:28:00+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -12747,8 +12746,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "beyondcode/laravel-comments": 20,
-        "grantholle/powerschool-api": 20
+        "beyondcode/laravel-comments": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
