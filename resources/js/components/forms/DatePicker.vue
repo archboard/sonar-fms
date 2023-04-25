@@ -4,8 +4,7 @@
     color="pink"
     :is-dark="darkStore.state.isDark"
     :mode="mode"
-    :minute-increment="15"
-    :model-config="modelConfig"
+    :rules="rules"
     :attributes="attributes"
     :timezone="timezone"
     :input-debounce="250"
@@ -29,7 +28,7 @@
 </template>
 
 <script>
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { DatePicker } from 'v-calendar'
 import darkStore from '@/stores/theme'
 import Input from '@/components/forms/Input.vue'
@@ -63,9 +62,11 @@ export default defineComponent({
       set: value => emit('update:modelValue', value)
     })
     const attributes = []
-    const modelConfig = {
-      timeAdjust: '00:00:00'
-    }
+    const rules = ref({
+      minutes: { interval: 15 },
+      seconds: 0,
+      milliseconds: 0
+    })
 
     return {
       localValue,
@@ -73,6 +74,7 @@ export default defineComponent({
       attributes,
       timezone,
       modelConfig,
+      rules,
     }
   }
 })
