@@ -182,7 +182,7 @@ class Invoice extends Model implements Searchable, Exportable
             } else {
                 $builder->where('uuid', $ids);
             }
-        })->when($filters['status'] ?? null, function (Builder $builder, $statuses) {
+        })->when($filters['status'] ?? [], function (Builder $builder, array $statuses) {
             if (empty($statuses)) {
                 return;
             }
@@ -222,6 +222,8 @@ class Invoice extends Model implements Searchable, Exportable
                     $builder->orWhereNotNull('voided_at');
                 }
             });
+        })->unless(in_array('void', $filters['status'] ?? []), function (Builder $builder) {
+            $builder->whereNull('voided_at');
         })->when($filters['grades'] ?? null, function (Builder $builder, $grades) {
             $builder->where(function (Builder $builder) use ($grades) {
                 $gradeQuery = function (Builder $builder) use ($grades) {
