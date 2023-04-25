@@ -105,7 +105,7 @@
           <Td class="text-right">{{ invoice.remaining_balance_formatted }}</Td>
           <Td class="text-right space-x-2 pl-0">
             <VerticalDotMenu>
-              <GuardianInvoiceActions />
+              <GuardianInvoiceActions :invoice="invoice" />
             </VerticalDotMenu>
           </Td>
         </tr>
