@@ -73,7 +73,6 @@ export default defineComponent({
       darkStore,
       attributes,
       timezone,
-      modelConfig,
       rules,
     }
   }
