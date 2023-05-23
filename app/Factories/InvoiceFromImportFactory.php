@@ -510,6 +510,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
                             'batch_id' => $this->batchId,
                             'invoice_uuid' => $this->rowInvoiceUuid,
                             'invoice_payment_schedule_uuid' => $scheduleUuid,
+                            'due_at' => $this->getMapValue(
+                                "payment_schedules.{$scheduleIndex}.terms.{$termIndex}.due_at",
+                                'date time'
+                            ),
                             'amount' => $amount,
                             'percentage' => $percentage,
                             'amount_due' => $termAmountDue,
