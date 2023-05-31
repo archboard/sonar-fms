@@ -133,7 +133,7 @@ class PowerSchoolProvider implements SisProvider
                 ->keyBy('sis_id');
 
             foreach ($results as $user) {
-                $email = strtolower(optional($user['emails'])->work_email ?? '');
+                $email = strtolower($user['emails']['work_email'] ?? '');
 
                 if (!$email) {
                     continue;
@@ -143,8 +143,8 @@ class PowerSchoolProvider implements SisProvider
                 if ($existingUser = $existingUsers->get($user['users_dcid'])) {
                     $existingUser->update([
                         'email' => $email,
-                        'first_name' => optional($user['name'])->first_name,
-                        'last_name' => optional($user['name'])->last_name,
+                        'first_name' => $user['name']['first_name'] ?? null,
+                        'last_name' => $user['name']['last_name'] ?? null,
                     ]);
                     /** @var School|null $existingSchool */
                     $existingSchool = $existingUser->schools->firstWhere('id', $school->id);
