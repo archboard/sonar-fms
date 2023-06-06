@@ -47,6 +47,8 @@ class CreateInvoiceRequest extends FormRequest
                 'nullable',
                 Rule::in($school->terms()->pluck('id')),
             ],
+            'grade_level_adjustment' => ['nullable', 'integer'],
+            'grade_level' => ['nullable', 'integer'],
             'notify' => 'boolean',
             'items' => 'required|array|min:1',
             'items.*.id' => ['string'],

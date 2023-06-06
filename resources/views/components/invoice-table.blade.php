@@ -35,7 +35,7 @@
         @if ($invoice->student)
         <div class="text-right">
           <h3 class="text-lg font-medium">{{ $invoice->student->full_name }} <span class="text-gray-500">({{ $invoice->student->student_number }})</span></h3>
-          <div class="text-gray-700 text-sm">{{ $invoice->student->grade_level_formatted }}</div>
+          <div class="text-gray-700 text-sm">{{ !empty($invoice->grade_level) ? $invoice->grade_level_formatted : $invoice->student->adjustGradeLevel($invoice->grade_level_adjustment)->grade_level_formatted }}</div>
         </div>
         @endif
       </div>

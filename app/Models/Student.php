@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Concerns\Exportable;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasGradeLevelAttribute;
 use App\Traits\UsesUuid;
 use BeyondCode\Comments\Traits\HasComments;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -36,6 +37,7 @@ class Student extends Model implements Searchable, Exportable
     use UsesUuid;
     use HasComments;
     use HasTags;
+    use HasGradeLevelAttribute;
 
     protected $guarded = [];
 
@@ -110,32 +112,6 @@ class Student extends Model implements Searchable, Exportable
             ->unpaid()
             ->count()
         );
-    }
-
-    public function getGradeLevelShortFormattedAttribute(): string
-    {
-        if ($this->grade_level > 0) {
-            return (string) $this->grade_level;
-        }
-
-        if ($this->grade_level === 0) {
-            return __('K');
-        }
-
-        return __('PK:age', ['age' => 5 + $this->grade_level]);
-    }
-
-    public function getGradeLevelFormattedAttribute(): string
-    {
-        if ($this->grade_level > 0) {
-            return __('Grade :grade', ['grade' => $this->grade_level]);
-        }
-
-        if ($this->grade_level === 0) {
-            return __('Kindergarten');
-        }
-
-        return __('Pre-Kindergarten age :age', ['age' => 5 + $this->grade_level]);
     }
 
     public function accountBalanceFormatted(): Attribute
@@ -336,5 +312,12 @@ class Student extends Model implements Searchable, Exportable
         }
 
         return $query;
+    }
+
+    public function adjustGradeLevel(int $amount = 0): static
+    {
+        $this->grade_level += $amount;
+
+        return $this;
     }
 }

@@ -388,6 +388,7 @@ class InvoiceFromRequestFactory extends InvoiceFactory
                     'published_at' => $this->asDraft ? null : $this->now,
                     'invoice_number' => $invoiceNumber,
                     'title' => $title,
+                    'grade_level' => $student->grade_level + ($this->invoiceAttributes['grade_level_adjustment'] ?? 0),
                 ]
             ));
 

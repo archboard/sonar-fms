@@ -84,6 +84,7 @@ class InvoiceImport extends Model implements FileImport
                 'nullable',
                 Rule::in($this->school->terms->pluck('id')),
             ]),
+            'grade_level_adjustment' => new FileImportMap(['nullable', 'integer']),
             'notify' => 'boolean',
             'items' => 'required|array|min:1',
             'items.*.fee_id' => new FileImportMap([

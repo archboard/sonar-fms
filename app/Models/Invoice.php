@@ -14,6 +14,7 @@ use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
 use App\Traits\HasActivities;
+use App\Traits\HasGradeLevelAttribute;
 use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
@@ -54,6 +55,7 @@ class Invoice extends Model implements Searchable, Exportable
     use HasResource;
     use HasTaxRateAttribute;
     use HasActivities;
+    use HasGradeLevelAttribute;
 
     public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -92,6 +94,8 @@ class Invoice extends Model implements Searchable, Exportable
         'is_parent',
         'invoice_payment_schedule_uuid',
         'total_paid',
+        'grade_level_adjustment',
+        'grade_level',
     ];
 
     protected $casts = [
@@ -113,6 +117,8 @@ class Invoice extends Model implements Searchable, Exportable
         'total_paid' => 'int',
         'amount_due' => 'int',
         'remaining_balance' => 'int',
+        'grade_level_adjustment' => 'int',
+        'grade_level' => 'int',
     ];
 
     // These are the attributes/properties that are

@@ -192,6 +192,7 @@ export default {
       title: props.invoice.title || school.value.default_title,
       description: props.invoice.description || null,
       term_id: props.invoice.term_id || null,
+      grade_level_adjustment: props.invoice.grade_level_adjustment || 0,
       invoice_date: props.invoice.invoice_date
         ? dayjs(props.invoice.invoice_date).toDate()
         : dayjs().toDate(),

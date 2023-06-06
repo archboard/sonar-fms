@@ -138,6 +138,16 @@
             </MapField>
           </InputWrap>
 
+          <InputWrap :error="form.errors.grade_level_adjustment">
+            <Label for="grade_level_adjustment" :required="true">{{ __('Grade level adjustment') }}</Label>
+            <MapField v-model="form.grade_level_adjustment" :headers="headers" id="grade_level_adjustment">
+              <Input v-model="form.grade_level_adjustment.value" id="grade_level_adjustment" type="number" />
+              <template v-slot:after>
+                <HelpText>{{ __("This will adjust how the student's grade level appears on the generated invoice by year. For example, putting 1 will display a grade 6 student as grade 7. Negative numbers will reduce the grade level.") }}</HelpText>
+              </template>
+            </MapField>
+          </InputWrap>
+
           <InputWrap>
             <CheckboxWrapper>
               <Checkbox v-model:checked="form.notify" />
@@ -309,6 +319,7 @@ export default {
       invoice_date: props.invoiceImport.mapping?.invoice_date || addMapFieldValue(new Date),
       available_at: props.invoiceImport.mapping?.available_at || addMapFieldValue(),
       due_at: props.invoiceImport.mapping?.due_at || addMapFieldValue(),
+      grade_level_adjustment: props.invoiceImport.mapping?.grade_level_adjustment || addMapFieldValue(0),
       notify: props.invoiceImport.mapping?.notify || false,
       items: props.invoiceImport.mapping?.items || [],
       scholarships: props.invoiceImport.mapping?.scholarships || [],
