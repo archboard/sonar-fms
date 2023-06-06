@@ -34,7 +34,9 @@ class CreateInvoicePdf implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->batch()?->cancelled()) {
+        $batch = $this->batch();
+
+        if ($batch && $batch->cancelled()) {
             return;
         }
 
