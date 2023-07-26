@@ -150,7 +150,7 @@ class School extends Model
             ->where('starts_at', '<=', $date)
             ->where('ends_at', '>=', $date)
             ->orderBy('portion', 'desc')
-            ->first() ?? new Term;
+            ->first() ?? Term::makeFromNow();
     }
 
     public function compileTemplate(string $subject, ?User $user = null, ?Student $student = null, ?Term $term = null): string

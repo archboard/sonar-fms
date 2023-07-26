@@ -46,4 +46,19 @@ class Term extends Model
 
         return $start . '-' . $end;
     }
+
+    public static function makeFromNow(): static
+    {
+        $today = today();
+        $ends = $today->addYear();
+
+        return new Term([
+            'starts_at' => $today->toDateString(),
+            'ends_at' => $today->addYear()->toDateString(),
+            'start_year' => $today->year,
+            'portion' => 1,
+            'name' => $today->year . '-' . $ends->year,
+            'abbreviation' => $today->format('y') . '-' . $ends->format('y'),
+        ]);
+    }
 }
