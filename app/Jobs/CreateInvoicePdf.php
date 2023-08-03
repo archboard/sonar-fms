@@ -22,7 +22,7 @@ class CreateInvoicePdf implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected string $invoiceUuid, protected ?int $invoiceLayoutId = null)
+    public function __construct(protected string $invoiceUuid, protected ?int $invoiceLayoutId = null, protected bool $force = false)
     {
         $this->onQueue('pdf');
     }
@@ -42,7 +42,7 @@ class CreateInvoicePdf implements ShouldQueue
 
         $invoice = Invoice::find($this->invoiceUuid);
 
-        if (!$invoice->published_at) {
+        if (!$invoice->published_at && !$this->force) {
             return;
         }
 

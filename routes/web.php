@@ -150,6 +150,9 @@ Route::middleware('tenant')->group(function () {
                 Route::put('/invoice-selection/publish', \App\Http\Controllers\PublishSelectedInvoicesController::class)
                     ->name('invoice-selection.publish');
 
+                Route::post('/invoice-selection/pdf', \App\Http\Controllers\GeneratePdfForSelectionController::class)
+                    ->name('invoice-selection.pdf');
+
                 Route::resource('/invoice-selection', \App\Http\Controllers\InvoiceSelectionController::class)
                     ->except('create', 'show', 'edit');
 

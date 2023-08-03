@@ -55,6 +55,9 @@
           <Link v-if="!selectionPublished && can('invoices.update')" href="/invoice-selection/publish" method="put" as="button">
             {{ __('Publish') }}
           </Link>
+          <Link href="/invoice-selection/pdf" method="post" as="button">
+            {{ __('Generate PDF') }}
+          </Link>
         </div>
       </div>
     </FadeIn>
