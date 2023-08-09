@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +50,7 @@ class Term extends Model
 
     public static function makeFromNow(): static
     {
-        $today = today();
+        $today = CarbonImmutable::parse(today());
         $ends = $today->addYear();
 
         return new Term([
