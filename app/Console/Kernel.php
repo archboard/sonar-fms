@@ -28,6 +28,11 @@ class Kernel extends ConsoleKernel
          $schedule->command(SyncTenantSisData::class)->hourly();
 
          $schedule->command('cache:prune-stale-tags')->hourly();
+
+         $schedule->command('backup:clean')
+             ->dailyAt('17:00');
+         $schedule->command('backup:run', ['--only-db'])
+             ->dailyAt('17:30'); // 1:30am China
     }
 
     /**

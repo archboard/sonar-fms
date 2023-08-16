@@ -1048,8 +1048,9 @@ class Invoice extends Model implements Searchable, Exportable
     {
         $key = "{$schoolId}_invoice_count";
         // Fetch the count or set it initially
-        $currentCount = Cache::rememberForever(
+        $currentCount = Cache::remember(
             $key,
+            900,
             fn () => Invoice::query()
                 ->where('school_id', $schoolId)
                 ->count()
