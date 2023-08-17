@@ -1046,18 +1046,40 @@ class Invoice extends Model implements Searchable, Exportable
 
     public static function generateInvoiceNumber(int $schoolId, string $prefix = ''): string
     {
-        $key = "{$schoolId}_invoice_count";
+        $key = "{$schoolId}_invoice_number";
         // Fetch the count or set it initially
-        $currentCount = Cache::remember(
+        $currentMax = Cache::remember(
             $key,
             900,
-            fn () => Invoice::query()
-                ->where('school_id', $schoolId)
-                ->count()
+            function () use ($schoolId) {
+                $max = DB::table((new static)->getTable())
+                    ->where('school_id', $schoolId)
+                    ->selectRaw("MAX(invoice_number::integer) as max")
+                    ->first('max')
+                    ?->max;
+
+                if (is_int($max)) {
+                    return $max;
+                }
+
+                $numberExists = fn ($number) => DB::table((new static)->getTable())
+                    ->where('school_id', $schoolId)
+                    ->whereRaw("invoice_number::integer = {$number}")
+                    ->exists();
+                $numberToCheck = static::query()
+                    ->where('school_id', $schoolId)
+                    ->count();
+
+                while ($numberExists($numberToCheck + 1)) {
+                    $numberToCheck++;
+                }
+
+                return $numberToCheck;
+            }
         );
         // Increment the value
         cache()->increment($key);
-        $invoiceNumber = $currentCount + 1;
+        $invoiceNumber = $currentMax + 1;
 
         return $prefix . Str::padLeft((string) $invoiceNumber, 3, '0');
     }
