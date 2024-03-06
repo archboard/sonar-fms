@@ -10,7 +10,7 @@
   "require": {
     "php": "^8.2",
     "ext-intl": "*",
-    "beyondcode/laravel-comments": "dev-l10-compatibility",
+    "beyondcode/laravel-comments": "^1.4",
     "brick/money": "^0.5.2",
     "grantholle/api-resource-detection": "^1.0",
     "grantholle/laravel-powerschool-auth": "^3.0",
@@ -39,10 +39,8 @@
     "barryvdh/laravel-ide-helper": "^2.9",
     "brianium/paratest": "^6.4",
     "fakerphp/faker": "^1.9.1",
-    "laravel/telescope": "^4.4",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^6.0",
-    "nunomaduro/larastan": "^2.0",
     "phpunit/phpunit": "^9.3.3"
   },
   "config": {
@@ -56,9 +54,7 @@
   },
   "extra": {
     "laravel": {
-      "dont-discover": [
-        "laravel/telescope"
-      ]
+      "dont-discover": []
     }
   },
   "autoload": {
@@ -89,19 +85,9 @@
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "@php artisan ide-helper:generate",
-      "@php artisan ide-helper:meta",
-      "@php artisan ide-helper:models -M",
-      "@php artisan telescope:publish",
       "@php artisan horizon:publish"
     ],
     "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G",
     "test": "./vendor/bin/phpunit --stop-on-failure"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/laravel-shift/laravel-comments.git"
-    }
-  ]
+  }
 }

@@ -50,11 +50,6 @@ class AppServiceProvider extends ServiceProvider
         Inertia::setRootView('layouts.app');
         URL::forceScheme('https');
 
-        if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(TelescopeServiceProvider::class);
-        }
-
         $currentTenant = function (): Tenant {
             /** @var Tenant|null $current */
             $current = Tenant::current();
