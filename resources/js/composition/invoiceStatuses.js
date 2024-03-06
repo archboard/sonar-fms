@@ -10,6 +10,7 @@ export default (blockedStatuses = []) => {
     published: __('Published'),
     draft: __('Draft'),
     void: __('Void'),
+    canceled: __('Canceled'),
   }
 
   return {

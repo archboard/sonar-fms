@@ -93,4 +93,28 @@ class ChangeInvoiceStatusTest extends TestCase
             return $job->studentUuid === $invoice->student_uuid;
         });
     }
+
+    public function test_can_cancel_invoice()
+    {
+        Queue::fake();
+        $this->assignPermission('update', Invoice::class);
+
+        $invoice = $this->createInvoice();
+
+        $data = [
+            'status' => 'canceled_at',
+        ];
+
+        $this->post(route('invoices.status', $invoice), $data)
+            ->assertSessionHas('success')
+            ->assertRedirect(back()->getTargetUrl());
+
+        $invoice->refresh();
+        $this->assertNull($invoice->voided_at);
+        $this->assertNotNull($invoice->canceled_at);
+        $this->assertEquals(0, $invoice->remaining_balance);
+        Queue::assertPushed(SetStudentCachedValues::class, function ($job) use ($invoice) {
+            return $job->studentUuid === $invoice->student_uuid;
+        });
+    }
 }

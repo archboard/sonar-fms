@@ -20,7 +20,7 @@ class ChangeInvoiceStatusController extends Controller
         $data = $request->validate([
             'status' => [
                 'required',
-                Rule::in(['paid_at', 'voided_at']),
+                Rule::in(['paid_at', 'voided_at', 'canceled_at']),
             ],
             'duplicate' => [
                 'boolean',
@@ -28,9 +28,17 @@ class ChangeInvoiceStatusController extends Controller
             ],
         ]);
 
-        $invoice->update([
+        $invoice->fill([
             $data['status'] => now(),
         ]);
+
+        if ($invoice->canceled_at) {
+            $invoice->remaining_balance = 0;
+            $invoice->invoicePaymentTerms()
+                ->update(['remaining_balance' => 0]);
+        }
+
+        $invoice->save();
 
         session()->flash('success', __('Invoice status updated.'));
 

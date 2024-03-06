@@ -5,7 +5,7 @@
     @action="save"
     :auto-close="false"
   >
-    <p class="text-sm">
+    <p class="text-sm font-bold">
       {{ __('Mark invoice as...') }}
     </p>
     <Fieldset class="pt-4">
@@ -24,10 +24,19 @@
           <div>
             <RadioWrapper>
               <Radio v-model:checked="form.status" value="voided_at" />
-              <CheckboxText>{{ __('Void' )}}</CheckboxText>
+              <CheckboxText class="font-medium">{{ __('Void' )}}</CheckboxText>
             </RadioWrapper>
             <HelpText class="pl-6">
               {{ __('This invoice was accidentally created or contains a mistake.') }}
+            </HelpText>
+          </div>
+          <div>
+            <RadioWrapper>
+              <Radio v-model:checked="form.status" value="canceled_at" />
+              <CheckboxText class="font-medium">{{ __('Canceled' )}}</CheckboxText>
+            </RadioWrapper>
+            <HelpText class="pl-6">
+              {{ __('This invoice will not be repaid. The remaining balance will be removed.') }}
             </HelpText>
           </div>
         </RadioGroup>

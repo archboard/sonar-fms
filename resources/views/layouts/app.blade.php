@@ -35,7 +35,7 @@
 
     @vite('resources/js/app.js')
   </head>
-  <body class="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 selection:text-white selection:bg-primary-800">
+  <body class="antialiased text-gray-900 dark:text-white bg-white dark:bg-gray-900 selection:text-white selection:bg-primary-800">
     @inertia
     <div id="tooltip-container"></div>
   </body>

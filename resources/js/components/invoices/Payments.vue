@@ -39,6 +39,15 @@
                   </VerticalDotMenu>
                 </Td>
               </tr>
+              <tr>
+                <Td :lighter="false">
+                  <strong>{{ __('Total payments') }}</strong>
+                </Td>
+                <Td :lighter="false" class="text-right">
+                  <strong>{{ invoice.total_paid_formatted }}</strong>
+                </Td>
+                <Td colspan="2"></Td>
+              </tr>
             </Tbody>
           </Table>
           <p v-else class="text-sm">{{ __('No payments have been recorded yet.') }} <span v-if="can('payments.create')"><Link :href="`/payments/create?invoice_uuid=${invoice.uuid}`">{{ __('Record a payment') }}</Link>.</span></p>

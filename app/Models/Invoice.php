@@ -76,6 +76,7 @@ class Invoice extends Model implements Exportable, Searchable
         'due_at',
         'paid_at',
         'voided_at',
+        'canceled_at',
         'notify',
         'notify_at',
         'notified_at',
@@ -107,6 +108,7 @@ class Invoice extends Model implements Exportable, Searchable
         'invoice_date' => 'date',
         'due_at' => 'datetime',
         'voided_at' => 'datetime',
+        'canceled_at' => 'datetime',
         'paid_at' => 'datetime',
         'notify_at' => 'datetime',
         'notified_at' => 'datetime',
@@ -149,6 +151,13 @@ class Invoice extends Model implements Exportable, Searchable
                     ->log('Invoice voided by :user.');
             }
 
+            if ($invoice->isDirty('canceled_at')) {
+                // __('Invoice canceled by :user.')
+                activity()
+                    ->on($invoice)
+                    ->log('Invoice canceled by :user.');
+            }
+
             if ($invoice->isDirty('published_at')) {
                 // __('Invoice published by :user.')
                 activity()
@@ -160,7 +169,7 @@ class Invoice extends Model implements Exportable, Searchable
         static::updated(function (Invoice $invoice) {
             // If the invoice has been voided or the published time has changed
             // run the recalculations on the parent
-            if ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at')) {
+            if ($invoice->isDirty('voided_at') || $invoice->isDirty('published_at') || $invoice->isDirty('canceled_at')) {
                 if ($invoice->parent_uuid) {
                     dispatch(new CalculateInvoiceAttributes($invoice->parent_uuid));
                 }
@@ -225,6 +234,9 @@ class Invoice extends Model implements Exportable, Searchable
                 }
                 if (in_array('void', $statuses)) {
                     $builder->orWhereNotNull('voided_at');
+                }
+                if (in_array('canceled', $statuses)) {
+                    $builder->orWhereNotNull('canceled_at');
                 }
             });
         })->unless(in_array('void', $filters['status'] ?? []), function (Builder $builder) {
@@ -530,7 +542,7 @@ class Invoice extends Model implements Exportable, Searchable
             return 'green';
         }
 
-        if ($this->past_due || $this->voided_at) {
+        if ($this->past_due || $this->voided_at || $this->canceled_at) {
             return 'red';
         }
 
@@ -553,6 +565,10 @@ class Invoice extends Model implements Exportable, Searchable
 
         if ($this->voided_at) {
             return __('Void');
+        }
+
+        if ($this->canceled_at) {
+            return __('Canceled');
         }
 
         if ($this->payment_made) {
