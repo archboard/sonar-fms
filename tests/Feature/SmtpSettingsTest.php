@@ -4,10 +4,7 @@ namespace Tests\Feature;
 
 use App\Notifications\TestSmtp;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 

@@ -6,14 +6,12 @@ use App\Traits\BelongsToTenant;
 use App\Traits\HasTaxRateAttribute;
 use Carbon\Carbon;
 use GrantHolle\Http\Resources\Traits\HasResource;
-use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -21,12 +19,13 @@ use Illuminate\Support\Str;
  */
 class School extends Model
 {
-    use HasFactory;
     use BelongsToTenant;
+    use HasFactory;
     use HasResource;
     use HasTaxRateAttribute;
 
     protected $guarded = [];
+
     protected ?Term $currentTerm = null;
 
     protected $casts = [
@@ -157,7 +156,7 @@ class School extends Model
     {
         $subject = trim($subject);
 
-        if (!$subject) {
+        if (! $subject) {
             return '';
         }
 

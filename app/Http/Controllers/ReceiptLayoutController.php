@@ -61,7 +61,6 @@ class ReceiptLayoutController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param SaveLayoutRequest $request
      * @return RedirectResponse
      */
     public function store(SaveLayoutRequest $request)
@@ -76,7 +75,6 @@ class ReceiptLayoutController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ReceiptLayout $layout
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(ReceiptLayout $layout)
@@ -87,7 +85,6 @@ class ReceiptLayoutController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ReceiptLayout $layout
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(ReceiptLayout $layout)
@@ -111,8 +108,6 @@ class ReceiptLayoutController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param SaveLayoutRequest $request
-     * @param \App\Models\ReceiptLayout $layout
      * @return RedirectResponse
      */
     public function update(SaveLayoutRequest $request, ReceiptLayout $layout)
@@ -127,7 +122,6 @@ class ReceiptLayoutController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ReceiptLayout $layout
      * @return RedirectResponse
      */
     public function destroy(ReceiptLayout $layout)

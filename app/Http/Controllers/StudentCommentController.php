@@ -30,8 +30,6 @@ class StudentCommentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Student $student
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request, Student $student)
@@ -40,13 +38,13 @@ class StudentCommentController extends Controller
 
         $comment = $student->commentAsUser($request->user(), $data['comment']);
 
-//        $comment->load('commentator');
-//        return $this->success(
-//            __('Comment created successfully.'),
-//            [
-//                'comment' => $comment->toResource(),
-//            ]
-//        );
+        //        $comment->load('commentator');
+        //        return $this->success(
+        //            __('Comment created successfully.'),
+        //            [
+        //                'comment' => $comment->toResource(),
+        //            ]
+        //        );
 
         session()->flash('success', __('Comment created successfully.'));
 
@@ -56,7 +54,6 @@ class StudentCommentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(Comment $comment)
@@ -67,14 +64,12 @@ class StudentCommentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Student $student, Comment $comment)
     {
         abort_if(
-            !$request->user()->ownsComment($comment),
+            ! $request->user()->ownsComment($comment),
             403,
             __("You don't have permission to edit this comment.")
         );
@@ -90,13 +85,12 @@ class StudentCommentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request, Student $student, Comment $comment)
     {
         abort_if(
-            !$request->user()->ownsComment($comment),
+            ! $request->user()->ownsComment($comment),
             403,
             __("You don't have permission to edit this comment.")
         );

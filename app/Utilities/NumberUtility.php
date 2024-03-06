@@ -7,9 +7,6 @@ class NumberUtility
     /**
      * This takes a user-provided percentage (e.g. 10)
      * and converts it to the decimal (e.g. .1)
-     *
-     * @param int|string|float|null $value
-     * @return float
      */
     public static function convertPercentageFromUser(int|string|float|null $value): float
     {

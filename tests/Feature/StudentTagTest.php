@@ -16,7 +16,9 @@ class StudentTagTest extends TestCase
     use WithFaker;
 
     protected Student $student;
+
     protected bool $signIn = true;
+
     protected Collection $tags;
 
     protected function setUp(): void
@@ -89,7 +91,7 @@ class StudentTagTest extends TestCase
         $this->assertEquals(2, $tags->count());
 
         $tagsByName = Arr::keyBy($data['tags'], 'name');
-        $tags->each(function (Tag $tag) use ($data, $tagsByName) {
+        $tags->each(function (Tag $tag) use ($tagsByName) {
             $currentTag = $tagsByName[$tag->name];
             $this->assertEquals($currentTag['name'], $tag->name);
             $this->assertEquals($currentTag['color'], $tag->color);

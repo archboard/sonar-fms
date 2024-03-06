@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\PaymentImport;
 use App\Models\PaymentImportTemplate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PaymentImportTemplateTest extends TestCase

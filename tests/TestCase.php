@@ -3,7 +3,6 @@
 namespace Tests;
 
 use App\Factories\UuidFactory;
-use App\Models\InvoiceLayout;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Tenant;
@@ -17,8 +16,11 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     protected Tenant $tenant;
+
     protected School $school;
+
     protected ?User $user = null;
+
     protected bool $signIn = false;
 
     protected function setUp(): void
@@ -37,7 +39,7 @@ abstract class TestCase extends BaseTestCase
         \Bouncer::scope()->to($this->school->id);
         \Bouncer::allow('school admin')->everything();
         \Bouncer::refresh();
-//        \Bouncer::dontCache();
+        //        \Bouncer::dontCache();
 
         $this->app->bind(School::class, fn () => $this->school);
         $this->app->bind(Tenant::class, fn () => $this->tenant);
@@ -71,7 +73,7 @@ abstract class TestCase extends BaseTestCase
 
     public function signIn(bool $force = false): User
     {
-        if ($this->user && !$force) {
+        if ($this->user && ! $force) {
             return $this->user;
         }
 

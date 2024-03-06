@@ -33,7 +33,6 @@ class InvoiceTemplateController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -63,7 +62,6 @@ class InvoiceTemplateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param InvoiceTemplate $template
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(InvoiceTemplate $template)
@@ -75,8 +73,6 @@ class InvoiceTemplateController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param InvoiceTemplate $template
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, InvoiceTemplate $template)
@@ -100,7 +96,6 @@ class InvoiceTemplateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param InvoiceTemplate $template
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(InvoiceTemplate $template)

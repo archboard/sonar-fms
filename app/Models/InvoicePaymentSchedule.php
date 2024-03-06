@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class InvoicePaymentSchedule extends Model
 {
-    use HasFactory;
     use BelongsToInvoice;
+    use HasFactory;
 
     protected $fillable = [
         'uuid',

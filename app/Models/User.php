@@ -20,7 +20,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Silber\Bouncer\BouncerFacade;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Spatie\Activitylog\Traits\CausesActivity;
 
@@ -29,13 +28,13 @@ use Spatie\Activitylog\Traits\CausesActivity;
  */
 class User extends Authenticatable implements HasLocalePreference
 {
+    use BelongsToTenant;
+    use CausesActivity;
     use HasFactory;
-    use Notifiable;
     use HasResource;
     use HasRolesAndAbilities;
-    use BelongsToTenant;
+    use Notifiable;
     use UsesUuid;
-    use CausesActivity;
 
     const TEACHER = 'teacher';
 
@@ -71,9 +70,6 @@ class User extends Authenticatable implements HasLocalePreference
 
     /**
      * Gets the users who have an ability directly or through a role
-     *
-     * @param Builder $query
-     * @param string $ability
      */
     public function scopeWhereCan(Builder $query, string $ability)
     {
@@ -84,11 +80,11 @@ class User extends Authenticatable implements HasLocalePreference
             });
             // through roles
             $query->orWhereHas('roles', function ($query) use ($ability) {
-                 $query->whereHas('abilities', function ($query) use ($ability) {
-                     $query->byName($ability);
-                 });
-             });
-         });
+                $query->whereHas('abilities', function ($query) use ($ability) {
+                    $query->byName($ability);
+                });
+            });
+        });
     }
 
     public function getSchoolPermissionsAttribute(): array
@@ -136,7 +132,7 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function getFullNameAttribute(): string
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function getDateFactoryAttribute(): Factory
@@ -250,7 +246,7 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->belongsToMany(Invoice::class);
     }
 
-    public function getPermissionsForSchool(School $school = null): array
+    public function getPermissionsForSchool(?School $school = null): array
     {
         $school = $school ?? $this->school;
 
@@ -265,9 +261,6 @@ class User extends Authenticatable implements HasLocalePreference
 
     /**
      * Adds a student to a user's selection
-     *
-     * @param Student|string $studentId
-     * @return User
      */
     public function selectStudent(Student|string $studentId): User
     {
@@ -279,7 +272,7 @@ class User extends Authenticatable implements HasLocalePreference
             ->student($studentId)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             DB::table('student_selections')->insert([
                 'school_id' => $this->school_id,
                 'user_uuid' => $this->id,
@@ -300,7 +293,7 @@ class User extends Authenticatable implements HasLocalePreference
             ->invoice($invoiceUuid)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             DB::table('invoice_selections')->insert([
                 'school_id' => $this->school_id,
                 'user_uuid' => $this->id,
@@ -314,14 +307,14 @@ class User extends Authenticatable implements HasLocalePreference
     public function setSchool(): static
     {
         if (
-            !$this->school_id ||
-            !$this->schools->contains('id', $this->school_id)
+            ! $this->school_id ||
+            ! $this->schools->contains('id', $this->school_id)
         ) {
             $school = $this->schools->first();
 
             // If they're not assigned a school yet,
             // check their students' for a school to assign
-            if (!$school) {
+            if (! $school) {
                 $school = $this->students()
                     ->whereHas('school')
                     ->first();
@@ -329,7 +322,7 @@ class User extends Authenticatable implements HasLocalePreference
 
             // If they still don't have a school,
             // check if there's only one school for the tenant
-            if (!$school && $this->tenant->schools()->count() === 1) {
+            if (! $school && $this->tenant->schools()->count() === 1) {
                 $school = $this->tenant->schools()
                     ->first();
             }
@@ -342,7 +335,7 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function setSchoolStaffSchools(): static
     {
-        if (!$this->sis_id) {
+        if (! $this->sis_id) {
             return $this;
         }
 
@@ -364,7 +357,7 @@ class User extends Authenticatable implements HasLocalePreference
      */
     public function syncStudents(): static
     {
-        if (!$this->contact_id) {
+        if (! $this->contact_id) {
             return $this;
         }
 
@@ -377,7 +370,7 @@ class User extends Authenticatable implements HasLocalePreference
         // to any of the students. If the conditions are right
         // they will need to receive registration access
         // to ensure they can access invoices
-        if (!$hasDataAccess && !$this->password) {
+        if (! $hasDataAccess && ! $this->password) {
             $this->update(['needs_to_register' => true]);
         }
 
@@ -407,8 +400,8 @@ class User extends Authenticatable implements HasLocalePreference
             // or the student doesn't exist
             // don't do anything
             if (
-                !$schools->has($student['schoolNumber']) ||
-                !$studentUuid
+                ! $schools->has($student['schoolNumber']) ||
+                ! $studentUuid
             ) {
                 return $studentUsers;
             }
@@ -427,7 +420,6 @@ class User extends Authenticatable implements HasLocalePreference
         // Re-associate all the students
         DB::table('student_user')->insert($studentUsers);
 
-
         // Give fresh permission for these students
         \Bouncer::scope()->remove();
         $this->students()
@@ -440,7 +432,7 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function setContactId(): static
     {
-        if (!$this->contact_id && $this->guardian_id) {
+        if (! $this->contact_id && $this->guardian_id) {
             $response = PowerSchool::pq('com.archboard.sonarfms.guardian.contactid', ['guardianid' => $this->guardian_id]);
 
             if ($response->count() === 1) {
@@ -456,8 +448,6 @@ class User extends Authenticatable implements HasLocalePreference
      * a flag of whether the user has access
      *
      * Used for assigning schools in users
-     *
-     * @return Collection
      */
     public function getSchoolAccessList(): Collection
     {
@@ -473,11 +463,6 @@ class User extends Authenticatable implements HasLocalePreference
 
     /**
      * Assigns a permission to a user for a school
-     *
-     * @param School $school
-     * @param string $permission
-     * @param string|Model $model
-     * @return static
      */
     public function givePermissionForSchool(School $school, string $permission = '*', Model|string $model = '*'): static
     {
@@ -494,9 +479,6 @@ class User extends Authenticatable implements HasLocalePreference
      * based on the given model. It will pull the set of
      * permissions for the model as a flattened array
      * of [permission name] => true/false
-     *
-     * @param string $model
-     * @return array
      */
     public function getPermissions(string $model): array
     {
@@ -505,7 +487,7 @@ class User extends Authenticatable implements HasLocalePreference
         $permissions = collect($matrix['models'])
             ->first(fn ($set) => $set['model'] === $model);
 
-        if (!$permissions) {
+        if (! $permissions) {
             return [];
         }
 
@@ -530,8 +512,8 @@ class User extends Authenticatable implements HasLocalePreference
     public function getSelectionSuggestedUsers(): Collection
     {
         return static::whereHas('students', function (Builder $builder) {
-                $builder->whereIn('students.uuid', $this->selectedInvoices->pluck('student_uuid'));
-            })
+            $builder->whereIn('students.uuid', $this->selectedInvoices->pluck('student_uuid'));
+        })
             ->orderBy('last_name')
             ->get();
     }

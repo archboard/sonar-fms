@@ -15,6 +15,7 @@ class InvoiceSelection extends Model
     use ScopeToCurrentSchool;
 
     protected $guarded = [];
+
     public $timestamps = false;
 
     public function scopeInvoice(Builder $builder, string $uuid)

@@ -5,14 +5,13 @@ namespace App\Notifications;
 use App\Models\PaymentImport;
 use App\Traits\AddsNotificationSubject;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class PaymentImportFinished extends Notification
 {
-    use Queueable;
     use AddsNotificationSubject;
+    use Queueable;
 
     /**
      * Create a new notification instance.

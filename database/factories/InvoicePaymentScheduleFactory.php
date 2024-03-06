@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\InvoicePaymentSchedule;
-use App\Models\InvoicePaymentTerm;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

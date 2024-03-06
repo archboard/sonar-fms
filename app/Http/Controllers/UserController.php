@@ -41,7 +41,6 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -56,7 +55,7 @@ class UserController extends Controller
         $user = User::where('email', 'ilike', $data['email'])
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             $data['tenant_id'] = $school->tenant_id;
             $data['school_id'] = $school->id;
             $data['email'] = strtolower($data['email']);
@@ -73,7 +72,6 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(User $user)

@@ -38,7 +38,6 @@ class FeeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -65,7 +64,6 @@ class FeeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Fee  $fee
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Fee $fee)
@@ -82,8 +80,6 @@ class FeeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Fee  $fee
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Fee $fee)
@@ -107,7 +103,6 @@ class FeeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Fee  $fee
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Fee $fee)

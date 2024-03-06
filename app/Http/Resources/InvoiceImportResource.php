@@ -10,7 +10,6 @@ class InvoiceImportResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     public function toArray($request): array
     {
@@ -37,7 +36,7 @@ class InvoiceImportResource extends JsonResource
                     'file' => $this->file_path,
                     'existing' => true,
                 ],
-            ]
+            ],
         ];
     }
 }

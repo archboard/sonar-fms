@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -41,7 +40,7 @@ class TenantSyncFailed extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('[' . config('app.name') . '] ' . __('Full Sync Failed'))
+            ->subject('['.config('app.name').'] '.__('Full Sync Failed'))
             ->line(__('This is letting you know that the attempted sync failed. If you think this is due to a system error please contact support.'));
     }
 

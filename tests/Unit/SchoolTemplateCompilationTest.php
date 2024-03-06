@@ -16,7 +16,7 @@ class SchoolTemplateCompilationTest extends TestCase
         $now = $user->getCarbonFactory()->now();
 
         $this->school->invoice_number_template = null;
-        $this->assertEquals("", $this->school->getInvoiceNumberPrefix($this->user));
+        $this->assertEquals('', $this->school->getInvoiceNumberPrefix($this->user));
 
         $this->school->invoice_number_template = '{year}-';
         $this->assertEquals("{$now->format('Y')}-", $this->school->getInvoiceNumberPrefix($this->user));
@@ -25,7 +25,7 @@ class SchoolTemplateCompilationTest extends TestCase
         $this->assertEquals("{$now->format('Y')}{$now->format('m')}-", $this->school->getInvoiceNumberPrefix($this->user));
 
         $this->school->invoice_number_template = 'INV';
-        $this->assertEquals("INV", $this->school->getInvoiceNumberPrefix($this->user));
+        $this->assertEquals('INV', $this->school->getInvoiceNumberPrefix($this->user));
 
         $this->school->invoice_number_template = '{year}{month}{month}{year}-INV';
         $this->assertEquals("{$now->format('Y')}{$now->format('m')}{$now->format('m')}{$now->format('Y')}-INV", $this->school->getInvoiceNumberPrefix($this->user));
@@ -59,7 +59,7 @@ class SchoolTemplateCompilationTest extends TestCase
         $student = $this->school->students->random();
 
         $this->assertEquals(
-            $student->student_number . $student->sis_id . $student->last_name . $student->first_name,
+            $student->student_number.$student->sis_id.$student->last_name.$student->first_name,
             $this->school->compileTemplate('{student_number}{sis_id}{last_name}{first_name}', student: $student)
         );
     }

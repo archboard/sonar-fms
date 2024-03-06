@@ -18,11 +18,12 @@ use Tests\Traits\CreatesInvoice;
 
 class UpdateInvoiceTest extends TestCase
 {
+    use CreatesInvoice;
     use RefreshDatabase;
     use WithFaker;
-    use CreatesInvoice;
 
     protected Student $student;
+
     protected Invoice $invoice;
 
     protected function setUp(): void

@@ -39,7 +39,7 @@ class UpdatePaymentRequest extends FormRequest
                 'required',
                 'integer',
                 'min:1',
-                'max:' . ($payment->invoice->remaining_balance + $payment->amount), // Factor in the original payment
+                'max:'.($payment->invoice->remaining_balance + $payment->amount), // Factor in the original payment
             ],
             'made_by' => [
                 'nullable',

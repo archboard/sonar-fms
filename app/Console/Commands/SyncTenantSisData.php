@@ -48,6 +48,7 @@ class SyncTenantSisData extends Command
 
         if ($query->count() === 0) {
             $this->info("No tenants sync at hour {$hour}.");
+
             return 0;
         }
 

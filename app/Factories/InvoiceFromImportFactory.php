@@ -14,13 +14,8 @@ use App\Models\Student;
 use App\Traits\ConvertsExcelValues;
 use App\Traits\GetsImportMappingValues;
 use App\Utilities\NumberUtility;
-use Brick\Money\Money;
-use Carbon\Exceptions\InvalidFormatException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class InvoiceFromImportFactory extends InvoiceFactory
 {
@@ -28,19 +23,31 @@ class InvoiceFromImportFactory extends InvoiceFactory
     use GetsImportMappingValues;
 
     protected ?InvoiceImport $import;
+
     protected Collection $contents;
+
     protected array $warnings = [];
+
     protected bool $attributesBuilt = false;
+
     protected bool $asModels = false;
+
     protected string $userNow = '';
+
     protected int $rowSubtotal = 0;
+
     protected int $rowDiscountTotal = 0;
+
     protected int $rowPreTaxSubtotal = 0;
+
     protected int $rowTaxDue = 0;
+
     protected string $rowInvoiceUuid = '';
 
     protected Collection $terms;
+
     protected Collection $fees;
+
     protected Collection $scholarships;
 
     protected Collection $models;
@@ -48,15 +55,22 @@ class InvoiceFromImportFactory extends InvoiceFactory
     // These are the collections that store the attributes
     // that need to be stored in the db
     protected Collection $localInvoices;
+
     protected Collection $localInvoiceItems;
+
     protected Collection $localInvoiceItemsKeyedById;
+
     protected Collection $localInvoiceScholarships;
+
     protected Collection $localItemScholarshipPivot;
+
     protected Collection $localInvoicePaymentSchedules;
+
     protected Collection $localInvoicePaymentTerms;
+
     protected Collection $localInvoiceTaxItems;
 
-    public static function make(InvoiceImport $import = null): static
+    public static function make(?InvoiceImport $import = null): static
     {
         return (new static)
             ->setInvoiceImport($import)
@@ -64,7 +78,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
             ->setStudents();
     }
 
-    public function setInvoiceImport(InvoiceImport $import = null): static
+    public function setInvoiceImport(?InvoiceImport $import = null): static
     {
         $this->import = $import;
         $this->contents = $import->getImportContents();
@@ -83,7 +97,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
     {
         $values = $this->contents
             ->pluck($this->getMapField('student_column'))
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
 
         $this->students = $this->import->school->students()
             ->whereIn($this->getMapField('student_attribute'), $values)
@@ -179,9 +193,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
         $fee = $this->fees->get($value);
 
-        if (!$fee) {
+        if (! $fee) {
             // __('Invalid fee ID, fee does not exist')
             $this->addWarning('Invalid fee ID, fee does not exist');
+
             return null;
         }
 
@@ -196,9 +211,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
         $scholarship = $this->scholarships->get($value);
 
-        if (!$scholarship) {
+        if (! $scholarship) {
             // __('Invalid scholarship ID, scholarship does not exist')
             $this->addWarning('Invalid scholarship ID, scholarship does not exist');
+
             return null;
         }
 
@@ -242,14 +258,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * This is done last after all items, scholarships,
      * and tax details have been figured out
      *
-     * @return array
      * @throws InvalidImportMapValue
      */
     protected function getInvoiceAttributes(): array
     {
         $student = $this->getStudentForCurrentRow();
 
-        if (!$student) {
+        if (! $student) {
             // __('Could not find student')
             throw new InvalidImportMapValue('Could not find student');
         }
@@ -319,7 +334,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * by the id they were give on the frontend so that we
      * can map to scholarship relationships
      *
-     * @return Collection
      * @throws InvalidImportMapValue
      */
     protected function buildInvoiceItems(): Collection
@@ -335,13 +349,13 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $perUnit = $this->getMapValue("items.{$index}.amount_per_unit", 'currency');
                 $quantity = $this->getMapValue("items.{$index}.quantity", 'int');
 
-                if (!is_int($perUnit)) {
+                if (! is_int($perUnit)) {
                     ray('invalid value', $perUnit)->red();
                     // __('Invalid line item amount')
                     throw new InvalidImportMapValue('Invalid line item amount');
                 }
 
-                if (!is_int((int) $quantity)) {
+                if (! is_int((int) $quantity)) {
                     ray('invalid value', $quantity)->red();
                     // __('Invalid line item quantity')
                     throw new InvalidImportMapValue('Invalid line item quantity');
@@ -380,8 +394,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * Scholarships are _optional_ parts of an invoice.
      * Therefore, if there is no amount or percentage
      * we won't add any scholarships for the row
-     *
-     * @return int
      */
     protected function buildInvoiceScholarships(): int
     {
@@ -394,7 +406,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 // or percentage since scholarships are optional
                 if (
                     ($item['use_amount'] && empty($amount)) ||
-                    (!$item['use_amount'] && empty($percentage))
+                    (! $item['use_amount'] && empty($percentage))
                 ) {
                     return $total;
                 }
@@ -402,7 +414,8 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $name = trim($this->getMapValue("scholarships.{$index}.name"));
 
                 if (empty($name)) {
-                    $this->addWarning("Scholarship missing name. Please add a name value to the spreadsheet or enter a manual value.");
+                    $this->addWarning('Scholarship missing name. Please add a name value to the spreadsheet or enter a manual value.');
+
                     return $total;
                 }
 
@@ -420,7 +433,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 $applicableSubtotal = $this->rowSubtotal;
 
                 if (
-                    !empty($item['applies_to']) &&
+                    ! empty($item['applies_to']) &&
                     count($item['applies_to']) !== $this->localInvoiceItemsKeyedById->count()
                 ) {
                     // This is probably "bad practice" since the reduce's
@@ -444,7 +457,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 // If we're not using amount calculate the discount
                 // based on the appropriate subtotal
-                if (!$item['use_amount']) {
+                if (! $item['use_amount']) {
                     $discount = $applicableSubtotal * $attributes['percentage'];
                 }
 
@@ -465,8 +478,6 @@ class InvoiceFromImportFactory extends InvoiceFactory
      * If a row doesn't have any schedule values, skip creating
      * them for this row. Don't throw an exception and import the
      * rest of the invoice normally.
-     *
-     * @return Collection
      */
     protected function buildPaymentSchedules(): Collection
     {
@@ -499,7 +510,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
                         // Don't process if the "use" value is empty
                         if (
                             ($term['use_amount'] && empty($amount)) ||
-                            (!$term['use_amount'] && empty($percentage))
+                            (! $term['use_amount'] && empty($percentage))
                         ) {
                             return $total;
                         }
@@ -539,13 +550,11 @@ class InvoiceFromImportFactory extends InvoiceFactory
     /**
      * Builds the invoice tax items for the invoice if applicable,
      * and return the total tax due regardless of tax items
-     *
-     * @return int
      */
     protected function buildTaxItemAttributes(): int
     {
         // Not collecting tax means no tax due
-        if (!$this->collectingTax()) {
+        if (! $this->collectingTax()) {
             return 0;
         }
 
@@ -597,10 +606,10 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 // or percentage since scholarships are optional
                 if (
                     ($item['use_amount'] && empty($amount)) ||
-                    (!$item['use_amount'] && empty($percentage)) ||
+                    (! $item['use_amount'] && empty($percentage)) ||
                     (
-                        !empty($item['applies_to']) &&
-                        !in_array($itemId, $item['applies_to'])
+                        ! empty($item['applies_to']) &&
+                        ! in_array($itemId, $item['applies_to'])
                     )
                 ) {
                     return $total;
@@ -618,7 +627,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
                 // If we're not using amount calculate the discount
                 // based on the appropriate subtotal
-                if (!$item['use_amount']) {
+                if (! $item['use_amount']) {
                     $discount = $itemSubtotal * $percentage;
                 }
 
@@ -682,17 +691,19 @@ class InvoiceFromImportFactory extends InvoiceFactory
                 if ($validator->fails()) {
                     $message = collect($validator->errors()->toArray())
                         ->reduce(function (string $message, $errors, $key) {
-                            if (!empty($message)) {
-                                $message .=', ';
+                            if (! empty($message)) {
+                                $message .= ', ';
                             }
 
                             $attribute = ucfirst($key);
                             $error = $errors[0];
                             $message .= "{$attribute}: {$error}";
+
                             return $message;
                         }, '');
                     $this->addResult($message, false);
                     $this->resetLocalStores();
+
                     return;
                 }
 
@@ -715,7 +726,7 @@ class InvoiceFromImportFactory extends InvoiceFactory
 
     public function build(): Collection
     {
-        if (!$this->attributesBuilt) {
+        if (! $this->attributesBuilt) {
             $this->buildAttributes();
         }
 

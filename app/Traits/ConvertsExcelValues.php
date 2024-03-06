@@ -63,6 +63,7 @@ trait ConvertsExcelValues
             $days = floatval($value) - 2;
             $hours = $days * 24;
             $minutes = $hours * 60;
+
             return $date->addMinutes((int) $minutes)
                 ->roundUnit('minute', 15)
                 ->setTimezone(config('app.timezone'))

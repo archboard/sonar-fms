@@ -4,22 +4,18 @@ namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
 use App\Traits\HasPercentageAttribute;
-use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @mixin IdeHelperInvoiceScholarship
  */
 class InvoiceScholarship extends Model
 {
-    use HasFactory;
     use BelongsToInvoice;
+    use HasFactory;
     use HasPercentageAttribute;
 
     protected $fillable = [
@@ -87,8 +83,8 @@ class InvoiceScholarship extends Model
     public function getAmountFormattedAttribute(): ?string
     {
         if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
+            ! $this->relationLoaded('invoice') ||
+            ! $this->invoice->relationLoaded('currency')
         ) {
             return null;
         }
@@ -99,8 +95,8 @@ class InvoiceScholarship extends Model
     public function getCalculatedAmountFormattedAttribute(): ?string
     {
         if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
+            ! $this->relationLoaded('invoice') ||
+            ! $this->invoice->relationLoaded('currency')
         ) {
             return null;
         }

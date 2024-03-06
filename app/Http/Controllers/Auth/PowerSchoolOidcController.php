@@ -8,7 +8,6 @@ use App\Models\User;
 use GrantHolle\PowerSchool\Auth\Traits\AuthenticatesUsingPowerSchoolWithOidc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 class PowerSchoolOidcController extends Controller
 {
@@ -61,10 +60,6 @@ class PowerSchoolOidcController extends Controller
 
     /**
      * Gets the default attributes to be added for this user
-     *
-     * @param Request $request
-     * @param Collection $data
-     * @return array
      */
     protected function getDefaultAttributes(Request $request, Collection $data): array
     {

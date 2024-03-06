@@ -6,7 +6,6 @@ use App\Models\Invoice;
 use App\Models\InvoiceLayout;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,8 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateInvoicePdf implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use Batchable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -42,7 +41,7 @@ class CreateInvoicePdf implements ShouldQueue
 
         $invoice = Invoice::find($this->invoiceUuid);
 
-        if (!$invoice->published_at && !$this->force) {
+        if (! $invoice->published_at && ! $this->force) {
             return;
         }
 

@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -41,7 +40,7 @@ class TenantSyncComplete extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('[' . config('app.name') . '] ' . __('Full Sync Complete'))
+            ->subject('['.config('app.name').'] '.__('Full Sync Complete'))
             ->line(__('This is letting you know that the data for all of your schools have completed their scheduled sync.'));
     }
 

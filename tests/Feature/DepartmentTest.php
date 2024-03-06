@@ -46,7 +46,7 @@ class DepartmentTest extends TestCase
 
         $this->assertDatabaseHas('departments', [
             'tenant_id' => $this->tenant->id,
-            'name' => 'Department Name'
+            'name' => 'Department Name',
         ]);
     }
 

@@ -8,7 +8,6 @@ use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\Term;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 
 class TenantSeeder extends Seeder
 {

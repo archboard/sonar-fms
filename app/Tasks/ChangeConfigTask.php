@@ -22,7 +22,7 @@ class ChangeConfigTask implements SwitchTenantTask
         Config::set('powerschool.client_id', $tenant->ps_client_id);
         Config::set('powerschool.client_secret', $tenant->ps_secret);
 
-        if (!config('app.cloud')) {
+        if (! config('app.cloud')) {
             Config::set('mail.default', $tenant->smtp_host ? 'smtp' : 'log');
             Config::set('mail.mailers.smtp.host', $tenant->smtp_host);
             Config::set('mail.mailers.smtp.port', $tenant->smtp_port);

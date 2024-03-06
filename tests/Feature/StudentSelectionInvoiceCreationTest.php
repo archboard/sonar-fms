@@ -23,18 +23,18 @@ use Tests\Traits\SignsIn;
 class StudentSelectionInvoiceCreationTest extends TestCase
 {
     use RefreshDatabase;
-    use WithFaker;
     use SignsIn;
+    use WithFaker;
 
     protected function makeSelection($count = 3)
     {
         $students = $this->school->students
             ->random($count);
         $selection = $students->map(fn (Student $student) => [
-                'user_uuid' => $this->user->id,
-                'student_uuid' => $student->id,
-                'school_id' => $this->school->id,
-            ]);
+            'user_uuid' => $this->user->id,
+            'student_uuid' => $student->id,
+            'school_id' => $this->school->id,
+        ]);
 
         DB::table('student_selections')->insert($selection->toArray());
 
@@ -202,7 +202,7 @@ class StudentSelectionInvoiceCreationTest extends TestCase
                     'invoice_payment_schedules',
                     [
                         'invoice_uuid' => $invoice->uuid,
-                        'amount' => array_reduce($schedule['terms'], fn (int $total, array $item) => $total + $item['amount'], 0)
+                        'amount' => array_reduce($schedule['terms'], fn (int $total, array $item) => $total + $item['amount'], 0),
                     ]
                 );
             }

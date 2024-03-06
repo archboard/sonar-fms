@@ -25,16 +25,27 @@ class PaymentFromImportFactory extends BaseImportFactory
     use GetsImportMappingValues;
 
     protected Collection $invoices;
+
     protected Collection $invoicePayments;
+
     protected bool $asModels = false;
+
     protected string $now;
+
     protected string $invoiceColumn;
+
     protected School $school;
+
     protected Collection $paymentMethods;
+
     protected Collection $users;
+
     protected Collection $models;
+
     protected Collection $activityLogs;
+
     protected Collection $invoicesToRecalculate;
+
     protected array $warnings = [];
 
     public function __construct(protected PaymentImport $import, protected User $user)
@@ -70,7 +81,7 @@ class PaymentFromImportFactory extends BaseImportFactory
     public function setInvoices(): static
     {
         $invoiceNumbers = $this->contents
-            ->reject(fn ($row) => !$row[$this->invoiceColumn])
+            ->reject(fn ($row) => ! $row[$this->invoiceColumn])
             ->pluck($this->invoiceColumn)
             ->map(fn ($number) => strtoupper($number));
         $this->invoices = $this->school->invoices()
@@ -148,7 +159,7 @@ class PaymentFromImportFactory extends BaseImportFactory
 
     protected function convertUserEmail(?string $value): ?string
     {
-        if (!$value) {
+        if (! $value) {
             return null;
         }
 
@@ -169,7 +180,7 @@ class PaymentFromImportFactory extends BaseImportFactory
 
     protected function queueToRecalculate($invoiceUuid): static
     {
-        if (!$this->invoicesToRecalculate->contains($invoiceUuid)) {
+        if (! $this->invoicesToRecalculate->contains($invoiceUuid)) {
             $this->invoicesToRecalculate->push($invoiceUuid);
         }
 
@@ -178,7 +189,7 @@ class PaymentFromImportFactory extends BaseImportFactory
 
     protected function addLog(array $attributes): static
     {
-        if (!$this->logActivity) {
+        if (! $this->logActivity) {
             return $this;
         }
 
@@ -204,7 +215,7 @@ class PaymentFromImportFactory extends BaseImportFactory
             'subject_type' => 'invoice',
             'subject_id' => $attributes['invoice_uuid'],
             'properties' => json_encode([
-                'amount' => displayCurrency($attributes['amount'], $this->school->currency)
+                'amount' => displayCurrency($attributes['amount'], $this->school->currency),
             ]),
         ]);
     }
@@ -215,31 +226,35 @@ class PaymentFromImportFactory extends BaseImportFactory
             $this->currentRowNumber++;
             $this->currentRow = $row;
 
-            if (!$row[$this->invoiceColumn] ?? null) { // @phpstan-ignore-line
+            if (! $row[$this->invoiceColumn] ?? null) { // @phpstan-ignore-line
                 // __('Missing invoice number');
                 $this->addResult('Missing invoice number', false);
+
                 continue;
             }
 
             $invoice = $this->getCurrentRowInvoice();
 
-            if (!$invoice) {
+            if (! $invoice) {
                 // __('Could not find invoice - invalid invoice number');
                 $this->addResult('Could not find invoice - invalid invoice number', false);
+
                 continue;
             }
 
             $amount = $this->getMapValue('amount', 'currency', 0);
 
-            if (!$amount) {
+            if (! $amount) {
                 // __('Invalid amount');
                 $this->addResult('Invalid amount', false);
+
                 continue;
             }
 
             if ($amount > $invoice->remaining_balance) {
                 // __('Payment greater than remaining balance');
                 $this->addResult('Payment greater than remaining balance', false);
+
                 continue;
             }
 
@@ -343,17 +358,17 @@ class PaymentFromImportFactory extends BaseImportFactory
 
             // Create batch to calculate payments
             $batch = Bus::batch(
-                    $this->invoicePayments
-                        ->pluck('invoice_uuid')
-                        ->unique()
-                        ->map(fn ($uuid) => new SetInvoiceRemainingBalance($uuid))
-                )->then(function (Batch $batch) {
-                    event(new PaymentImportFinished($this->import));
-                })->catch(function (Batch $batch, \Throwable $e) {
-                    //
-                })->finally(function (Batch $batch) {
-                    $this->import->update(['job_batch_id' => null]);
-                })
+                $this->invoicePayments
+                    ->pluck('invoice_uuid')
+                    ->unique()
+                    ->map(fn ($uuid) => new SetInvoiceRemainingBalance($uuid))
+            )->then(function (Batch $batch) {
+                event(new PaymentImportFinished($this->import));
+            })->catch(function (Batch $batch, \Throwable $e) {
+                //
+            })->finally(function (Batch $batch) {
+                $this->import->update(['job_batch_id' => null]);
+            })
                 ->name("Payment import {$this->import->id}")
                 ->dispatch();
 

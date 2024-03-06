@@ -34,12 +34,12 @@ class StudentFactory extends Factory
             'grade_level' => $this->faker->numberBetween(-2, 12),
             'enroll_status' => 0,
             'enrolled' => true,
-//            'school_id' => function () {
-//                return School::inRandomOrder()->first()->id;
-//            },
-//            'tenant_id' => function () {
-//                return Tenant::first()->id;
-//            },
+            //            'school_id' => function () {
+            //                return School::inRandomOrder()->first()->id;
+            //            },
+            //            'tenant_id' => function () {
+            //                return Tenant::first()->id;
+            //            },
         ];
     }
 

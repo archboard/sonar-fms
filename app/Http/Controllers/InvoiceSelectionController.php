@@ -45,7 +45,7 @@ class InvoiceSelectionController extends Controller
         }
 
         session()->flash('success', __('Selected :count invoices', [
-            'count' => $selection->count()
+            'count' => $selection->count(),
         ]));
 
         return back();
@@ -72,6 +72,7 @@ class InvoiceSelectionController extends Controller
 
         if ($request->wantsInertia()) {
             session()->flash('success', __('Invoice removed from selection.'));
+
             return back();
         }
 

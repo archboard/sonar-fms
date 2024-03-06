@@ -11,9 +11,8 @@ class UpdateBatchDraftController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param UpdateInvoiceRequest $request
-     * @param string $batch
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function __invoke(UpdateInvoiceRequest $request, string $batch)

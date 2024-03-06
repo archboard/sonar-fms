@@ -18,7 +18,7 @@ use App\Traits\HasGradeLevelAttribute;
 use App\Traits\HasTaxRateAttribute;
 use App\Traits\UsesUuid;
 use GrantHolle\Http\Resources\Traits\HasResource;
-use Hidehalo\Nanoid\Client;
+use GrantHolle\Timezone\Facades\Timezone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,7 +37,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use GrantHolle\Timezone\Facades\Timezone;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
@@ -45,17 +44,17 @@ use Spatie\Searchable\SearchResult;
 /**
  * @mixin IdeHelperInvoice
  */
-class Invoice extends Model implements Searchable, Exportable
+class Invoice extends Model implements Exportable, Searchable
 {
-    use BelongsToTenant;
     use BelongsToSchool;
+    use BelongsToTenant;
     use BelongsToUser;
-    use UsesUuid;
+    use HasActivities;
     use HasFactory;
+    use HasGradeLevelAttribute;
     use HasResource;
     use HasTaxRateAttribute;
-    use HasActivities;
-    use HasGradeLevelAttribute;
+    use UsesUuid;
 
     public const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -290,9 +289,9 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function scopeForUser(Builder $builder, User $user)
     {
-        $builder->leftJoin('invoice_user', function (JoinClause $join) use ($user) {
-                $join->on('invoices.uuid', '=', 'invoice_user.invoice_uuid');
-            })
+        $builder->leftJoin('invoice_user', function (JoinClause $join) {
+            $join->on('invoices.uuid', '=', 'invoice_user.invoice_uuid');
+        })
             ->where(function (Builder $builder) use ($user) {
                 $builder->where('invoice_user.user_uuid', $user->uuid)
                     ->orWhereIn('student_uuid', $user->students->pluck('uuid'));
@@ -447,7 +446,7 @@ class Invoice extends Model implements Searchable, Exportable
     public function hasLargerQuantities(): Attribute
     {
         return Attribute::get(function (): bool {
-            if (!$this->relationLoaded('invoiceItems')) {
+            if (! $this->relationLoaded('invoiceItems')) {
                 return true;
             }
 
@@ -459,12 +458,12 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getIsVoidAttribute(): bool
     {
-        return !!$this->voided_at;
+        return (bool) $this->voided_at;
     }
 
     public function getAmountDueFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -473,7 +472,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getTaxDueFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -482,7 +481,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getTotalPaidFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -491,7 +490,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getSubtotalFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -500,7 +499,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getDiscountTotalFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -509,7 +508,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getRemainingBalanceFormattedAttribute(): ?string
     {
-        if (!$this->relationLoaded('currency')) {
+        if (! $this->relationLoaded('currency')) {
             return null;
         }
 
@@ -518,12 +517,12 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getNumberFormattedAttribute(): string
     {
-        return '#' . $this->id;
+        return '#'.$this->id;
     }
 
     public function getStatusColorAttribute(): string
     {
-        if (!$this->published_at) {
+        if (! $this->published_at) {
             return 'gray';
         }
 
@@ -535,7 +534,7 @@ class Invoice extends Model implements Searchable, Exportable
             return 'red';
         }
 
-        if ($this->payment_made || !$this->available) {
+        if ($this->payment_made || ! $this->available) {
             return 'yellow';
         }
 
@@ -544,7 +543,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getStatusLabelAttribute(): string
     {
-        if (!$this->published_at) {
+        if (! $this->published_at) {
             return __('Draft');
         }
 
@@ -564,7 +563,7 @@ class Invoice extends Model implements Searchable, Exportable
             return __('Past due');
         }
 
-        if (!$this->available) {
+        if (! $this->available) {
             return __('Unavailable');
         }
 
@@ -588,7 +587,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function getAvailableAttribute(): bool
     {
-        if (!$this->available_at) {
+        if (! $this->available_at) {
             return true;
         }
 
@@ -601,7 +600,7 @@ class Invoice extends Model implements Searchable, Exportable
             return $this->student->full_name;
         }
 
-        if (!$this->student_uuid && $this->relationLoaded('students')) {
+        if (! $this->student_uuid && $this->relationLoaded('students')) {
             return $this->students->pluck('full_name')->join(', ');
         }
 
@@ -637,7 +636,7 @@ class Invoice extends Model implements Searchable, Exportable
 
     public function loadChildren(): static
     {
-        if (!$this->is_parent) {
+        if (! $this->is_parent) {
             return $this;
         }
 
@@ -663,8 +662,6 @@ class Invoice extends Model implements Searchable, Exportable
     /**
      * This gets the children that can be included
      * in the calculations for the parent invoice
-     *
-     * @return Collection
      */
     public function countableChildren(): Collection
     {
@@ -776,7 +773,7 @@ class Invoice extends Model implements Searchable, Exportable
 
         // If this isn't the parent of a combined invoice
         // just return the sum of all the payments
-        if (!$this->is_parent) {
+        if (! $this->is_parent) {
             return $total;
         }
 
@@ -793,11 +790,11 @@ class Invoice extends Model implements Searchable, Exportable
         // and any child invoices since they could be
         // recorded independently of the parent
         $childrenPaymentTotal = $this->countableChildren()->reduce(function (int $total, Invoice $child) {
-                return $total + $child->invoicePayments->sum('amount');
-            }, $total);
+            return $total + $child->invoicePayments->sum('amount');
+        }, $total);
         $childrenRefunds = $this->countableChildren()->reduce(function (int $total, Invoice $child) {
-                return $total + $child->invoiceRefunds->sum('amount');
-            }, 0);
+            return $total + $child->invoiceRefunds->sum('amount');
+        }, 0);
 
         return $childrenPaymentTotal - $childrenRefunds;
     }
@@ -852,7 +849,7 @@ class Invoice extends Model implements Searchable, Exportable
     public function shouldBeIncludedInCalculations(): bool
     {
         return ($this->published_at && $this->published_at <= now()) &&
-            !$this->voided_at;
+            ! $this->voided_at;
     }
 
     public function queueNotification(Carbon $notifyAt): static
@@ -872,7 +869,7 @@ class Invoice extends Model implements Searchable, Exportable
         return $this;
     }
 
-    public function notifyLater(Carbon $dateTime = null): static
+    public function notifyLater(?Carbon $dateTime = null): static
     {
         return $this->queueNotification($dateTime ?? now()->addMinutes(15));
     }
@@ -907,8 +904,6 @@ class Invoice extends Model implements Searchable, Exportable
     /**
      * Takes the invoice and prunes all the fields
      * that aren't required to create an invoice
-     *
-     * @return array
      */
     public function asInvoiceTemplate(): array
     {
@@ -1054,7 +1049,7 @@ class Invoice extends Model implements Searchable, Exportable
             function () use ($schoolId) {
                 $max = DB::table((new static)->getTable())
                     ->where('school_id', $schoolId)
-                    ->selectRaw("MAX(invoice_number::integer) as max")
+                    ->selectRaw('MAX(invoice_number::integer) as max')
                     ->first('max')
                     ?->max;
 
@@ -1081,7 +1076,7 @@ class Invoice extends Model implements Searchable, Exportable
         cache()->increment($key);
         $invoiceNumber = $currentMax + 1;
 
-        return $prefix . Str::padLeft((string) $invoiceNumber, 3, '0');
+        return $prefix.Str::padLeft((string) $invoiceNumber, 3, '0');
     }
 
     public function migrateActivity(string $uuid): static
@@ -1155,13 +1150,12 @@ class Invoice extends Model implements Searchable, Exportable
         // If this isn't a parent invoice
         // Or the payment isn't being applied to the parent invoice
         // Don't distribute to the children because it isn't for the parent
-        if (!$this->is_parent || $this->uuid !== $payment->invoice_uuid) {
+        if (! $this->is_parent || $this->uuid !== $payment->invoice_uuid) {
             return $this;
         }
 
         // Do in a transaction so nothing weird happens
-        DB::transaction(fn () =>
-            DB::table('invoice_payments')->insert($this->getChildrenPayments($payment))
+        DB::transaction(fn () => DB::table('invoice_payments')->insert($this->getChildrenPayments($payment))
         );
 
         return $this;
@@ -1238,7 +1232,7 @@ class Invoice extends Model implements Searchable, Exportable
 
             $child->update([
                 'remaining_balance' => $remaining,
-                'paid_at' => $remaining > 0 ? null : now()
+                'paid_at' => $remaining > 0 ? null : now(),
             ]);
 
             // Update account balances
@@ -1282,7 +1276,7 @@ class Invoice extends Model implements Searchable, Exportable
     {
         // Load all the payment schedules to automatically distribute the
         // payment across all the terms
-        if (!$this->relationLoaded('invoicePaymentSchedules')) {
+        if (! $this->relationLoaded('invoicePaymentSchedules')) {
             $this->load('invoicePaymentSchedules', 'invoicePaymentSchedules.invoicePaymentTerms');
         }
 
@@ -1398,7 +1392,7 @@ class Invoice extends Model implements Searchable, Exportable
             'currency' => $this->currency,
         ])->render();
 
-        $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/layout-{$layout->id}");
+        $userDir = realpath(sys_get_temp_dir()."/sonar-fms-pdf/layout-{$layout->id}");
         $disk = static::getPdfDisk();
         $path = $this->generatePdfPath();
 
@@ -1413,7 +1407,7 @@ class Invoice extends Model implements Searchable, Exportable
             ->setNodeBinary(config('services.node.binary'))
             ->setNpmBinary(config('services.node.npm'))
             ->addChromiumArguments([
-                'user-data-dir' => $userDir
+                'user-data-dir' => $userDir,
             ])
             ->ignoreHttpsErrors()
             ->hideHeader()
@@ -1507,8 +1501,8 @@ class Invoice extends Model implements Searchable, Exportable
             __('Student'),
             __('Student number'),
             __('Grade'),
-//            __('Contact'),
-//            __('Contact email'),
+            //            __('Contact'),
+            //            __('Contact email'),
             __('Title'),
             __('Status'),
             __('Invoice date'),
@@ -1529,8 +1523,8 @@ class Invoice extends Model implements Searchable, Exportable
             $this->student?->full_name,
             $this->student?->student_number,
             $this->student?->grade_level_short_formatted,
-//            $this->user?->full_name,
-//            $this->user?->email,
+            //            $this->user?->full_name,
+            //            $this->user?->email,
             $this->title,
             $this->status_label,
             $this->invoice_date?->format('Y-m-d'),

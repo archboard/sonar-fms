@@ -10,8 +10,8 @@ use Illuminate\Notifications\Notification;
 
 class InvoicePdfBatchFailed extends Notification implements ShouldQueue
 {
-    use Queueable;
     use AddsNotificationSubject;
+    use Queueable;
 
     /**
      * Create a new notification instance.
@@ -38,7 +38,7 @@ class InvoicePdfBatchFailed extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject($this->makeSubject(__('Failed creating invoice PDFs')))
-            ->line("There was an error that occurred when creating the invoice PDFs. Please try again later.");
+            ->line('There was an error that occurred when creating the invoice PDFs. Please try again later.');
     }
 
     /**

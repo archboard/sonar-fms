@@ -12,8 +12,8 @@ use Tests\Traits\CreatesInvoice;
 
 class InvoiceDraftTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected Student $student;
 

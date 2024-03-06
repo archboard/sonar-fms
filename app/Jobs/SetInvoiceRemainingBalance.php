@@ -3,10 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Invoice;
-use App\Models\InvoicePayment;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,7 +22,8 @@ class SetInvoiceRemainingBalance implements ShouldQueue
     final public function __construct(
         protected string $invoiceUuid,
         protected bool $distributeToTerms = true
-    ) { }
+    ) {
+    }
 
     /**
      * Execute the job.
@@ -44,7 +43,7 @@ class SetInvoiceRemainingBalance implements ShouldQueue
         $invoice->setRemainingBalance()
             ->save();
 
-        if ($this->distributeToTerms && !$invoice->parent_uuid) {
+        if ($this->distributeToTerms && ! $invoice->parent_uuid) {
             $invoice->distributePaymentsToTerms(true);
         }
 
@@ -52,7 +51,7 @@ class SetInvoiceRemainingBalance implements ShouldQueue
         // dispatch calculating the parents data
         if ($invoice->parent_uuid) {
             $batch?->add([
-                new static($invoice->parent_uuid)
+                new static($invoice->parent_uuid),
             ]);
         }
     }

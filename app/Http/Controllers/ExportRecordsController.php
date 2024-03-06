@@ -35,8 +35,9 @@ class ExportRecordsController extends Controller
         ];
         $model = $configuration[$type] ?? null;
 
-        if (!$model) {
+        if (! $model) {
             session()->flash('error', __('Export unavailable.'));
+
             return back();
         }
 

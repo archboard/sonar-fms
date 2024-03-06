@@ -7,6 +7,7 @@ use App\Models\PaymentMethod;
 abstract class PaymentMethodBase
 {
     protected ?PaymentMethod $paymentMethod;
+
     protected bool $includePaymentMethodInResource = false;
 
     public function __construct(?PaymentMethod $paymentMethod = null)

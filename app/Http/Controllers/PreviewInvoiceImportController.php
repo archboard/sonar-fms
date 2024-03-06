@@ -10,7 +10,6 @@ class PreviewInvoiceImportController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function __invoke(Request $request, InvoiceImport $import)
@@ -38,7 +37,7 @@ class PreviewInvoiceImportController extends Controller
             'breadcrumbs' => $breadcrumbs,
             'invoiceImport' => $results->get('invoiceImport')->toResource(),
             'results' => $import->results ?? [],
-//            'errors' => $import->getMappingValidationErrors(),
+            //            'errors' => $import->getMappingValidationErrors(),
             'permissions' => $request->user()->getPermissions(InvoiceImport::class),
             'previewResults' => $results->get('models'),
             'isPreview' => true,

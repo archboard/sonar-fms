@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PaymentMethodDriverResource;
-use App\Http\Resources\PaymentMethodResource;
 use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Rules\PaymentMethodDriverOptions;
@@ -81,7 +80,6 @@ class PaymentMethodController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -118,7 +116,6 @@ class PaymentMethodController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PaymentMethod  $paymentMethod
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(PaymentMethod $paymentMethod)
@@ -129,7 +126,6 @@ class PaymentMethodController extends Controller
     /**
      * Edit the specified resource.
      *
-     * @param  \App\Models\PaymentMethod  $paymentMethod
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(PaymentMethod $paymentMethod)
@@ -164,8 +160,6 @@ class PaymentMethodController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PaymentMethod  $paymentMethod
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, PaymentMethod $paymentMethod)

@@ -7,7 +7,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
-use Tests\Traits\SignsIn;
 
 class InvoiceLayoutTest extends TestCase
 {
@@ -71,7 +70,7 @@ class InvoiceLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [
@@ -111,7 +110,7 @@ class InvoiceLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [
@@ -164,7 +163,7 @@ class InvoiceLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [
@@ -214,7 +213,7 @@ class InvoiceLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                 ],

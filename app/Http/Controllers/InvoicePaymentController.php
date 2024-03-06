@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateInvoicePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
 use App\Http\Resources\InvoicePaymentResource;
-use App\Http\Resources\PaymentMethodDriverResource;
-use App\Http\Resources\UserResource;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
-use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class InvoicePaymentController extends Controller
 {
@@ -62,8 +58,8 @@ class InvoicePaymentController extends Controller
     {
         $title = __('Record payment');
         $breadcrumbs = [
-            $this->makeBreadcrumb(__('Payments'),  route('payments.index')),
-            $this->makeBreadcrumb(__('Record payment'),  route('payments.create')),
+            $this->makeBreadcrumb(__('Payments'), route('payments.index')),
+            $this->makeBreadcrumb(__('Record payment'), route('payments.create')),
         ];
         $invoice = $request->has('invoice_uuid')
             ? Invoice::where('uuid', $request->get('invoice_uuid'))
@@ -81,6 +77,7 @@ class InvoicePaymentController extends Controller
 
         if ($invoice->voided_at) {
             session()->flash('error', __('Invoice has been voided.'));
+
             return redirect()->route('invoices.show', $invoice);
         }
 
@@ -108,7 +105,6 @@ class InvoicePaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateInvoicePaymentRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateInvoicePaymentRequest $request)
@@ -131,7 +127,6 @@ class InvoicePaymentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param InvoicePayment $payment
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(InvoicePayment $payment)

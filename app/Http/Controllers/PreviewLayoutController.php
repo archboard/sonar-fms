@@ -18,8 +18,9 @@ class PreviewLayoutController extends Controller
             ->inRandomOrder()
             ->first();
 
-        if (!$invoice) {
+        if (! $invoice) {
             session()->flash('error', __('No invoices exist to preview.'));
+
             return to_route('layouts.index');
         }
 

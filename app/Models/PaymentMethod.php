@@ -20,15 +20,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PaymentMethod extends Model
 {
+    use BelongsToSchool;
+    use BelongsToTenant;
     use HasFactory;
     use HasResource;
-    use BelongsToTenant;
-    use BelongsToSchool;
     use ScopeToCurrentSchool;
 
     protected $guarded = [];
 
     public bool $includeDriverWithResource = true;
+
     protected PaymentMethodDriver $paymentMethodDriver;
 
     protected $casts = [
@@ -84,7 +85,7 @@ class PaymentMethod extends Model
 
         $driver = $drivers[$driverName] ?? null;
 
-        if (!$driver || !class_exists($driver)) {
+        if (! $driver || ! class_exists($driver)) {
             throw new PaymentMethodDriverNotFound("The {$driverName} payment method driver could not be found.");
         }
 
@@ -117,7 +118,7 @@ class PaymentMethod extends Model
                 /** @var static $paymentMethod */
                 $paymentMethod = $paymentMethods->get($driver->key(), new PaymentMethod());
 
-                if (!$paymentMethod->id) {
+                if (! $paymentMethod->id) {
                     return $methods;
                 }
 
@@ -127,6 +128,7 @@ class PaymentMethod extends Model
                     ->setIncludePaymentMethodInResource(true);
 
                 $methods[] = $driver;
+
                 return $methods;
             },
             []

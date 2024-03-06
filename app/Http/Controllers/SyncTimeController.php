@@ -23,7 +23,6 @@ class SyncTimeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -45,7 +44,6 @@ class SyncTimeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SyncTime  $syncTime
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(SyncTime $syncTime)

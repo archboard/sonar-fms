@@ -12,11 +12,12 @@ use Tests\Traits\CreatesPayments;
 
 class StudentRevenueTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
     use CreatesPayments;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
+
     protected Student $student;
 
     protected function setUp(): void

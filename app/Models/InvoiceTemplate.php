@@ -15,8 +15,8 @@ class InvoiceTemplate extends Model
 {
     use BelongsToSchool;
     use BelongsToUser;
-    use HasResource;
     use HasFactory;
+    use HasResource;
 
     protected $guarded = [];
 

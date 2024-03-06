@@ -20,19 +20,18 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command(SyncTenantSisData::class)->hourly();
+        $schedule->command(SyncTenantSisData::class)->hourly();
 
-         $schedule->command('cache:prune-stale-tags')->hourly();
+        $schedule->command('cache:prune-stale-tags')->hourly();
 
-         $schedule->command('backup:clean')
-             ->dailyAt('17:00');
-         $schedule->command('backup:run', ['--only-db'])
-             ->dailyAt('17:30'); // 1:30am China
+        $schedule->command('backup:clean')
+            ->dailyAt('17:00');
+        $schedule->command('backup:run', ['--only-db'])
+            ->dailyAt('17:30'); // 1:30am China
     }
 
     /**

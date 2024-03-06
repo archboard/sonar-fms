@@ -5,8 +5,6 @@ namespace Tests\Feature;
 use App\Jobs\SyncSchool;
 use App\Models\School;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Testing\Fakes\PendingBatchFake;

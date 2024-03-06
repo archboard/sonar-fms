@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InvoicePaymentTerm extends Model
 {
-    use HasFactory;
     use BelongsToInvoice;
+    use HasFactory;
     use HasResource;
     use UsesUuid;
 

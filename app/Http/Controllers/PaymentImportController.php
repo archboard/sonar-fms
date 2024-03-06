@@ -76,8 +76,6 @@ class PaymentImportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateFileImportRequest $request
-     * @param School $school
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function store(CreateFileImportRequest $request, School $school)
@@ -100,7 +98,6 @@ class PaymentImportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PaymentImport  $import
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Request $request, PaymentImport $import)
@@ -150,13 +147,13 @@ class PaymentImportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PaymentImport  $import
      * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(PaymentImport $import)
     {
         if ($import->imported_records > 0) {
             session()->flash('error', __('You have already imported the payments. Please create a new import.'));
+
             return redirect()->route('payments.imports.show', $import);
         }
 
@@ -193,8 +190,6 @@ class PaymentImportController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateFileImportRequest $request
-     * @param \App\Models\PaymentImport $import
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateFileImportRequest $request, PaymentImport $import)

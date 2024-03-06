@@ -66,7 +66,7 @@ class ReceiptLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [
@@ -105,7 +105,7 @@ class ReceiptLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [
@@ -158,7 +158,7 @@ class ReceiptLayoutTest extends TestCase
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [

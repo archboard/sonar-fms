@@ -10,8 +10,8 @@ class MapInvoiceImportController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param InvoiceImport $import
      * @return \Inertia\Response|\Inertia\ResponseFactory
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(InvoiceImport $import)

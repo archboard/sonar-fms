@@ -102,6 +102,7 @@ class InvoiceImportController extends Controller
     {
         if ($import->imported_records > 0) {
             session()->flash('error', __('You have already imported records for this invoice. Please create a new import.'));
+
             return redirect()->route('invoices.imports.show', $import);
         }
 

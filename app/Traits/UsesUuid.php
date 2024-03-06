@@ -9,7 +9,7 @@ trait UsesUuid
     public static function bootUsesUuid()
     {
         static::creating(function ($model) {
-            if (!$model->uuid) {
+            if (! $model->uuid) {
                 $model->uuid = UuidFactory::make();
             }
         });

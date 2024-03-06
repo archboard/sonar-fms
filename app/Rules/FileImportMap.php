@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 class FileImportMap implements Rule
 {
     protected bool $required;
+
     protected string|array $rules;
 
     /**
@@ -33,13 +34,13 @@ class FileImportMap implements Rule
         $requiredKeys = ['id', 'isManual', 'column', 'value'];
 
         if (
-            (!empty(array_diff($requiredKeys, array_keys($value)))) ||
-            ($this->required && !$value['isManual'] && !$value['column'])
+            (! empty(array_diff($requiredKeys, array_keys($value)))) ||
+            ($this->required && ! $value['isManual'] && ! $value['column'])
         ) {
             return false;
         }
 
-        if (!$value['isManual'] && $value['column']) {
+        if (! $value['isManual'] && $value['column']) {
             return true;
         }
 

@@ -16,8 +16,8 @@ class CombineInvoiceController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Request $request)
@@ -33,6 +33,7 @@ class CombineInvoiceController extends Controller
 
         if ($selection->count() < 2) {
             session()->flash('error', __("You don't have enough invoices selected to combine."));
+
             return redirect()->route('invoices.index');
         }
 
@@ -49,7 +50,6 @@ class CombineInvoiceController extends Controller
      * Combines the user's selection into a single invoice
      * that contains the selection as children invoices
      *
-     * @param CombineInvoicesRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CombineInvoicesRequest $request)
@@ -67,9 +67,8 @@ class CombineInvoiceController extends Controller
     /**
      * Edit a parent invoice
      *
-     * @param Request $request
-     * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Request $request, Invoice $invoice)
@@ -100,8 +99,8 @@ class CombineInvoiceController extends Controller
         );
         $assignedUsers = $invoice->users()->pluck('uuid');
         $suggestedUsers = User::whereHas('students', function (Builder $builder) use ($selection) {
-                $builder->whereIn('students.uuid', $selection->pluck('student_uuid'));
-            })
+            $builder->whereIn('students.uuid', $selection->pluck('student_uuid'));
+        })
             ->orWhereIn('uuid', $invoice->users()->pluck('uuid'))
             ->orderBy('last_name')
             ->get();

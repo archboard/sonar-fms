@@ -12,15 +12,15 @@ class StartPaymentImportController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function __invoke(Request $request, PaymentImport $import)
     {
         $this->authorize('create', InvoicePayment::class);
 
-        if (!$import->mapping_valid) {
+        if (! $import->mapping_valid) {
             session()->flash('error', __('Import mapping is incomplete.'));
+
             return redirect()->route('payments.imports.map', $import);
         }
 

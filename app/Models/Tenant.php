@@ -24,6 +24,7 @@ class Tenant extends TenantBase
     use HasResource;
 
     protected $guarded = [];
+
     protected $casts = [
         'allow_password_auth' => 'boolean',
         'allow_oidc_login' => 'boolean',
@@ -81,7 +82,7 @@ class Tenant extends TenantBase
 
     public function getSyncNotificationEmails(): array
     {
-        if (!$this->sync_notification_emails) {
+        if (! $this->sync_notification_emails) {
             return [];
         }
 
@@ -139,6 +140,7 @@ class Tenant extends TenantBase
      * terms, students, teachers, courses, sections, and enrollment
      *
      * @return $this
+     *
      * @throws \Throwable
      */
     public function startSisSync(): static
@@ -191,7 +193,7 @@ class Tenant extends TenantBase
             'smtp_from_name' => $this->smtp_from_name,
             'smtp_from_address' => $this->smtp_from_address,
             'smtp_encryption' => $this->smtp_encryption,
-            'is_syncing' => !!$this->batch_id,
+            'is_syncing' => (bool) $this->batch_id,
             'is_cloud' => config('app.cloud'),
         ];
     }

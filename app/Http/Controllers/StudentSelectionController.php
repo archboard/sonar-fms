@@ -13,7 +13,6 @@ class StudentSelectionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Request $request)
@@ -26,8 +25,6 @@ class StudentSelectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param School $school
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request, School $school)
@@ -59,8 +56,6 @@ class StudentSelectionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, string $id)
@@ -76,8 +71,6 @@ class StudentSelectionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
-     * @param string $studentId
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request, string $studentId)

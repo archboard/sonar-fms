@@ -11,12 +11,11 @@ class UpdateTenancyManagerStatusController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request, User $user)
     {
-        $user->manages_tenancy = !$user->manages_tenancy;
+        $user->manages_tenancy = ! $user->manages_tenancy;
         $user->save();
 
         $message = $user->manages_tenancy

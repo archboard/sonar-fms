@@ -10,8 +10,8 @@ use Illuminate\Notifications\Notification;
 
 class InvoicePdfBatchFinished extends Notification implements ShouldQueue
 {
-    use Queueable;
     use AddsNotificationSubject;
+    use Queueable;
 
     /**
      * Create a new notification instance.

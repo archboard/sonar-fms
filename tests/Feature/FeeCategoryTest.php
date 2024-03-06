@@ -40,7 +40,7 @@ class FeeCategoryTest extends TestCase
         $this->post(route('fee-categories.store'), ['name' => 'Fee Category Name'])
             ->assertOk()
             ->assertJsonStructure([
-                'level', 'message', 'data'
+                'level', 'message', 'data',
             ]);
 
         $this->assertDatabaseHas('fee_categories', [

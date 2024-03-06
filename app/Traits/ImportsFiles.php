@@ -35,7 +35,7 @@ trait ImportsFiles
 
     public function getHeadersAttribute(): array
     {
-        if (!$this->file_path) {
+        if (! $this->file_path) {
             return [];
         }
 
@@ -56,7 +56,8 @@ trait ImportsFiles
         return $value ?? 0;
     }
 
-    #[Pure] public function getExcelImport(): FileImport
+    #[Pure]
+    public function getExcelImport(): FileImport
     {
         return new FileImport($this);
     }
@@ -81,7 +82,7 @@ trait ImportsFiles
 
     public function storeFile(UploadedFile $file, School $school): string
     {
-        $now = now()->format('U') . '-' . Str::random(8);
+        $now = now()->format('U').'-'.Str::random(8);
 
         return $file->storeAs(
             "imports/{$school->id}/{$now}",
@@ -132,11 +133,11 @@ trait ImportsFiles
         $this->fill(Arr::except($data, 'files'));
 
         // This key only exists if the file hasn't been changed
-        if (!isset($fileData['existing'])) {
+        if (! isset($fileData['existing'])) {
             /** @var UploadedFile $file */
             $file = $fileData['file'];
 
-            if (!$file->isValid()) {
+            if (! $file->isValid()) {
                 session()->flash('error', __('Invalid file.'));
                 throw new InvalidImportFileTypeException();
             }

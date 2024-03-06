@@ -10,7 +10,6 @@ class EditBatchDraftInvoicesController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse|\Inertia\Response|\Inertia\ResponseFactory
      */
     public function __invoke(Request $request, string $batch)
@@ -22,6 +21,7 @@ class EditBatchDraftInvoicesController extends Controller
 
         if ($query->count() === 0) {
             session()->flash('error', __('This batch has no unpublished invoices.'));
+
             return back();
         }
 

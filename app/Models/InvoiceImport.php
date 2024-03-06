@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Concerns\FileImport;
 use App\Factories\InvoiceFromImportFactory;
 use App\Jobs\PruneInvoicePdfs;
-use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Rules\FileImportMap;
+use App\Rules\InvoiceImportAmountOrPercentage;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToUser;
 use App\Traits\ImportsFiles;
@@ -26,9 +26,9 @@ use Illuminate\Validation\Rule;
  */
 class InvoiceImport extends Model implements FileImport
 {
-    use HasResource;
     use BelongsToSchool;
     use BelongsToUser;
+    use HasResource;
     use ImportsFiles;
 
     protected $guarded = [];
@@ -141,35 +141,31 @@ class InvoiceImport extends Model implements FileImport
                 'boolean',
             ],
             'tax_rate' => new FileImportMap([
-                Rule::requiredIf(fn () =>
-                    $this->school->collect_tax &&
+                Rule::requiredIf(fn () => $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false) &&
-                    !($mapping['use_school_tax_defaults'] ?? false)
+                    ! ($mapping['use_school_tax_defaults'] ?? false)
                 ),
                 'nullable',
                 'numeric',
             ]),
             'tax_label' => new FileImportMap([
-                Rule::requiredIf(fn () =>
-                    $this->school->collect_tax &&
+                Rule::requiredIf(fn () => $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false) &&
-                    !($mapping['use_school_tax_defaults'] ?? false)
+                    ! ($mapping['use_school_tax_defaults'] ?? false)
                 ),
                 'nullable',
                 'min:1',
             ]),
             'apply_tax_to_all_items' => [
-                Rule::requiredIf(fn () =>
-                    $this->school->collect_tax &&
+                Rule::requiredIf(fn () => $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false)
                 ),
                 'boolean',
             ],
             'tax_items' => [
-                Rule::requiredIf(fn () =>
-                    $this->school->collect_tax &&
+                Rule::requiredIf(fn () => $this->school->collect_tax &&
                     ($mapping['apply_tax'] ?? false) &&
-                    !($mapping['apply_tax_to_all_items'] ?? false)
+                    ! ($mapping['apply_tax_to_all_items'] ?? false)
                 ),
                 'array',
             ],
@@ -191,10 +187,10 @@ class InvoiceImport extends Model implements FileImport
 
         // Dispatch jobs to delete any invoice files
         Bus::batch(
-                $this->invoicePdfs()
-                    ->pluck('relative_path')
-                    ->map(fn ($path) => new PruneInvoicePdfs($path))
-            )
+            $this->invoicePdfs()
+                ->pluck('relative_path')
+                ->map(fn ($path) => new PruneInvoicePdfs($path))
+        )
             ->catch(function (Batch $batch, \Throwable $e) {
                 // Do something
             })

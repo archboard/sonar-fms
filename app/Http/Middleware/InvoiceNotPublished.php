@@ -11,8 +11,6 @@ class InvoiceNotPublished
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -20,7 +18,7 @@ class InvoiceNotPublished
         /** @var Invoice|null $invoice */
         $invoice = $request->route('invoice');
 
-        if ($invoice && !$invoice->published_at) {
+        if ($invoice && ! $invoice->published_at) {
             return $next($request);
         }
 

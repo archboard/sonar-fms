@@ -8,7 +8,6 @@ use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
@@ -16,8 +15,8 @@ use Tests\Traits\SignsIn;
 
 class InvoiceDuplicationTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
     use SignsIn;
 
     /**

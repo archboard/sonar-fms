@@ -34,8 +34,8 @@ class MissingSchoolController extends Controller
                 'required',
                 Rule::exists('schools', 'id')
                     ->where('tenant_id', $user->tenant_id)
-                    ->where('active', true)
-            ]
+                    ->where('active', true),
+            ],
         ]);
 
         $user->update($data);

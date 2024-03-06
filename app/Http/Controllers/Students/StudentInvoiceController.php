@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Students;
 
+use App\Factories\InvoiceFromRequestFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
-use App\Factories\InvoiceFromRequestFactory;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\InvoiceScholarship;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class StudentInvoiceController extends Controller
 {
@@ -50,8 +46,6 @@ class StudentInvoiceController extends Controller
     /**
      * Create a new invoice for a student
      *
-     * @param Request $request
-     * @param Student $student
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function create(Request $request, Student $student)
@@ -77,8 +71,6 @@ class StudentInvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateInvoiceRequest $request
-     * @param Student $student
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateInvoiceRequest $request, Student $student)
@@ -96,8 +88,6 @@ class StudentInvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Student $student
-     * @param Invoice $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Request $request, Student $student, Invoice $invoice)

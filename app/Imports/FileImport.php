@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class FileImport implements ToCollection, WithHeadingRow, WithStartRow, WithCalculatedFormulas
+class FileImport implements ToCollection, WithCalculatedFormulas, WithHeadingRow, WithStartRow
 {
     use Importable;
 
@@ -21,9 +21,6 @@ class FileImport implements ToCollection, WithHeadingRow, WithStartRow, WithCalc
         $this->import = $import;
     }
 
-    /**
-    * @param Collection $collection
-    */
     public function collection(Collection $collection)
     {
         ray($collection);

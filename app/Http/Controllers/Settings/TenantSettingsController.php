@@ -35,7 +35,6 @@ class TenantSettingsController extends Controller
     /**
      * Updates attributes for the tenant
      *
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request)
@@ -48,12 +47,12 @@ class TenantSettingsController extends Controller
             'ps_secret' => 'required|uuid',
             'allow_password_auth' => 'required|boolean',
             'allow_oidc_login' => 'required|boolean',
-            'smtp_host' => [Rule::requiredIf(!config('app.cloud'))],
-            'smtp_port' => [Rule::requiredIf(!config('app.cloud'))],
+            'smtp_host' => [Rule::requiredIf(! config('app.cloud'))],
+            'smtp_port' => [Rule::requiredIf(! config('app.cloud'))],
             'smtp_username' => ['nullable'],
             'smtp_password' => ['nullable'],
-            'smtp_from_name' => [Rule::requiredIf(!config('app.cloud'))],
-            'smtp_from_address' => [Rule::requiredIf(!config('app.cloud')), 'email'],
+            'smtp_from_name' => [Rule::requiredIf(! config('app.cloud'))],
+            'smtp_from_address' => [Rule::requiredIf(! config('app.cloud')), 'email'],
             'smtp_encryption' => ['nullable'],
         ]);
 

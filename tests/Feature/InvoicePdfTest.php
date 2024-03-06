@@ -5,15 +5,14 @@ namespace Tests\Feature;
 use App\Models\Invoice;
 use App\Models\InvoiceLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\Traits\CreatesInvoice;
 
 class InvoicePdfTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
 
@@ -31,7 +30,7 @@ class InvoicePdfTest extends TestCase
         InvoiceLayout::factory()->create(['is_default' => true]);
 
         $this->get(route('invoices.download', $invoice))
-            ->assertDownload($invoice->invoice_number . '.pdf');
+            ->assertDownload($invoice->invoice_number.'.pdf');
 
         $this->assertDatabaseHas('invoice_pdfs', [
             'tenant_id' => $this->tenant->id,

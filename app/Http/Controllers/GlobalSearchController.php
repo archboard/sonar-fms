@@ -8,8 +8,6 @@ use App\Models\Scholarship;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Spatie\Searchable\ModelSearchAspect;
 use Spatie\Searchable\Search;
@@ -20,7 +18,6 @@ class GlobalSearchController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request, School $school)
@@ -60,7 +57,7 @@ class GlobalSearchController extends Controller
         }
 
         if ($user->can('view', Fee::class)) {
-            $search->registerModel(Fee::class, function (ModelSearchAspect $aspect) use ($school) {
+            $search->registerModel(Fee::class, function (ModelSearchAspect $aspect) {
                 $aspect->addSearchableAttribute('name')
                     ->with('currency');
             });

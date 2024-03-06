@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\School;
-use App\Models\Student;
 use App\Models\User;
-use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use GrantHolle\PowerSchool\Auth\Traits\AuthenticatesUsingPowerSchoolWithOpenId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class PowerSchoolOpenIdLoginController extends Controller
 {
@@ -19,16 +16,13 @@ class PowerSchoolOpenIdLoginController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param User $user
-     * @param \Illuminate\Support\Collection $data
      * @return mixed
      */
     protected function authenticated(Request $request, User $user, Collection $data)
     {
         $adminSchools = $data->get('adminSchools', []);
 
-        if (!empty($adminSchools)) {
+        if (! empty($adminSchools)) {
             $schools = School::whereIn('school_number', $adminSchools)
                 ->pluck('id');
             $user->schools()->syncWithoutDetaching($schools);
@@ -54,10 +48,6 @@ class PowerSchoolOpenIdLoginController extends Controller
 
     /**
      * Gets the default attributes to be added for this user
-     *
-     * @param Request $request
-     * @param Collection $data
-     * @return array
      */
     protected function getDefaultAttributes(Request $request, Collection $data): array
     {

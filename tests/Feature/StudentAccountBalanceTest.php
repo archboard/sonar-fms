@@ -9,10 +9,11 @@ use Tests\Traits\CreatesInvoice;
 
 class StudentAccountBalanceTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
+
     protected Student $student;
 
     protected function setUp(): void

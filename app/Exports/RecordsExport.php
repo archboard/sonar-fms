@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class RecordsExport implements Responsable, FromQuery, WithHeadings, WithMapping, WithStrictNullComparison
+class RecordsExport implements FromQuery, Responsable, WithHeadings, WithMapping, WithStrictNullComparison
 {
     use Exportable;
 
@@ -35,8 +35,7 @@ class RecordsExport implements Responsable, FromQuery, WithHeadings, WithMapping
     }
 
     /**
-     * @param \App\Concerns\Exportable $row
-     * @return array
+     * @param  \App\Concerns\Exportable  $row
      */
     public function map($row): array
     {

@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use BeyondCode\Comments\Comment as Model;
 use Carbon\Carbon;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use BeyondCode\Comments\Comment as Model;
 use Illuminate\Support\Str;
 
 /**

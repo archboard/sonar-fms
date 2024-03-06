@@ -28,16 +28,16 @@ use Spatie\Tags\HasTags;
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Searchable, Exportable
+class Student extends Model implements Exportable, Searchable
 {
-    use HasResource;
-    use HasFactory;
-    use BelongsToTenant;
     use BelongsToSchool;
-    use UsesUuid;
+    use BelongsToTenant;
     use HasComments;
-    use HasTags;
+    use HasFactory;
     use HasGradeLevelAttribute;
+    use HasResource;
+    use HasTags;
+    use UsesUuid;
 
     protected $guarded = [];
 
@@ -88,10 +88,10 @@ class Student extends Model implements Searchable, Exportable
     public function scopeSearch(Builder $builder, string $search)
     {
         $builder->where(function (Builder $builder) use ($search) {
-                $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "{$search}%")
-                    ->orWhere('student_number', 'ilike', "{$search}%");
-            });
+            $builder->where(DB::raw("concat(first_name, ' ', last_name)"), 'ilike', "%{$search}%")
+                ->orWhere('email', 'ilike', "{$search}%")
+                ->orWhere('student_number', 'ilike', "{$search}%");
+        });
     }
 
     public function scopeSisId(Builder $builder, $sisId)
@@ -101,7 +101,7 @@ class Student extends Model implements Searchable, Exportable
 
     public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function unpaidInvoices(): Attribute
@@ -176,11 +176,11 @@ class Student extends Model implements Searchable, Exportable
      * @throws \GrantHolle\PowerSchool\Api\Exception\MissingClientCredentialsException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function syncContacts(Collection $schools = null): array
+    public function syncContacts(?Collection $schools = null): array
     {
         $response = PowerSchool::get("/ws/contacts/student/{$this->sis_id}");
 
-        if (!$schools) {
+        if (! $schools) {
             $schools = School::select(['id', 'school_number'])
                 ->get()
                 ->keyBy('school_number');
@@ -200,7 +200,7 @@ class Student extends Model implements Searchable, Exportable
                 )['address'];
 
                 // If no name or email, don't process this relationship
-                if (!$contact['firstName'] || !$contact['lastName'] || !$email) {
+                if (! $contact['firstName'] || ! $contact['lastName'] || ! $email) {
                     return $users;
                 }
 
@@ -296,14 +296,12 @@ class Student extends Model implements Searchable, Exportable
             ->students()
             ->with('currency')
             ->withCount([
-                'invoices as paid_invoices_count' =>
-                    fn ($query) => $query->where('remaining_balance', 0)
-                        ->isNotVoid()
-                        ->published(),
-                'invoices as unpaid_invoices_count' =>
-                    fn ($query) => $query->where('remaining_balance', '>', 0)
-                        ->isNotVoid()
-                        ->published(),
+                'invoices as paid_invoices_count' => fn ($query) => $query->where('remaining_balance', 0)
+                    ->isNotVoid()
+                    ->published(),
+                'invoices as unpaid_invoices_count' => fn ($query) => $query->where('remaining_balance', '>', 0)
+                    ->isNotVoid()
+                    ->published(),
             ])
             ->orderBy('last_name');
 

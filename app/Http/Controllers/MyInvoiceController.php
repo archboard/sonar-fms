@@ -32,7 +32,7 @@ class MyInvoiceController extends Controller
     {
         $this->authorize('view invoice', $invoice);
 
-        $title = $invoice->title . ': ' . $invoice->invoice_number;
+        $title = $invoice->title.': '.$invoice->invoice_number;
         $invoice->fullLoad()
             ->loadChildren();
         $user = $request->user();

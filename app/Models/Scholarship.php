@@ -10,9 +10,9 @@ use App\Traits\HasAmountAttribute;
 use App\Traits\HasPercentageAttribute;
 use App\Traits\ScopeToCurrentSchool;
 use GrantHolle\Http\Resources\Traits\HasResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -21,13 +21,13 @@ use Spatie\Searchable\SearchResult;
  */
 class Scholarship extends Model implements Searchable
 {
-    use HasFactory;
-    use HasResource;
-    use BelongsToTenant;
     use BelongsToSchool;
-    use ScopeToCurrentSchool;
-    use HasPercentageAttribute;
+    use BelongsToTenant;
     use HasAmountAttribute;
+    use HasFactory;
+    use HasPercentageAttribute;
+    use HasResource;
+    use ScopeToCurrentSchool;
 
     protected $guarded = [];
 

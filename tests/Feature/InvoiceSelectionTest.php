@@ -12,8 +12,8 @@ use Tests\Traits\CreatesInvoice;
 
 class InvoiceSelectionTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -77,8 +77,8 @@ class InvoiceSelectionTest extends TestCase
         $this->createInvoice(['school_id' => $otherSchool->id]);
 
         $this->post(route('invoice-selection.store'), [
-                'batch_id' => $batchId,
-            ])
+            'batch_id' => $batchId,
+        ])
             ->assertRedirect()
             ->assertSessionHas('success');
 

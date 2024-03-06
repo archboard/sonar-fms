@@ -9,7 +9,7 @@ trait CreatesUuidForId
     public static function bootCreatesUuidForId()
     {
         static::creating(function ($model) {
-            if (!$model->id) {
+            if (! $model->id) {
                 $model->id = UuidFactory::make();
             }
         });

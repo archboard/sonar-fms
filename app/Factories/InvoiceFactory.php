@@ -24,33 +24,53 @@ use Illuminate\Support\Facades\Log;
 abstract class InvoiceFactory extends BaseImportFactory
 {
     public ?School $school = null;
+
     protected Collection $students;
+
     protected User $user;
+
     protected string $invoiceNumberPrefix = '';
+
     protected ?string $originalBatchId = null;
+
     protected ?string $pdfBatchId = null;
+
     protected Collection $studentInvoiceMap;
+
     protected Collection $invoiceNumberMap;
 
     // These are the collections that store the attributes
     // that need to be stored in the db
     protected Collection $invoices;
+
     protected Collection $invoiceItems;
+
     protected Collection $invoiceScholarships;
+
     protected Collection $itemScholarshipPivot;
+
     protected Collection $invoicePaymentSchedules;
+
     protected Collection $invoicePaymentTerms;
+
     protected Collection $invoiceTaxItems;
 
     protected array $fillableInvoiceAttributes;
+
     protected array $fillableInvoiceItemAttributes;
+
     protected array $fillableScholarshipAttributes;
+
     protected array $fillablePaymentScheduleAttributes;
+
     protected array $fillablePaymentTermAttributes;
 
     protected string $now;
+
     protected string $notifyAt;
+
     protected bool $asDraft = false;
+
     protected string $activityDescription;
 
     public function __construct()
@@ -220,7 +240,7 @@ abstract class InvoiceFactory extends BaseImportFactory
                     ? 'Created as a draft by :user.'
                     : 'Created by :user.';
 
-                if (!empty($this->activityDescription)) {
+                if (! empty($this->activityDescription)) {
                     $description = $this->activityDescription;
                 }
 
@@ -240,13 +260,13 @@ abstract class InvoiceFactory extends BaseImportFactory
         });
 
         $uuids = $this->invoices->map(function (array $invoice) {
-            if ($invoice['notify'] && !$this->asDraft) {
+            if ($invoice['notify'] && ! $this->asDraft) {
                 SendNewInvoiceNotification::dispatch($invoice['uuid'])
                     ->delay(Carbon::parse($invoice['notify_at']));
             }
 
             // Kick off caching account balances
-            if (!$this->asDraft && ($invoice['student_uuid'] ?? false)) {
+            if (! $this->asDraft && ($invoice['student_uuid'] ?? false)) {
                 SetStudentCachedValues::dispatch($invoice['student_uuid']);
             }
 
@@ -255,9 +275,9 @@ abstract class InvoiceFactory extends BaseImportFactory
 
         // Start the batch for the pdfs after dispatching the account balance jobs
         $batch = Bus::batch(
-                $this->invoices->pluck('uuid')
-                    ->map(fn ($uuid) => new CreateInvoicePdf($uuid))
-            )
+            $this->invoices->pluck('uuid')
+                ->map(fn ($uuid) => new CreateInvoicePdf($uuid))
+        )
             ->then(function (Batch $batch) {
                 InvoiceImport::where('pdf_batch_id', $batch->id)
                     ->update(['pdf_batch_id' => null]);

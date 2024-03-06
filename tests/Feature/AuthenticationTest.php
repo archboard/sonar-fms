@@ -31,9 +31,9 @@ class AuthenticationTest extends TestCase
         $user = $this->createUser();
 
         $this->post('/login', [
-                'email' => strtoupper($user->email),
-                'password' => 'password',
-            ])
+            'email' => strtoupper($user->email),
+            'password' => 'password',
+        ])
             ->assertRedirect(RouteServiceProvider::HOME);
 
         $this->assertAuthenticated();
@@ -49,9 +49,9 @@ class AuthenticationTest extends TestCase
         $user = $this->createUser();
 
         $this->post('/login', [
-                'email' => $user->email,
-                'password' => 'wrong-password',
-            ])
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ])
             ->assertSessionHasErrors();
 
         $this->assertGuest();

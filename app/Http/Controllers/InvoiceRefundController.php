@@ -28,6 +28,7 @@ class InvoiceRefundController extends Controller
 
         if ($invoice->invoicePayments->isEmpty()) {
             session()->flash('error', __('No payments have been made yet.'));
+
             return redirect()->route('invoices.show', $invoice);
         }
 

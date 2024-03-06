@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Currency;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 

@@ -28,7 +28,6 @@ class PersonalSettingsController extends Controller
     /**
      * Updates a users name, email, and password
      *
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request)

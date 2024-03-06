@@ -13,9 +13,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PaymentImportTemplate extends Model
 {
-    use HasFactory;
     use BelongsToSchool;
     use BelongsToUser;
+    use HasFactory;
     use HasResource;
 
     protected $guarded = [];

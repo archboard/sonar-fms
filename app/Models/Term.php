@@ -45,7 +45,7 @@ class Term extends Model
         $start = substr((string) $year, 2);
         $end = substr((string) ($year + 1), 2);
 
-        return $start . '-' . $end;
+        return $start.'-'.$end;
     }
 
     public static function makeFromNow(): static
@@ -58,8 +58,8 @@ class Term extends Model
             'ends_at' => $today->addYear()->toDateString(),
             'start_year' => $today->year,
             'portion' => 1,
-            'name' => $today->year . '-' . $ends->year,
-            'abbreviation' => $today->format('y') . '-' . $ends->format('y'),
+            'name' => $today->year.'-'.$ends->year,
+            'abbreviation' => $today->format('y').'-'.$ends->format('y'),
         ]);
     }
 }

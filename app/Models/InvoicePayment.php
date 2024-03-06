@@ -33,14 +33,14 @@ use Spatie\Browsershot\Browsershot;
  */
 class InvoicePayment extends Model implements Exportable
 {
+    use BelongsToInvoice;
+    use BelongsToSchool;
+    use BelongsToTenant;
+    use HasAmountAttribute;
     use HasFactory;
     use HasResource;
-    use BelongsToTenant;
-    use BelongsToSchool;
-    use BelongsToInvoice;
-    use HasAmountAttribute;
-    use UsesUuid;
     use LogsActivity;
+    use UsesUuid;
 
     protected $guarded = [];
 
@@ -110,7 +110,7 @@ class InvoicePayment extends Model implements Exportable
 
     public function getPaidAtFormattedAttribute(): string
     {
-        if (!$this->paid_at) {
+        if (! $this->paid_at) {
             return '';
         }
 
@@ -127,7 +127,7 @@ class InvoicePayment extends Model implements Exportable
         return Attribute::get(function () {
             $index = 0;
 
-            if (!$this->invoice_payment_term_uuid) {
+            if (! $this->invoice_payment_term_uuid) {
                 return $index;
             }
 
@@ -287,7 +287,7 @@ class InvoicePayment extends Model implements Exportable
 
         $content = $this->receiptView($layout, $receipt)->render();
 
-        $userDir = realpath(sys_get_temp_dir() . "/sonar-fms-pdf/receipts-{$layout->id}");
+        $userDir = realpath(sys_get_temp_dir()."/sonar-fms-pdf/receipts-{$layout->id}");
         $disk = Receipt::getDisk();
         $disk->makeDirectory(dirname($receipt->path));
 
@@ -300,7 +300,7 @@ class InvoicePayment extends Model implements Exportable
             ->setNodeBinary(config('services.node.binary'))
             ->setNpmBinary(config('services.node.npm'))
             ->addChromiumArguments([
-                'user-data-dir' => $userDir
+                'user-data-dir' => $userDir,
             ])
             ->ignoreHttpsErrors()
             ->hideHeader()

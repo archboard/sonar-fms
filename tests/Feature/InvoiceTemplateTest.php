@@ -44,7 +44,7 @@ class InvoiceTemplateTest extends TestCase
             'name' => 'My new template',
             'template' => [
                 'title' => 'Title',
-                'description' => 'Data'
+                'description' => 'Data',
             ],
             'for_import' => false,
         ];
@@ -72,7 +72,7 @@ class InvoiceTemplateTest extends TestCase
             'name' => 'My updated template',
             'template' => [
                 'title' => 'Title',
-                'description' => 'Data'
+                'description' => 'Data',
             ],
         ];
 

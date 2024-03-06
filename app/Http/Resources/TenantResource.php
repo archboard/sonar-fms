@@ -22,7 +22,7 @@ class TenantResource extends JsonResource
             'allow_password_auth' => $this->allow_password_auth,
             'sync_times' => SyncTimeResource::collection($this->whenLoaded('syncTimes')),
             'schools' => SchoolResource::collection($this->whenLoaded('schools')),
-            'is_syncing' => !!$this->batch_id,
+            'is_syncing' => (bool) $this->batch_id,
             'is_cloud' => config('app.cloud'),
             'sis' => $this->sis,
         ];

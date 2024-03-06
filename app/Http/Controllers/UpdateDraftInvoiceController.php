@@ -11,8 +11,6 @@ class UpdateDraftInvoiceController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param UpdateInvoiceRequest $request
-     * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(UpdateInvoiceRequest $request, Invoice $invoice)

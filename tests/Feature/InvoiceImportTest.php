@@ -20,7 +20,6 @@ use App\Models\InvoiceTemplate;
 use App\Models\Scholarship;
 use App\Models\Student;
 use App\Models\Term;
-use Illuminate\Bus\Batch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -39,10 +38,10 @@ use Tests\Traits\SignsIn;
 
 class InvoiceImportTest extends TestCase
 {
+    use GetsUploadedFiles;
+    use MapsFields;
     use RefreshDatabase;
     use SignsIn;
-    use MapsFields;
-    use GetsUploadedFiles;
 
     public function test_cannot_access_imports_without_permission()
     {
@@ -290,7 +289,7 @@ class InvoiceImportTest extends TestCase
                     'amount' => $this->makeMapField(),
                     'percentage' => $this->makeMapField('discount'),
                     'applies_to' => [],
-                ]
+                ],
             ],
             'payment_schedules' => [],
             'apply_tax' => true,
@@ -303,7 +302,7 @@ class InvoiceImportTest extends TestCase
                     'item_id' => $itemId,
                     'selected' => true,
                     'tax_rate' => $this->makeMapField(value: 10, isManual: true),
-                ]
+                ],
             ],
         ];
 
@@ -359,10 +358,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
 
         // Check that the import validity is checked
@@ -433,10 +432,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -449,7 +448,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -463,7 +462,7 @@ class InvoiceImportTest extends TestCase
 
         $values = $contents
             ->pluck('student number')
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
 
         $students = $import->school->students()
             ->whereIn('student_number', $values)
@@ -478,7 +477,7 @@ class InvoiceImportTest extends TestCase
             $total = $row['invoice amount'] * 100;
             $discount = 0;
 
-            if (!empty($row['discount'])) {
+            if (! empty($row['discount'])) {
                 $this->assertEquals(1, $invoice->invoiceScholarships->count());
                 /** @var InvoiceScholarship $scholarship */
                 $scholarship = $invoice->invoiceScholarships->first();
@@ -577,7 +576,7 @@ class InvoiceImportTest extends TestCase
                 ],
                 'scholarships' => [],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -590,7 +589,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -603,7 +602,7 @@ class InvoiceImportTest extends TestCase
 
         $values = $contents
             ->pluck('student number')
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
 
         $students = $import->school->students()
             ->whereIn('student_number', $values)
@@ -616,7 +615,7 @@ class InvoiceImportTest extends TestCase
             $this->assertEquals(1, $invoice->invoiceItems->count());
 
             $this->assertEquals("{$student->last_name}, {$student->first_name} {$term->abbreviation} Invoice", $invoice->title);
-            $this->assertEquals("{last_name}, {first_name} {term} Invoice", $invoice->raw_title);
+            $this->assertEquals('{last_name}, {first_name} {term} Invoice', $invoice->raw_title);
             $this->assertNotNull($invoice->invoice_number);
             $this->assertNull($invoice->term_id);
             $this->assertNotNull($invoice->invoiceImport);
@@ -664,7 +663,7 @@ class InvoiceImportTest extends TestCase
                 ],
                 'scholarships' => [],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -677,7 +676,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -742,10 +741,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -758,7 +757,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -817,10 +816,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -833,7 +832,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -845,7 +844,7 @@ class InvoiceImportTest extends TestCase
         $contents = $import->getImportContents();
         $values = $contents
             ->pluck('student number')
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
         $import->school->students()
             ->whereIn('student_number', $values)
             ->get();
@@ -921,7 +920,7 @@ class InvoiceImportTest extends TestCase
                 ],
                 'scholarships' => [],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -945,7 +944,7 @@ class InvoiceImportTest extends TestCase
         $this->assertEquals(0, $import->imported_records);
         $this->assertEquals(3, $import->failed_records);
         $this->assertCount(3, $import->results);
-        $this->assertTrue(collect($import->results)->every(fn ($r) => !$r['successful']));
+        $this->assertTrue(collect($import->results)->every(fn ($r) => ! $r['successful']));
         Event::assertDispatched(InvoiceImportFinished::class);
     }
 
@@ -992,10 +991,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -1040,7 +1039,7 @@ class InvoiceImportTest extends TestCase
         $this->school->fees()->save(
             Fee::factory()->make([
                 'id' => 1,
-                'tenant_id' => $this->tenant->id
+                'tenant_id' => $this->tenant->id,
             ])
         );
 
@@ -1049,7 +1048,7 @@ class InvoiceImportTest extends TestCase
             ->save(
                 Scholarship::factory()->make([
                     'id' => 1,
-                    'tenant_id' => $this->tenant->id
+                    'tenant_id' => $this->tenant->id,
                 ])
             );
 
@@ -1104,7 +1103,7 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField('discount 2 amount'),
                         'percentage' => $this->makeMapField(),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [
                     [
@@ -1127,7 +1126,7 @@ class InvoiceImportTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -1177,26 +1176,26 @@ class InvoiceImportTest extends TestCase
                 $this->assertNotNull($invoice->invoiceItems->firstWhere('fee_id', $row['item 1 fee']));
             }
 
-            if (!empty($row['item 1 amount'])) {
+            if (! empty($row['item 1 amount'])) {
                 $this->assertNotNull($invoice->invoiceItems->firstWhere('amount', $row['item 1 amount'] * 100));
                 $this->assertNotNull($invoice->invoiceItems->firstWhere('name', $row['item 1 name']));
             }
 
-            if (!empty($row['item 2 amount'])) {
+            if (! empty($row['item 2 amount'])) {
                 $this->assertNotNull($invoice->invoiceItems->firstWhere('amount', $row['item 2 amount'] * 100));
                 $this->assertNotNull($invoice->invoiceItems->firstWhere('name', $row['item 2 name']));
             }
 
-            if (!empty($row['discount 1 percentage'])) {
+            if (! empty($row['discount 1 percentage'])) {
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('percentage', $row['discount 1 percentage']));
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('name', $row['discount 1 name']));
             }
 
-            if (!empty($row['discount 1 scholarship'])) {
+            if (! empty($row['discount 1 scholarship'])) {
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('scholarship_id', $row['discount 1 scholarship']));
             }
 
-            if (!empty($row['discount 2 amount'])) {
+            if (! empty($row['discount 2 amount'])) {
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('amount', $row['discount 2 amount'] * 100));
                 $this->assertNotNull($invoice->invoiceScholarships->firstWhere('name', $row['discount 2 name']));
             }
@@ -1296,7 +1295,7 @@ class InvoiceImportTest extends TestCase
                     'amount' => $this->makeMapField(),
                     'percentage' => $this->makeMapField('discount'),
                     'applies_to' => [],
-                ]
+                ],
             ],
             'payment_schedules' => [],
             'apply_tax' => true,
@@ -1419,15 +1418,15 @@ class InvoiceImportTest extends TestCase
                     [
                         'item_id' => $itemId1,
                         'selected' => true,
-                        'tax_rate' => $this->makeMapField('tax rate')
+                        'tax_rate' => $this->makeMapField('tax rate'),
                     ],
                     [
                         'item_id' => $itemId2,
                         'selected' => false,
-                        'tax_rate' => $this->makeMapField(value: 0.05, isManual: true)
+                        'tax_rate' => $this->makeMapField(value: 0.05, isManual: true),
                     ],
                 ],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -1440,7 +1439,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -1454,7 +1453,7 @@ class InvoiceImportTest extends TestCase
 
         $values = $contents
             ->pluck('student number')
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
 
         $students = $import->school->students()
             ->whereIn('student_number', $values)
@@ -1486,7 +1485,7 @@ class InvoiceImportTest extends TestCase
             $this->assertTrue($invoice->invoiceScholarships->count() > 0);
 
             // This discount only applies to item 1
-            if (!empty($row['discount'])) {
+            if (! empty($row['discount'])) {
                 /** @var InvoiceScholarship $scholarship1 */
                 $scholarship1 = $invoice->invoiceScholarships->firstWhere('name', 'Assistance 1');
                 $this->assertEquals($row['discount'], $scholarship1->percentage);
@@ -1495,7 +1494,7 @@ class InvoiceImportTest extends TestCase
                 $discount += $scholarship1->calculated_amount;
             }
 
-            if (!empty($row['discount amount'])) {
+            if (! empty($row['discount amount'])) {
                 /** @var InvoiceScholarship $scholarship2 */
                 $scholarship2 = $invoice->invoiceScholarships->firstWhere('name', 'Assistance 2');
 
@@ -1611,10 +1610,10 @@ class InvoiceImportTest extends TestCase
                         'amount' => $this->makeMapField(),
                         'percentage' => $this->makeMapField('discount'),
                         'applies_to' => [],
-                    ]
+                    ],
                 ],
                 'payment_schedules' => [],
-            ]
+            ],
         ]);
         $import->mapping_valid = $import->hasValidMapping();
         $import->setTotalRecords();
@@ -1627,7 +1626,7 @@ class InvoiceImportTest extends TestCase
             ->each(function (Collection $row, $index) use ($students) {
                 $studentNumber = $row->get('student number');
 
-                if (!blank($studentNumber)) {
+                if (! blank($studentNumber)) {
                     $students->get($index)->update(['student_number' => $row->get('student number')]);
                 }
             });
@@ -1641,7 +1640,7 @@ class InvoiceImportTest extends TestCase
 
         $values = $contents
             ->pluck('student number')
-            ->filter(fn ($value) => !is_null($value));
+            ->filter(fn ($value) => ! is_null($value));
 
         $students = $import->school->students()
             ->whereIn('student_number', $values)
@@ -1656,7 +1655,7 @@ class InvoiceImportTest extends TestCase
             $total = $row['invoice amount'] * 100;
             $discount = 0;
 
-            if (!empty($row['discount'])) {
+            if (! empty($row['discount'])) {
                 $this->assertEquals(0, $invoice->invoiceScholarships->count());
                 $result = Arr::first($import->results, fn ($e) => $e['result'] === $invoice->uuid);
                 $this->assertCount(1, $result['warnings']);

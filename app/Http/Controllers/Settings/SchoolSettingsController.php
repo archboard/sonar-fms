@@ -13,7 +13,6 @@ class SchoolSettingsController extends Controller
     /**
      * Show the school settings page
      *
-     * @param Request $request
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function index(Request $request)
@@ -31,7 +30,6 @@ class SchoolSettingsController extends Controller
     /**
      * Updates the current school
      *
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request)
@@ -40,7 +38,7 @@ class SchoolSettingsController extends Controller
             'currency_id' => 'required|exists:currencies,id',
             'timezone' => [
                 'required',
-                Rule::in(timezones()->keys())
+                Rule::in(timezones()->keys()),
             ],
             'collect_tax' => 'required|boolean',
             'include_draft_stamp' => 'required|boolean',

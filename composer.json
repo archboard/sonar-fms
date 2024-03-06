@@ -39,6 +39,7 @@
     "barryvdh/laravel-ide-helper": "^2.9",
     "brianium/paratest": "^6.4",
     "fakerphp/faker": "^1.9.1",
+    "laravel/pint": "^1.14",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^6.0",
     "phpunit/phpunit": "^9.3.3"
@@ -87,7 +88,7 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan horizon:publish"
     ],
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G",
+    "format": "./vendor/bin/pint",
     "test": "./vendor/bin/phpunit --stop-on-failure"
   }
 }

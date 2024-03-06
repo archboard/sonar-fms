@@ -10,7 +10,7 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
  */
 class Activity extends BaseActivity
 {
-    public function getDescriptionAttribute(?string $description):? string
+    public function getDescriptionAttribute(?string $description): ?string
     {
         if (is_null($description)) {
             return null;
@@ -52,7 +52,7 @@ class Activity extends BaseActivity
 
     protected function getChangeAttributeValue(string $attribute, ?string $value): ?string
     {
-        if (!$value) {
+        if (! $value) {
             return $value;
         }
 

@@ -10,7 +10,6 @@ class ChangeSchoolController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request)
@@ -24,6 +23,7 @@ class ChangeSchoolController extends Controller
 
         if ($user->schools()->where($data)->doesntExist()) {
             session()->flash('error', __('You do not have access to this school.'));
+
             return back();
         }
 

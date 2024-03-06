@@ -44,15 +44,15 @@ class Handler extends ExceptionHandler
         $response = parent::render($request, $e);
 
         if (
-            !app()->environment('local') &&
+            ! app()->environment('local') &&
             in_array($response->status(), [500, 503, 404, 403])
         ) {
             $title = __('Error');
 
             return inertia('Error', [
-                    'status' => $response->status(),
-                    'title' => $title
-                ])
+                'status' => $response->status(),
+                'title' => $title,
+            ])
                 ->withViewData(compact('title'))
                 ->toResponse($request)
                 ->setStatusCode($response->status());

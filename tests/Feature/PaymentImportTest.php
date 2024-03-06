@@ -25,12 +25,12 @@ use Tests\Traits\MapsFields;
 
 class PaymentImportTest extends TestCase
 {
-    use RefreshDatabase;
-    use WithFaker;
-    use MapsFields;
-    use GetsUploadedFiles;
     use CreatesInvoice;
     use CreatesPaymentImports;
+    use GetsUploadedFiles;
+    use MapsFields;
+    use RefreshDatabase;
+    use WithFaker;
 
     protected bool $signIn = true;
 
@@ -277,7 +277,7 @@ class PaymentImportTest extends TestCase
         $import = $this->createImport();
 
         $this->get(route('payments.imports.preview', $import))
-            ->assertRedirect(route('payments.imports.show', $import) . '?preview=1');
+            ->assertRedirect(route('payments.imports.show', $import).'?preview=1');
     }
 
     public function test_can_import_payments()

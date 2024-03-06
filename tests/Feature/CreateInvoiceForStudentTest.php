@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Http\Requests\CreateInvoiceRequest;
 use App\Jobs\SendNewInvoiceNotification;
 use App\Jobs\SetStudentCachedValues;
-use App\Models\Activity;
 use App\Models\Fee;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -26,15 +25,14 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
-use GrantHolle\Timezone\Facades\Timezone;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
 class CreateInvoiceForStudentTest extends TestCase
 {
     use RefreshDatabase;
-    use WithFaker;
     use SignsIn;
+    use WithFaker;
 
     protected function getTestRequest($data = []): CreateInvoiceRequest
     {
@@ -164,7 +162,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'name' => 'Not matching name',
                     'amount_per_unit' => 100,
                     'quantity' => 2,
-                ]
+                ],
             ],
             'scholarships' => [],
             'payment_schedules' => [],
@@ -305,7 +303,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'name' => 'Not matching name',
                     'amount_per_unit' => 100,
                     'quantity' => 2,
-                ]
+                ],
             ],
             'scholarships' => [
                 [
@@ -315,7 +313,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'amount' => 100,
                     'percentage' => null,
                     'resolution_strategy' => Least::class,
-                ]
+                ],
             ],
             'payment_schedules' => [],
         ];
@@ -380,7 +378,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'name' => 'Not matching name',
                     'amount_per_unit' => 100,
                     'quantity' => 2,
-                ]
+                ],
             ],
             'scholarships' => [
                 [
@@ -390,8 +388,8 @@ class CreateInvoiceForStudentTest extends TestCase
                     'amount' => 100,
                     'percentage' => null,
                     'resolution_strategy' => Least::class,
-                    'applies_to' => [$item1Id]
-                ]
+                    'applies_to' => [$item1Id],
+                ],
             ],
             'payment_schedules' => [],
         ];
@@ -797,7 +795,7 @@ class CreateInvoiceForStudentTest extends TestCase
                 'invoice_payment_schedules',
                 [
                     'invoice_uuid' => $invoice->uuid,
-                    'amount' => array_reduce($schedule['terms'], fn (int $total, array $item) => $total + $item['amount'], 0)
+                    'amount' => array_reduce($schedule['terms'], fn (int $total, array $item) => $total + $item['amount'], 0),
                 ]
             );
         }
@@ -954,7 +952,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'item_id' => $item3,
                     'selected' => true,
                     'tax_rate' => 9,
-                ]
+                ],
             ],
         ];
 
@@ -1345,7 +1343,7 @@ class CreateInvoiceForStudentTest extends TestCase
                     'item_id' => $item3,
                     'selected' => true,
                     'tax_rate' => 9,
-                ]
+                ],
             ],
         ];
 

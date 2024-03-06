@@ -19,10 +19,11 @@ use Tests\Traits\CreatesInvoice;
 
 class CombineInvoicesTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
+
     protected Collection $selection;
 
     protected function createSelection()
@@ -87,9 +88,9 @@ class CombineInvoicesTest extends TestCase
                         [
                             'id' => $this->uuid(),
                             'amount' => 'not a number',
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
 

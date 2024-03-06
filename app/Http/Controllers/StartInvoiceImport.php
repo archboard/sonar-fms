@@ -11,14 +11,13 @@ class StartInvoiceImport extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request, InvoiceImport $import)
     {
         $this->authorize('create', $import);
 
-        if (!$import->mapping_valid) {
+        if (! $import->mapping_valid) {
             session()->flash('error', __('Import mapping is incomplete.'));
 
             return redirect()->route('invoices.imports.map', $import);

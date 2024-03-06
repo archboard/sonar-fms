@@ -32,7 +32,7 @@ class RecordExportFactory extends Factory
                 'status' => [],
                 'date_start' => null,
                 'date_end' => null,
-            ]
+            ],
         ];
     }
 }

@@ -6,6 +6,6 @@ trait AddsNotificationSubject
 {
     public function makeSubject(string $subject): string
     {
-        return '[Sonar FMS] ' . $subject;
+        return '[Sonar FMS] '.$subject;
     }
 }

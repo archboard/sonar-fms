@@ -61,7 +61,6 @@ class InvoiceLayoutController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param SaveLayoutRequest $request
      * @return RedirectResponse
      */
     public function store(SaveLayoutRequest $request)
@@ -76,7 +75,6 @@ class InvoiceLayoutController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param InvoiceLayout $layout
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(InvoiceLayout $layout)
@@ -87,7 +85,6 @@ class InvoiceLayoutController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param InvoiceLayout $layout
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(InvoiceLayout $layout)
@@ -111,8 +108,6 @@ class InvoiceLayoutController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param SaveLayoutRequest $request
-     * @param InvoiceLayout $layout
      * @return RedirectResponse
      */
     public function update(SaveLayoutRequest $request, InvoiceLayout $layout)
@@ -127,7 +122,6 @@ class InvoiceLayoutController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param InvoiceLayout $layout
      * @return RedirectResponse
      */
     public function destroy(InvoiceLayout $layout)

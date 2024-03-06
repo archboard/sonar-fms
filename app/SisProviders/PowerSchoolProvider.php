@@ -6,22 +6,20 @@ use App\Events\SchoolSyncComplete;
 use App\Factories\UuidFactory;
 use App\Models\Course;
 use App\Models\School;
-use App\Models\Section;
 use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\User;
-use GrantHolle\PowerSchool\Api\Facades\PowerSchool;
 use GrantHolle\PowerSchool\Api\RequestBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Ramsey\Uuid\Uuid;
 
 class PowerSchoolProvider implements SisProvider
 {
     protected Tenant $tenant;
+
     protected RequestBuilder $builder;
 
     public function __construct(Tenant $tenant)
@@ -82,10 +80,10 @@ class PowerSchoolProvider implements SisProvider
 
         if (
             config('app.cloud') &&
-            !$force &&
-            !$this->tenant->schools()->where('sis_id', $sisId)->exists()
+            ! $force &&
+            ! $this->tenant->schools()->where('sis_id', $sisId)->exists()
         ) {
-            throw new \Exception("Your license does not support this school. Please update your license and try again.");
+            throw new \Exception('Your license does not support this school. Please update your license and try again.');
         }
 
         return $this->builder
@@ -135,7 +133,7 @@ class PowerSchoolProvider implements SisProvider
             foreach ($results as $user) {
                 $email = strtolower($user['emails']['work_email'] ?? '');
 
-                if (!$email) {
+                if (! $email) {
                     continue;
                 }
 
@@ -155,7 +153,7 @@ class PowerSchoolProvider implements SisProvider
                             ->updateExistingPivot($school->id, ['staff_id' => $user['id']]);
                     }
                     // If there isn't a school relationship, add it here
-                    elseif (!$existingSchool) {
+                    elseif (! $existingSchool) {
                         $schoolUser->push([
                             'school_id' => $school->id,
                             'user_uuid' => $existingUser->uuid,
@@ -218,6 +216,7 @@ class PowerSchoolProvider implements SisProvider
                     // If it exists, then update
                     if ($existingStudent = $existingStudents->get($student['id'])) {
                         $existingStudent->update($attributes);
+
                         return $entries;
                     }
 
@@ -264,13 +263,14 @@ class PowerSchoolProvider implements SisProvider
 
         if ($student) {
             $student->update($attributes);
+
             return;
         }
 
         $school = School::where('sis_id', $response->school_enrollment->school_id)
             ->first();
 
-        if (!$school) {
+        if (! $school) {
             return;
         }
 
@@ -381,7 +381,7 @@ class PowerSchoolProvider implements SisProvider
                             'ends_at' => $term['end_date'],
                         ]
                     );
-        });
+            });
     }
 
     public function syncSchoolStudentGuardians($sisId)
@@ -409,18 +409,18 @@ class PowerSchoolProvider implements SisProvider
                 // or the result doesn't have an email address/name
                 // we can't do anything about the user record
                 if (
-                    !isset($result['sis_id']) ||
-                    !$students->has($result['sis_id']) ||
-                    !isset($result['other_email']) ||
-                    !isset($result['first_name']) ||
-                    !isset($result['last_name'])
+                    ! isset($result['sis_id']) ||
+                    ! $students->has($result['sis_id']) ||
+                    ! isset($result['other_email']) ||
+                    ! isset($result['first_name']) ||
+                    ! isset($result['last_name'])
                 ) {
                     continue;
                 }
 
                 $contactId = (int) $result['contact_id'];
 
-                if (!$users->has($contactId)) {
+                if (! $users->has($contactId)) {
                     $uuid = UuidFactory::make();
                     $users->put($contactId, $uuid);
 
@@ -442,9 +442,9 @@ class PowerSchoolProvider implements SisProvider
 
                 $studentUuid = $students->get($result['sis_id']);
                 $userUuid = $users->get($contactId);
-                $key = $studentUuid . $userUuid;
+                $key = $studentUuid.$userUuid;
 
-                if (!isset($relations[$key])) {
+                if (! isset($relations[$key])) {
                     $relations[$key] = 1;
 
                     $studentUser[] = [
@@ -477,7 +477,7 @@ class PowerSchoolProvider implements SisProvider
      * Syncs everything for a school:
      * staff, students, courses, sections, and enrollment
      *
-     * @param int|string $sisId
+     * @param  int|string  $sisId
      */
     public function fullSchoolSync($sisId)
     {
@@ -504,15 +504,15 @@ class PowerSchoolProvider implements SisProvider
         ray()->measure();
 
         // These are courses/sections/enrollments and aren't very relevant
-//        ray('syncing school courses');
-//        $this->syncSchoolCourses($school);
-//        ray()->measure();
-//        ray('syncing school sections');
-//        $this->syncSchoolSections($school);
-//        ray()->measure();
-//        ray('syncing school enrollment');
-//        $this->syncSchoolStudentEnrollment($school);
-//        ray()->measure();
+        //        ray('syncing school courses');
+        //        $this->syncSchoolCourses($school);
+        //        ray()->measure();
+        //        ray('syncing school sections');
+        //        $this->syncSchoolSections($school);
+        //        ray()->measure();
+        //        ray('syncing school enrollment');
+        //        $this->syncSchoolStudentEnrollment($school);
+        //        ray()->measure();
 
         \Bouncer::refresh();
         event(new SchoolSyncComplete($school));
@@ -618,8 +618,8 @@ class PowerSchoolProvider implements SisProvider
         ];
 
         $this->getBuilder()
-             ->withData($data)
-             ->to('/ws/v1/event_subscription')
-             ->put();
+            ->withData($data)
+            ->to('/ws/v1/event_subscription')
+            ->put();
     }
 }

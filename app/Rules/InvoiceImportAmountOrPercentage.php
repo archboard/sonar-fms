@@ -10,7 +10,9 @@ use Illuminate\Support\Str;
 class InvoiceImportAmountOrPercentage implements Rule
 {
     public array $data;
+
     public string $key;
+
     public ?string $message;
 
     /**
@@ -18,7 +20,7 @@ class InvoiceImportAmountOrPercentage implements Rule
      *
      * @return void
      */
-    public function __construct(array $data, string $key, string $message = null)
+    public function __construct(array $data, string $key, ?string $message = null)
     {
         $this->data = $data;
         $this->key = $key;
@@ -34,27 +36,27 @@ class InvoiceImportAmountOrPercentage implements Rule
      */
     public function passes($attribute, $value)
     {
-//        ray($attribute, $value);
+        //        ray($attribute, $value);
         $prefix = Str::beforeLast($attribute, '.');
         $useAmount = Arr::get($this->data, "{$prefix}.use_amount");
 
         // If it is set to use the amount, validate the amount
         if (
             ($useAmount && Str::endsWith($attribute, 'amount')) ||
-            (!$useAmount && Str::endsWith($attribute, 'percentage'))
+            (! $useAmount && Str::endsWith($attribute, 'percentage'))
         ) {
             return Validator::make(['value' => $value], [
-                'value' => new FileImportMap('required', true)
+                'value' => new FileImportMap('required', true),
             ])->passes();
         }
 
         // Get the percentage value
-//        $without = Arr::get($this->data, "{$prefix}.{$this->key}");
-//        ray('percentage', $without);
-//
-//        return Validator::make(['percentage' => $without], [
-//            'percentage' => new InvoiceImportMap('required', true)
-//        ])->passes();
+        //        $without = Arr::get($this->data, "{$prefix}.{$this->key}");
+        //        ray('percentage', $without);
+        //
+        //        return Validator::make(['percentage' => $without], [
+        //            'percentage' => new InvoiceImportMap('required', true)
+        //        ])->passes();
 
         return true;
     }

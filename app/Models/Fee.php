@@ -19,12 +19,12 @@ use Spatie\Searchable\SearchResult;
  */
 class Fee extends Model implements Searchable
 {
+    use BelongsToSchool;
+    use BelongsToTenant;
+    use HasAmountAttribute;
     use HasFactory;
     use HasResource;
-    use BelongsToTenant;
-    use BelongsToSchool;
     use ScopeToCurrentSchool;
-    use HasAmountAttribute;
 
     protected $guarded = [];
 

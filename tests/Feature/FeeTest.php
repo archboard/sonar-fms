@@ -6,8 +6,6 @@ use App\Models\Department;
 use App\Models\Fee;
 use App\Models\FeeCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\ResponseTrait;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 

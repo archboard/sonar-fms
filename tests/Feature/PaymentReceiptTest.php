@@ -4,17 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\InvoicePayment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
-use Tests\Traits\CreatesInvoice;
 use Tests\Traits\CreatesPayments;
 
 class PaymentReceiptTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesPayments;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
 

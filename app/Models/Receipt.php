@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class Receipt extends Model
 {
-    use HasFactory;
-    use BelongsToUser;
     use BelongsToSchool;
+    use BelongsToUser;
+    use HasFactory;
 
     protected $guarded = [];
 
@@ -48,7 +48,7 @@ class Receipt extends Model
         $disk = static::getDisk();
 
         // If the pdf doesn't exist, try creating it
-        if (!$disk->exists($this->path)) {
+        if (! $disk->exists($this->path)) {
             $this->invoicePayment->saveReceiptPdf(receipt: $this);
         }
 

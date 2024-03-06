@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Notifications\SchoolSyncFinished;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +18,9 @@ class SyncSchool implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $school;
+
     public $user;
+
     public bool $notify = false;
 
     // Set the timeout to be 10 minutes
@@ -28,11 +29,8 @@ class SyncSchool implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param School $school
-     * @param bool $notify
      */
-    public function __construct(School $school, bool $notify = false, User $user = null)
+    public function __construct(School $school, bool $notify = false, ?User $user = null)
     {
         $this->school = $school;
         $this->notify = $notify;
@@ -52,7 +50,7 @@ class SyncSchool implements ShouldQueue
             return;
         }
 
-        if (!app()->environment('testing')) {
+        if (! app()->environment('testing')) {
             $this->school->syncDataFromSis();
         }
 

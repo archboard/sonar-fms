@@ -10,7 +10,6 @@ class LogFailedLogin implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param Failed $event
      * @return void
      */
     public function handle(Failed $event)

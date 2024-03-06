@@ -25,11 +25,11 @@ use Illuminate\Support\Facades\Validator;
  */
 class PaymentImport extends Model implements FileImport
 {
-    use BelongsToTenant;
     use BelongsToSchool;
+    use BelongsToTenant;
     use BelongsToUser;
-    use ImportsFiles;
     use HasResource;
+    use ImportsFiles;
 
     protected $guarded = [];
 
@@ -102,8 +102,8 @@ class PaymentImport extends Model implements FileImport
         )->catch(function (Batch $batch, \Throwable $e) {
             //
         })
-        ->name("Roll back {$this->id}")
-        ->dispatch();
+            ->name("Roll back {$this->id}")
+            ->dispatch();
 
         return $this->reset();
     }

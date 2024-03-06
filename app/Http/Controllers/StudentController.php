@@ -19,8 +19,6 @@ class StudentController extends Controller
     /**
      * Displays all the students based on a filter
      *
-     * @param Request $request
-     * @param School $school
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function index(Request $request, School $school)
@@ -52,8 +50,6 @@ class StudentController extends Controller
     /**
      * Displays the student
      *
-     * @param Request $request
-     * @param Student $student
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Request $request, Student $student)

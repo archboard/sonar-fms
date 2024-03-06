@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Tenant;
-use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -28,9 +27,9 @@ class TenantSyncEmailParseTest extends TestCase
         ];
 
         $string = array_reduce($bank, function ($string, $email) {
-            return $string .
-                $email .
-                $this->faker->randomElement([',', ';', '|', ' ']) .
+            return $string.
+                $email.
+                $this->faker->randomElement([',', ';', '|', ' ']).
                 $this->faker->randomElement([' ', '']);
         }, '');
 

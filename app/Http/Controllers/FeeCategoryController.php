@@ -28,7 +28,6 @@ class FeeCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -44,6 +43,7 @@ class FeeCategoryController extends Controller
 
         if ($request->wantsInertia()) {
             session()->flash('success', $message);
+
             return back();
         }
 
@@ -57,7 +57,6 @@ class FeeCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\FeeCategory  $feeCategory
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(FeeCategory $feeCategory)
@@ -68,8 +67,6 @@ class FeeCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\FeeCategory  $feeCategory
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, FeeCategory $feeCategory)
@@ -82,6 +79,7 @@ class FeeCategoryController extends Controller
 
         if ($request->wantsInertia()) {
             session()->flash('success', $message);
+
             return back();
         }
 
@@ -95,7 +93,6 @@ class FeeCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\FeeCategory  $feeCategory
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(FeeCategory $feeCategory)

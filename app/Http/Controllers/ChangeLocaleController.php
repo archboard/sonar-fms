@@ -10,7 +10,6 @@ class ChangeLocaleController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request)
@@ -19,7 +18,7 @@ class ChangeLocaleController extends Controller
             'locale' => [
                 'required',
                 // Rule::in(['']),
-            ]
+            ],
         ]);
 
         $request->user()

@@ -63,7 +63,7 @@ class AppServiceProvider extends ServiceProvider
             return $current ?? new School();
         };
 
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             $this->app->bind(Tenant::class, $currentTenant);
             $this->app->bind(School::class, $currentSchool);
         }

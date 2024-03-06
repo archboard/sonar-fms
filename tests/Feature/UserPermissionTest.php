@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\SignsIn;
 
@@ -63,7 +62,7 @@ class UserPermissionTest extends TestCase
         $this->put(route('users.permissions', $user), $permissions)
             ->assertOk()
             ->assertJsonStructure([
-                'level', 'message'
+                'level', 'message',
             ]);
 
         $this->assertTrue($user->can('view', User::class));

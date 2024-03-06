@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Receipt;
-use Illuminate\Http\Request;
 
 class ReceiptController extends Controller
 {
@@ -15,7 +14,6 @@ class ReceiptController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Receipt $receipt
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function show(Receipt $receipt)
@@ -26,7 +24,6 @@ class ReceiptController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Receipt $receipt)

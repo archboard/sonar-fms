@@ -86,7 +86,6 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @param CreateInvoiceRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateInvoiceRequest $request)
@@ -100,13 +99,11 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Request $request
-     * @param \App\Models\Invoice $invoice
      * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Request $request, Invoice $invoice)
     {
-        $title = $invoice->title . ': ' . $invoice->invoice_number;
+        $title = $invoice->title.': '.$invoice->invoice_number;
         $invoice->load([
             'student',
             'students',
@@ -123,7 +120,7 @@ class InvoiceController extends Controller
             'activities',
             'activities.causer',
         ])
-        ->loadChildren();
+            ->loadChildren();
 
         $breadcrumbs = [
             $this->makeBreadcrumb(__('Invoices'), route('invoices.index')),
@@ -181,8 +178,6 @@ class InvoiceController extends Controller
      * but just deletes the original invoice
      * after creating a new invoice from the request
      *
-     * @param UpdateInvoiceRequest $request
-     * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)

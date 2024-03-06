@@ -13,11 +13,11 @@ use Tests\Traits\MapsFields;
 
 class ConvertPaymentImportToTemplateTest extends TestCase
 {
-    use RefreshDatabase;
-    use WithFaker;
     use CreatesPaymentImports;
     use GetsUploadedFiles;
     use MapsFields;
+    use RefreshDatabase;
+    use WithFaker;
 
     protected bool $signIn = true;
 

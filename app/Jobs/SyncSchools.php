@@ -2,11 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,8 +21,6 @@ class SyncSchools implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Tenant $tenant
      */
     public function __construct(Tenant $tenant)
     {
@@ -38,7 +34,7 @@ class SyncSchools implements ShouldQueue
      */
     public function handle()
     {
-        if (!app()->environment('testing')) {
+        if (! app()->environment('testing')) {
             $this->tenant->sisProvider()->syncSchools();
         }
 

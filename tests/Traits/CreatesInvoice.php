@@ -8,7 +8,6 @@ use App\Models\InvoicePaymentSchedule;
 use App\Models\InvoicePaymentTerm;
 use App\Models\InvoiceScholarship;
 use App\Models\InvoiceSelection;
-use App\Models\School;
 use App\Models\Student;
 use App\ResolutionStrategies\Greatest;
 use App\ResolutionStrategies\Least;
@@ -79,11 +78,11 @@ trait CreatesInvoice
                         'item_id' => $item['id'],
                         'selected' => true,
                         'tax_rate' => $this->faker->numberBetween(1, 10),
-                    ])->toArray()
+                    ])->toArray(),
         ];
     }
 
-    protected function createInvoice(array $invoiceAttributes = [], int $paymentSchedules = null): Invoice
+    protected function createInvoice(array $invoiceAttributes = [], ?int $paymentSchedules = null): Invoice
     {
         $defaultAttributes = [
             'user_uuid' => $this->user->uuid,
@@ -246,7 +245,7 @@ trait CreatesInvoice
         return $this->user->invoiceSelections()
             ->create([
                 'school_id' => $this->school->id,
-                'invoice_uuid' => $invoice->uuid
+                'invoice_uuid' => $invoice->uuid,
             ]);
     }
 

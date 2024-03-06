@@ -11,7 +11,6 @@ class ChangeInvoiceStatusController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request, Invoice $invoice)
@@ -26,7 +25,7 @@ class ChangeInvoiceStatusController extends Controller
             'duplicate' => [
                 'boolean',
                 'required_if:status,voided_at',
-            ]
+            ],
         ]);
 
         $invoice->update([

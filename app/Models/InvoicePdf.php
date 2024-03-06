@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Traits\BelongsToSchool;
 use App\Traits\BelongsToTenant;
 use App\Traits\BelongsToUser;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InvoicePdf extends Model
 {
-    use BelongsToTenant;
     use BelongsToSchool;
+    use BelongsToTenant;
     use BelongsToUser;
 
     protected $guarded = [];

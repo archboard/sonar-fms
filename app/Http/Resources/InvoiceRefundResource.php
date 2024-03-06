@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use GrantHolle\Timezone\Facades\Timezone;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class InvoiceRefundResource extends JsonResource
 {

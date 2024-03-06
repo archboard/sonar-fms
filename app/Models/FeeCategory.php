@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FeeCategory extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
     use HasResource;
-    use BelongsToTenant;
 
     protected $guarded = [];
 }

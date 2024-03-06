@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Prunable;
  */
 class RecordExport extends Model
 {
-    use HasFactory;
     use BelongsToSchool;
     use BelongsToUser;
+    use HasFactory;
     use Prunable;
 
     protected $guarded = [];

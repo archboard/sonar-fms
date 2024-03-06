@@ -19,7 +19,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '784',
                 'digits' => 2,
-                'currency' => "UAE Dirham",
+                'currency' => 'UAE Dirham',
             ]
         );
         Currency::updateOrCreate(
@@ -27,7 +27,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '971',
                 'digits' => 2,
-                'currency' => "Afghani",
+                'currency' => 'Afghani',
             ]
         );
         Currency::updateOrCreate(
@@ -35,7 +35,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '008',
                 'digits' => 2,
-                'currency' => "Lek",
+                'currency' => 'Lek',
             ]
         );
         Currency::updateOrCreate(
@@ -43,7 +43,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '051',
                 'digits' => 2,
-                'currency' => "Armenian Dram",
+                'currency' => 'Armenian Dram',
             ]
         );
         Currency::updateOrCreate(
@@ -51,7 +51,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '532',
                 'digits' => 2,
-                'currency' => "Netherlands Antillean Guilder",
+                'currency' => 'Netherlands Antillean Guilder',
             ]
         );
         Currency::updateOrCreate(
@@ -59,7 +59,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '973',
                 'digits' => 2,
-                'currency' => "Kwanza",
+                'currency' => 'Kwanza',
             ]
         );
         Currency::updateOrCreate(
@@ -67,7 +67,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '032',
                 'digits' => 2,
-                'currency' => "Argentine Peso",
+                'currency' => 'Argentine Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -75,7 +75,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '036',
                 'digits' => 2,
-                'currency' => "Australian Dollar",
+                'currency' => 'Australian Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -83,7 +83,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '533',
                 'digits' => 2,
-                'currency' => "Aruban Florin",
+                'currency' => 'Aruban Florin',
             ]
         );
         Currency::updateOrCreate(
@@ -91,7 +91,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '944',
                 'digits' => 2,
-                'currency' => "Azerbaijan Manat",
+                'currency' => 'Azerbaijan Manat',
             ]
         );
         Currency::updateOrCreate(
@@ -99,7 +99,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '977',
                 'digits' => 2,
-                'currency' => "Convertible Mark",
+                'currency' => 'Convertible Mark',
             ]
         );
         Currency::updateOrCreate(
@@ -107,7 +107,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '052',
                 'digits' => 2,
-                'currency' => "Barbados Dollar",
+                'currency' => 'Barbados Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -115,7 +115,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '050',
                 'digits' => 2,
-                'currency' => "Taka",
+                'currency' => 'Taka',
             ]
         );
         Currency::updateOrCreate(
@@ -123,7 +123,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '975',
                 'digits' => 2,
-                'currency' => "Bulgarian Lev",
+                'currency' => 'Bulgarian Lev',
             ]
         );
         Currency::updateOrCreate(
@@ -131,7 +131,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '048',
                 'digits' => 3,
-                'currency' => "Bahraini Dinar",
+                'currency' => 'Bahraini Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -139,7 +139,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '108',
                 'digits' => 0,
-                'currency' => "Burundi Franc",
+                'currency' => 'Burundi Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -147,7 +147,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '060',
                 'digits' => 2,
-                'currency' => "Bermudian Dollar",
+                'currency' => 'Bermudian Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -155,7 +155,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '096',
                 'digits' => 2,
-                'currency' => "Brunei Dollar",
+                'currency' => 'Brunei Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -163,7 +163,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '068',
                 'digits' => 2,
-                'currency' => "Boliviano",
+                'currency' => 'Boliviano',
             ]
         );
         Currency::updateOrCreate(
@@ -171,7 +171,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '984',
                 'digits' => 2,
-                'currency' => "Mvdol",
+                'currency' => 'Mvdol',
             ]
         );
         Currency::updateOrCreate(
@@ -179,7 +179,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '986',
                 'digits' => 2,
-                'currency' => "Brazilian Real",
+                'currency' => 'Brazilian Real',
             ]
         );
         Currency::updateOrCreate(
@@ -187,7 +187,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '044',
                 'digits' => 2,
-                'currency' => "Bahamian Dollar",
+                'currency' => 'Bahamian Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -195,7 +195,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '064',
                 'digits' => 2,
-                'currency' => "Ngultrum",
+                'currency' => 'Ngultrum',
             ]
         );
         Currency::updateOrCreate(
@@ -203,7 +203,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '072',
                 'digits' => 2,
-                'currency' => "Pula",
+                'currency' => 'Pula',
             ]
         );
         Currency::updateOrCreate(
@@ -211,7 +211,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '933',
                 'digits' => 2,
-                'currency' => "Belarusian Ruble",
+                'currency' => 'Belarusian Ruble',
             ]
         );
         Currency::updateOrCreate(
@@ -219,7 +219,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '084',
                 'digits' => 2,
-                'currency' => "Belize Dollar",
+                'currency' => 'Belize Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -227,7 +227,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '124',
                 'digits' => 2,
-                'currency' => "Canadian Dollar",
+                'currency' => 'Canadian Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -235,7 +235,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '976',
                 'digits' => 2,
-                'currency' => "Congolese Franc",
+                'currency' => 'Congolese Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -243,7 +243,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '947',
                 'digits' => 2,
-                'currency' => "WIR Euro",
+                'currency' => 'WIR Euro',
             ]
         );
         Currency::updateOrCreate(
@@ -251,7 +251,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '756',
                 'digits' => 2,
-                'currency' => "Swiss Franc",
+                'currency' => 'Swiss Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -259,7 +259,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '948',
                 'digits' => 2,
-                'currency' => "WIR Franc",
+                'currency' => 'WIR Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -267,7 +267,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '990',
                 'digits' => 4,
-                'currency' => "Unidad de Fomento",
+                'currency' => 'Unidad de Fomento',
             ]
         );
         Currency::updateOrCreate(
@@ -275,7 +275,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '152',
                 'digits' => 0,
-                'currency' => "Chilean Peso",
+                'currency' => 'Chilean Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -283,7 +283,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '156',
                 'digits' => 2,
-                'currency' => "Chinese Yuan Renminbi",
+                'currency' => 'Chinese Yuan Renminbi',
             ]
         );
         Currency::updateOrCreate(
@@ -291,7 +291,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '170',
                 'digits' => 2,
-                'currency' => "Colombian Peso",
+                'currency' => 'Colombian Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -299,7 +299,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '970',
                 'digits' => 2,
-                'currency' => "Unidad de Valor Real",
+                'currency' => 'Unidad de Valor Real',
             ]
         );
         Currency::updateOrCreate(
@@ -307,7 +307,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '188',
                 'digits' => 2,
-                'currency' => "Costa Rican Colon",
+                'currency' => 'Costa Rican Colon',
             ]
         );
         Currency::updateOrCreate(
@@ -315,7 +315,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '931',
                 'digits' => 2,
-                'currency' => "Peso Convertible",
+                'currency' => 'Peso Convertible',
             ]
         );
         Currency::updateOrCreate(
@@ -323,7 +323,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '192',
                 'digits' => 2,
-                'currency' => "Cuban Peso",
+                'currency' => 'Cuban Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -331,7 +331,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '132',
                 'digits' => 2,
-                'currency' => "Cabo Verde Escudo",
+                'currency' => 'Cabo Verde Escudo',
             ]
         );
         Currency::updateOrCreate(
@@ -339,7 +339,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '203',
                 'digits' => 2,
-                'currency' => "Czech Koruna",
+                'currency' => 'Czech Koruna',
             ]
         );
         Currency::updateOrCreate(
@@ -347,7 +347,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '262',
                 'digits' => 0,
-                'currency' => "Djibouti Franc",
+                'currency' => 'Djibouti Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -355,7 +355,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '208',
                 'digits' => 2,
-                'currency' => "Danish Krone",
+                'currency' => 'Danish Krone',
             ]
         );
         Currency::updateOrCreate(
@@ -363,7 +363,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '214',
                 'digits' => 2,
-                'currency' => "Dominican Peso",
+                'currency' => 'Dominican Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -371,7 +371,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '012',
                 'digits' => 2,
-                'currency' => "Algerian Dinar",
+                'currency' => 'Algerian Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -379,7 +379,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '818',
                 'digits' => 2,
-                'currency' => "Egyptian Pound",
+                'currency' => 'Egyptian Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -387,7 +387,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '232',
                 'digits' => 2,
-                'currency' => "Nakfa",
+                'currency' => 'Nakfa',
             ]
         );
         Currency::updateOrCreate(
@@ -395,7 +395,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '230',
                 'digits' => 2,
-                'currency' => "Ethiopian Birr",
+                'currency' => 'Ethiopian Birr',
             ]
         );
         Currency::updateOrCreate(
@@ -403,7 +403,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '978',
                 'digits' => 2,
-                'currency' => "Euro",
+                'currency' => 'Euro',
             ]
         );
         Currency::updateOrCreate(
@@ -411,7 +411,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '242',
                 'digits' => 2,
-                'currency' => "Fiji Dollar",
+                'currency' => 'Fiji Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -419,7 +419,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '238',
                 'digits' => 2,
-                'currency' => "Falkland Islands Pound",
+                'currency' => 'Falkland Islands Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -427,7 +427,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '826',
                 'digits' => 2,
-                'currency' => "Pound Sterling",
+                'currency' => 'Pound Sterling',
             ]
         );
         Currency::updateOrCreate(
@@ -435,7 +435,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '981',
                 'digits' => 2,
-                'currency' => "Lari",
+                'currency' => 'Lari',
             ]
         );
         Currency::updateOrCreate(
@@ -443,7 +443,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '936',
                 'digits' => 2,
-                'currency' => "Ghana Cedi",
+                'currency' => 'Ghana Cedi',
             ]
         );
         Currency::updateOrCreate(
@@ -451,7 +451,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '292',
                 'digits' => 2,
-                'currency' => "Gibraltar Pound",
+                'currency' => 'Gibraltar Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -459,7 +459,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '270',
                 'digits' => 2,
-                'currency' => "Dalasi",
+                'currency' => 'Dalasi',
             ]
         );
         Currency::updateOrCreate(
@@ -467,7 +467,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '324',
                 'digits' => 0,
-                'currency' => "Guinean Franc",
+                'currency' => 'Guinean Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -475,7 +475,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '320',
                 'digits' => 2,
-                'currency' => "Quetzal",
+                'currency' => 'Quetzal',
             ]
         );
         Currency::updateOrCreate(
@@ -483,7 +483,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '328',
                 'digits' => 2,
-                'currency' => "Guyana Dollar",
+                'currency' => 'Guyana Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -491,7 +491,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '344',
                 'digits' => 2,
-                'currency' => "Hong Kong Dollar",
+                'currency' => 'Hong Kong Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -499,7 +499,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '340',
                 'digits' => 2,
-                'currency' => "Lempira",
+                'currency' => 'Lempira',
             ]
         );
         Currency::updateOrCreate(
@@ -507,7 +507,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '191',
                 'digits' => 2,
-                'currency' => "Kuna",
+                'currency' => 'Kuna',
             ]
         );
         Currency::updateOrCreate(
@@ -515,7 +515,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '332',
                 'digits' => 2,
-                'currency' => "Gourde",
+                'currency' => 'Gourde',
             ]
         );
         Currency::updateOrCreate(
@@ -523,7 +523,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '348',
                 'digits' => 2,
-                'currency' => "Forint",
+                'currency' => 'Forint',
             ]
         );
         Currency::updateOrCreate(
@@ -531,7 +531,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '360',
                 'digits' => 2,
-                'currency' => "Rupiah",
+                'currency' => 'Rupiah',
             ]
         );
         Currency::updateOrCreate(
@@ -539,7 +539,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '376',
                 'digits' => 2,
-                'currency' => "New Israeli Sheqel",
+                'currency' => 'New Israeli Sheqel',
             ]
         );
         Currency::updateOrCreate(
@@ -547,7 +547,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '356',
                 'digits' => 2,
-                'currency' => "Indian Rupee",
+                'currency' => 'Indian Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -555,7 +555,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '368',
                 'digits' => 3,
-                'currency' => "Iraqi Dinar",
+                'currency' => 'Iraqi Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -563,7 +563,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '364',
                 'digits' => 2,
-                'currency' => "Iranian Rial",
+                'currency' => 'Iranian Rial',
             ]
         );
         Currency::updateOrCreate(
@@ -571,7 +571,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '352',
                 'digits' => 0,
-                'currency' => "Iceland Krona",
+                'currency' => 'Iceland Krona',
             ]
         );
         Currency::updateOrCreate(
@@ -579,7 +579,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '388',
                 'digits' => 2,
-                'currency' => "Jamaican Dollar",
+                'currency' => 'Jamaican Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -587,7 +587,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '400',
                 'digits' => 3,
-                'currency' => "Jordanian Dinar",
+                'currency' => 'Jordanian Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -595,7 +595,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '392',
                 'digits' => 0,
-                'currency' => "Yen",
+                'currency' => 'Yen',
             ]
         );
         Currency::updateOrCreate(
@@ -603,7 +603,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '404',
                 'digits' => 2,
-                'currency' => "Kenyan Shilling",
+                'currency' => 'Kenyan Shilling',
             ]
         );
         Currency::updateOrCreate(
@@ -611,7 +611,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '417',
                 'digits' => 2,
-                'currency' => "Som",
+                'currency' => 'Som',
             ]
         );
         Currency::updateOrCreate(
@@ -619,7 +619,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '116',
                 'digits' => 2,
-                'currency' => "Riel",
+                'currency' => 'Riel',
             ]
         );
         Currency::updateOrCreate(
@@ -627,7 +627,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '174',
                 'digits' => 0,
-                'currency' => "Comorian Franc ",
+                'currency' => 'Comorian Franc ',
             ]
         );
         Currency::updateOrCreate(
@@ -635,7 +635,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '408',
                 'digits' => 2,
-                'currency' => "North Korean Won",
+                'currency' => 'North Korean Won',
             ]
         );
         Currency::updateOrCreate(
@@ -643,7 +643,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '410',
                 'digits' => 0,
-                'currency' => "Won",
+                'currency' => 'Won',
             ]
         );
         Currency::updateOrCreate(
@@ -651,7 +651,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '414',
                 'digits' => 3,
-                'currency' => "Kuwaiti Dinar",
+                'currency' => 'Kuwaiti Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -659,7 +659,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '136',
                 'digits' => 2,
-                'currency' => "Cayman Islands Dollar",
+                'currency' => 'Cayman Islands Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -667,7 +667,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '398',
                 'digits' => 2,
-                'currency' => "Tenge",
+                'currency' => 'Tenge',
             ]
         );
         Currency::updateOrCreate(
@@ -675,7 +675,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '418',
                 'digits' => 2,
-                'currency' => "Lao Kip",
+                'currency' => 'Lao Kip',
             ]
         );
         Currency::updateOrCreate(
@@ -683,7 +683,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '422',
                 'digits' => 2,
-                'currency' => "Lebanese Pound",
+                'currency' => 'Lebanese Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -691,7 +691,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '144',
                 'digits' => 2,
-                'currency' => "Sri Lanka Rupee",
+                'currency' => 'Sri Lanka Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -699,7 +699,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '430',
                 'digits' => 2,
-                'currency' => "Liberian Dollar",
+                'currency' => 'Liberian Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -707,7 +707,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '426',
                 'digits' => 2,
-                'currency' => "Loti",
+                'currency' => 'Loti',
             ]
         );
         Currency::updateOrCreate(
@@ -715,7 +715,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '434',
                 'digits' => 3,
-                'currency' => "Libyan Dinar",
+                'currency' => 'Libyan Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -723,7 +723,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '504',
                 'digits' => 2,
-                'currency' => "Moroccan Dirham",
+                'currency' => 'Moroccan Dirham',
             ]
         );
         Currency::updateOrCreate(
@@ -731,7 +731,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '498',
                 'digits' => 2,
-                'currency' => "Moldovan Leu",
+                'currency' => 'Moldovan Leu',
             ]
         );
         Currency::updateOrCreate(
@@ -739,7 +739,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '969',
                 'digits' => 2,
-                'currency' => "Malagasy Ariary",
+                'currency' => 'Malagasy Ariary',
             ]
         );
         Currency::updateOrCreate(
@@ -747,7 +747,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '807',
                 'digits' => 2,
-                'currency' => "Denar",
+                'currency' => 'Denar',
             ]
         );
         Currency::updateOrCreate(
@@ -755,7 +755,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '104',
                 'digits' => 2,
-                'currency' => "Kyat",
+                'currency' => 'Kyat',
             ]
         );
         Currency::updateOrCreate(
@@ -763,7 +763,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '496',
                 'digits' => 2,
-                'currency' => "Tugrik",
+                'currency' => 'Tugrik',
             ]
         );
         Currency::updateOrCreate(
@@ -771,7 +771,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '446',
                 'digits' => 2,
-                'currency' => "Pataca",
+                'currency' => 'Pataca',
             ]
         );
         Currency::updateOrCreate(
@@ -779,7 +779,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '929',
                 'digits' => 2,
-                'currency' => "Ouguiya",
+                'currency' => 'Ouguiya',
             ]
         );
         Currency::updateOrCreate(
@@ -787,7 +787,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '480',
                 'digits' => 2,
-                'currency' => "Mauritius Rupee",
+                'currency' => 'Mauritius Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -795,7 +795,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '462',
                 'digits' => 2,
-                'currency' => "Rufiyaa",
+                'currency' => 'Rufiyaa',
             ]
         );
         Currency::updateOrCreate(
@@ -803,7 +803,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '454',
                 'digits' => 2,
-                'currency' => "Malawi Kwacha",
+                'currency' => 'Malawi Kwacha',
             ]
         );
         Currency::updateOrCreate(
@@ -811,7 +811,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '484',
                 'digits' => 2,
-                'currency' => "Mexican Peso",
+                'currency' => 'Mexican Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -819,7 +819,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '979',
                 'digits' => 2,
-                'currency' => "Mexican Unidad de Inversion (UDI)",
+                'currency' => 'Mexican Unidad de Inversion (UDI)',
             ]
         );
         Currency::updateOrCreate(
@@ -827,7 +827,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '458',
                 'digits' => 2,
-                'currency' => "Malaysian Ringgit",
+                'currency' => 'Malaysian Ringgit',
             ]
         );
         Currency::updateOrCreate(
@@ -835,7 +835,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '943',
                 'digits' => 2,
-                'currency' => "Mozambique Metical",
+                'currency' => 'Mozambique Metical',
             ]
         );
         Currency::updateOrCreate(
@@ -843,7 +843,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '516',
                 'digits' => 2,
-                'currency' => "Namibia Dollar",
+                'currency' => 'Namibia Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -851,7 +851,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '566',
                 'digits' => 2,
-                'currency' => "Naira",
+                'currency' => 'Naira',
             ]
         );
         Currency::updateOrCreate(
@@ -859,7 +859,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '558',
                 'digits' => 2,
-                'currency' => "Cordoba Oro",
+                'currency' => 'Cordoba Oro',
             ]
         );
         Currency::updateOrCreate(
@@ -867,7 +867,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '578',
                 'digits' => 2,
-                'currency' => "Norwegian Krone",
+                'currency' => 'Norwegian Krone',
             ]
         );
         Currency::updateOrCreate(
@@ -875,7 +875,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '524',
                 'digits' => 2,
-                'currency' => "Nepalese Rupee",
+                'currency' => 'Nepalese Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -883,7 +883,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '554',
                 'digits' => 2,
-                'currency' => "New Zealand Dollar",
+                'currency' => 'New Zealand Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -891,7 +891,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '512',
                 'digits' => 3,
-                'currency' => "Rial Omani",
+                'currency' => 'Rial Omani',
             ]
         );
         Currency::updateOrCreate(
@@ -899,7 +899,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '590',
                 'digits' => 2,
-                'currency' => "Balboa",
+                'currency' => 'Balboa',
             ]
         );
         Currency::updateOrCreate(
@@ -907,7 +907,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '604',
                 'digits' => 2,
-                'currency' => "Sol",
+                'currency' => 'Sol',
             ]
         );
         Currency::updateOrCreate(
@@ -915,7 +915,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '598',
                 'digits' => 2,
-                'currency' => "Kina",
+                'currency' => 'Kina',
             ]
         );
         Currency::updateOrCreate(
@@ -923,7 +923,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '608',
                 'digits' => 2,
-                'currency' => "Philippine Peso",
+                'currency' => 'Philippine Peso',
             ]
         );
         Currency::updateOrCreate(
@@ -931,7 +931,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '586',
                 'digits' => 2,
-                'currency' => "Pakistan Rupee",
+                'currency' => 'Pakistan Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -939,7 +939,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '985',
                 'digits' => 2,
-                'currency' => "Zloty",
+                'currency' => 'Zloty',
             ]
         );
         Currency::updateOrCreate(
@@ -947,7 +947,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '600',
                 'digits' => 0,
-                'currency' => "Guarani",
+                'currency' => 'Guarani',
             ]
         );
         Currency::updateOrCreate(
@@ -955,7 +955,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '634',
                 'digits' => 2,
-                'currency' => "Qatari Rial",
+                'currency' => 'Qatari Rial',
             ]
         );
         Currency::updateOrCreate(
@@ -963,7 +963,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '946',
                 'digits' => 2,
-                'currency' => "Romanian Leu",
+                'currency' => 'Romanian Leu',
             ]
         );
         Currency::updateOrCreate(
@@ -971,7 +971,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '941',
                 'digits' => 2,
-                'currency' => "Serbian Dinar",
+                'currency' => 'Serbian Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -979,7 +979,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '643',
                 'digits' => 2,
-                'currency' => "Russian Ruble",
+                'currency' => 'Russian Ruble',
             ]
         );
         Currency::updateOrCreate(
@@ -987,7 +987,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '646',
                 'digits' => 0,
-                'currency' => "Rwanda Franc",
+                'currency' => 'Rwanda Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -995,7 +995,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '682',
                 'digits' => 2,
-                'currency' => "Saudi Riyal",
+                'currency' => 'Saudi Riyal',
             ]
         );
         Currency::updateOrCreate(
@@ -1003,7 +1003,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '090',
                 'digits' => 2,
-                'currency' => "Solomon Islands Dollar",
+                'currency' => 'Solomon Islands Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1011,7 +1011,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '690',
                 'digits' => 2,
-                'currency' => "Seychelles Rupee",
+                'currency' => 'Seychelles Rupee',
             ]
         );
         Currency::updateOrCreate(
@@ -1019,7 +1019,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '938',
                 'digits' => 2,
-                'currency' => "Sudanese Pound",
+                'currency' => 'Sudanese Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -1027,7 +1027,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '752',
                 'digits' => 2,
-                'currency' => "Swedish Krona",
+                'currency' => 'Swedish Krona',
             ]
         );
         Currency::updateOrCreate(
@@ -1035,7 +1035,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '702',
                 'digits' => 2,
-                'currency' => "Singapore Dollar",
+                'currency' => 'Singapore Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1043,7 +1043,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '654',
                 'digits' => 2,
-                'currency' => "Saint Helena Pound",
+                'currency' => 'Saint Helena Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -1051,7 +1051,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '694',
                 'digits' => 2,
-                'currency' => "Leone",
+                'currency' => 'Leone',
             ]
         );
         Currency::updateOrCreate(
@@ -1059,7 +1059,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '706',
                 'digits' => 2,
-                'currency' => "Somali Shilling",
+                'currency' => 'Somali Shilling',
             ]
         );
         Currency::updateOrCreate(
@@ -1067,7 +1067,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '968',
                 'digits' => 2,
-                'currency' => "Surinam Dollar",
+                'currency' => 'Surinam Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1075,7 +1075,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '728',
                 'digits' => 2,
-                'currency' => "South Sudanese Pound",
+                'currency' => 'South Sudanese Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -1083,7 +1083,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '930',
                 'digits' => 2,
-                'currency' => "Dobra",
+                'currency' => 'Dobra',
             ]
         );
         Currency::updateOrCreate(
@@ -1091,7 +1091,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '222',
                 'digits' => 2,
-                'currency' => "El Salvador Colon",
+                'currency' => 'El Salvador Colon',
             ]
         );
         Currency::updateOrCreate(
@@ -1099,7 +1099,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '760',
                 'digits' => 2,
-                'currency' => "Syrian Pound",
+                'currency' => 'Syrian Pound',
             ]
         );
         Currency::updateOrCreate(
@@ -1107,7 +1107,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '748',
                 'digits' => 2,
-                'currency' => "Lilangeni",
+                'currency' => 'Lilangeni',
             ]
         );
         Currency::updateOrCreate(
@@ -1115,7 +1115,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '764',
                 'digits' => 2,
-                'currency' => "Baht",
+                'currency' => 'Baht',
             ]
         );
         Currency::updateOrCreate(
@@ -1123,7 +1123,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '972',
                 'digits' => 2,
-                'currency' => "Somoni",
+                'currency' => 'Somoni',
             ]
         );
         Currency::updateOrCreate(
@@ -1131,7 +1131,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '934',
                 'digits' => 2,
-                'currency' => "Turkmenistan New Manat",
+                'currency' => 'Turkmenistan New Manat',
             ]
         );
         Currency::updateOrCreate(
@@ -1139,7 +1139,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '788',
                 'digits' => 3,
-                'currency' => "Tunisian Dinar",
+                'currency' => 'Tunisian Dinar',
             ]
         );
         Currency::updateOrCreate(
@@ -1147,7 +1147,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '776',
                 'digits' => 2,
-                'currency' => "Pa’anga",
+                'currency' => 'Pa’anga',
             ]
         );
         Currency::updateOrCreate(
@@ -1155,7 +1155,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '949',
                 'digits' => 2,
-                'currency' => "Turkish Lira",
+                'currency' => 'Turkish Lira',
             ]
         );
         Currency::updateOrCreate(
@@ -1163,7 +1163,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '780',
                 'digits' => 2,
-                'currency' => "Trinidad and Tobago Dollar",
+                'currency' => 'Trinidad and Tobago Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1171,7 +1171,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '901',
                 'digits' => 2,
-                'currency' => "New Taiwan Dollar",
+                'currency' => 'New Taiwan Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1179,7 +1179,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '834',
                 'digits' => 2,
-                'currency' => "Tanzanian Shilling",
+                'currency' => 'Tanzanian Shilling',
             ]
         );
         Currency::updateOrCreate(
@@ -1187,7 +1187,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '980',
                 'digits' => 2,
-                'currency' => "Hryvnia",
+                'currency' => 'Hryvnia',
             ]
         );
         Currency::updateOrCreate(
@@ -1195,7 +1195,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '800',
                 'digits' => 0,
-                'currency' => "Uganda Shilling",
+                'currency' => 'Uganda Shilling',
             ]
         );
         Currency::updateOrCreate(
@@ -1203,7 +1203,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '840',
                 'digits' => 2,
-                'currency' => "US Dollar",
+                'currency' => 'US Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1211,7 +1211,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '997',
                 'digits' => 2,
-                'currency' => "US Dollar (Next day)",
+                'currency' => 'US Dollar (Next day)',
             ]
         );
         Currency::updateOrCreate(
@@ -1219,7 +1219,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '940',
                 'digits' => 0,
-                'currency' => "Uruguay Peso en Unidades Indexadas (UI)",
+                'currency' => 'Uruguay Peso en Unidades Indexadas (UI)',
             ]
         );
         Currency::updateOrCreate(
@@ -1227,7 +1227,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '858',
                 'digits' => 2,
-                'currency' => "Peso Uruguayo",
+                'currency' => 'Peso Uruguayo',
             ]
         );
         Currency::updateOrCreate(
@@ -1235,7 +1235,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '927',
                 'digits' => 4,
-                'currency' => "Unidad Previsional",
+                'currency' => 'Unidad Previsional',
             ]
         );
         Currency::updateOrCreate(
@@ -1243,7 +1243,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '860',
                 'digits' => 2,
-                'currency' => "Uzbekistan Sum",
+                'currency' => 'Uzbekistan Sum',
             ]
         );
         Currency::updateOrCreate(
@@ -1251,7 +1251,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '928',
                 'digits' => 2,
-                'currency' => "Bolívar Soberano",
+                'currency' => 'Bolívar Soberano',
             ]
         );
         Currency::updateOrCreate(
@@ -1259,7 +1259,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '704',
                 'digits' => 0,
-                'currency' => "Dong",
+                'currency' => 'Dong',
             ]
         );
         Currency::updateOrCreate(
@@ -1267,7 +1267,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '548',
                 'digits' => 0,
-                'currency' => "Vatu",
+                'currency' => 'Vatu',
             ]
         );
         Currency::updateOrCreate(
@@ -1275,7 +1275,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '882',
                 'digits' => 2,
-                'currency' => "Tala",
+                'currency' => 'Tala',
             ]
         );
         Currency::updateOrCreate(
@@ -1283,7 +1283,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '950',
                 'digits' => 0,
-                'currency' => "CFA Franc BEAC",
+                'currency' => 'CFA Franc BEAC',
             ]
         );
         Currency::updateOrCreate(
@@ -1291,7 +1291,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '951',
                 'digits' => 2,
-                'currency' => "East Caribbean Dollar",
+                'currency' => 'East Caribbean Dollar',
             ]
         );
         Currency::updateOrCreate(
@@ -1299,7 +1299,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '960',
                 'digits' => 0,
-                'currency' => "SDR (Special Drawing Right)",
+                'currency' => 'SDR (Special Drawing Right)',
             ]
         );
         Currency::updateOrCreate(
@@ -1307,7 +1307,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '952',
                 'digits' => 0,
-                'currency' => "CFA Franc BCEAO",
+                'currency' => 'CFA Franc BCEAO',
             ]
         );
         Currency::updateOrCreate(
@@ -1315,7 +1315,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '953',
                 'digits' => 0,
-                'currency' => "CFP Franc",
+                'currency' => 'CFP Franc',
             ]
         );
         Currency::updateOrCreate(
@@ -1323,7 +1323,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '994',
                 'digits' => 0,
-                'currency' => "Sucre",
+                'currency' => 'Sucre',
             ]
         );
         Currency::updateOrCreate(
@@ -1331,7 +1331,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '965',
                 'digits' => 0,
-                'currency' => "ADB Unit of Account",
+                'currency' => 'ADB Unit of Account',
             ]
         );
         Currency::updateOrCreate(
@@ -1339,7 +1339,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '886',
                 'digits' => 2,
-                'currency' => "Yemeni Rial",
+                'currency' => 'Yemeni Rial',
             ]
         );
         Currency::updateOrCreate(
@@ -1347,7 +1347,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '710',
                 'digits' => 2,
-                'currency' => "Rand",
+                'currency' => 'Rand',
             ]
         );
         Currency::updateOrCreate(
@@ -1355,7 +1355,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '967',
                 'digits' => 2,
-                'currency' => "Zambian Kwacha",
+                'currency' => 'Zambian Kwacha',
             ]
         );
         Currency::updateOrCreate(
@@ -1363,7 +1363,7 @@ class CurrencySeeder extends Seeder
             [
                 'number' => '932',
                 'digits' => 2,
-                'currency' => "Zimbabwe Dollar",
+                'currency' => 'Zimbabwe Dollar',
             ]
         );
     }

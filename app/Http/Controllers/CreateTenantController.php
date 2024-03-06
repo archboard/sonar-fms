@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SyncSchool;
 use App\Jobs\SyncSchools;
-use App\Models\School;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,7 +14,6 @@ class CreateTenantController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request)

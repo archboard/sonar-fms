@@ -15,6 +15,7 @@ class StudentCommentTest extends TestCase
     use WithFaker;
 
     protected bool $signIn = true;
+
     protected Student $student;
 
     protected function setUp(): void
@@ -24,7 +25,7 @@ class StudentCommentTest extends TestCase
         $this->student = $this->createStudent();
     }
 
-    protected function createComment(User $user = null): Comment
+    protected function createComment(?User $user = null): Comment
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->student
@@ -55,7 +56,7 @@ class StudentCommentTest extends TestCase
         $this->post(route('students.comments.store', $this->student), $data)
             ->assertSessionHas('success')
             ->assertRedirect();
-//            ->assertJsonStructure(['level', 'message', 'data']);
+        //            ->assertJsonStructure(['level', 'message', 'data']);
 
         $this->assertEquals(1, $this->student->comments()->count());
         $comment = $this->student->comments()->first();

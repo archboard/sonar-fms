@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InvoiceTaxItem extends Model
 {
-    use HasResource;
     use BelongsToInvoice;
+    use HasResource;
     use HasTaxRateAttribute;
 
     protected $guarded = [];
@@ -31,8 +31,8 @@ class InvoiceTaxItem extends Model
     public function getAmountFormattedAttribute(): ?string
     {
         if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
+            ! $this->relationLoaded('invoice') ||
+            ! $this->invoice->relationLoaded('currency')
         ) {
             return null;
         }

@@ -10,8 +10,6 @@ class SyncStudentGuardiansController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Student $student
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request, Student $student)

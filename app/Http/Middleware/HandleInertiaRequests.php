@@ -18,6 +18,7 @@ class HandleInertiaRequests extends Middleware
      * The root template that's loaded on the first page visit.
      *
      * @see https://inertiajs.com/server-side-setup#root-template
+     *
      * @var string
      */
     protected $rootView = 'layouts.app';
@@ -26,7 +27,7 @@ class HandleInertiaRequests extends Middleware
      * Determines the current asset version.
      *
      * @see https://inertiajs.com/asset-versioning
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @return string|null
      */
     public function version(Request $request)
@@ -38,7 +39,7 @@ class HandleInertiaRequests extends Middleware
      * Defines the props that are shared by default.
      *
      * @see https://inertiajs.com/shared-data
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @return array
      */
     public function share(Request $request)
@@ -75,7 +76,7 @@ class HandleInertiaRequests extends Middleware
                 /** @var User|null $user */
                 $user = $request->user();
 
-                if (!$user) {
+                if (! $user) {
                     return [];
                 }
 
@@ -85,7 +86,7 @@ class HandleInertiaRequests extends Middleware
                         'route' => route('home'),
                         'active' => $request->routeIs('home'),
                         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />',
-                    ]
+                    ],
                 ];
 
                 if ($user->can('view', Student::class)) {
@@ -101,7 +102,7 @@ class HandleInertiaRequests extends Middleware
                     $links[] = [
                         'label' => __('Invoices'),
                         'route' => route('invoices.index'),
-                        'active' => $request->routeIs('invoices.*') && !$request->routeIs('invoices.imports.*'),
+                        'active' => $request->routeIs('invoices.*') && ! $request->routeIs('invoices.imports.*'),
                         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />',
                     ];
                     $links[] = [
@@ -169,7 +170,7 @@ class HandleInertiaRequests extends Middleware
                 /** @var User|null $user */
                 $user = $request->user();
 
-                if (!$user) {
+                if (! $user) {
                     return [];
                 }
 
@@ -178,7 +179,7 @@ class HandleInertiaRequests extends Middleware
                         'label' => __('Personal settings'),
                         'route' => route('settings.personal'),
                         'active' => $request->routeIs('settings.personal'),
-                    ]
+                    ],
                 ];
 
                 if ($user->can('edit school settings')) {

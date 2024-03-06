@@ -72,13 +72,13 @@ class InstallationTest extends TestCase
         $parsed = parse_url($url);
 
         // Ideally this would be done with a mock, but I don't know how it would work
-//        $jobMock = $this->getMockBuilder(SyncSchools::class)
-//            ->onlyMethods(['handle'])
-//            ->getMock();
-//
-//        $jobMock->expects($this->once())
-//            ->method('handle')
-//            ->will($this->returnSelf());
+        //        $jobMock = $this->getMockBuilder(SyncSchools::class)
+        //            ->onlyMethods(['handle'])
+        //            ->getMock();
+        //
+        //        $jobMock->expects($this->once())
+        //            ->method('handle')
+        //            ->will($this->returnSelf());
 
         $data = [
             'license' => $this->uuid(),

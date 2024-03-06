@@ -22,11 +22,12 @@ use Tests\Traits\CreatesPayments;
 
 class InvoicePaymentTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
     use CreatesPayments;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
+
     protected \Illuminate\Contracts\Filesystem\Filesystem $disk;
 
     protected function setUp(): void

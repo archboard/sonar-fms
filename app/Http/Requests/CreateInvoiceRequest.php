@@ -3,12 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use App\Models\InvoiceScholarship;
 use App\Models\Scholarship;
-use App\Models\Student;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class CreateInvoiceRequest extends FormRequest
@@ -86,34 +82,30 @@ class CreateInvoiceRequest extends FormRequest
                 'boolean',
             ],
             'tax_rate' => [
-                Rule::requiredIf(fn () =>
-                    $school->collect_tax &&
+                Rule::requiredIf(fn () => $school->collect_tax &&
                     $this->boolean('apply_tax') &&
-                    !$this->boolean('use_school_tax_defaults')
+                    ! $this->boolean('use_school_tax_defaults')
                 ),
                 'nullable',
                 'numeric',
             ],
             'tax_label' => [
-                Rule::requiredIf(fn () =>
-                    $school->collect_tax &&
+                Rule::requiredIf(fn () => $school->collect_tax &&
                     $this->boolean('apply_tax') &&
-                    !$this->boolean('use_school_tax_defaults')
+                    ! $this->boolean('use_school_tax_defaults')
                 ),
                 'nullable',
             ],
             'apply_tax_to_all_items' => [
-                Rule::requiredIf(fn () =>
-                    $school->collect_tax &&
+                Rule::requiredIf(fn () => $school->collect_tax &&
                     $this->boolean('apply_tax')
                 ),
                 'boolean',
             ],
             'tax_items' => [
-                Rule::requiredIf(fn () =>
-                    $school->collect_tax &&
+                Rule::requiredIf(fn () => $school->collect_tax &&
                     $this->boolean('apply_tax') &&
-                    !$this->boolean('apply_tax_to_all_items')
+                    ! $this->boolean('apply_tax_to_all_items')
                 ),
                 'array',
             ],

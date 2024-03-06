@@ -11,8 +11,8 @@ class UserSchoolController extends Controller
     /**
      * Gets the list of schools and the user's access to them
      *
-     * @param User $user
      * @return \Illuminate\Http\JsonResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(User $user)
@@ -26,9 +26,8 @@ class UserSchoolController extends Controller
     /**
      * Updates a user's school access
      *
-     * @param Request $request
-     * @param User $user
      * @return \Illuminate\Http\JsonResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, User $user)

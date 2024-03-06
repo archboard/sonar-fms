@@ -16,10 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LayoutBase extends Model
 {
+    use BelongsToSchool;
+    use BelongsToTenant;
     use HasFactory;
     use HasResource;
-    use BelongsToTenant;
-    use BelongsToSchool;
 
     protected $guarded = [];
 

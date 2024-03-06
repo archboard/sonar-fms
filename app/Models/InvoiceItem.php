@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\BelongsToInvoice;
-use Brick\Money\Money;
 use GrantHolle\Http\Resources\Traits\HasResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,9 +13,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InvoiceItem extends Model
 {
+    use BelongsToInvoice;
     use HasFactory;
     use HasResource;
-    use BelongsToInvoice;
 
     protected $fillable = [
         'uuid',
@@ -53,8 +52,8 @@ class InvoiceItem extends Model
     public function getAmountFormattedAttribute(): ?string
     {
         if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
+            ! $this->relationLoaded('invoice') ||
+            ! $this->invoice->relationLoaded('currency')
         ) {
             return null;
         }
@@ -65,8 +64,8 @@ class InvoiceItem extends Model
     public function getAmountPerUnitFormattedAttribute()
     {
         if (
-            !$this->relationLoaded('invoice') ||
-            !$this->invoice->relationLoaded('currency')
+            ! $this->relationLoaded('invoice') ||
+            ! $this->invoice->relationLoaded('currency')
         ) {
             return null;
         }

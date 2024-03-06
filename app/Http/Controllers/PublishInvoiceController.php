@@ -10,7 +10,6 @@ class PublishInvoiceController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Request $request, Invoice $invoice)
@@ -19,6 +18,7 @@ class PublishInvoiceController extends Controller
 
         if ($invoice->published_at) {
             session()->flash('error', __('This invoice is already published.'));
+
             return back();
         }
 

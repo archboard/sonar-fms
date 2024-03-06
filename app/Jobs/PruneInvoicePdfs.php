@@ -11,10 +11,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class PruneInvoicePdfs implements ShouldQueue, ShouldBeUnique
+class PruneInvoicePdfs implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use Batchable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected string $directory;
 

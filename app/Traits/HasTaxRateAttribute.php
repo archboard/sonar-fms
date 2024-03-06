@@ -18,7 +18,7 @@ trait HasTaxRateAttribute
 
     public function getTaxRateFormattedAttribute()
     {
-        return $this->tax_rate_converted . '%';
+        return $this->tax_rate_converted.'%';
     }
 
     public function getTaxRateConvertedAttribute()

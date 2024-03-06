@@ -14,10 +14,10 @@ use Tests\Traits\CreatesPayments;
 
 class InvoiceRefundTest extends TestCase
 {
-    use RefreshDatabase;
-    use WithFaker;
     use CreatesInvoice;
     use CreatesPayments;
+    use RefreshDatabase;
+    use WithFaker;
 
     protected Invoice $invoice;
 
@@ -137,7 +137,7 @@ class InvoiceRefundTest extends TestCase
                 InvoiceRefund::factory()
                     ->count(2)
                     ->make([
-                        'amount' => (int) round($this->invoice->total_paid / 3)
+                        'amount' => (int) round($this->invoice->total_paid / 3),
                     ])
             );
 

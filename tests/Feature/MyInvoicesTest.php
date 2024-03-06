@@ -9,8 +9,8 @@ use Tests\Traits\CreatesInvoice;
 
 class MyInvoicesTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesInvoice;
+    use RefreshDatabase;
 
     protected bool $signIn = true;
 

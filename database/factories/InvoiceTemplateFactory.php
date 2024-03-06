@@ -45,7 +45,7 @@ class InvoiceTemplateFactory extends Factory
                         'name' => 'Line item 2',
                         'amount_per_unit' => 100,
                         'quantity' => 2,
-                    ]
+                    ],
                 ],
                 'scholarships' => [],
                 'payment_schedules' => [],

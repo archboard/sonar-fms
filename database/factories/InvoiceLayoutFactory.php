@@ -36,7 +36,7 @@ class InvoiceLayoutFactory extends Factory
                         'columns' => [
                             [
                                 'content' => '<p>My layout content</p>',
-                            ]
+                            ],
                         ],
                     ],
                     [

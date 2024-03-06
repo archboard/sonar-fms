@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Department extends Model
 {
-    use HasFactory;
     use BelongsToTenant;
+    use HasFactory;
     use HasResource;
 
     protected $guarded = [];

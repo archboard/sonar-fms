@@ -22,10 +22,10 @@ class GeneratePdfForSelectionController extends Controller
         $user = $request->user();
 
         $batch = Bus::batch(
-                $user->selectedInvoices()
-                    ->pluck('uuid')
-                    ->map(fn ($uuid) => new CreateInvoicePdf(invoiceUuid: $uuid, force: true))
-            )
+            $user->selectedInvoices()
+                ->pluck('uuid')
+                ->map(fn ($uuid) => new CreateInvoicePdf(invoiceUuid: $uuid, force: true))
+        )
             ->then(function (Batch $batch) use ($user) {
                 $user->notify(new InvoicePdfBatchFinished());
             })
