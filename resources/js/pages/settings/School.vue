@@ -248,8 +248,8 @@ export default defineComponent({
       include_draft_stamp: school.include_draft_stamp,
       tax_rate: school.tax_rate_converted,
       tax_label: school.tax_label,
-      invoice_number_template: school.invoice_number_template,
-      default_title: school.default_title,
+      invoice_number_template: school.invoice_number_template || '',
+      default_title: school.default_title || '',
     })
     const submit = () => {
       form.post('/settings/school')
