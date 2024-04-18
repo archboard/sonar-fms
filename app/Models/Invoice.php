@@ -1062,37 +1062,32 @@ class Invoice extends Model implements Exportable, Searchable
         $currentMax = Cache::remember(
             $key,
             900,
-            function () use ($schoolId) {
-                $max = DB::table((new static)->getTable())
-                    ->where('school_id', $schoolId)
-                    ->selectRaw('MAX(invoice_number::integer) as max')
-                    ->first('max')
-                    ?->max;
-
-                if (is_int($max)) {
-                    return $max;
-                }
-
-                $numberExists = fn ($number) => DB::table((new static)->getTable())
-                    ->where('school_id', $schoolId)
-                    ->whereRaw("invoice_number::integer = {$number}")
-                    ->exists();
-                $numberToCheck = static::query()
+            function () use ($schoolId, $prefix) {
+                $number = static::query()
                     ->where('school_id', $schoolId)
                     ->count();
+                $numberExists = fn ($number) => static::query()
+                    ->where('school_id', $schoolId)
+                    ->where('invoice_number', static::makeInvoiceNumber($number, $prefix))
+                    ->exists();
 
-                while ($numberExists($numberToCheck + 1)) {
-                    $numberToCheck++;
+                while ($numberExists($number + 1)) {
+                    $number++;
                 }
 
-                return $numberToCheck;
+                return $number;
             }
         );
         // Increment the value
         cache()->increment($key);
         $invoiceNumber = $currentMax + 1;
 
-        return $prefix.Str::padLeft((string) $invoiceNumber, 3, '0');
+        return static::makeInvoiceNumber($invoiceNumber, $prefix);
+    }
+
+    public static function makeInvoiceNumber(int $number, string $prefix): string
+    {
+        return $prefix.Str::padLeft((string) $number, 3, '0');
     }
 
     public function migrateActivity(string $uuid): static
